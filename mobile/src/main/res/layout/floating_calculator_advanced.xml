@@ -48,21 +48,21 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/ln" />
+            android:text="@string/fun_ln" />
 
         <Button
             android:id="@+id/lg"
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/lg" />
+            android:text="@string/fun_log" />
 
         <Button
             android:id="@+id/pi"
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/pi" />
+            android:text="@string/const_pi" />
 
         <Button
             android:id="@+id/e"
@@ -89,14 +89,14 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/factorial" />
+            android:text="@string/op_fact" />
 
         <Button
             android:id="@+id/sqrt"
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/sqrt" />
+            android:text="@string/op_sqrt" />
 
         <Button
             android:id="@+id/cbrt"
@@ -116,7 +116,7 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/power" />
+            android:text="@string/op_pow" />
 
         <Button
             android:id="@+id/leftParen"

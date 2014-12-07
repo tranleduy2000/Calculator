@@ -35,7 +35,7 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/div" />
+            android:text="@string/op_div" />
     </LinearLayout>
 
     <LinearLayout
@@ -69,7 +69,7 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/mul" />
+            android:text="@string/op_mul" />
     </LinearLayout>
 
     <LinearLayout
@@ -103,7 +103,7 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/minus" />
+            android:text="@string/op_sub" />
     </LinearLayout>
 
     <LinearLayout
@@ -131,13 +131,14 @@
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/equal" />
+            android:text="@string/eq" />
 
         <Button
             android:id="@+id/plus"
             style="@style/Theme.Calculator.ButtonStyle.FloatingCalc"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="@dimen/floating_window_button_height"
-            android:text="@string/plus" />
+            android:text="@string/op_add" />
     </LinearLayout>
+
 </LinearLayout>
