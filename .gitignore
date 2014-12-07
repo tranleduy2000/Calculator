@@ -10,3 +10,4 @@ gradlew
 .DS_Store
 /build
 *.iml
+local.properties
