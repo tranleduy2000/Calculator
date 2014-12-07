@@ -97,10 +97,4 @@
         <item name="android:paddingRight">8dip</item>
     </style>
 
-    <style name="PadLinearLayoutStyle">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dip</item>
-        <item name="android:layout_weight">508</item>
-    </style>
-
 </resources>
