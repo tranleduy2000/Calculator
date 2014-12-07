@@ -1,1 +1,1 @@
-include ':mobile', ':wear', ':glass', ':legacy-mobile', ':ThemeEngine', ':GDK-ProgressBar', ':MathLibrary', ':floating'
+include ':mobile', ':wear', ':glass', ':legacy-mobile', ':ThemeEngine', ':GDK-ProgressBar', ':MathLibrary', ':FloatingView'

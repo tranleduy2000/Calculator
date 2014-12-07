@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.AdvancedDisplay;
-import com.xlythe.floatingview2.FloatingView;
+import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.History;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;

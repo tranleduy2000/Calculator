@@ -86,16 +86,6 @@ public class MatrixView extends TableLayout {
         return "";
     }
 
-    private static int countOccurrences(String haystack, char needle) {
-        int count = 0;
-        for(int i = 0; i < haystack.length(); i++) {
-            if(haystack.charAt(i) == needle) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     public void addRow() {
         mRows++;
         TableRow tr = new TableRow(getContext());
@@ -282,8 +272,8 @@ public class MatrixView extends TableLayout {
     public static class DisplayComponent implements AdvancedDisplay.DisplayComponent {
         @Override
         public View getView(Context context, Solver solver, String equation, AdvancedDisplay.EventListener listener) {
-            int rows = MatrixView.countOccurrences(equation, '[') - 1;
-            int columns = MatrixView.countOccurrences(equation, getSeparator().charAt(0)) / rows + 1;
+            int rows = TextUtil.countOccurrences(equation, '[') - 1;
+            int columns = TextUtil.countOccurrences(equation, getSeparator().charAt(0)) / rows + 1;
 
             MatrixView mv = new MatrixView(context);
             mv.mSolver = solver;

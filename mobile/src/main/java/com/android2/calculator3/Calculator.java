@@ -30,6 +30,7 @@ import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -150,6 +151,8 @@ public class Calculator extends Activity
         mFormulaEditText.registerComponent(new MatrixView.DisplayComponent());
         mResultEditText.registerComponents(mFormulaEditText.getComponents());
 
+        mDisplayView.bringToFront();
+
         // Disable IME for this application
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
@@ -164,7 +167,7 @@ public class Calculator extends Activity
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_CURRENT_STATE, mCurrentState.ordinal());
         outState.putString(KEY_CURRENT_EXPRESSION,
-                mTokenizer.getNormalizedExpression(mFormulaEditText.getText().toString()));
+                mTokenizer.getNormalizedExpression(mFormulaEditText.getText()));
     }
 
     private void setState(CalculatorState state) {
@@ -260,6 +263,7 @@ public class Calculator extends Activity
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (mCurrentState == CalculatorState.INPUT) {
             mResultEditText.setText(result);
+            Log.d("CALC", "setText1: "+result);
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
         } else if (!TextUtils.isEmpty(result)) {
@@ -318,7 +322,7 @@ public class Calculator extends Activity
     private void reveal(View sourceView, int colorRes, AnimatorListener listener) {
         // Make reveal cover the display and status bar.
         final View revealView = new View(this);
-        mLayoutParams.height = mDisplayView.getHeight();
+        mLayoutParams.height = mDisplayView.getHeight() - mDisplayView.getPaddingTop() - mDisplayView.getPaddingBottom();
         revealView.setLayoutParams(mLayoutParams);
         revealView.setBackgroundColor(getResources().getColor(colorRes));
         mDisplayView.addView(revealView);
@@ -437,6 +441,7 @@ public class Calculator extends Activity
             @Override
             public void onAnimationStart(Animator animation) {
                 mResultEditText.setText(result);
+                Log.d("CALC", "setText2: "+result);
             }
 
             @Override

@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.text.Editable;
+import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -13,6 +14,7 @@ import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
@@ -29,6 +31,7 @@ import android.widget.TextView;
 import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
 import com.xlythe.math.Constants;
+import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 
 import java.util.ArrayList;
@@ -65,6 +68,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
 
     // Try and use as large a text as possible, if the width allows it
     private int mWidthConstraint = -1;
+    private int mHeightConstraint = -1;
     private final Paint mTempPaint = new TextPaint();
     private OnTextSizeChangeListener mOnTextSizeChangeListener;
 
@@ -91,10 +95,14 @@ public class AdvancedDisplay extends ScrollableDisplay {
     private int mTextColor;
     private Editable.Factory mFactory;
     private KeyListener mKeyListener;
+    private boolean mTextIsUpdating = false;
     private final List<TextWatcher> mTextWatchers = new ArrayList<TextWatcher>();
     private final TextWatcher mTextWatcher = new TextWatcher() {
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            if(mTextIsUpdating) return;
+
             CharSequence text = getText();
             for(TextWatcher watcher : mTextWatchers) {
                 watcher.beforeTextChanged(text, 0, 0, text.length());
@@ -104,6 +112,8 @@ public class AdvancedDisplay extends ScrollableDisplay {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if(mTextIsUpdating) return;
+
             CharSequence text = getText();
             for(TextWatcher watcher : mTextWatchers) {
                 watcher.onTextChanged(text, 0, 0, text.length());
@@ -112,6 +122,8 @@ public class AdvancedDisplay extends ScrollableDisplay {
 
         @Override
         public void afterTextChanged(Editable s) {
+            if(mTextIsUpdating) return;
+
             Editable e = new AdvancedEditable(getText());
             for(TextWatcher watcher : mTextWatchers) {
                 watcher.afterTextChanged(e);
@@ -133,7 +145,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
         if(attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(
                     attrs, R.styleable.CalculatorEditText, 0, 0);
-            mTextSize = a.getDimension(
+            mTextSize = mMaximumTextSize = mMinimumTextSize = a.getDimension(
                     R.styleable.CalculatorEditText_textSize, getTextSize());
             mMaximumTextSize = a.getDimension(
                     R.styleable.CalculatorEditText_maxTextSize, getTextSize());
@@ -141,6 +153,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
                     R.styleable.CalculatorEditText_minTextSize, getTextSize());
             mStepTextSize = a.getDimension(R.styleable.CalculatorEditText_stepTextSize,
                     (mMaximumTextSize - mMinimumTextSize) / 3);
+            mTextColor = a.getColor(R.styleable.CalculatorEditText_textColor, 0);
             a.recycle();
 
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mMaximumTextSize);
@@ -281,12 +294,17 @@ public class AdvancedDisplay extends ScrollableDisplay {
             return getTextSize();
         }
 
+        // Count exponents, which aren't measured properly.
+        int exponents = TextUtil.countOccurrences(text, '^');
+
         // Step through increasing text sizes until the text would no longer fit.
         float lastFitTextSize = mMinimumTextSize;
         while (lastFitTextSize < mMaximumTextSize) {
             final float nextSize = Math.min(lastFitTextSize + mStepTextSize, mMaximumTextSize);
             mTempPaint.setTextSize(nextSize);
             if (mTempPaint.measureText(text) > mWidthConstraint) {
+                break;
+            } else if(nextSize + nextSize * exponents / 2 > mHeightConstraint) {
                 break;
             } else {
                 lastFitTextSize = nextSize;
@@ -340,6 +358,8 @@ public class AdvancedDisplay extends ScrollableDisplay {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         mWidthConstraint =
                 MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+        mHeightConstraint =
+                MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
         setTextSize(TypedValue.COMPLEX_UNIT_PX, getVariableTextSize(getText().toString()));
     }
 
@@ -356,16 +376,18 @@ public class AdvancedDisplay extends ScrollableDisplay {
      * Clears the text in the display
      * */
     public void clear() {
-        for(TextWatcher watcher : mTextWatchers) {
-            watcher.beforeTextChanged(getText(), 0, 0, 0);
-            watcher.onTextChanged("", 0, 0, 0);
-            watcher.afterTextChanged(new AdvancedEditable(""));
-        }
+        // Notify the text watcher
+        mTextWatcher.beforeTextChanged(null, 0, 0, 0);
+
         mRoot.removeAllViews();
         mActiveEditText = CalculatorEditText.getInstance(getContext(), mSolver, mEventListener);
 
         // Always start with a CalculatorEditText
         addView(mActiveEditText);
+
+        // Notify the text watcher
+        mTextWatcher.onTextChanged(null, 0, 0, 0);
+        mTextWatcher.afterTextChanged(null);
     }
 
     /**
@@ -411,16 +433,27 @@ public class AdvancedDisplay extends ScrollableDisplay {
             setText(delta);
         }
         else {
+            // Notify the text watcher
+            mTextWatcher.beforeTextChanged(null, 0, 0, 0);
+            mTextIsUpdating = true;
+
             if(CalculatorEditText.class.isInstance(getActiveEditText())) {
                 // Logic to insert, split text if there's another view, etc
-                int cursor = getActiveEditText().getSelectionStart();
+                int cursor, cacheCursor;
+                cursor = cacheCursor = getActiveEditText().getSelectionStart();
                 final int index = mRoot.getChildIndex(getActiveEditText());
+                StringBuilder cache = new StringBuilder();
 
                 // Loop over the text, adding custom views when needed
                 loop: while(!delta.isEmpty()) {
                     for(DisplayComponent c : mComponents) {
                         String equation = c.parse(delta);
                         if(equation != null) {
+                            // Update the EditText with the cached text
+                            getActiveEditText().getText().insert(cursor, cache);
+                            cache.setLength(0);
+                            cacheCursor = 0;
+
                             // We found a custom view
                             mRoot.addView(c.getView(getContext(), mSolver, equation, mEventListener));
 
@@ -443,16 +476,24 @@ public class AdvancedDisplay extends ScrollableDisplay {
                     }
 
                     // Append the next character to the EditText
-                    getActiveEditText().getText().insert(cursor, delta.subSequence(0, 1));
+                    cache.append(delta.charAt(0));
                     delta = delta.substring(1);
                     cursor++;
                 }
+
+                // Update the EditText with the cached text
+                getActiveEditText().getText().insert(cacheCursor, cache);
             }
             else {
                 // We let the custom edit text handle displaying the text
                 int cursor = getActiveEditText().getSelectionStart();
                 getActiveEditText().getText().insert(cursor, delta);
             }
+
+            // Notify the text watcher
+            mTextIsUpdating = false;
+            mTextWatcher.onTextChanged(null, 0, 0, 0);
+            mTextWatcher.afterTextChanged(null);
         }
     }
 
@@ -552,6 +593,10 @@ public class AdvancedDisplay extends ScrollableDisplay {
      * Set the text for the display
      * */
     public void setText(String text) {
+        // Notify the text watcher
+        mTextWatcher.beforeTextChanged(null, 0, 0, 0);
+        mTextIsUpdating = true;
+
         // Remove existing text
         clear();
 
@@ -589,6 +634,11 @@ public class AdvancedDisplay extends ScrollableDisplay {
             text = text.substring(1);
         }
         mRoot.getLastView().requestFocus();
+
+        // Notify the text watcher
+        mTextIsUpdating = false;
+        mTextWatcher.onTextChanged(null, 0, 0, 0);
+        mTextWatcher.afterTextChanged(null);
     }
 
     public void registerComponent(DisplayComponent component) {

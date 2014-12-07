@@ -261,33 +261,27 @@ public class BaseModule extends Module {
         }
 
         String modifiedNumber = group(wholeNumber, getSeparatorDistance(base), getSeparator(base));
+
         return sign + modifiedNumber + remainder;
     }
 
     private String group(String wholeNumber, int spacing, char separator) {
-        String modifiedNumber = "";
-        int offset = wholeNumber.startsWith(SELECTION_HANDLE + "") ? 1 : 0;
-        for(int i = 1; i <= wholeNumber.length(); i++) {
-            char charFromEnd = wholeNumber.charAt(wholeNumber.length() - i);
-            modifiedNumber = charFromEnd + modifiedNumber;
-            if(charFromEnd == SELECTION_HANDLE) {
-                offset++;
-                if(i == wholeNumber.length()) {
-                    // Remove separator if we accidentally caused an extra one
-                    if(modifiedNumber.startsWith(SELECTION_HANDLE + separator+"")) {
-                        modifiedNumber = SELECTION_HANDLE + modifiedNumber.substring(2);
-                    }
+        StringBuilder sb = new StringBuilder();
+        int digitsSeen = 0;
+        for (int i=wholeNumber.length()-1; i>=0; --i) {
+            char curChar = wholeNumber.charAt(i);
+            if (curChar != SELECTION_HANDLE) {
+                if (digitsSeen > 0 && digitsSeen % spacing == 0) {
+                    sb.insert(0, separator);
                 }
-            } else {
-                if((i - offset) % spacing == 0 && i != wholeNumber.length() && (i - offset) != 0) {
-                    modifiedNumber = separator + modifiedNumber;
-                }
+                ++digitsSeen;
             }
+            sb.insert(0, curChar);
         }
-        return modifiedNumber;
+        return sb.toString();
     }
 
-    private char getSeparator(Base base) {
+    public char getSeparator(Base base) {
         switch(base) {
             case DECIMAL:
                 return getDecSeparator();
@@ -298,6 +292,10 @@ public class BaseModule extends Module {
             default:
                 return 0;
         }
+    }
+
+    public char getSeparator() {
+        return getSeparator(mBase);
     }
 
     private int getSeparatorDistance(Base base) {

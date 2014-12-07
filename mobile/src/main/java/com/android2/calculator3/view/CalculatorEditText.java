@@ -26,6 +26,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -45,9 +46,9 @@ import com.xlythe.math.Solver;
 public class CalculatorEditText extends EditText {
     private static final int BLINK = 500;
     private final long mShowCursor = SystemClock.uptimeMillis();
-    Paint mHighlightPaint = new Paint();
-    Handler mHandler = new Handler();
-    Runnable mRefresher = new Runnable() {
+    private final Paint mHighlightPaint = new Paint();
+    private final Handler mHandler = new Handler();
+    private final Runnable mRefresher = new Runnable() {
         @Override
         public void run() {
             invalidate();
@@ -60,15 +61,15 @@ public class CalculatorEditText extends EditText {
     private AdvancedDisplay.EventListener mEventListener;
 
     public static CalculatorEditText getInstance(Context context, Solver solver, AdvancedDisplay.EventListener eventListener) {
-        CalculatorEditText et = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
-        et.mSolver = solver;
-        et.mEventListener = eventListener;
+        CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
+        text.mSolver = solver;
+        text.mEventListener = eventListener;
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER_VERTICAL;
-        et.setLayoutParams(params);
-        return et;
+        text.setLayoutParams(params);
+        return text;
     }
 
     public CalculatorEditText(Context context) {
@@ -84,7 +85,7 @@ public class CalculatorEditText extends EditText {
     private void setUp() {
         setLongClickable(false);
 
-        // Hide the keyboard
+        // Disable highlighting text
         setCustomSelectionActionModeCallback(new NoTextSelectionMode());
 
         // Display ^ , and other visual cues
@@ -101,29 +102,23 @@ public class CalculatorEditText extends EditText {
             @Override
             public void afterTextChanged(Editable s) {
                 if(updating) return;
+                updating = true;
 
                 mInput = s.toString()
                         .replace(Constants.PLACEHOLDER, Constants.POWER)
-                        .replace(Constants.DECIMAL_SEPARATOR + "", "")
-                        .replace(Constants.BINARY_SEPARATOR + "", "")
-                        .replace(Constants.HEXADECIMAL_SEPARATOR + "", "");
-                updating = true;
+                        .replace(mSolver.getBaseModule().getSeparator() + "", "");
 
                 // Get the selection handle, since we're setting text and that'll overwrite it
                 mSelectionHandle = getSelectionStart();
+
                 // Adjust the handle by removing any comas or spacing to the left
                 String cs = s.subSequence(0, mSelectionHandle).toString();
-                mSelectionHandle -= countOccurrences(cs, Constants.DECIMAL_SEPARATOR);
-                if(Constants.BINARY_SEPARATOR != Constants.DECIMAL_SEPARATOR) {
-                    mSelectionHandle -= countOccurrences(cs, Constants.BINARY_SEPARATOR);
-                }
-                if(Constants.HEXADECIMAL_SEPARATOR != Constants.BINARY_SEPARATOR
-                        && Constants.HEXADECIMAL_SEPARATOR != Constants.DECIMAL_SEPARATOR) {
-                    mSelectionHandle -= countOccurrences(cs, Constants.HEXADECIMAL_SEPARATOR);
-                }
+                mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
 
+                // Update the text with formatted (comas, etc) text
                 setText(formatText(mInput));
                 setSelection(Math.min(mSelectionHandle, getText().length()));
+
                 updating = false;
             }
         });
@@ -135,16 +130,6 @@ public class CalculatorEditText extends EditText {
                     mEventListener.onEditTextChanged(CalculatorEditText.this);
             }
         });
-    }
-
-    private int countOccurrences(String haystack, char needle) {
-        int count = 0;
-        for(int i = 0; i < haystack.length(); i++) {
-            if(haystack.charAt(i) == needle) {
-                count++;
-            }
-        }
-        return count;
     }
 
     private Spanned formatText(String input) {
@@ -205,6 +190,9 @@ public class CalculatorEditText extends EditText {
             if((SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
                 mHighlightPaint.setColor(getCurrentTextColor());
                 mHighlightPaint.setStyle(Paint.Style.STROKE);
+                if (android.os.Build.VERSION.SDK_INT >= 21) {
+                    mHighlightPaint.setStrokeWidth(6f);
+                }
                 canvas.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight(), mHighlightPaint);
                 mHandler.postAtTime(mRefresher, SystemClock.uptimeMillis() + BLINK);
             }

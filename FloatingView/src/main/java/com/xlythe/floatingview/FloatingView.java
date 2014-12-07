@@ -1,4 +1,4 @@
-package com.xlythe.floatingview2;
+package com.xlythe.floatingview;
 
 import android.animation.ValueAnimator;
 import android.app.Service;
