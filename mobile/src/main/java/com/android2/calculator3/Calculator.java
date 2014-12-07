@@ -30,7 +30,6 @@ import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -271,7 +270,6 @@ public class Calculator extends Activity
             // The current expression cannot be evaluated -> return to the input state.
             setState(CalculatorState.INPUT);
         }
-        mFormulaEditText.requestFocus();
     }
 
     @Override

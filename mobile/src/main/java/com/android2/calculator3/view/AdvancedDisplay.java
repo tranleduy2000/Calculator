@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.text.Editable;
-import android.text.Html;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -124,7 +123,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
         public void afterTextChanged(Editable s) {
             if(mTextIsUpdating) return;
 
-            Editable e = new AdvancedEditable(getText());
+            Editable e = mFactory.newEditable(getText());
             for(TextWatcher watcher : mTextWatchers) {
                 watcher.afterTextChanged(e);
             }
@@ -205,6 +204,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
                         int index = getChildIndex(getActiveEditText());
                         if(index > 0) {
                             removeView(getChildAt(index - 1));
+                            return true;
                         }
                     } else {
                         // Check and remove keywords
@@ -379,10 +379,11 @@ public class AdvancedDisplay extends ScrollableDisplay {
         // Notify the text watcher
         mTextWatcher.beforeTextChanged(null, 0, 0, 0);
 
+        // Clear all views
         mRoot.removeAllViews();
-        mActiveEditText = CalculatorEditText.getInstance(getContext(), mSolver, mEventListener);
 
         // Always start with a CalculatorEditText
+        mActiveEditText = CalculatorEditText.getInstance(getContext(), mSolver, mEventListener);
         addView(mActiveEditText);
 
         // Notify the text watcher
@@ -610,11 +611,18 @@ public class AdvancedDisplay extends ScrollableDisplay {
             text = text.substring(1);
         }
 
+        StringBuilder cache = new StringBuilder();
+
         // Loop over the text, adding custom views when needed
         loop: while(!text.isEmpty()) {
             for(DisplayComponent c : mComponents) {
                 String equation = c.parse(text);
                 if(equation != null) {
+                    // Apply the cache
+                    EditText trailingText = ((CalculatorEditText) mRoot.getLastView());
+                    trailingText.setText(cache);
+                    cache.setLength(0);
+
                     // We found a custom view
                     mRoot.addView(c.getView(getContext(), mSolver, equation, mEventListener));
 
@@ -628,12 +636,15 @@ public class AdvancedDisplay extends ScrollableDisplay {
             }
 
             // Append the next character to the trailing EditText
-            EditText trailingText = ((CalculatorEditText) mRoot.getLastView());
-            trailingText.setText(trailingText.getText() + text.substring(0, 1));
-            trailingText.setSelection(trailingText.length());
+            cache.append(text.charAt(0));
             text = text.substring(1);
         }
-        mRoot.getLastView().requestFocus();
+
+        // Apply the cache
+        EditText trailingText = ((CalculatorEditText) mRoot.getLastView());
+        trailingText.setText(cache);
+        trailingText.setSelection(trailingText.length());
+        trailingText.requestFocus();
 
         // Notify the text watcher
         mTextIsUpdating = false;
