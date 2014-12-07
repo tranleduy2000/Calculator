@@ -263,7 +263,6 @@ public class Calculator extends Activity
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (mCurrentState == CalculatorState.INPUT) {
             mResultEditText.setText(result);
-            Log.d("CALC", "setText1: "+result);
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
         } else if (!TextUtils.isEmpty(result)) {
@@ -441,7 +440,6 @@ public class Calculator extends Activity
             @Override
             public void onAnimationStart(Animator animation) {
                 mResultEditText.setText(result);
-                Log.d("CALC", "setText2: "+result);
             }
 
             @Override

@@ -84,6 +84,11 @@
 
     <style name="Theme.Calculator.ButtonStyle.FloatingCalc">
         <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Theme.Calculator.ButtonStyle.FloatingCalc.Advanced">
+        <item name="android:textColor">@color/pad_button_advanced_text_color</item>
     </style>
 
     <style name="PadButtonStyle" parent="@android:style/Widget.Button">
