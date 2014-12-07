@@ -21,6 +21,15 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="Theme.Calculator.Display.Widget" >
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="Theme.Calculator.ButtonStyle.Widget">
+        <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
     <style name="PadButtonStyle" parent="@android:style/Widget.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
