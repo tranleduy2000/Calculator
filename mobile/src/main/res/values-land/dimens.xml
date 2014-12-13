@@ -16,4 +16,6 @@
 <resources>
     <!-- The height of the display. -->
     <dimen name="display_height">100dp</dimen>
+
+    <dimen name="history_text_size">30sp</dimen>
 </resources>

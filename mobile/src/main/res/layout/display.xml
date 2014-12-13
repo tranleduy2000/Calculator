@@ -15,27 +15,42 @@
   limitations under the License.
   -->
 
-<RelativeLayout
+<com.android2.calculator3.view.DisplayOverlay
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/white_card">
+    android:background="@drawable/white_card"
+    android:orientation="vertical">
 
-    <com.android2.calculator3.view.AdvancedDisplay
-        android:id="@+id/formula"
-        style="@style/Theme.Calculator.Display.Main.Formula"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        textColor="@color/display_formula_text_color" />
+        android:layout_height="wrap_content">
 
-    <com.android2.calculator3.view.AdvancedDisplay
-        android:id="@+id/result"
-        style="@style/Theme.Calculator.Display.Main.Result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/formula"
-        android:focusable="false"
-        textColor="@color/display_result_text_color" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/historyRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
 
-</RelativeLayout>
+        <com.android2.calculator3.view.AdvancedDisplay
+            android:id="@+id/formula"
+            style="@style/Theme.Calculator.Display.Main.Formula"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/historyRecycler"
+            android:inputType="text|textNoSuggestions"
+            android:textColor="@color/display_formula_text_color" />
+
+        <com.android2.calculator3.view.AdvancedDisplay
+            android:id="@+id/result"
+            style="@style/Theme.Calculator.Display.Main.Result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/formula"
+            android:inputType="none"
+            android:focusable="false"
+            android:textColor="@color/display_result_text_color" />
+
+    </RelativeLayout>
+
+</com.android2.calculator3.view.DisplayOverlay>

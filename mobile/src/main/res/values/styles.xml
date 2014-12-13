@@ -58,6 +58,18 @@
         <item name="textSize">36sp</item>
     </style>
 
+    <style name="HistoryText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/history_result</item>
+        <item name="android:textSize">@dimen/history_text_size</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="HistoryText.Result">
+        <item name="android:textColor">@color/display_formula_text_color</item>
+    </style>
+
     <style name="Theme.Calculator.Display.Widget" />
 
     <style name="Theme.Calculator.Display.FloatingCalc">
@@ -118,7 +130,6 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
     </style>
-
 
     <style name="PadButtonStyle.Advanced">
         <item name="android:layout_margin">4dip</item>

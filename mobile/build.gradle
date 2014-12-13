@@ -26,6 +26,7 @@ dependencies {
     wearApp project(':wear')
     compile 'com.google.android.gms:play-services:+'
     compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:recyclerview-v7:+'
     compile project(':MathLibrary')
     compile project(':FloatingView')
 }

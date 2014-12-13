@@ -47,4 +47,7 @@
     <!-- The offset for the text in the cling -->
     <dimen name="cling_text_block_offset_x">0dp</dimen>
     <dimen name="cling_text_block_offset_y">0dp</dimen>
+
+    <dimen name="history_view_bottom_margin">60dp</dimen>
+    <dimen name="history_text_size">36sp</dimen>
 </resources>
