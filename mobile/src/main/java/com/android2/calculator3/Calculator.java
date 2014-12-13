@@ -459,6 +459,7 @@ public class Calculator extends Activity
             }
         });
     }
+
     private void onResult(final String result) {
         // Calculate the values needed to perform the scale and translation animations,
         // accounting for how the scale will affect the final position of the text.
@@ -517,7 +518,6 @@ public class Calculator extends Activity
 
                 // Finally update the formula to use the current result.
                 mFormulaEditText.setText(result);
-                mResultEditText.clear();
                 setState(CalculatorState.RESULT);
                 mCurrentAnimator = null;
             }
@@ -528,7 +528,10 @@ public class Calculator extends Activity
     }
 
     private void setBase(Base base) {
+        // Update the BaseManager, which handles restricting which buttons to show
         mBaseManager.setNumberBase(base);
+
+        // Update the evaluator, which handles the math
         mEvaluator.setBase(mFormulaEditText.getText(), base, new EvaluateCallback() {
             @Override
             public void onEvaluate(String expr, String result, int errorResourceId) {
