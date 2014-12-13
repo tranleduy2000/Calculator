@@ -21,8 +21,12 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class CalculatorPadViewPager extends ViewPager {
+    private NumberBaseManager mBaseManager;
+
     private final PagerAdapter mStaticPagerAdapter = new PagerAdapter() {
         @Override
         public int getCount() {
@@ -51,13 +55,17 @@ public class CalculatorPadViewPager extends ViewPager {
     };
 
     private final OnPageChangeListener mOnPageChangeListener = new SimpleOnPageChangeListener() {
-        private void recursivelySetEnabled(View view, boolean enabled) {
+        private void recursivelyEnable(View view) {
             if (view instanceof ViewGroup) {
                 final ViewGroup viewGroup = (ViewGroup) view;
                 for (int childIndex = 0; childIndex < viewGroup.getChildCount(); ++childIndex) {
-                    recursivelySetEnabled(viewGroup.getChildAt(childIndex), enabled);
+                    recursivelyEnable(viewGroup.getChildAt(childIndex));
                 }
             } else {
+                boolean enabled = true;
+                if(mBaseManager != null) {
+                    enabled &= !mBaseManager.isViewDisabled(view.getId());
+                }
                 view.setEnabled(enabled);
             }
         }
@@ -66,8 +74,7 @@ public class CalculatorPadViewPager extends ViewPager {
         public void onPageSelected(int position) {
             if (getAdapter() == mStaticPagerAdapter) {
                 for (int childIndex = 0; childIndex < getChildCount(); ++childIndex) {
-                    // Only enable subviews of the current page.
-                    recursivelySetEnabled(getChildAt(childIndex), childIndex == position);
+                    recursivelyEnable(getChildAt(childIndex));
                 }
             }
         }
@@ -109,5 +116,9 @@ public class CalculatorPadViewPager extends ViewPager {
         if (getAdapter() == mStaticPagerAdapter) {
             mStaticPagerAdapter.notifyDataSetChanged();
         }
+    }
+
+    public void setBaseManager(NumberBaseManager baseManager) {
+        mBaseManager = baseManager;
     }
 }

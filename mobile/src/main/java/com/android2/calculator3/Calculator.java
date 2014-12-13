@@ -49,6 +49,7 @@ import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.AdvancedDisplay;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.MatrixView;
+import com.xlythe.math.Base;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
@@ -57,10 +58,12 @@ public class Calculator extends Activity
         implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
 
     private static final String NAME = Calculator.class.getName();
+    private static final String TAG = "Calculator";
 
     // instance state keys
     private static final String KEY_CURRENT_STATE = NAME + "_currentState";
     private static final String KEY_CURRENT_EXPRESSION = NAME + "_currentExpression";
+    private static final String KEY_BASE = NAME + "_base";
 
     /**
      * Constant for an invalid resource id.
@@ -108,7 +111,7 @@ public class Calculator extends Activity
     private DisplayOverlay mDisplayView;
     private AdvancedDisplay mFormulaEditText;
     private AdvancedDisplay mResultEditText;
-    private ViewPager mPadViewPager;
+    private CalculatorPadViewPager mPadViewPager;
     private View mDeleteButton;
     private View mEqualButton;
     private View mClearButton;
@@ -117,6 +120,7 @@ public class Calculator extends Activity
     private History mHistory;
     private RecyclerView.Adapter mHistoryAdapter;
     private Persist mPersist;
+    private NumberBaseManager mBaseManager;
     private FrameLayout.LayoutParams mLayoutParams =
             new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0);
 
@@ -128,7 +132,7 @@ public class Calculator extends Activity
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mFormulaEditText = (AdvancedDisplay) findViewById(R.id.formula);
         mResultEditText = (AdvancedDisplay) findViewById(R.id.result);
-        mPadViewPager = (ViewPager) findViewById(R.id.pad_pager);
+        mPadViewPager = (CalculatorPadViewPager) findViewById(R.id.pad_pager);
         mDeleteButton = findViewById(R.id.del);
         mClearButton = findViewById(R.id.clr);
         mEqualButton = findViewById(R.id.pad_numeric).findViewById(R.id.eq);
@@ -159,6 +163,17 @@ public class Calculator extends Activity
 
         mFormulaEditText.registerComponent(new MatrixView.DisplayComponent());
         mResultEditText.registerComponents(mFormulaEditText.getComponents());
+
+        Base base = Base.DECIMAL;
+        int baseOrdinal = savedInstanceState.getInt(KEY_BASE, -1);
+        if (baseOrdinal != -1) {
+            base = Base.values()[baseOrdinal];
+        }
+        mBaseManager = new NumberBaseManager(base);
+        if (mPadViewPager != null) {
+            mPadViewPager.setBaseManager(mBaseManager);
+        }
+        setSelectedBaseButton(base);
 
         mDisplayView.bringToFront();
 
@@ -205,6 +220,7 @@ public class Calculator extends Activity
         outState.putInt(KEY_CURRENT_STATE, mCurrentState.ordinal());
         outState.putString(KEY_CURRENT_EXPRESSION,
                 mTokenizer.getNormalizedExpression(mFormulaEditText.getText()));
+        outState.putInt(KEY_BASE, mBaseManager.getNumberBase().ordinal());
     }
 
     private void setState(CalculatorState state) {
@@ -279,6 +295,15 @@ public class Calculator extends Activity
             case R.id.fun_tan:
                 // Add left parenthesis after functions.
                 mFormulaEditText.insert(((Button) view).getText() + "(");
+                break;
+            case R.id.hex:
+                setBase(Base.HEXADECIMAL);
+                break;
+            case R.id.bin:
+                setBase(Base.BINARY);
+                break;
+            case R.id.dec:
+                setBase(Base.DECIMAL);
                 break;
             default:
                 mFormulaEditText.insert(((Button) view).getText());
@@ -414,6 +439,7 @@ public class Calculator extends Activity
             @Override
             public void onAnimationEnd(Animator animation) {
                 mFormulaEditText.clear();
+                mResultEditText.clear();
             }
         });
     }
@@ -477,9 +503,7 @@ public class Calculator extends Activity
         animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
         animatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationStart(Animator animation) {
-                mResultEditText.setText(result);
-            }
+            public void onAnimationStart(Animator animation) {}
 
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -493,6 +517,7 @@ public class Calculator extends Activity
 
                 // Finally update the formula to use the current result.
                 mFormulaEditText.setText(result);
+                mResultEditText.clear();
                 setState(CalculatorState.RESULT);
                 mCurrentAnimator = null;
             }
@@ -500,5 +525,45 @@ public class Calculator extends Activity
 
         mCurrentAnimator = animatorSet;
         animatorSet.start();
+    }
+
+    private void setBase(Base base) {
+        mBaseManager.setNumberBase(base);
+        mEvaluator.setBase(mFormulaEditText.getText(), base, new EvaluateCallback() {
+            @Override
+            public void onEvaluate(String expr, String result, int errorResourceId) {
+                if (errorResourceId != INVALID_RES_ID) {
+                    onError(errorResourceId);
+                } else {
+                    mResultEditText.setText(result);
+                    onResult(result);
+                }
+            }
+        });
+        setSelectedBaseButton(base);
+
+        // disable any buttons that are not relevant to the current base
+        for (int resId : mBaseManager.getViewIds()) {
+            // TODO: handle duplicates
+            // This will not work if the same resId is used on multiple pages,
+            // which will be the case after adding the matrix view.
+            View view = findViewById(resId);
+            if (view != null) {
+                view.setEnabled(!mBaseManager.isViewDisabled(resId));
+            }
+        }
+
+        // TODO: preserve history
+        // Ideally each history entry is tagged with the base that it was created with.
+        // Then when we import a history item into the current display, we can convert the
+        // base as necessary. As a short term approach, just clear the history when
+        // changing the base.
+        mHistory.clear();
+    }
+
+    private void setSelectedBaseButton(Base base) {
+        findViewById(R.id.hex).setSelected(base.equals(Base.HEXADECIMAL));
+        findViewById(R.id.bin).setSelected(base.equals(Base.BINARY));
+        findViewById(R.id.dec).setSelected(base.equals(Base.DECIMAL));
     }
 }

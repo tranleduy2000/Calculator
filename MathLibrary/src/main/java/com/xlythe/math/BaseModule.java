@@ -1,5 +1,7 @@
 package com.xlythe.math;
 
+import android.util.Log;
+
 import org.javia.arity.SyntaxException;
 
 import java.text.DecimalFormatSymbols;
@@ -8,6 +10,8 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class BaseModule extends Module {
+    private static final String TAG = "Calculator";
+
     // Used to keep a reference to the cursor in text
     public static final char SELECTION_HANDLE = '\u2620';
 
@@ -15,8 +19,8 @@ public class BaseModule extends Module {
     private final static int PRECISION = 8;
 
     // Regex to strip out things like "90" from "sin(90)"
-    public final String REGEX_NUMBER;
-    public final String REGEX_NOT_NUMBER;
+    private final String REGEX_NUMBER;
+    private final String REGEX_NOT_NUMBER;
 
     // The current base. Defaults to decimal.
     private Base mBase = Base.DECIMAL;
@@ -27,8 +31,11 @@ public class BaseModule extends Module {
     BaseModule(Solver solver) {
         super(solver);
 
-        REGEX_NUMBER = "[A-F0-9" + Pattern.quote(getDecimalPoint()+"") + SELECTION_HANDLE + "]";
-        REGEX_NOT_NUMBER = "[^A-F0-9" + Pattern.quote(getDecimalPoint()+"") + SELECTION_HANDLE + "]";
+        // Modify the constants to include a fake character, SELECTION_HANDLE
+        REGEX_NUMBER = Constants.REGEX_NUMBER
+                .substring(0, Constants.REGEX_NUMBER.length() - 1) + SELECTION_HANDLE + "]";
+        REGEX_NOT_NUMBER = Constants.REGEX_NOT_NUMBER
+                .substring(0, Constants.REGEX_NOT_NUMBER.length() - 1) + SELECTION_HANDLE + "]";
     }
 
     public Base getBase() {
@@ -46,18 +53,19 @@ public class BaseModule extends Module {
         return text;
     }
 
-    String updateTextToNewMode(final String originalText, final Base base1, final Base base2) throws SyntaxException {
-        if(base1.equals(base2) || originalText.isEmpty() || originalText.matches(REGEX_NOT_NUMBER))
+    String updateTextToNewMode(final String originalText, final Base oldBase, final Base newBase) throws SyntaxException {
+        if(oldBase.equals(newBase) || originalText.isEmpty() || originalText.matches(REGEX_NOT_NUMBER)) {
             return originalText;
+        }
 
         String[] operations = originalText.split(REGEX_NUMBER);
         String[] numbers = originalText.split(REGEX_NOT_NUMBER);
         String[] translatedNumbers = new String[numbers.length];
         for(int i = 0; i < numbers.length; i++) {
             if(!numbers[i].isEmpty()) {
-                switch(base1) {
+                switch(oldBase) {
                     case BINARY:
-                        switch(base2) {
+                        switch(newBase) {
                             case BINARY:
                                 break;
                             case DECIMAL:
@@ -77,7 +85,7 @@ public class BaseModule extends Module {
                         }
                         break;
                     case DECIMAL:
-                        switch(base2) {
+                        switch(newBase) {
                             case BINARY:
                                 try {
                                     translatedNumbers[i] = newBase(numbers[i], 10, 2);
@@ -97,7 +105,7 @@ public class BaseModule extends Module {
                         }
                         break;
                     case HEXADECIMAL:
-                        switch(base2) {
+                        switch(newBase) {
                             case BINARY:
                                 try {
                                     translatedNumbers[i] = newBase(numbers[i], 16, 2);
