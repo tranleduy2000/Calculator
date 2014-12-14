@@ -15,63 +15,58 @@
   limitations under the License.
   -->
 
-<FrameLayout
+<com.android2.calculator3.CalculatorPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/PadLayoutStyle.Card">
+    android:id="@+id/pad_matrix"
+    style="@style/PadLayoutStyle.Matrix"
+    android:background="@color/pad_advanced_background_color">
 
-    <com.android2.calculator3.CalculatorPadLayout
-        android:id="@+id/pad_matrix"
-        style="@style/PadLayoutStyle.Matrix"
-        android:background="@color/pad_advanced_background_color">
+    <Button
+        android:id="@+id/matrix"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="[]" />
 
-        <Button
-            android:id="@+id/matrix"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="[]" />
+    <Button
+        android:id="@+id/det"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/det" />
 
-        <Button
-            android:id="@+id/det"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/det" />
+    <Button
+        android:id="@+id/matrix_transpose"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/matrix_transpose" />
 
-        <Button
-            android:id="@+id/matrix_transpose"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/matrix_transpose" />
+    <Button
+        android:id="@+id/matrix_inverse"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/matrix_inverse" />
 
-        <Button
-            android:id="@+id/matrix_inverse"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/matrix_inverse" />
+    <Button
+        android:id="@+id/plus_row"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/plus_row" />
 
-        <Button
-            android:id="@+id/plus_row"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/plus_row" />
+    <Button
+        android:id="@+id/minus_row"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/minus_row" />
 
-        <Button
-            android:id="@+id/minus_row"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/minus_row" />
+    <Button
+        android:id="@+id/plus_col"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/plus_col" />
 
-        <Button
-            android:id="@+id/plus_col"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/plus_col" />
+    <Button
+        android:id="@+id/minus_col"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/minus_col" />
 
-        <Button
-            android:id="@+id/minus_col"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/minus_col" />
-
-    </com.android2.calculator3.CalculatorPadLayout>
-
-</FrameLayout>
+</com.android2.calculator3.CalculatorPadLayout>

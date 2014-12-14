@@ -173,6 +173,7 @@
     </style>
 
     <style name="PadLayoutStyle.Hex" parent="@style/PadLayoutStyle.Advanced">
+        <item name="android:columnCount">3</item>
         <item name="android:rowCount">3</item>
     </style>
 

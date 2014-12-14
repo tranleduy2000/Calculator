@@ -15,72 +15,67 @@
   limitations under the License.
   -->
 
-<FrameLayout
+<com.android2.calculator3.CalculatorPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/PadLayoutStyle.Card">
+    android:id="@+id/pad_hex"
+    style="@style/PadLayoutStyle.Hex"
+    android:background="@color/pad_advanced_background_color">
 
-    <com.android2.calculator3.CalculatorPadLayout
-        android:id="@+id/pad_hex"
-        style="@style/PadLayoutStyle.Hex"
-        android:background="@color/pad_advanced_background_color">
+    <Button
+        android:id="@+id/A"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/A" />
 
-        <Button
-            android:id="@+id/A"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/A" />
+    <Button
+        android:id="@+id/B"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/B" />
 
-        <Button
-            android:id="@+id/B"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/B" />
+    <Button
+        android:id="@+id/C"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/C" />
 
-        <Button
-            android:id="@+id/C"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/C" />
+    <Button
+        android:id="@+id/D"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/D" />
 
-        <Button
-            android:id="@+id/D"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/D" />
+    <Button
+        android:id="@+id/E"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/E" />
 
-        <Button
-            android:id="@+id/E"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/E" />
+    <Button
+        android:id="@+id/F"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/F" />
 
-        <Button
-            android:id="@+id/F"
-            style="@style/PadButtonStyle.Advanced"
-            android:onClick="onButtonClick"
-            android:text="@string/F" />
+    <Button
+        android:id="@+id/dec"
+        style="@style/PadButtonStyle.Advanced.Toggle"
+        android:contentDescription="@string/desc_dec"
+        android:onClick="onButtonClick"
+        android:text="@string/dec" />
 
-        <Button
-            android:id="@+id/dec"
-            style="@style/PadButtonStyle.Advanced.Toggle"
-            android:contentDescription="@string/desc_dec"
-            android:onClick="onButtonClick"
-            android:text="@string/dec" />
+    <Button
+        android:id="@+id/hex"
+        style="@style/PadButtonStyle.Advanced.Toggle"
+        android:contentDescription="@string/desc_hex"
+        android:onClick="onButtonClick"
+        android:text="@string/hex" />
 
-        <Button
-            android:id="@+id/hex"
-            style="@style/PadButtonStyle.Advanced.Toggle"
-            android:contentDescription="@string/desc_hex"
-            android:onClick="onButtonClick"
-            android:text="@string/hex" />
+    <Button
+        android:id="@+id/bin"
+        style="@style/PadButtonStyle.Advanced.Toggle"
+        android:contentDescription="@string/desc_bin"
+        android:onClick="onButtonClick"
+        android:text="@string/bin" />
 
-        <Button
-            android:id="@+id/bin"
-            style="@style/PadButtonStyle.Advanced.Toggle"
-            android:contentDescription="@string/desc_bin"
-            android:onClick="onButtonClick"
-            android:text="@string/bin" />
-
-    </com.android2.calculator3.CalculatorPadLayout>
-
-</FrameLayout>
+</com.android2.calculator3.CalculatorPadLayout>

@@ -74,11 +74,16 @@
         <item name="android:paddingBottom">8dip</item>
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
+        <item name="android:columnCount">5</item>
+        <item name="android:rowCount">3</item>
+    </style>
+
+    <style name="PadLayoutStyle.Hex" parent="@style/PadLayoutStyle.Advanced">
         <item name="android:columnCount">6</item>
         <item name="android:rowCount">2</item>
     </style>
 
-    <style name="PadLayoutStyle.Hex" parent="@style/PadLayoutStyle.Advanced" />
+    <style name="PadLayoutStyle.Matrix" parent="@style/PadLayoutStyle.Advanced" />
 
     <style name="PadLayoutStyle.Numeric">
         <item name="android:layout_width">0dip</item>
