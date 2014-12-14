@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"/>
 
-        <com.android2.calculator3.view.AdvancedDisplay
+        <com.android2.calculator3.view.display.AdvancedDisplay
             android:id="@+id/formula"
             style="@style/Theme.Calculator.Display.Main.Formula"
             android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:inputType="text|textNoSuggestions"
             android:textColor="@color/display_formula_text_color" />
 
-        <com.android2.calculator3.view.AdvancedDisplay
+        <com.android2.calculator3.view.display.AdvancedDisplay
             android:id="@+id/result"
             style="@style/Theme.Calculator.Display.Main.Result"
             android:layout_width="match_parent"

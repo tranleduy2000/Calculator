@@ -26,7 +26,6 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,17 +36,18 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
-import com.android2.calculator3.view.AdvancedDisplay.OnTextSizeChangeListener;
+import com.android2.calculator3.view.display.AdvancedDisplay.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
-import com.android2.calculator3.view.AdvancedDisplay;
+import com.android2.calculator3.view.display.AdvancedDisplay;
 import com.android2.calculator3.view.DisplayOverlay;
+import com.android2.calculator3.view.MatrixEditText;
+import com.android2.calculator3.view.MatrixInverseView;
+import com.android2.calculator3.view.MatrixTransposeView;
 import com.android2.calculator3.view.MatrixView;
 import com.xlythe.math.Base;
 import com.xlythe.math.History;
@@ -161,7 +161,7 @@ public class Calculator extends Activity
         mResultEditText.setTextColor(getResources().getColor(R.color.display_result_text_color));
         mResultEditText.setEnabled(false);
 
-        mFormulaEditText.registerComponent(new MatrixView.DisplayComponent());
+        mFormulaEditText.registerComponent(new MatrixView.MVDisplayComponent());
         mResultEditText.registerComponents(mFormulaEditText.getComponents());
 
         Base base = Base.DECIMAL;
@@ -288,6 +288,7 @@ public class Calculator extends Activity
             case R.id.clr:
                 onClear();
                 break;
+            case R.id.det:
             case R.id.fun_cos:
             case R.id.fun_ln:
             case R.id.fun_log:
@@ -304,6 +305,35 @@ public class Calculator extends Activity
                 break;
             case R.id.dec:
                 setBase(Base.DECIMAL);
+                break;
+            case R.id.matrix:
+                mFormulaEditText.insert(MatrixView.getPattern());
+                break;
+            case R.id.matrix_inverse:
+                mFormulaEditText.insert(MatrixInverseView.PATTERN);
+                break;
+            case R.id.matrix_transpose:
+                mFormulaEditText.insert(MatrixTransposeView.PATTERN);
+                break;
+            case R.id.plus_row:
+                if(mFormulaEditText.getActiveEditText() instanceof MatrixEditText) {
+                    ((MatrixEditText) mFormulaEditText.getActiveEditText()).getMatrixView().addRow();
+                }
+                break;
+            case R.id.minus_row:
+                if(mFormulaEditText.getActiveEditText() instanceof MatrixEditText) {
+                    ((MatrixEditText) mFormulaEditText.getActiveEditText()).getMatrixView().removeRow();
+                }
+                break;
+            case R.id.plus_col:
+                if(mFormulaEditText.getActiveEditText() instanceof MatrixEditText) {
+                    ((MatrixEditText) mFormulaEditText.getActiveEditText()).getMatrixView().addColumn();
+                }
+                break;
+            case R.id.minus_col:
+                if(mFormulaEditText.getActiveEditText() instanceof MatrixEditText) {
+                    ((MatrixEditText) mFormulaEditText.getActiveEditText()).getMatrixView().removeColumn();
+                }
                 break;
             default:
                 mFormulaEditText.insert(((Button) view).getText());
@@ -324,7 +354,12 @@ public class Calculator extends Activity
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (mCurrentState == CalculatorState.INPUT) {
-            mResultEditText.setText(result);
+            if (result == null || result.equals(mFormulaEditText.getText())) {
+                mResultEditText.clear();
+            }
+            else {
+                mResultEditText.setText(result);
+            }
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
         } else if (!TextUtils.isEmpty(result)) {
@@ -371,8 +406,13 @@ public class Calculator extends Activity
 
     private void onEquals() {
         if (mCurrentState == CalculatorState.INPUT) {
-            setState(CalculatorState.EVALUATE);
-            mEvaluator.evaluate(mFormulaEditText.getText(), this);
+            if (mResultEditText.getText().isEmpty() || mFormulaEditText.hasNext()) {
+                mFormulaEditText.next();
+            }
+            else {
+                setState(CalculatorState.EVALUATE);
+                mEvaluator.evaluate(mFormulaEditText.getText(), this);
+            }
         }
     }
 
@@ -439,7 +479,6 @@ public class Calculator extends Activity
             @Override
             public void onAnimationEnd(Animator animation) {
                 mFormulaEditText.clear();
-                mResultEditText.clear();
             }
         });
     }

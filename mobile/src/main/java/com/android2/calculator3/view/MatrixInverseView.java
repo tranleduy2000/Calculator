@@ -22,6 +22,7 @@ import android.text.InputType;
 import android.widget.TextView;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.view.display.AdvancedDisplay;
 
 public class MatrixInverseView extends TextView {
     private final static char PLACEHOLDER = '\uFEFF';

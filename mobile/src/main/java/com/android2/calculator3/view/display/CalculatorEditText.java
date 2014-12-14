@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android2.calculator3.view;
+package com.android2.calculator3.view.display;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -26,7 +26,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -38,6 +37,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.view.MatrixView;
+import com.android2.calculator3.view.TextUtil;
 import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
@@ -58,9 +59,9 @@ public class CalculatorEditText extends EditText {
     private String mInput = "";
     private int mSelectionHandle = 0;
     private Solver mSolver;
-    private AdvancedDisplay.EventListener mEventListener;
+    private EventListener mEventListener;
 
-    public static CalculatorEditText getInstance(Context context, Solver solver, AdvancedDisplay.EventListener eventListener) {
+    public static CalculatorEditText getInstance(Context context, Solver solver, EventListener eventListener) {
         CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
         text.mSolver = solver;
         text.mEventListener = eventListener;

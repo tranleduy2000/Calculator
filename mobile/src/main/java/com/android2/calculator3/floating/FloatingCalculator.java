@@ -14,7 +14,7 @@ import com.android2.calculator3.Calculator;
 import com.android2.calculator3.CalculatorExpressionEvaluator;
 import com.android2.calculator3.CalculatorExpressionTokenizer;
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.AdvancedDisplay;
+import com.android2.calculator3.view.display.AdvancedDisplay;
 import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.History;
 import com.xlythe.math.Persist;

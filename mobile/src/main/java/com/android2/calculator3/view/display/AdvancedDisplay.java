@@ -1,4 +1,4 @@
-package com.android2.calculator3.view;
+package com.android2.calculator3.view.display;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -8,18 +8,15 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.Spanned;
 import android.text.TextPaint;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -29,9 +26,10 @@ import android.widget.TextView;
 
 import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
-import com.xlythe.math.BaseModule;
+import com.android2.calculator3.view.CalculatorEditable;
+import com.android2.calculator3.view.ScrollableDisplay;
+import com.android2.calculator3.view.TextUtil;
 import com.xlythe.math.Constants;
-import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 
 import java.util.ArrayList;
@@ -43,16 +41,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class AdvancedDisplay extends ScrollableDisplay {
-    private static final int CUT = 0;
-    private static final int COPY = 1;
-    private static final int PASTE = 2;
-
-    // For copy/paste
-    private String[] mMenuItemsStrings;
+public class AdvancedDisplay extends ScrollableDisplay implements EventListener {
 
     // Restrict keys from hardware keyboards
     private static final char[] ACCEPTED_CHARS = "0123456789.+-*/\u2212\u00d7\u00f7()!%^".toCharArray();
+
+    // For cut, copy, and paste
+    MenuHandler mMenuHandler = new MenuHandler(this);
 
     // Currently focused text box
     private EditText mActiveEditText;
@@ -74,17 +69,6 @@ public class AdvancedDisplay extends ScrollableDisplay {
 
     // Variables for setting custom views (like Matrices)
     private final Set<DisplayComponent> mComponents = new HashSet<DisplayComponent>();
-    private final EventListener mEventListener = new EventListener() {
-        @Override
-        public void onEditTextChanged(EditText editText) {
-            mActiveEditText = editText;
-        }
-
-        @Override
-        public void onRemoveView(View view) {
-            removeView(view);
-        }
-    };
 
     // Variables to apply to underlying EditTexts
     private Map<String, Sync> mRegisteredSyncs = new HashMap<String, Sync>();
@@ -386,7 +370,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
         mRoot.removeAllViews();
 
         // Always start with a CalculatorEditText
-        mActiveEditText = CalculatorEditText.getInstance(getContext(), mSolver, mEventListener);
+        mActiveEditText = CalculatorEditText.getInstance(getContext(), mSolver, this);
         addView(mActiveEditText);
 
         // Notify the text watcher
@@ -394,10 +378,21 @@ public class AdvancedDisplay extends ScrollableDisplay {
         mTextWatcher.afterTextChanged(null);
     }
 
+    @Override
+    public void onEditTextChanged(EditText editText) {
+        mActiveEditText = editText;
+    }
+
+    @Override
+    public void onRemoveView(View view) {
+        removeView(view);
+    }
+    
     /**
      * Loop around when arrow keys are pressed
      * */
-    View nextView(View currentView) {
+    @Override
+     public View nextView(View currentView) {
         boolean foundCurrentView = false;
         for(int i = 0; i < mRoot.getChildCount(); i++) {
             if(foundCurrentView) return mRoot.getChildAt(i);
@@ -409,13 +404,44 @@ public class AdvancedDisplay extends ScrollableDisplay {
     /**
      * Loop around when arrow keys are pressed
      * */
-    View previousView(View currentView) {
+    @Override
+     public View previousView(View currentView) {
         boolean foundCurrentView = false;
         for(int i = mRoot.getChildCount() - 1; i >= 0; i--) {
             if(foundCurrentView) return mRoot.getChildAt(i);
             else if(currentView == mRoot.getChildAt(i)) foundCurrentView = true;
         }
         return mRoot.getChildAt(mRoot.getChildCount() - 1);
+    }
+
+    public void next() {
+        if(mActiveEditText.getSelectionStart() == mActiveEditText.getText().length()) {
+            View v = mActiveEditText.focusSearch(View.FOCUS_FORWARD);
+            if(v != null) v.requestFocus();
+            mActiveEditText.setSelection(0);
+        } else {
+            mActiveEditText.setSelection(mActiveEditText.getSelectionStart() + 1);
+        }
+    }
+
+    public boolean hasNext() {
+        return hasNext(this);
+    }
+
+    private boolean hasNext(View view) {
+        if(view instanceof AdvancedDisplayControls) {
+            return ((AdvancedDisplayControls) view).hasNext();
+        }
+        else if(view instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) view;
+            for(int i=0;i<vg.getChildCount();i++) {
+                if(hasNext(vg.getChildAt(i))) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
     public void backspace() {
@@ -459,7 +485,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
                             cacheCursor = 0;
 
                             // We found a custom view
-                            mRoot.addView(c.getView(getContext(), mSolver, equation, mEventListener));
+                            mRoot.addView(c.getView(getContext(), mSolver, equation, this));
 
                             // Keep EditTexts in between custom views
                             splitText(cursor, index, delta);
@@ -510,7 +536,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
         getActiveEditText().setText(leftText);
 
         // Create a right EditText
-        EditText et = CalculatorEditText.getInstance(getContext(), mSolver, mEventListener);
+        EditText et = CalculatorEditText.getInstance(getContext(), mSolver, this);
         et.setText(rightText);
         addView(et, index + 2);
 
@@ -527,7 +553,7 @@ public class AdvancedDisplay extends ScrollableDisplay {
         mSolver = solver;
     }
 
-    protected EditText getActiveEditText() {
+    public EditText getActiveEditText() {
         return mActiveEditText;
     }
 
@@ -627,10 +653,10 @@ public class AdvancedDisplay extends ScrollableDisplay {
                     cache.setLength(0);
 
                     // We found a custom view
-                    mRoot.addView(c.getView(getContext(), mSolver, equation, mEventListener));
+                    mRoot.addView(c.getView(getContext(), mSolver, equation, this));
 
                     // Keep EditTexts in between custom views
-                    addView(CalculatorEditText.getInstance(getContext(), mSolver, mEventListener));
+                    addView(CalculatorEditText.getInstance(getContext(), mSolver, this));
 
                     // Update text and loop again
                     text = text.substring(equation.length());
@@ -667,128 +693,18 @@ public class AdvancedDisplay extends ScrollableDisplay {
         return mComponents;
     }
 
-    public BaseModule getBaseModule() {
-        return mSolver.getBaseModule();
-    }
-
     // Everything below is for copy/paste
 
     @Override
     public void onCreateContextMenu(ContextMenu menu) {
-        MenuHandler handler = new MenuHandler();
-        if(mMenuItemsStrings == null) {
-            Resources resources = getResources();
-            mMenuItemsStrings = new String[3];
-            mMenuItemsStrings[CUT] = resources.getString(android.R.string.cut);
-            mMenuItemsStrings[COPY] = resources.getString(android.R.string.copy);
-            mMenuItemsStrings[PASTE] = resources.getString(android.R.string.paste);
-        }
-        for(int i = 0; i < mMenuItemsStrings.length; i++) {
-            menu.add(Menu.NONE, i, i, mMenuItemsStrings[i]).setOnMenuItemClickListener(handler);
-        }
-        if(getText().length() == 0) {
-            menu.getItem(CUT).setVisible(false);
-            menu.getItem(COPY).setVisible(false);
-        }
-        if(!Clipboard.canPaste(getContext())) {
-            menu.getItem(PASTE).setVisible(false);
-        }
-    }
-
-    public boolean onTextContextMenuItem(CharSequence title) {
-        boolean handled = false;
-        if(TextUtils.equals(title, mMenuItemsStrings[CUT])) {
-            cutContent();
-            handled = true;
-        } else if(TextUtils.equals(title, mMenuItemsStrings[COPY])) {
-            copyContent();
-            handled = true;
-        } else if(TextUtils.equals(title, mMenuItemsStrings[PASTE])) {
-            pasteContent();
-            handled = true;
-        }
-        return handled;
-    }
-
-    private void copyContent() {
-        Clipboard.copy(getContext(), getText());
-    }
-
-    private void cutContent() {
-        Clipboard.copy(getContext(), getText());
-        clear();
-    }
-
-    private void pasteContent() {
-        insert(Clipboard.paste(getContext()));
-    }
-
-    private class MenuHandler implements MenuItem.OnMenuItemClickListener {
-        public boolean onMenuItemClick(MenuItem item) {
-            return onTextContextMenuItem(item.getTitle());
-        }
-    }
-
-    /**
-     * Declare a View as a component for AdvancedDisplay.
-     *
-     * A component is a custom view for math equations (Like matrices).
-     * Register components with AdvancedDisplay to create a better UI when showing equations.
-     * */
-    public interface DisplayComponent {
-        /**
-         * The view to display.
-         *
-         * Includes the equation to display.
-         *
-         * Includes a copy of the solver being used,
-         * because the base can change (from decimal to binary for instance).
-         * Useful for adding comas, or whatever else you need.
-         * */
-        public View getView(Context context, Solver solver, String equation, EventListener listener);
-
-        /**
-         * Return the text you claim is yours, but only if the equation starts with it.
-         *
-         * For instance, [[0],[1]]+[[1],[0]] represents 2 matrices. A MatrixView would return
-         * [[0],[1]] because that's 1 matrix.
-         * */
-        public String parse(String equation);
-     }
-
-    public static interface EventListener {
-        public void onEditTextChanged(EditText editText);
-
-        public void onRemoveView(View view);
-    }
-
-    public abstract class Sync {
-        private String tag;
-        Sync(String tag) {
-            this.tag = tag;
-        }
-
-        public abstract void apply(TextView textView);
-
-        @Override
-        public int hashCode() {
-            return tag.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if(o instanceof Sync) {
-                return ((Sync) o).tag.equals(tag);
-            }
-            return false;
-        }
+        mMenuHandler.onCreateContextMenu(menu);
     }
 
     public interface OnTextSizeChangeListener {
         void onTextSizeChanged(AdvancedDisplay textView, float oldSize);
     }
 
-    private class Root extends LinearLayout {
+    class Root extends LinearLayout {
         public Root(Context context) {
             this(context, null);
         }

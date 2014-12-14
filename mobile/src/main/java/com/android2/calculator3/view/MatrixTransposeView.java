@@ -17,12 +17,12 @@
 package com.android2.calculator3.view;
 
 import android.content.Context;
-import android.graphics.Typeface;
 import android.text.Html;
 import android.text.InputType;
 import android.widget.TextView;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.view.display.AdvancedDisplay;
 
 public class MatrixTransposeView extends TextView {
     public final static String PATTERN = "^T";
