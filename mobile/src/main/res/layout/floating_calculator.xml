@@ -25,7 +25,6 @@
             android:id="@+id/delete"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="match_parent"
-            android:background="@drawable/menu_bg"
             android:contentDescription="@string/del"
             android:src="@drawable/widget_delete" />
 
@@ -33,7 +32,6 @@
             android:id="@+id/clear"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="match_parent"
-            android:background="@drawable/menu_bg"
             android:contentDescription="@string/clear"
             android:visibility="gone"
             android:src="@drawable/widget_clear" />

@@ -14,9 +14,6 @@
 -->
 
 <resources>
-    <!-- The height of the display. -->
-    <dimen name="display_height">220dp</dimen>
-
     <!-- The margin between the pad pages when displayed using a view pager. -->
     <dimen name="pad_page_margin">-24dip</dimen>
 

@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.android2.calculator3.view.CalculatorDisplay;
 import com.android2.calculator3.view.CalculatorViewPager;
 import com.xlythe.engine.theme.Theme;
-import com.xlythe.floatingview2.FloatingView;
+import com.xlythe.floatingview.FloatingView;
 
 public class FloatingCalculator extends FloatingView {
     // Calc logic
