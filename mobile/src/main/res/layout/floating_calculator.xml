@@ -43,6 +43,6 @@
         android:layout_width="280dp"
         android:layout_height="280dp"
         android:layout_below="@id/display_wrapper"
-        android:layout_marginTop="-10dp"/>
+        android:layout_marginTop="@dimen/below_display_margin"/>
 
 </RelativeLayout>

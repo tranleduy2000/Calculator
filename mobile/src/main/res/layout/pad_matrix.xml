@@ -25,7 +25,7 @@
         android:id="@+id/matrix"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="[]" />
+        android:text="@string/matrix_new" />
 
     <Button
         android:id="@+id/det"

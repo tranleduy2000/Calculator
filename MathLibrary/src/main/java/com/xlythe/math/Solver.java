@@ -20,16 +20,16 @@ import java.util.regex.Pattern;
 public class Solver {
     // Used for solving basic math
     public static final Symbols mSymbols = new Symbols();
-    private GraphModule mGraphModule;
     private BaseModule mBaseModule;
     private MatrixModule mMatrixModule;
+    private GraphModule mGraphModule;
     private int mLineLength = 8;
     private Localizer mLocalizer;
 
     public Solver() {
-        mGraphModule = new GraphModule(this);
         mBaseModule = new BaseModule(this);
         mMatrixModule = new MatrixModule(this);
+        mGraphModule = new GraphModule(this);
     }
 
     /**
@@ -171,19 +171,6 @@ public class Solver {
         return result;
     }
 
-    public void setDomain(float min, float max) {
-        getGraphModule().setDomain(min, max);
-    }
-
-    public void setZoomLevel(float level) {
-        getGraphModule().setZoomLevel(level);
-    }
-
-    public void graph(String text, GraphModule.OnGraphUpdatedListener l) {
-        if(mLocalizer != null) text = mLocalizer.localize(text);
-        getGraphModule().updateGraph(text, l);
-    }
-
     public void enableLocalization(Context context, Class r) {
         mLocalizer = new Localizer(context, r);
     }
@@ -200,15 +187,15 @@ public class Solver {
         return mBaseModule.getBase();
     }
 
-    public GraphModule getGraphModule() {
-        return mGraphModule;
-    }
-
     public BaseModule getBaseModule() {
         return mBaseModule;
     }
 
     public MatrixModule getMatrixModule() {
         return mMatrixModule;
+    }
+
+    public GraphModule getGraphModule() {
+        return mGraphModule;
     }
 }

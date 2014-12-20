@@ -29,7 +29,7 @@
         layout="@layout/pad_auxiliary"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="-10dp"
+        android:layout_marginTop="@dimen/below_display_margin"
         android:layout_below="@id/display"/>
 
     <LinearLayout

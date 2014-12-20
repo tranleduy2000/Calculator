@@ -42,6 +42,8 @@
     <!-- Displayed on buttons on screen for the arctan function. -->
     <string name="arctan">atan</string>
 
+    <string name="dot">.</string>
+
     <!-- Displayed on buttons on screen for the value of i. -->
     <string name="const_imaginary" translatable="false">i</string>
     <!-- Displayed on buttons on screen for the percent function. -->
@@ -79,7 +81,7 @@
     <string name="minus_row">-Row</string>
     <string name="plus_col">+Col</string>
     <string name="minus_col">-Col</string>
-    <string name="matrix_new" translatable="false">[ ]</string>
+    <string name="matrix_new" translatable="false">[]</string>
     <string name="matrix_inverse" translatable="false">-1</string>
     <string name="matrix_transpose">T</string>
     <string name="next">Next</string>

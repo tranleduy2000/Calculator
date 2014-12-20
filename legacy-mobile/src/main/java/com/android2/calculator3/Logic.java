@@ -118,7 +118,7 @@ public class Logic {
         }
         mDisplay.insert(delta);
         setDeleteMode(DELETE_MODE_BACKSPACE);
-        mSolver.graph(getText(), mOnGraphUpdateListener);
+        graph();
     }
 
     boolean acceptInsert(String delta) {
@@ -258,12 +258,12 @@ public class Logic {
             mDisplay.dispatchKeyEvent(new KeyEvent(0, KeyEvent.KEYCODE_DEL));
             mResult = "";
         }
-        mSolver.graph(getText(), mOnGraphUpdateListener);
+        graph();
     }
 
     void onClear() {
         clear(mDeleteMode == DELETE_MODE_CLEAR);
-        mSolver.graph(getText(), mOnGraphUpdateListener);
+        graph();
     }
 
     public void onEnter() {
@@ -302,15 +302,15 @@ public class Logic {
     }
 
     public void setDomain(float min, float max) {
-        mSolver.setDomain(min, max);
+        mSolver.getGraphModule().setDomain(min, max);
     }
 
     public void setZoomLevel(float level) {
-        mSolver.setZoomLevel(level);
+        mSolver.getGraphModule().setZoomLevel(level);
     }
 
     public void graph() {
-        mSolver.graph(getText(), mOnGraphUpdateListener);
+        mSolver.getGraphModule().updateGraph(getText(), mOnGraphUpdateListener);
     }
 
     public BaseModule getBaseModule() {

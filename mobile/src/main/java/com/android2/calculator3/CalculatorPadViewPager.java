@@ -57,14 +57,13 @@ public class CalculatorPadViewPager extends ViewPager {
     };
 
     private final OnPageChangeListener mOnPageChangeListener = new SimpleOnPageChangeListener() {
-        private void recursivelyEnable(View view) {
+        private void recursivelyEnable(View view, boolean enabled) {
             if (view instanceof ViewGroup) {
                 final ViewGroup viewGroup = (ViewGroup) view;
                 for (int childIndex = 0; childIndex < viewGroup.getChildCount(); ++childIndex) {
-                    recursivelyEnable(viewGroup.getChildAt(childIndex));
+                    recursivelyEnable(viewGroup.getChildAt(childIndex), enabled);
                 }
             } else {
-                boolean enabled = true;
                 if(mBaseManager != null) {
                     enabled &= !mBaseManager.isViewDisabled(view.getId());
                 }
@@ -76,7 +75,7 @@ public class CalculatorPadViewPager extends ViewPager {
         public void onPageSelected(int position) {
             if (getAdapter() == mStaticPagerAdapter) {
                 for (int childIndex = 0; childIndex < getChildCount(); ++childIndex) {
-                    recursivelyEnable(getChildAt(childIndex));
+                    recursivelyEnable(getChildAt(childIndex), childIndex == position);
                 }
             }
         }
