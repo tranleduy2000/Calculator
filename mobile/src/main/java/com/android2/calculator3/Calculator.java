@@ -295,6 +295,10 @@ public class Calculator extends Activity
 
     @Override
     public void onBackPressed() {
+        if (mDisplayView.getMode().equals(DisplayMode.GRAPH)) {
+            mDisplayView.setMode(DisplayMode.FORMULA);
+            return;
+        }
         if (mPadViewPager == null || mPadViewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first pad (or the pad is not paged),
             // allow the system to handle the Back button.
@@ -629,11 +633,8 @@ public class Calculator extends Activity
         });
         setSelectedBaseButton(base);
 
-        // disable any buttons that are not relevant to the current base
-        for (int resId : mBaseManager.getViewIds()) {
-            // TODO: handle duplicates
-            // This will not work if the same resId is used on multiple pages,
-            // which will be the case after adding the matrix view.
+        // Disable any buttons that are not relevant to the current base
+        for (int resId : mBaseManager.getViewIds(mPadViewPager.getCurrentItem())) {
             View view = findViewById(resId);
             if (view != null) {
                 view.setEnabled(!mBaseManager.isViewDisabled(resId));

@@ -398,6 +398,7 @@ public class DisplayOverlay extends FrameLayout {
 
     public void setMode(DisplayMode mode) {
         mMode = mode;
+        animateModeTransition();
     }
 
     public DisplayMode getMode() {
