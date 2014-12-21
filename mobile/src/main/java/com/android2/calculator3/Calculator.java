@@ -137,6 +137,10 @@ public class Calculator extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
 
+        // Rebuild constants. If the user changed their locale, it won't kill the app
+        // but it might change a decimal point from . to ,
+        Constants.rebuildConstants();
+
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mFormulaEditText = (AdvancedDisplay) findViewById(R.id.formula);
         mResultEditText = (AdvancedDisplay) findViewById(R.id.result);
@@ -188,9 +192,6 @@ public class Calculator extends Activity
         // Disable IME for this application
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
-        // Rebuild constants. If the user changed their locale, it won't kill the app
-        // but it might change a decimal point from . to ,
-        Constants.rebuildConstants();
         Button dot = (Button) findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
