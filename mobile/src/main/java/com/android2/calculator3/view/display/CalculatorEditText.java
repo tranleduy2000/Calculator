@@ -161,19 +161,19 @@ public class CalculatorEditText extends EditText {
 
     @Override
     public View focusSearch(int direction) {
-        AdvancedDisplay parent = (AdvancedDisplay) getParent();
         View v;
         switch(direction) {
             case View.FOCUS_FORWARD:
-                v = parent.nextView(this);
+                v = mEventListener.nextView(this);
                 while(!v.isFocusable())
-                    v = parent.nextView(v);
+                    v = mEventListener.nextView(v);
                 return v;
             case View.FOCUS_BACKWARD:
-                v = parent.previousView(this);
+                v = mEventListener.previousView(this);
                 while(!v.isFocusable())
-                    v = parent.previousView(v);
+                    v = mEventListener.previousView(v);
                 if(MatrixView.class.isAssignableFrom(v.getClass())) {
+                    // TODO CalculatorEditText shouldn't know of MatrixView
                     v = ((ViewGroup) v).getChildAt(((ViewGroup) v).getChildCount() - 1);
                     v = ((ViewGroup) v).getChildAt(((ViewGroup) v).getChildCount() - 1);
                 }
