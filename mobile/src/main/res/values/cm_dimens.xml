@@ -11,4 +11,8 @@
     <!-- Display -->
     <dimen name="below_display_margin">-10dp</dimen>
     <dimen name="graph_margin">8dp</dimen>
+
+    <!-- Number pad -->
+    <dimen name="num_margin_horizontal">14dp</dimen>
+    <dimen name="num_margin_vertical">10dp</dimen>
 </resources>

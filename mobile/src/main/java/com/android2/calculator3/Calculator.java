@@ -635,7 +635,7 @@ public class Calculator extends Activity
         setSelectedBaseButton(base);
 
         // Disable any buttons that are not relevant to the current base
-        for (int resId : mBaseManager.getViewIds(mPadViewPager.getCurrentItem())) {
+        for (int resId : mBaseManager.getViewIds(mPadViewPager == null ? -1 : mPadViewPager.getCurrentItem())) {
             View view = findViewById(resId);
             if (view != null) {
                 view.setEnabled(!mBaseManager.isViewDisabled(resId));
