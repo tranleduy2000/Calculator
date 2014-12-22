@@ -260,12 +260,14 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
             MatrixView mv = new MatrixView(context);
             mv.mSolver = solver;
             mv.mListener = listener;
+
             for(int i = 0; i < rows; i++) {
                 mv.addRow();
             }
             for(int i = 0; i < columns; i++) {
                 mv.addColumn();
             }
+
             String[] data = equation.split(Pattern.quote(String.valueOf(Constants.MATRIX_SEPARATOR)) + "|\\]\\[");
             for(int order = 0, row = 0; row < rows; row++) {
                 TableRow tr = (TableRow) mv.getChildAt(row);
@@ -275,6 +277,7 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
                     order++;
                 }
             }
+
             AdvancedDisplay.LayoutParams params = new AdvancedDisplay.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER_VERTICAL;
             mv.setLayoutParams(params);

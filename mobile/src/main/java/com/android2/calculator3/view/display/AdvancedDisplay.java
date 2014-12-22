@@ -1,7 +1,6 @@
 package com.android2.calculator3.view.display;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.text.Editable;
@@ -16,7 +15,6 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -24,7 +22,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.CalculatorEditable;
 import com.android2.calculator3.view.ScrollableDisplay;
@@ -190,7 +187,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
                         // Remove the view in front
                         int index = getChildIndex(getActiveEditText());
                         if(index > 0) {
-                            removeView(getChildAt(index - 1));
+                            removeViewAt(index - 1);
                             return true;
                         }
                     } else {
@@ -323,8 +320,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
     }
 
     @Override
-    public void removeView(View view) {
-        int index = mRoot.getChildIndex(view);
+    public void removeViewAt(int index) {
         if(index == -1) return;
 
         // Remove the requested view
@@ -338,6 +334,11 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
         mRoot.removeViewAt(index); // Remove the second EditText
         leftSide.requestFocus();
         leftSide.setSelection(cursor);
+    }
+
+    @Override
+    public void removeView(View view) {
+        removeViewAt(mRoot.getChildIndex(view));
     }
 
     @Override
@@ -491,7 +492,6 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
 
                             // Keep EditTexts in between custom views
                             splitText(cursor, index, delta);
-                            mRoot.getChildAt(index + 2).requestFocus();
 
                             // Update text and loop again
                             delta = delta.substring(equation.length());
