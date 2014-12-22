@@ -190,6 +190,14 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
                             removeViewAt(index - 1);
                             return true;
                         }
+                        else if(index == -1) {
+                            // Remove the view itself if it's a custom view (eg matrix)
+                            View parent = (View) getActiveEditText().getParent();
+                            while(!(parent instanceof AdvancedDisplayControls)) {
+                                parent = (View) parent.getParent();
+                            }
+                            removeView(parent);
+                        }
                     } else {
                         // Check and remove keywords
                         String textBeforeInsertionHandle = getActiveEditText().getText().toString().substring(0, selectionHandle);
@@ -490,11 +498,12 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
                             // We found a custom view
                             mRoot.addView(c.getView(getContext(), mSolver, equation, this));
 
+                            // Update text
+                            delta = delta.substring(equation.length());
+
                             // Keep EditTexts in between custom views
                             splitText(cursor, index, delta);
 
-                            // Update text and loop again
-                            delta = delta.substring(equation.length());
                             continue loop;
                         }
                     }

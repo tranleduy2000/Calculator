@@ -18,7 +18,6 @@ import com.xlythe.math.Solver;
 import org.ejml.simple.SimpleMatrix;
 import org.javia.arity.SyntaxException;
 
-import java.text.DecimalFormatSymbols;
 import java.util.regex.Pattern;
 
 public class MatrixView extends TableLayout implements AdvancedDisplayControls {

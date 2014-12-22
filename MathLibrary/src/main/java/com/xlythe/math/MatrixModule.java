@@ -605,7 +605,12 @@ public class MatrixModule extends Module {
             if(cols.length == 0) throw new SyntaxException();
             for(int j = 0; j < cols.length; j++) {
                 if(cols[j].isEmpty()) throw new SyntaxException();
-                temp.set(i, j, Double.parseDouble(calculate(cols[j])));
+                try {
+                    temp.set(i, j, Double.parseDouble(calculate(cols[j])));
+                } catch(NumberFormatException e) {
+                    e.printStackTrace();
+                    throw new SyntaxException();
+                }
             }
         }
 
