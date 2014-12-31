@@ -59,13 +59,6 @@
         <item name="android:textSize">32sp</item>
     </style>
 
-    <style name="PadLayoutStyle.Advanced">
-        <item name="android:layout_height">0dip</item>
-        <item name="android:layout_weight">256</item>
-        <item name="android:columnCount">6</item>
-        <item name="android:rowCount">2</item>
-    </style>
-
     <style name="PadLayoutStyle.Numeric">
         <item name="android:layout_width">0dip</item>
         <item name="android:layout_weight">532</item>
