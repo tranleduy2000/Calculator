@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class Solver {
     // Used for solving basic math
-    public static final Symbols mSymbols = new Symbols();
+    private Symbols mSymbols = new Symbols();
     private BaseModule mBaseModule;
     private MatrixModule mMatrixModule;
     private GraphModule mGraphModule;
@@ -97,6 +97,22 @@ public class Solver {
         if(mLocalizer != null) result = mLocalizer.relocalize(result);
 
         return result;
+    }
+
+    public double eval(String input) throws SyntaxException{
+        return mSymbols.eval(input);
+    }
+
+    public void pushFrame() {
+        mSymbols.pushFrame();
+    }
+
+    public void popFrame() {
+        mSymbols.popFrame();
+    }
+
+    public void define(String var, double val) {
+        mSymbols.define(var, val);
     }
 
     public static boolean isOperator(char c) {

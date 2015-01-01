@@ -17,6 +17,7 @@ import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.display.AdvancedDisplay;
 import com.xlythe.floatingview.FloatingView;
+import com.xlythe.math.Constants;
 import com.xlythe.math.History;
 import com.xlythe.math.Persist;
 
@@ -43,6 +44,10 @@ public class FloatingCalculator extends FloatingView {
     }
 
     public View inflateView() {
+        // Rebuild constants. If the user changed their locale, it won't kill the app
+        // but it might change a decimal point from . to ,
+        Constants.rebuildConstants();
+
         View child = View.inflate(getContext(), R.layout.floating_calculator, null);
 
         mTokenizer = new CalculatorExpressionTokenizer(this);

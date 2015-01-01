@@ -15,8 +15,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.android2.calculator3.R;
+import com.android2.calculator3.util.AnimationUtil;
 import com.android2.calculator3.view.display.AdvancedDisplay;
-import com.android2.calculator3.util.FadeUtil;
 
 /**
  * The display overlay is a container that intercepts touch events on top of:
@@ -385,13 +385,13 @@ public class DisplayOverlay extends FrameLayout {
         switch (mMode) {
             case GRAPH:
                 expandHistory();
-                FadeUtil.fadeOut(mMainDisplay);
-                FadeUtil.fadeIn(mGraphLayout);
+                AnimationUtil.fadeOut(mMainDisplay);
+                AnimationUtil.fadeIn(mGraphLayout);
                 break;
             case FORMULA:
                 collapseHistory();
-                FadeUtil.fadeIn(mMainDisplay);
-                FadeUtil.fadeOut(mGraphLayout);
+                AnimationUtil.fadeIn(mMainDisplay);
+                AnimationUtil.fadeOut(mGraphLayout);
                 break;
         }
     }

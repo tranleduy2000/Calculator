@@ -49,11 +49,16 @@
 
     <style name="PadButtonStyle.Numeric.Equals">
         <item name="android:visibility">gone</item>
+        <item name="android:tint">@color/pad_text_color_normal</item>
     </style>
 
     <style name="PadButtonStyle.Operator">
         <item name="android:layout_margin">6dip</item>
         <item name="android:textSize">48sp</item>
+    </style>
+
+    <style name="PadButtonStyle.Operator.Equals">
+        <item name="android:tint">@color/pad_text_color_normal</item>
     </style>
 
     <style name="PadButtonStyle.Operator.Text">

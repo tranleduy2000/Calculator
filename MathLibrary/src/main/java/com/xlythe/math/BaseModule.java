@@ -185,16 +185,16 @@ public class BaseModule extends Module {
         double decimal = 0;
         if(originalBase != 10) {
             String decimalFraction = Long.toString(Long.parseLong(split[1], originalBase)) + "/" + originalBase + "^" + split[1].length();
-            decimal = getSolver().mSymbols.eval(decimalFraction);
+            decimal = getSolver().eval(decimalFraction);
         } else {
             decimal = Double.parseDouble("0." + split[1]);
         }
         if(decimal == 0) return wholeNumber.toUpperCase(Locale.US);
 
         String decimalNumber = "";
-        for(int i = 0, id = 0; decimal != 0 && i <= PRECISION; i++) {
+        for(int i = 0; decimal != 0 && i <= PRECISION; i++) {
             decimal *= base;
-            id = (int) Math.floor(decimal);
+            int id = (int) Math.floor(decimal);
             decimal -= id;
             decimalNumber += Integer.toHexString(id);
         }

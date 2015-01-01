@@ -218,6 +218,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
             }
         };
         setKeyListener(calculatorKeyListener);
+        setText(null);
     }
 
     public void setEditableFactory(Editable.Factory factory) {
@@ -627,6 +628,13 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
     /**
      * Set the text for the display
      * */
+    public void setText(CharSequence text) {
+        setText(text.toString());
+    }
+
+    /**
+     * Set the text for the display
+     * */
     public void setText(String text) {
         // Notify the text watcher
         mTextWatcher.beforeTextChanged(null, 0, 0, 0);
@@ -684,6 +692,10 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
         mTextIsUpdating = false;
         mTextWatcher.onTextChanged(null, 0, 0, 0);
         mTextWatcher.afterTextChanged(null);
+    }
+
+    public boolean isCursorModified() {
+        return getActiveEditText().getSelectionStart() != getActiveEditText().getText().length();
     }
 
     public void registerComponent(DisplayComponent component) {

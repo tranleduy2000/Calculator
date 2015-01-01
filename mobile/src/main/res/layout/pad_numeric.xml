@@ -101,13 +101,12 @@
         android:onClick="onButtonClick"
         android:text="@string/digit0" />
 
-    <Button
+    <com.android2.calculator3.view.EqualsImageButton
         android:id="@+id/eq"
         style="@style/PadButtonStyle.Numeric.Equals"
-        android:paddingRight="@dimen/num_margin_horizontal"
-        android:paddingBottom="@dimen/num_margin_vertical"
-        android:contentDescription="@string/desc_eq"
         android:onClick="onButtonClick"
-        android:text="@string/eq" />
+        android:src="@drawable/equals_btn"
+        android:paddingRight="@dimen/num_margin_horizontal"
+        android:paddingBottom="@dimen/num_margin_vertical"/>
 
 </com.android2.calculator3.CalculatorPadLayout>

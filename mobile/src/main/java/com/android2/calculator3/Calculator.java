@@ -42,6 +42,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.display.AdvancedDisplay.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
@@ -52,6 +53,7 @@ import com.android2.calculator3.view.MatrixEditText;
 import com.android2.calculator3.view.MatrixInverseView;
 import com.android2.calculator3.view.MatrixTransposeView;
 import com.android2.calculator3.view.MatrixView;
+import com.android2.calculator3.view.EqualsImageButton.State;
 import com.xlythe.math.Base;
 import com.xlythe.math.Constants;
 import com.xlythe.math.GraphModule;
@@ -119,7 +121,7 @@ public class Calculator extends Activity
     private AdvancedDisplay mResultEditText;
     private CalculatorPadViewPager mPadViewPager;
     private View mDeleteButton;
-    private View mEqualButton;
+    private EqualsImageButton mEqualButton;
     private View mClearButton;
     private View mCurrentButton;
     private Animator mCurrentAnimator;
@@ -140,6 +142,7 @@ public class Calculator extends Activity
         // Rebuild constants. If the user changed their locale, it won't kill the app
         // but it might change a decimal point from . to ,
         Constants.rebuildConstants();
+        mX = getString(R.string.X);
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mFormulaEditText = (AdvancedDisplay) findViewById(R.id.formula);
@@ -147,10 +150,10 @@ public class Calculator extends Activity
         mPadViewPager = (CalculatorPadViewPager) findViewById(R.id.pad_pager);
         mDeleteButton = findViewById(R.id.del);
         mClearButton = findViewById(R.id.clr);
-        mEqualButton = findViewById(R.id.pad_numeric).findViewById(R.id.eq);
+        mEqualButton = (EqualsImageButton) findViewById(R.id.pad_numeric).findViewById(R.id.eq);
 
         if (mEqualButton == null || mEqualButton.getVisibility() != View.VISIBLE) {
-            mEqualButton = findViewById(R.id.pad_operator).findViewById(R.id.eq);
+            mEqualButton = (EqualsImageButton) findViewById(R.id.pad_operator).findViewById(R.id.eq);
         }
 
         mTokenizer = new CalculatorExpressionTokenizer(this);
@@ -195,7 +198,6 @@ public class Calculator extends Activity
         Button dot = (Button) findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
-        mX = getString(R.string.X);
         GraphView graphView = (GraphView)findViewById(R.id.graphView);
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
         mGraphController = new GraphController(graphView, graphModule, mDisplayView);
@@ -379,11 +381,21 @@ public class Calculator extends Activity
                     ((MatrixEditText) mFormulaEditText.getActiveEditText()).getMatrixView().removeColumn();
                 }
                 break;
-            case R.id.const_x:
+            case R.id.op_add:
+            case R.id.op_sub:
+            case R.id.op_mul:
+            case R.id.op_div:
+            case R.id.op_fact:
+            case R.id.op_pow:
                 mFormulaEditText.insert(((Button) view).getText());
                 break;
             default:
-                mFormulaEditText.insert(((Button) view).getText());
+                if(mCurrentState.equals(CalculatorState.INPUT) || mFormulaEditText.isCursorModified()) {
+                    mFormulaEditText.insert(((Button) view).getText());
+                }
+                else {
+                    mFormulaEditText.setText(((Button) view).getText());
+                }
                 break;
         }
     }
@@ -416,6 +428,14 @@ public class Calculator extends Activity
         } else if (mCurrentState == CalculatorState.EVALUATE) {
             // The current expression cannot be evaluated -> return to the input state.
             setState(CalculatorState.INPUT);
+        }
+
+        if (expr.contains(mX)) {
+            mEqualButton.setState(State.GRAPH);
+        } else if (expr.equals(result) || mFormulaEditText.hasNext()) {
+            mEqualButton.setState(State.NEXT);
+        } else {
+            mEqualButton.setState(State.EQUALS);
         }
     }
 
@@ -454,14 +474,17 @@ public class Calculator extends Activity
     private void onEquals() {
         String text = mFormulaEditText.getText();
         if (mCurrentState == CalculatorState.INPUT) {
-            if (mFormulaEditText.hasNext()) {
-                mFormulaEditText.next();
-            }
-            else if (text.contains(mX)) {
-                mGraphController.startGraph(text);
-            } else {
-                setState(CalculatorState.EVALUATE);
-                mEvaluator.evaluate(text, this);
+            switch(mEqualButton.getState()) {
+                case EQUALS:
+                    setState(CalculatorState.EVALUATE);
+                    mEvaluator.evaluate(text, this);
+                    break;
+                case NEXT:
+                    mFormulaEditText.next();
+                    break;
+                case GRAPH:
+                    mGraphController.startGraph(text);
+                    break;
             }
         }
     }

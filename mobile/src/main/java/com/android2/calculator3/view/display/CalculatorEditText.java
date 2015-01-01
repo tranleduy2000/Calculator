@@ -102,7 +102,7 @@ public class CalculatorEditText extends EditText {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if(updating) return;
+                if(updating || mSolver == null) return;
                 updating = true;
 
                 mInput = s.toString()
