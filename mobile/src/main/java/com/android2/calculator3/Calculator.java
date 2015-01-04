@@ -413,7 +413,7 @@ public class Calculator extends Activity
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (mCurrentState == CalculatorState.INPUT) {
-            if (result == null || result.equals(mFormulaEditText.getText())) {
+            if (result == null || result.equals(expr)) {
                 mResultEditText.clear();
             }
             else {

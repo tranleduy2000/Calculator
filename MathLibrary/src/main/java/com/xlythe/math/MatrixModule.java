@@ -1,7 +1,5 @@
 package com.xlythe.math;
 
-import android.util.Log;
-
 import org.ejml.simple.SimpleEVD;
 import org.ejml.simple.SimpleMatrix;
 import org.ejml.simple.SimpleSVD;
@@ -267,8 +265,7 @@ public class MatrixModule extends Module {
         text = getSolver().convertToDecimal(text);
         String result = calculate(text).replace('-', Constants.MINUS);
 
-        return getSolver().getBaseModule().updateTextToNewMode(result, Base.DECIMAL,
-                getSolver().getBaseModule().getBase());
+        return getSolver().getBaseModule().changeBase(result, getSolver().getBase());
     }
 
     private String applyFunc(String func, String arg) throws SyntaxException {

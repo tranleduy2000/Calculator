@@ -1,10 +1,7 @@
 package com.xlythe.math;
 
-import android.util.Log;
-
 import org.javia.arity.SyntaxException;
 
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -48,12 +45,22 @@ public class BaseModule extends Module {
     }
 
     public String setBase(String input, Base base) throws SyntaxException {
-        String text = updateTextToNewMode(input, mBase, base);
+        String text = changeBase(input, mBase, base);
         setBase(base);
         return text;
     }
 
-    String updateTextToNewMode(final String originalText, final Base oldBase, final Base newBase) throws SyntaxException {
+    /**
+     * Updates the text to the new base. This does not set the active base.
+     * */
+    String changeBase(String text, Base base) throws SyntaxException {
+        return changeBase(text, Base.DECIMAL, base);
+    }
+
+    /**
+     * Updates the text to the new base. This does not set the active base.
+     * */
+    String changeBase(final String originalText, final Base oldBase, final Base newBase) throws SyntaxException {
         if(oldBase.equals(newBase) || originalText.isEmpty() || originalText.matches(REGEX_NOT_NUMBER)) {
             return originalText;
         }

@@ -69,7 +69,7 @@ public class GraphModule extends Module {
         @Override
         protected List<Point> doInBackground(String... eq) {
             try {
-                return graph(mSolver.getBaseModule().updateTextToNewMode(eq[0],
+                return graph(mSolver.getBaseModule().changeBase(eq[0],
                         mSolver.getBaseModule().getBase(), Base.DECIMAL));
             } catch(SyntaxException e) {
                 cancel(true);
