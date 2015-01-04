@@ -15,12 +15,14 @@ import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.CalculatorEditable;
@@ -709,8 +711,6 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
     public Set<DisplayComponent> getComponents() {
         return mComponents;
     }
-
-    // Everything below is for copy/paste
 
     public interface OnTextSizeChangeListener {
         void onTextSizeChanged(AdvancedDisplay textView, float oldSize);

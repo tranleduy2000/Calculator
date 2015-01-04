@@ -276,13 +276,26 @@ public class BaseModule extends Module {
     private String group(String wholeNumber, int spacing, char separator) {
         StringBuilder sb = new StringBuilder();
         int digitsSeen = 0;
+
+        // Required for handling Delete
+        boolean sawSelectionHandle = false;
+
         for (int i=wholeNumber.length()-1; i>=0; --i) {
             char curChar = wholeNumber.charAt(i);
             if (curChar != SELECTION_HANDLE) {
                 if (digitsSeen > 0 && digitsSeen % spacing == 0) {
-                    sb.insert(0, separator);
+                    if(sawSelectionHandle) {
+                        sb.insert(1, separator);
+                    }
+                    else {
+                        sb.insert(0, separator);
+                    }
                 }
                 ++digitsSeen;
+                sawSelectionHandle = false;
+            }
+            else {
+                sawSelectionHandle = true;
             }
             sb.insert(0, curChar);
         }

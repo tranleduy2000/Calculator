@@ -119,7 +119,6 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
-        layoutManager.setStackFromEnd(true);
         historyView.setLayoutManager(layoutManager);
 
         FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mHistory, listener);

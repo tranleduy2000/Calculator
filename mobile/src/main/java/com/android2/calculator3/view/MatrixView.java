@@ -181,7 +181,7 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
                 else if(currentView == tr.getChildAt(column)) foundCurrentView = true;
             }
         }
-        return mListener.nextView(currentView);
+        return mListener.nextView(this);
     }
 
     View previousView(View currentView) {

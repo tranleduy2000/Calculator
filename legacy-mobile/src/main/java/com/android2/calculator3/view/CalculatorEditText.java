@@ -101,7 +101,7 @@ public class CalculatorEditText extends ThemedEditText {
             public void afterTextChanged(Editable s) {
                 if(updating) return;
 
-                mInput = s.toString().replace(Constants.PLACEHOLDER, Constants.POWER).replace(mDecSeparator, "").replace(mBinSeparator, "").replace(mHexSeparator, "");
+                mInput = s.toString().replace(Constants.POWER_PLACEHOLDER, Constants.POWER).replace(mDecSeparator, "").replace(mBinSeparator, "").replace(mHexSeparator, "");
                 updating = true;
 
                 // Get the selection handle, since we're setting text and

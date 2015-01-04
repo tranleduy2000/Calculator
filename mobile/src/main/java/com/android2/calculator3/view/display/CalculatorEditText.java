@@ -26,6 +26,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.Menu;
@@ -65,6 +66,8 @@ public class CalculatorEditText extends EditText {
         CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
         text.mSolver = solver;
         text.mEventListener = eventListener;
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
+        text.setPadding(padding, 0, padding, 0);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
@@ -106,8 +109,8 @@ public class CalculatorEditText extends EditText {
                 updating = true;
 
                 mInput = s.toString()
-                        .replace(Constants.PLACEHOLDER, Constants.POWER)
-                        .replace(mSolver.getBaseModule().getSeparator() + "", "");
+                        .replace(Constants.POWER_PLACEHOLDER, Constants.POWER)
+                        .replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
 
                 // Get the selection handle, since we're setting text and that'll overwrite it
                 mSelectionHandle = getSelectionStart();
