@@ -286,27 +286,15 @@ public class BaseModule extends Module {
         StringBuilder sb = new StringBuilder();
         int digitsSeen = 0;
 
-        // Required for handling Delete
-        boolean sawSelectionHandle = false;
-
         for (int i=wholeNumber.length()-1; i>=0; --i) {
             char curChar = wholeNumber.charAt(i);
-            if (curChar != SELECTION_HANDLE) {
-                if (digitsSeen > 0 && digitsSeen % spacing == 0) {
-                    if(sawSelectionHandle) {
-                        sb.insert(1, separator);
-                    }
-                    else {
-                        sb.insert(0, separator);
-                    }
-                }
-                ++digitsSeen;
-                sawSelectionHandle = false;
-            }
-            else {
-                sawSelectionHandle = true;
-            }
             sb.insert(0, curChar);
+            if (curChar != SELECTION_HANDLE && i != 0 && !(i == 1 && wholeNumber.charAt(0) == SELECTION_HANDLE)) {
+                ++digitsSeen;
+                if (digitsSeen > 0 && digitsSeen % spacing == 0) {
+                    sb.insert(0, separator);
+                }
+            }
         }
         return sb.toString();
     }

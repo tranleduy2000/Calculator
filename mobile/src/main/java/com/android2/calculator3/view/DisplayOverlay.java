@@ -13,6 +13,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import com.android2.calculator3.R;
 import com.android2.calculator3.util.AnimationUtil;
@@ -216,7 +217,23 @@ public class DisplayOverlay extends FrameLayout {
     }
 
     public void expandHistory() {
-        settleAt(getMaxTranslation(), mMinVelocity);
+        if (getHeight() == 0) {
+            getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            if(android.os.Build.VERSION.SDK_INT < 16) {
+                                getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            } else {
+                                getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                            settleAt(getMaxTranslation(), mMinVelocity);
+                        }
+                    });
+        }
+        else {
+            settleAt(getMaxTranslation(), mMinVelocity);
+        }
     }
 
     public void collapseHistory() {
