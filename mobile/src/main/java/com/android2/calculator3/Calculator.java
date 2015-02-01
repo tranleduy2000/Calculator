@@ -30,6 +30,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -60,12 +61,13 @@ import com.xlythe.math.GraphModule;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
+import com.xlythe.math.Solver;
 
 public class Calculator extends Activity
         implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
 
     private static final String NAME = Calculator.class.getName();
-    private static final String TAG = "Calculator";
+    private static final String TAG = Calculator.class.getSimpleName();
 
     // instance state keys
     private static final String KEY_CURRENT_STATE = NAME + "_currentState";
@@ -171,12 +173,10 @@ public class Calculator extends Activity
         mFormulaEditText.addTextChangedListener(mFormulaTextWatcher);
         mFormulaEditText.setOnKeyListener(mFormulaOnKeyListener);
         mFormulaEditText.setOnTextSizeChangeListener(this);
-        mFormulaEditText.setTextColor(getResources().getColor(R.color.display_formula_text_color));
         mDeleteButton.setOnLongClickListener(this);
-        mResultEditText.setTextColor(getResources().getColor(R.color.display_result_text_color));
         mResultEditText.setEnabled(false);
 
-        mFormulaEditText.registerComponent(new MatrixView.MVDisplayComponent());
+        mFormulaEditText.registerComponent(new MatrixView.DisplayComponent());
         mResultEditText.registerComponents(mFormulaEditText.getComponents());
 
         Base base = Base.DECIMAL;
@@ -413,7 +413,7 @@ public class Calculator extends Activity
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (mCurrentState == CalculatorState.INPUT) {
-            if (result == null || result.equals(expr)) {
+            if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.clear();
             }
             else {

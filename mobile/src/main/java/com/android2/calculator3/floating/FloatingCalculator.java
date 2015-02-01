@@ -148,11 +148,12 @@ public class FloatingCalculator extends FloatingView {
     private void onInsert(String text) {
         if(mState != State.DELETE) {
             setText(text);
-            return;
+        }
+        else {
+            mDisplay.insert(text);
         }
 
         setState(State.DELETE);
-        mDisplay.insert(text);
     }
 
     private void onError(int resId) {

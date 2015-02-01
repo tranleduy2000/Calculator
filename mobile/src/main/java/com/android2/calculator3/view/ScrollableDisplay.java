@@ -12,7 +12,6 @@ import android.widget.HorizontalScrollView;
 import com.android2.calculator3.R;
 
 public class ScrollableDisplay extends HorizontalScrollView {
-    private int mMaxHeight;
     private boolean gravityRight = false;
     private boolean autoScrolling = false;
 

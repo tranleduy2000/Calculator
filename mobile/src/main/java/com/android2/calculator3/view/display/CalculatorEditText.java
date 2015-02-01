@@ -57,14 +57,12 @@ public class CalculatorEditText extends EditText {
         }
     };
     private EquationFormatter mEquationFormatter;
-    private String mInput = "";
     private int mSelectionHandle = 0;
     private Solver mSolver;
     private EventListener mEventListener;
 
-    public static CalculatorEditText getInstance(Context context, Solver solver, EventListener eventListener) {
+    public static CalculatorEditText getInstance(Context context, EventListener eventListener) {
         CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
-        text.mSolver = solver;
         text.mEventListener = eventListener;
         int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
         text.setPadding(padding, 0, padding, 0);
@@ -108,9 +106,7 @@ public class CalculatorEditText extends EditText {
                 if(updating || mSolver == null) return;
                 updating = true;
 
-                mInput = s.toString()
-                        .replace(Constants.POWER_PLACEHOLDER, Constants.POWER)
-                        .replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
+                String text = removeFormatting(s.toString());
 
                 // Get the selection handle, since we're setting text and that'll overwrite it
                 mSelectionHandle = getSelectionStart();
@@ -120,7 +116,7 @@ public class CalculatorEditText extends EditText {
                 mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
 
                 // Update the text with formatted (comas, etc) text
-                setText(formatText(mInput));
+                setText(formatText(text));
                 setSelection(Math.min(mSelectionHandle, getText().length()));
 
                 updating = false;
@@ -134,6 +130,18 @@ public class CalculatorEditText extends EditText {
                     mEventListener.onEditTextChanged(CalculatorEditText.this);
             }
         });
+    }
+
+    public void setSolver(Solver solver) {
+        mSolver = solver;
+    }
+
+    private String removeFormatting(String input) {
+        input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
+        if(mSolver != null) {
+            input = input.replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
+        }
+        return input;
     }
 
     private Spanned formatText(String input) {
@@ -159,7 +167,7 @@ public class CalculatorEditText extends EditText {
 
     @Override
     public String toString() {
-        return mInput;
+        return removeFormatting(getText().toString());
     }
 
     @Override

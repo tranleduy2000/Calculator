@@ -1,6 +1,7 @@
 package com.android2.calculator3.view;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import com.android2.calculator3.view.display.AdvancedDisplayControls;
 import com.android2.calculator3.view.display.DisplayComponent;
 import com.android2.calculator3.view.display.EventListener;
 import com.xlythe.math.Constants;
+import com.xlythe.math.MatrixModule;
 import com.xlythe.math.Solver;
 
 import org.ejml.simple.SimpleMatrix;
@@ -21,6 +23,8 @@ import org.javia.arity.SyntaxException;
 import java.util.regex.Pattern;
 
 public class MatrixView extends TableLayout implements AdvancedDisplayControls {
+    private static final String TAG = MatrixView.class.getSimpleName();
+
     private int mRows, mColumns = 0;
     private EventListener mListener;
     private Solver mSolver;
@@ -123,8 +127,8 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
                     else {
                         data[row][column] = Double.valueOf(stringify(input));
                     }
-                } catch(Exception e) {
-                    e.printStackTrace();
+                } catch(NumberFormatException e) {
+                    Log.e(TAG, "Could not convert " + input + " into a number", e);
                     data[row][column] = Double.NaN;
                 }
             }
@@ -154,7 +158,7 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
             try {
                 return mSolver.convertToDecimal(input);
             } catch(SyntaxException e) {
-                e.printStackTrace();
+                Log.e(TAG, "Could not convert " + input + " to decimal", e);
             }
         }
         return input;
@@ -250,7 +254,7 @@ public class MatrixView extends TableLayout implements AdvancedDisplayControls {
         return false;
     }
 
-    public static class MVDisplayComponent implements DisplayComponent {
+    public static class DisplayComponent implements com.android2.calculator3.view.display.DisplayComponent {
         @Override
         public View getView(Context context, Solver solver, String equation, EventListener listener) {
             int rows = TextUtil.countOccurrences(equation, '[') - 1;

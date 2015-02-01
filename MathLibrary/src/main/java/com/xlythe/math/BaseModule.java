@@ -1,5 +1,7 @@
 package com.xlythe.math;
 
+import android.util.Log;
+
 import org.javia.arity.SyntaxException;
 
 import java.util.ArrayList;
@@ -124,7 +126,7 @@ public class BaseModule extends Module {
                                 try {
                                     translatedNumbers[i] = newBase(numbers[i], 16, 10);
                                 } catch(NumberFormatException e) {
-                                    e.printStackTrace();
+                                    Log.e(TAG, numbers[i] + " is not a number", e);
                                     throw new SyntaxException();
                                 }
                                 break;
