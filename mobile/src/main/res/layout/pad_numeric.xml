@@ -96,6 +96,7 @@
     <com.android2.calculator3.view.EqualsImageButton
         android:id="@+id/eq"
         style="@style/PadButtonStyle.Numeric.Equals"
+        android:contentDescription="@string/desc_eq"
         android:onClick="onButtonClick"
         android:src="@drawable/equals_btn" />
 

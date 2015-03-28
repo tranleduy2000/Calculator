@@ -85,6 +85,8 @@
     <string name="matrix_inverse" translatable="false">-1</string>
     <string name="matrix_transpose">T</string>
     <string name="next">Next</string>
+    <string name="radians">RAD</string>
+    <string name="degrees">DEG</string>
 
     <!-- Hex page text -->
     <string name="hex">Hex</string>

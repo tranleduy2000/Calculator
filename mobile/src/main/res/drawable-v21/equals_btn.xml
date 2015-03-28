@@ -18,8 +18,8 @@
 <animated-selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:equals="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/graph" equals:state_graph="true" android:drawable="@drawable/btn_graph" />
-    <item android:id="@+id/next" equals:state_next="true" android:drawable="@drawable/equal30" />
-    <item android:id="@+id/equal" android:drawable="@drawable/equal0" />
+    <item android:id="@+id/next" equals:state_next="true" android:drawable="@drawable/btn_next" />
+    <item android:id="@+id/equal" android:drawable="@drawable/btn_equals" />
 
     <transition android:fromId="@id/equal" android:toId="@id/next" android:reversible="true">
         <animation-list>

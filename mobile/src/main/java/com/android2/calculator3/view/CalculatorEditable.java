@@ -74,7 +74,7 @@ public class CalculatorEditable extends SpannableStringBuilder {
             }
 
             // don't allow multiple successive operators
-            if(Solver.isOperator(text)) {
+            if(Solver.isOperator(text) && text != Constants.MINUS) {
                 while(Solver.isOperator(prevChar)) {
                     if(start == 1) {
                         return super.replace(start, end, "");

@@ -105,16 +105,37 @@ public class MatrixModule extends Module {
         return Double.parseDouble(text.substring(1));
     }
 
+    /**
+     * Undo anything changed in clean(). The resulting String won't be parsable by MatrixModule
+     * anymore, but it'll look right to Solver.
+     * */
+    private String dirty(String input) {
+        input = input.replace('-', Constants.MINUS);
+        return input;
+    }
+
+    /**
+     * Modify the text to make it easier to manipulate (eg, replacing all minus signs with a standard sign).
+     * */
+    private String clean(String input) {
+        // I never realized negative numbers could be so difficult.
+        input = input.replace(Constants.MINUS, '-');
+        // All remaining instances of U+2212 will be on negative numbers.
+        // They will be counted as whole tokens.
+        return input;
+    }
+
+    private double solve(String input) throws SyntaxException {
+        return Double.parseDouble(clean(getSolver().solve(input)));
+    }
+
     // The following have a lot of repeated boilerplate code.
     // Condensing it down would require language features/properties
     // that Java does not have.
     // In short, Java is not F#.
 
     private String calculate(String input) throws SyntaxException {
-        // I never realized negative numbers could be so difficult.
-        input = input.replace(Constants.MINUS, '-');
-        // All remaining instances of U+2212 will be on negative numbers.
-        // They will be counted as whole tokens.
+        input = clean(input);
 
         // Instantiate matrices first.
         Matcher m = Pattern.compile("\\[\\[.+?\\]\\]").matcher(input);
@@ -158,7 +179,9 @@ public class MatrixModule extends Module {
 
         // Process inverses
         match = Pattern.compile("(\\[.+\\])\uFEFF\\^-1").matcher(input);
+        Log.d(TAG, "Looking for inverses");
         while(match.find()) {
+            Log.d(TAG, "Found an inverse");
             SimpleMatrix temp = parseMatrix(match.group(1)).pseudoInverse();
             input = input.replace(match.group(), printMatrix(temp));
         }
@@ -174,7 +197,6 @@ public class MatrixModule extends Module {
         if(input.contains("NaN")) throw new SyntaxException();
 
         // Substitute e
-        // input = input.replaceAll("(?<!\\d)e", "2.7182818284590452353");
         input = input.replaceAll("(?<!\\d)(e)(?!\\d)", "2.7182818284590452353");
         // Sub pi
         input = input.replace("\u03c0", "3.1415926535897932384626");
@@ -199,7 +221,7 @@ public class MatrixModule extends Module {
                 pieces[i] = parseMatrix(parts[i]);
             }
             else {
-                pieces[i] = Double.parseDouble(getSolver().solve(parts[i]));
+                pieces[i] = solve(parts[i]);
             }
         }
 
@@ -266,13 +288,12 @@ public class MatrixModule extends Module {
 
     String evaluateMatrices(String text) throws SyntaxException {
         text = getSolver().convertToDecimal(text);
-        String result = calculate(text).replace('-', Constants.MINUS);
-
+        String result = dirty(calculate(text));
         return getSolver().getBaseModule().changeBase(result, getSolver().getBase());
     }
 
     private String applyFunc(String func, String arg) throws SyntaxException {
-        arg = arg.replace(Constants.MINUS, '-');
+        arg = clean(arg);
         double DEG = Math.PI / 180.0;
         if(func.equals("\u221a"))// sqrt
         {

@@ -25,14 +25,20 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
@@ -42,6 +48,8 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
@@ -62,6 +70,8 @@ import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
+
+import java.util.Locale;
 
 public class Calculator extends Activity
         implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
@@ -119,6 +129,7 @@ public class Calculator extends Activity
     private CalculatorExpressionTokenizer mTokenizer;
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
+    private TextView mInfoView;
     private AdvancedDisplay mFormulaEditText;
     private AdvancedDisplay mResultEditText;
     private CalculatorPadViewPager mPadViewPager;
@@ -135,6 +146,8 @@ public class Calculator extends Activity
     private GraphController mGraphController;
     private FrameLayout.LayoutParams mLayoutParams =
             new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0);
+    private boolean mShowBaseDetails;
+    private boolean mShowTrigDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +160,7 @@ public class Calculator extends Activity
         mX = getString(R.string.X);
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
+        mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (AdvancedDisplay) findViewById(R.id.formula);
         mResultEditText = (AdvancedDisplay) findViewById(R.id.result);
         mPadViewPager = (CalculatorPadViewPager) findViewById(R.id.pad_pager);
@@ -220,6 +234,10 @@ public class Calculator extends Activity
                         }
                     }
                 });
+
+        mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
+        mShowTrigDetails = false;
+        updateDetails();
     }
 
     @Override
@@ -247,6 +265,7 @@ public class Calculator extends Activity
     @Override
     protected void onPause() {
         super.onPause();
+        mHistory.enter(mFormulaEditText.getText(), mResultEditText.getText());
         mPersist.save();
     }
 
@@ -335,6 +354,9 @@ public class Calculator extends Activity
                 onClear();
                 break;
             case R.id.det:
+                // Add left parenthesis after functions.
+                mFormulaEditText.insert(((Button) view).getText() + "(");
+                break;
             case R.id.fun_cos:
             case R.id.fun_ln:
             case R.id.fun_log:
@@ -342,6 +364,8 @@ public class Calculator extends Activity
             case R.id.fun_tan:
                 // Add left parenthesis after functions.
                 mFormulaEditText.insert(((Button) view).getText() + "(");
+                mShowTrigDetails = true;
+                updateDetails();
                 break;
             case R.id.hex:
                 setBase(Base.HEXADECIMAL);
@@ -404,6 +428,7 @@ public class Calculator extends Activity
     public boolean onLongClick(View view) {
         mCurrentButton = view;
         if (view.getId() == R.id.del) {
+            mHistory.enter(mFormulaEditText.getText(), mResultEditText.getText());
             onClear();
             return true;
         }
@@ -642,6 +667,7 @@ public class Calculator extends Activity
     private void setBase(Base base) {
         // Update the BaseManager, which handles restricting which buttons to show
         mBaseManager.setNumberBase(base);
+        mShowBaseDetails = true;
 
         // Update the evaluator, which handles the math
         mEvaluator.setBase(mFormulaEditText.getText(), base, new EvaluateCallback() {
@@ -665,17 +691,99 @@ public class Calculator extends Activity
             }
         }
 
-        // TODO: preserve history
-        // Ideally each history entry is tagged with the base that it was created with.
-        // Then when we import a history item into the current display, we can convert the
-        // base as necessary. As a short term approach, just clear the history when
-        // changing the base.
-        mHistory.clear();
+        updateDetails();
     }
 
     private void setSelectedBaseButton(Base base) {
         findViewById(R.id.hex).setSelected(base.equals(Base.HEXADECIMAL));
         findViewById(R.id.bin).setSelected(base.equals(Base.BINARY));
         findViewById(R.id.dec).setSelected(base.equals(Base.DECIMAL));
+    }
+
+    private void updateDetails() {
+        if(mInfoView != null) {
+            String text = "";
+            String units = CalculatorSettings.useRadians(getBaseContext()) ?
+                    getString(R.string.radians) : getString(R.string.degrees);
+            String base = "";
+            switch(mBaseManager.getNumberBase()) {
+                case HEXADECIMAL:
+                    base = getString(R.string.hex).toUpperCase(Locale.getDefault());
+                    break;
+                case BINARY:
+                    base = getString(R.string.bin).toUpperCase(Locale.getDefault());
+                    break;
+                case DECIMAL:
+                    base = getString(R.string.dec).toUpperCase(Locale.getDefault());
+                    break;
+            }
+            if(mShowBaseDetails) text += base;
+            if(mShowTrigDetails) {
+                if(!text.isEmpty()) text += " | ";
+                text += units;
+            }
+
+            mInfoView.setMovementMethod(LinkMovementMethod.getInstance());
+            mInfoView.setText(text, TextView.BufferType.SPANNABLE);
+
+            if(mShowBaseDetails) {
+                setClickableSpan(mInfoView, base, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final int DEC = 0;
+                        final int HEX = 1;
+                        final int BIN = 2;
+                        final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                        final Menu menu = popupMenu.getMenu();
+                        menu.add(0, DEC, menu.size(), R.string.desc_dec);
+                        menu.add(0, HEX, menu.size(), R.string.desc_hex);
+                        menu.add(0, BIN, menu.size(), R.string.desc_bin);
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case DEC:
+                                        setBase(Base.DECIMAL);
+                                        break;
+                                    case HEX:
+                                        setBase(Base.HEXADECIMAL);
+                                        break;
+                                    case BIN:
+                                        setBase(Base.BINARY);
+                                        break;
+                                }
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
+                    }
+                });
+            }
+            if(mShowTrigDetails) {
+                setClickableSpan(mInfoView, units, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CalculatorSettings.setRadiansEnabled(getBaseContext(), !CalculatorSettings.useRadians(getBaseContext()));
+                        updateDetails();
+                        setState(CalculatorState.INPUT);
+                        mEvaluator.evaluate(mFormulaEditText.getText(), Calculator.this);
+                    }
+                });
+            }
+        }
+    }
+
+    private void setClickableSpan(TextView textView, final String word, final View.OnClickListener listener) {
+        Spannable spans = (Spannable) textView.getText();
+        String text = spans.toString();
+        ClickableSpan span = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                listener.onClick(null);
+            }
+
+            public void updateDrawState(TextPaint ds) {}
+        };
+        spans.setSpan(span, text.indexOf(word), text.indexOf(word) + word.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 }

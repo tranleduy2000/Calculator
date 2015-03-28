@@ -85,7 +85,7 @@ public class EqualsImageButton extends ImageButton {
     @Override
     public int[] onCreateDrawableState(int extraSpace) {
         int[] state = super.onCreateDrawableState(extraSpace + 1);
-        if(mState == null) return state;
+        if(mState == null) mState = State.EQUALS;
 
         switch(mState) {
             case EQUALS:

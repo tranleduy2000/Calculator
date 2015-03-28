@@ -8,13 +8,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 'Google Inc.:Glass Development Kit Preview:19'
-    buildToolsVersion "21.1.1"
+    compileSdkVersion 22
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.android2.calculator3"
         minSdkVersion 19
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }

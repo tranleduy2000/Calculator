@@ -23,11 +23,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class CalculatorExpressionTokenizer {
+    private final Context mContext;
     private final List<Localizer> mReplacements;
-    private boolean mUseDegrees = false;
 
     public CalculatorExpressionTokenizer(Context context) {
+        mContext = context;
         mReplacements = new LinkedList<Localizer>();
+    }
+
+    private void generateReplacements(Context context) {
+        mReplacements.clear();
         mReplacements.add(new Localizer(",", String.valueOf(Constants.MATRIX_SEPARATOR)));
         mReplacements.add(new Localizer(".", String.valueOf(Constants.DECIMAL_POINT)));
         mReplacements.add(new Localizer("0", context.getString(R.string.digit0)));
@@ -49,10 +54,10 @@ public class CalculatorExpressionTokenizer {
         mReplacements.add(new Localizer("sin", context.getString(R.string.fun_sin)));
         mReplacements.add(new Localizer("cos", context.getString(R.string.fun_cos)));
         mReplacements.add(new Localizer("tan", context.getString(R.string.fun_tan)));
-        if(mUseDegrees) {
-            mReplacements.add(new Localizer("sin", "sind"));
-            mReplacements.add(new Localizer("cos", "cosd"));
-            mReplacements.add(new Localizer("tan", "tand"));
+        if(!CalculatorSettings.useRadians(context)) {
+            mReplacements.add(new Localizer("sind", "sin"));
+            mReplacements.add(new Localizer("cosd", "cos"));
+            mReplacements.add(new Localizer("tand", "tan"));
         }
         mReplacements.add(new Localizer("ln", context.getString(R.string.fun_ln)));
         mReplacements.add(new Localizer("log", context.getString(R.string.fun_log)));
@@ -61,6 +66,7 @@ public class CalculatorExpressionTokenizer {
     }
 
     public String getNormalizedExpression(String expr) {
+        generateReplacements(mContext);
         for (Localizer replacement : mReplacements) {
             expr = expr.replace(replacement.local, replacement.english);
         }
@@ -68,6 +74,7 @@ public class CalculatorExpressionTokenizer {
     }
 
     public String getLocalizedExpression(String expr) {
+        generateReplacements(mContext);
         for (Localizer replacement : mReplacements) {
             expr = expr.replace(replacement.english, replacement.local);
         }

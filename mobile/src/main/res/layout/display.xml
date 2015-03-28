@@ -33,30 +33,49 @@
         <RelativeLayout
             android:id="@+id/mainDisplay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white">
+            android:layout_height="wrap_content">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/historyRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"/>
 
-            <com.android2.calculator3.view.display.AdvancedDisplay
-                android:id="@+id/formula"
-                style="@style/Theme.Calculator.Display.Main.Formula"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/historyRecycler"
-                ui:textSize="23sp"
-                ui:textColor="@color/display_formula_text_color" />
+                android:layout_below="@id/historyRecycler">
 
-            <com.android2.calculator3.view.display.AdvancedDisplay
-                android:id="@+id/result"
-                style="@style/Theme.Calculator.Display.Main.Result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/formula"
-                ui:textColor="@color/display_result_text_color" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.android2.calculator3.view.display.AdvancedDisplay
+                        android:id="@+id/formula"
+                        style="@style/Theme.Calculator.Display.Main.Formula"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        ui:textSize="23sp"
+                        ui:textColor="@color/display_formula_text_color" />
+
+                    <com.android2.calculator3.view.display.AdvancedDisplay
+                        android:id="@+id/result"
+                        style="@style/Theme.Calculator.Display.Main.Result"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        ui:textColor="@color/display_result_text_color" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textColor="@color/display_formula_text_color"/>
+
+            </FrameLayout>
+
         </RelativeLayout>
 
     </FrameLayout>
