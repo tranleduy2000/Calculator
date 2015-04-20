@@ -20,63 +20,56 @@
     xmlns:ui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/white_card"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/historyRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
 
     <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:id="@+id/main_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/historyRecycler">
 
-        <include layout="@layout/graph_display"/>
+        <com.android2.calculator3.view.GraphView
+            android:id="@+id/mini_graph"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/display_height_graph"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/above_display_margin"/>
 
         <RelativeLayout
-            android:id="@+id/mainDisplay"
+            android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@drawable/white_card">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/historyRecycler"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"/>
-
-            <FrameLayout
+            <com.android2.calculator3.view.display.AdvancedDisplay
+                android:id="@+id/formula"
+                style="@style/Theme.Calculator.Display.Main.Formula"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/historyRecycler">
+                ui:textSize="23sp"
+                ui:textColor="@color/display_formula_text_color" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <com.android2.calculator3.view.display.AdvancedDisplay
-                        android:id="@+id/formula"
-                        style="@style/Theme.Calculator.Display.Main.Formula"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        ui:textSize="23sp"
-                        ui:textColor="@color/display_formula_text_color" />
-
-                    <com.android2.calculator3.view.display.AdvancedDisplay
-                        android:id="@+id/result"
-                        style="@style/Theme.Calculator.Display.Main.Result"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        ui:textColor="@color/display_result_text_color" />
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/info"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="10dp"
-                    android:textColor="@color/display_formula_text_color"/>
-
-            </FrameLayout>
+            <com.android2.calculator3.view.display.AdvancedDisplay
+                android:id="@+id/result"
+                style="@style/Theme.Calculator.Display.Main.Result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/formula"
+                ui:textColor="@color/display_result_text_color" />
 
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textColor="@color/display_formula_text_color"/>
 
     </FrameLayout>
 

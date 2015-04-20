@@ -20,6 +20,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <include layout="@layout/graph_display" />
+
+    <com.android2.calculator3.view.GraphView
+        android:id="@+id/mini_graph"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/display_height_graph"
+        android:layout_marginTop="@dimen/display_height_small"/>
+
     <include
         android:id="@+id/display"
         layout="@layout/display" />
@@ -29,8 +37,7 @@
         layout="@layout/pad_auxiliary"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="@dimen/below_display_margin"
-        android:layout_below="@id/display"/>
+        android:layout_marginTop="@dimen/display_height"/>
 
     <LinearLayout
         android:layout_below="@id/pad_auxiliary"

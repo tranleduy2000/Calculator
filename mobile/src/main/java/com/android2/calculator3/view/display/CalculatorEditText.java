@@ -64,7 +64,7 @@ public class CalculatorEditText extends EditText {
     public static CalculatorEditText getInstance(Context context, EventListener eventListener) {
         CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
         text.mEventListener = eventListener;
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
+        int padding = 0;//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
         text.setPadding(padding, 0, padding, 0);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,

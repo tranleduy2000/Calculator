@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.android2.calculator3;
+package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android2.calculator3.NumberBaseManager;
+import com.android2.calculator3.R;
 import com.xlythe.math.Constants;
 
 public class CalculatorPadViewPager extends ViewPager {

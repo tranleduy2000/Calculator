@@ -30,7 +30,6 @@
 
             <include layout="@layout/pad_advanced" />
             <include layout="@layout/pad_hex" />
-            <include layout="@layout/pad_matrix" />
 
         </com.android2.calculator3.viewpager.VerticalViewPager>
 

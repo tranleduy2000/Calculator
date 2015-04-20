@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import com.android2.calculator3.R;
-import com.android2.calculator3.util.AnimationUtil;
 import com.android2.calculator3.view.display.AdvancedDisplay;
 
 /**
@@ -42,15 +41,10 @@ public class DisplayOverlay extends FrameLayout {
     private static boolean DEBUG = false;
     private static final String TAG = "DisplayOverlay";
 
-    public static enum DisplayMode { FORMULA, GRAPH };
-
     private RecyclerView mRecyclerView;
     private AdvancedDisplay mFormula;
     private View mResult;
     private View mGraphLayout;
-    private View mCloseGraphHandle;
-    private View mMainDisplay;
-    private DisplayMode mMode;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
     private float mLastMotionY;
@@ -110,8 +104,6 @@ public class DisplayOverlay extends FrameLayout {
         mFormula = (AdvancedDisplay)findViewById(R.id.formula);
         mResult = findViewById(R.id.result);
         mGraphLayout = findViewById(R.id.graphLayout);
-        mMainDisplay = findViewById(R.id.mainDisplay);
-        mCloseGraphHandle = findViewById(R.id.closeGraphHandle);
     }
 
     @Override
@@ -129,12 +121,6 @@ public class DisplayOverlay extends FrameLayout {
                 float dy = y - mInitialMotionY;
                 if (Math.abs(dy) < mTouchSlop) {
                     return false;
-                }
-
-                // in graph mode let move events apply to the graph,
-                // unless the touch is on the "close handle"
-                if (mMode == DisplayMode.GRAPH) {
-                    return isInBounds(ev.getX(), ev.getY(), mCloseGraphHandle);
                 }
 
                 if (dy < 0) {
@@ -396,29 +382,5 @@ public class DisplayOverlay extends FrameLayout {
     private boolean isInBounds(float x, float y, View v) {
         return y >= v.getTop() && y <= v.getBottom() &&
                 x >= v.getLeft() && x <= v.getRight();
-    }
-
-    public void animateModeTransition() {
-        switch (mMode) {
-            case GRAPH:
-                expandHistory();
-                AnimationUtil.fadeOut(mMainDisplay);
-                AnimationUtil.fadeIn(mGraphLayout);
-                break;
-            case FORMULA:
-                collapseHistory();
-                AnimationUtil.fadeIn(mMainDisplay);
-                AnimationUtil.fadeOut(mGraphLayout);
-                break;
-        }
-    }
-
-    public void setMode(DisplayMode mode) {
-        mMode = mode;
-        animateModeTransition();
-    }
-
-    public DisplayMode getMode() {
-        return mMode;
     }
 }

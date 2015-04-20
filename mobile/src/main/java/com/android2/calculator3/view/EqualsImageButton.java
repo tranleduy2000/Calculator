@@ -17,26 +17,9 @@
 package com.android2.calculator3.view;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.InputType;
-import android.text.Spanned;
-import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
-import android.view.ActionMode;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.display.EventListener;
-import com.xlythe.math.Constants;
 
 public class EqualsImageButton extends ImageButton {
     private static final int[] STATE_EQUALS = { R.attr.state_equals };

@@ -17,7 +17,6 @@ package com.android2.calculator3;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
@@ -25,7 +24,6 @@ import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -35,15 +33,19 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewAnimationUtils;
-import android.view.ViewTreeObserver;
+
+import io.codetail.animation.SupportAnimator;
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealView;
+
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
@@ -51,18 +53,19 @@ import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.display.AdvancedDisplay.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.display.AdvancedDisplay;
 import com.android2.calculator3.view.DisplayOverlay;
-import com.android2.calculator3.view.DisplayOverlay.DisplayMode;
 import com.android2.calculator3.view.MatrixEditText;
 import com.android2.calculator3.view.MatrixInverseView;
 import com.android2.calculator3.view.MatrixTransposeView;
 import com.android2.calculator3.view.MatrixView;
 import com.android2.calculator3.view.EqualsImageButton.State;
+import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.Constants;
 import com.xlythe.math.GraphModule;
@@ -83,7 +86,6 @@ public class Calculator extends Activity
     private static final String KEY_CURRENT_STATE = NAME + "_currentState";
     private static final String KEY_CURRENT_EXPRESSION = NAME + "_currentExpression";
     private static final String KEY_BASE = NAME + "_base";
-    private static final String KEY_DISPLAY_MODE = NAME + "_displayMode";
 
     /**
      * Constant for an invalid resource id.
@@ -129,6 +131,8 @@ public class Calculator extends Activity
     private CalculatorExpressionTokenizer mTokenizer;
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
+    private ViewGroup mMainDisplay;
+    private ViewGroup mCalculationsDisplay;
     private TextView mInfoView;
     private AdvancedDisplay mFormulaEditText;
     private AdvancedDisplay mResultEditText;
@@ -160,6 +164,8 @@ public class Calculator extends Activity
         mX = getString(R.string.X);
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
+        mMainDisplay = (ViewGroup) mDisplayView.findViewById(R.id.main_display);
+        mCalculationsDisplay = (ViewGroup) mMainDisplay.findViewById(R.id.calculations);
         mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (AdvancedDisplay) findViewById(R.id.formula);
         mResultEditText = (AdvancedDisplay) findViewById(R.id.result);
@@ -183,7 +189,6 @@ public class Calculator extends Activity
         mResultEditText.setSolver(mEvaluator.getSolver());
         mFormulaEditText.setText(mTokenizer.getLocalizedExpression(
                 savedInstanceState.getString(KEY_CURRENT_EXPRESSION, "")));
-        mEvaluator.evaluate(mFormulaEditText.getText(), this);
         mFormulaEditText.addTextChangedListener(mFormulaTextWatcher);
         mFormulaEditText.setOnKeyListener(mFormulaOnKeyListener);
         mFormulaEditText.setOnTextSizeChangeListener(this);
@@ -212,32 +217,24 @@ public class Calculator extends Activity
         Button dot = (Button) findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
-        GraphView graphView = (GraphView)findViewById(R.id.graphView);
+        GraphView miniGraph = (GraphView) findViewById(R.id.mini_graph);
+        miniGraph.setShowGrid(false);
+        miniGraph.setShowInlineNumbers(true);
+        miniGraph.setShowOutline(false);
+        miniGraph.setPanEnabled(false);
+        miniGraph.setZoomEnabled(false);
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
-        mGraphController = new GraphController(graphView, graphModule, mDisplayView);
+        mGraphController = new GraphController(graphModule, miniGraph);
 
-        DisplayMode displayMode = DisplayMode.FORMULA;
-        int modeOrdinal = savedInstanceState.getInt(KEY_DISPLAY_MODE, -1);
-        if (modeOrdinal != -1) {
-            displayMode = DisplayMode.values()[modeOrdinal];
-        }
-        mDisplayView.setMode(displayMode);
-        mDisplayView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-                    @Override
-                    public void onGlobalLayout() {
-                        if (mDisplayView.getHeight() > 0) {
-                            mDisplayView.initializeHistoryAndGraphView();
-                            if (mDisplayView.getMode() == DisplayMode.GRAPH) {
-                                mGraphController.startGraph(mFormulaEditText.getText());
-                            }
-                        }
-                    }
-                });
+//        findViewById(R.id.exitGraph).setOnClickListener(mGraphController);
+//        findViewById(R.id.minusZoom).setOnClickListener(mGraphController);
+//        findViewById(R.id.plusZoom).setOnClickListener(mGraphController);
+//        findViewById(R.id.resetZoom).setOnClickListener(mGraphController);
 
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
         updateDetails();
+        mEvaluator.evaluate(mFormulaEditText.getText(), this);
     }
 
     @Override
@@ -262,6 +259,69 @@ public class Calculator extends Activity
         mDisplayView.scrollToMostRecent();
     }
 
+    private void transitionToGraph() {
+        if (mResultEditText.getVisibility() == View.GONE) {
+            return;
+        }
+
+        // We don't want the display resizing, so hardcode its width for now.
+        mMainDisplay.measure(
+                View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        mMainDisplay.getLayoutParams().height = mMainDisplay.getMeasuredHeight();
+
+        // Now we need to shrink the calculations display
+        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Hide the result and then measure to grab new coordinates
+        mResultEditText.setVisibility(View.GONE);
+        mCalculationsDisplay.measure(
+                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        int newHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Now animate between the old and new heights
+        ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
+        animator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCalculationsDisplay.getLayoutParams().height = (int) animation.getAnimatedValue();
+                mCalculationsDisplay.requestLayout();
+            }
+        });
+        animator.start();
+    }
+
+    private void transitionToDisplay() {
+        if (mResultEditText.getVisibility() == View.VISIBLE) {
+            return;
+        }
+
+        // Now we need to expand the calculations display
+        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Show the result and then measure to grab new coordinates
+        mResultEditText.setVisibility(View.VISIBLE);
+        mCalculationsDisplay.measure(
+                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        int newHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Now animate between the old and new heights
+        ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
+        animator.addUpdateListener(new AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mCalculationsDisplay.getLayoutParams().height = (int) animation.getAnimatedValue();
+                mCalculationsDisplay.requestLayout();
+            }
+        });
+        animator.start();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -281,7 +341,6 @@ public class Calculator extends Activity
         outState.putString(KEY_CURRENT_EXPRESSION,
                 mTokenizer.getNormalizedExpression(mFormulaEditText.getText()));
         outState.putInt(KEY_BASE, mBaseManager.getNumberBase().ordinal());
-        outState.putInt(KEY_DISPLAY_MODE, mDisplayView.getMode().ordinal());
     }
 
     private void setState(CalculatorState state) {
@@ -317,10 +376,6 @@ public class Calculator extends Activity
 
     @Override
     public void onBackPressed() {
-        if (mDisplayView.getMode().equals(DisplayMode.GRAPH)) {
-            mDisplayView.setMode(DisplayMode.FORMULA);
-            return;
-        }
         if (mPadViewPager == null || mPadViewPager.getCurrentItem() == 0) {
             // If the user is currently looking at the first pad (or the pad is not paged),
             // allow the system to handle the Back button.
@@ -358,14 +413,14 @@ public class Calculator extends Activity
                 mFormulaEditText.insert(((Button) view).getText() + "(");
                 break;
             case R.id.fun_cos:
-            case R.id.fun_ln:
-            case R.id.fun_log:
             case R.id.fun_sin:
             case R.id.fun_tan:
-                // Add left parenthesis after functions.
-                mFormulaEditText.insert(((Button) view).getText() + "(");
                 mShowTrigDetails = true;
                 updateDetails();
+            case R.id.fun_ln:
+            case R.id.fun_log:
+                // Add left parenthesis after functions.
+                mFormulaEditText.insert(((Button) view).getText() + "(");
                 break;
             case R.id.hex:
                 setBase(Base.HEXADECIMAL);
@@ -456,11 +511,15 @@ public class Calculator extends Activity
         }
 
         if (expr.contains(mX)) {
-            mEqualButton.setState(State.GRAPH);
-        } else if (expr.equals(result) || mFormulaEditText.hasNext()) {
-            mEqualButton.setState(State.NEXT);
+            transitionToGraph();
+            mGraphController.startGraph(mFormulaEditText.getText());
         } else {
-            mEqualButton.setState(State.EQUALS);
+            transitionToDisplay();
+            if (expr.equals(result) || mFormulaEditText.hasNext()) {
+                mEqualButton.setState(State.NEXT);
+            } else {
+                mEqualButton.setState(State.EQUALS);
+            }
         }
     }
 
@@ -507,9 +566,6 @@ public class Calculator extends Activity
                 case NEXT:
                     mFormulaEditText.next();
                     break;
-                case GRAPH:
-                    mGraphController.startGraph(text);
-                    break;
             }
         }
     }
@@ -519,63 +575,70 @@ public class Calculator extends Activity
         mFormulaEditText.backspace();
     }
 
-    private void reveal(View sourceView, int colorRes, AnimatorListener listener) {
-        // Make reveal cover the display and status bar.
-        final View revealView = new View(this);
-        mLayoutParams.height = mDisplayView.getDisplayHeight();
-        mLayoutParams.gravity = Gravity.BOTTOM;
+    private void reveal(View sourceView, int colorRes, final AnimatorListener listener) {
+        // Make reveal cover the display
+        final RevealView revealView = new RevealView(this);
+        mLayoutParams.height = mCalculationsDisplay.getMeasuredHeight()
+                - getResources().getDimensionPixelSize(R.dimen.above_display_margin);
         revealView.setLayoutParams(mLayoutParams);
-        revealView.setBackgroundColor(getResources().getColor(colorRes));
-        mDisplayView.addView(revealView);
+        revealView.setRevealColor(getResources().getColor(colorRes));
+        mCalculationsDisplay.addView(revealView);
 
-        final Animator revealAnimator;
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            final int[] clearLocation = new int[2];
-            sourceView.getLocationInWindow(clearLocation);
-            clearLocation[0] += sourceView.getWidth() / 2;
-            clearLocation[1] += sourceView.getHeight() / 2;
-            final int revealCenterX = clearLocation[0] - revealView.getLeft();
-            final int revealCenterY = clearLocation[1] - revealView.getTop();
-            final double x1_2 = Math.pow(revealView.getLeft() - revealCenterX, 2);
-            final double x2_2 = Math.pow(revealView.getRight() - revealCenterX, 2);
-            final double y_2 = Math.pow(revealView.getTop() - revealCenterY, 2);
-            final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
+        final SupportAnimator revealAnimator;
+        final int[] clearLocation = new int[2];
+        sourceView.getLocationInWindow(clearLocation);
+        clearLocation[0] += sourceView.getWidth() / 2;
+        clearLocation[1] += sourceView.getHeight() / 2;
+        final int revealCenterX = clearLocation[0] - revealView.getLeft();
+        final int revealCenterY = clearLocation[1] - revealView.getTop();
+        final double x1_2 = Math.pow(revealView.getLeft() - revealCenterX, 2);
+        final double x2_2 = Math.pow(revealView.getRight() - revealCenterX, 2);
+        final double y_2 = Math.pow(revealView.getTop() - revealCenterY, 2);
+        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
 
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(revealView,
-                            revealCenterX, revealCenterY, 0.0f, revealRadius);
-        }
-        else {
-            revealAnimator = ObjectAnimator.ofFloat(revealView, View.ALPHA, 0.0f, 1f);
-        }
+        revealAnimator =
+                ViewAnimationUtils.createCircularReveal(revealView,
+                        revealCenterX, revealCenterY, 0.0f, revealRadius);
         revealAnimator.setDuration(
                 getResources().getInteger(android.R.integer.config_longAnimTime));
         revealAnimator.addListener(listener);
 
         final Animator alphaAnimator = ObjectAnimator.ofFloat(revealView, View.ALPHA, 0.0f);
         alphaAnimator.setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-
-        final AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.play(revealAnimator).before(alphaAnimator);
-        animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-        animatorSet.addListener(new AnimatorListenerAdapter() {
+        alphaAnimator.addListener(new AnimationFinishedListener() {
             @Override
-            public void onAnimationEnd(Animator animator) {
-                mDisplayView.removeView(revealView);
+            public void onAnimationFinished() {
+                mMainDisplay.removeView(revealView);
+            }
+        });
+
+        revealAnimator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                play(alphaAnimator);
+            }
+        });
+        play(revealAnimator);
+    }
+
+    private void play(Animator animator) {
+        mCurrentAnimator = animator;
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
                 mCurrentAnimator = null;
             }
         });
-        mCurrentAnimator = animatorSet;
-        animatorSet.start();
+        animator.start();
     }
 
     private void onClear() {
         if (TextUtils.isEmpty(mFormulaEditText.getText())) {
             return;
         }
-        reveal(mCurrentButton, R.color.calculator_accent_color, new AnimatorListenerAdapter() {
+        reveal(mCurrentButton, R.color.calculator_accent_color, new AnimationFinishedListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationFinished() {
                 mFormulaEditText.clear();
             }
         });
@@ -588,9 +651,9 @@ public class Calculator extends Activity
             return;
         }
 
-        reveal(mCurrentButton, R.color.calculator_error_color, new AnimatorListenerAdapter() {
+        reveal(mCurrentButton, R.color.calculator_error_color, new AnimationFinishedListener() {
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationFinished() {
                 setState(CalculatorState.ERROR);
                 mResultEditText.setText(errorResourceId);
             }
@@ -639,12 +702,9 @@ public class Calculator extends Activity
                 ObjectAnimator.ofFloat(mFormulaEditText, View.TRANSLATION_Y, formulaTranslationY));
         animatorSet.setDuration(getResources().getInteger(android.R.integer.config_longAnimTime));
         animatorSet.setInterpolator(new AccelerateDecelerateInterpolator());
-        animatorSet.addListener(new AnimatorListenerAdapter() {
+        animatorSet.addListener(new AnimationFinishedListener() {
             @Override
-            public void onAnimationStart(Animator animation) {}
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationFinished() {
                 // Reset all of the values modified during the animation.
                 mResultEditText.setTextColor(resultTextColor);
                 mResultEditText.setScaleX(1.0f);
@@ -656,12 +716,10 @@ public class Calculator extends Activity
                 // Finally update the formula to use the current result.
                 mFormulaEditText.setText(result);
                 setState(CalculatorState.RESULT);
-                mCurrentAnimator = null;
             }
         });
 
-        mCurrentAnimator = animatorSet;
-        animatorSet.start();
+        play(animatorSet);
     }
 
     private void setBase(Base base) {

@@ -24,7 +24,7 @@
         android:id="@+id/display"
         layout="@layout/display" />
 
-    <com.android2.calculator3.CalculatorPadViewPager
+    <com.android2.calculator3.view.CalculatorPadViewPager
         android:id="@+id/pad_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,6 +43,6 @@
 
         <include layout="@layout/pad_auxiliary" />
 
-    </com.android2.calculator3.CalculatorPadViewPager>
+    </com.android2.calculator3.view.CalculatorPadViewPager>
 
 </RelativeLayout>

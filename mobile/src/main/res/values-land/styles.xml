@@ -41,7 +41,7 @@
         <item name="android:layout_marginBottom">4dip</item>
         <item name="android:layout_marginLeft">8dip</item>
         <item name="android:layout_marginRight">8dip</item>
-        <item name="android:background">@drawable/pad_button_advanced_background</item>
+        <item name="android:background">@color/pad_button_advanced_ripple_color</item>
         <item name="android:textColor">@color/pad_button_advanced_text_color</item>
         <item name="android:textSize">15sp</item>
     </style>

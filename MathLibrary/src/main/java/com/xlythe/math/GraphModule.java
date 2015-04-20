@@ -1,6 +1,7 @@
 package com.xlythe.math;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.javia.arity.SyntaxException;
 
@@ -80,6 +81,7 @@ public class GraphModule extends Module {
         public List<Point> graph(String equation) {
             final LinkedList<Point> series = new LinkedList<Point>();
 
+            Log.d("TEST", "Starting to graph: " + mMinX + ", " + mMaxX + ", " + mZoomLevel);
             mSolver.pushFrame();
             for(double x = mMinX; x <= mMaxX; x += 0.01 * mZoomLevel) {
                 if(isCancelled()) {
@@ -89,6 +91,7 @@ public class GraphModule extends Module {
                 try {
                     mSolver.define("X", x);
                     double y = mSolver.eval(equation);
+//                    Log.d("TEST", String.format("%s,%s", x, y));
                     series.add(new Point(x, y));
                 } catch(SyntaxException e) {}
             }

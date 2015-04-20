@@ -13,7 +13,7 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.android2.calculator3;
+package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -75,13 +75,25 @@ public class CalculatorPadLayout extends ViewGroup {
                 continue;
             }
             final MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
-            final int childTop = paddingTop + lp.topMargin + rowIndex * rowHeight;
-            final int childBottom = childTop - lp.topMargin - lp.bottomMargin + rowHeight;
-            final int childLeft = paddingLeft + lp.leftMargin +
+            int childTop = paddingTop + lp.topMargin + rowIndex * rowHeight;
+            int childBottom = childTop - lp.topMargin - lp.bottomMargin + rowHeight;
+            int childLeft = paddingLeft + lp.leftMargin +
                     (isRTL ? (mColumnCount - 1) - columnIndex : columnIndex) * columnWidth;
-            final int childRight = childLeft - lp.leftMargin - lp.rightMargin + columnWidth;
-            final int childWidth = childRight - childLeft;
-            final int childHeight = childBottom - childTop;
+            int childRight = childLeft - lp.leftMargin - lp.rightMargin + columnWidth;
+            int childWidth = childRight - childLeft;
+            int childHeight = childBottom - childTop;
+
+            // Make the children square
+            if (childWidth > childHeight) {
+                childLeft += (childWidth - childHeight) / 2;
+                childWidth = childHeight;
+                childRight = childLeft + childWidth;
+            } else {
+                childTop += (childHeight - childWidth) / 2;
+                childHeight = childWidth;
+                childBottom = childTop + childHeight;
+            }
+
             if (childWidth != childView.getMeasuredWidth() ||
                     childHeight != childView.getMeasuredHeight()) {
                 childView.measure(

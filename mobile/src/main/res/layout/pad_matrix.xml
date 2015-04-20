@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<com.android2.calculator3.CalculatorPadLayout
+<com.android2.calculator3.view.CalculatorPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_matrix"
     style="@style/PadLayoutStyle.Matrix"
@@ -27,46 +27,46 @@
         android:onClick="onButtonClick"
         android:src="@drawable/matrix" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/det"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/det" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/matrix_transpose"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/matrix_transpose" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/matrix_inverse"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/matrix_inverse" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/plus_row"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/plus_row" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/minus_row"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/minus_row" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/plus_col"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/plus_col" />
 
-    <Button
+    <com.android2.calculator3.view.Button
         android:id="@+id/minus_col"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/minus_col" />
 
-</com.android2.calculator3.CalculatorPadLayout>
+</com.android2.calculator3.view.CalculatorPadLayout>

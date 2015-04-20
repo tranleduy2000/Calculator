@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphView extends View {
+    private static final int GRID_WIDTH = 2;
+    private static final int AXIS_WIDTH = 6;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
     private static final int LINES = 1;
@@ -48,6 +50,12 @@ public class GraphView extends View {
     private float mZoomInitLevel;
     private int mMode;
     private int mPointers;
+    private boolean mShowGrid = true;
+    private boolean mShowAxis = true;
+    private boolean mShowOutline = true;
+    private boolean mPanEnabled = true;
+    private boolean mZoomEnabled = true;
+    private boolean mInlineNumbers = false;
 
     public GraphView(Context context) {
         super(context);
@@ -110,11 +118,15 @@ public class GraphView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mPanEnabled != true && mZoomEnabled != true) {
+            return false;
+        }
+
         // Update mode if pointer count changes
         if(mPointers != event.getPointerCount()) {
             setMode(event);
         }
-        ;
+
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 setMode(event);
@@ -122,7 +134,7 @@ public class GraphView extends View {
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(mMode == DRAG) {
+                if(mMode == DRAG && mPanEnabled) {
                     mOffsetX += mDragOffsetX;
                     mOffsetY += mDragOffsetY;
                     mDragOffsetX = (int) (event.getX() - mStartX) / mLineMargin;
@@ -132,7 +144,7 @@ public class GraphView extends View {
                     mOffsetX -= mDragOffsetX;
                     mOffsetY -= mDragOffsetY;
                     if(mPanListener != null) mPanListener.panApplied();
-                } else if(mMode == ZOOM) {
+                } else if(mMode == ZOOM && mZoomEnabled) {
                     double distance = getDistance(new Point(event.getX(0), event.getY(0)), new Point(event.getX(1), event.getY(1)));
                     double delta = mZoomInitDistance - distance;
                     float zoom = (float) (delta / mZoomInitDistance);
@@ -162,64 +174,80 @@ public class GraphView extends View {
 
         canvas.drawPaint(mBackgroundPaint);
 
-        // draw bounding box
+        // Draw bounding box
         mAxisPaint.setStrokeWidth(BOX_STROKE);
-        canvas.drawRect(mLineMargin, mLineMargin,
-                getWidth() - BOX_STROKE/2, getHeight() - BOX_STROKE/2, mAxisPaint);
+        if (mShowOutline) {
+            canvas.drawRect(mLineMargin, mLineMargin,
+                    getWidth() - BOX_STROKE / 2, getHeight() - BOX_STROKE / 2, mAxisPaint);
+        }
 
         // Draw the grid lines
         Rect bounds = new Rect();
         int previousLine = 0;
-        for(int i = 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
+        for(int i = mInlineNumbers ? 0 : 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
             // Draw vertical lines
             int x = i * mLineMargin + mDragRemainderX;
             if(x < mLineMargin || x - previousLine < mMinLineMargin) continue;
             previousLine = x;
 
-            if(j == 0) mAxisPaint.setStrokeWidth(6);
-            else mAxisPaint.setStrokeWidth(2);
-            canvas.drawLine(x, mLineMargin, x, getHeight(), mAxisPaint);
+            if(j == 0 && mShowAxis) {
+                mAxisPaint.setStrokeWidth(AXIS_WIDTH);
+                canvas.drawLine(x, mInlineNumbers ? 0 : mLineMargin, x, getHeight(), mAxisPaint);
+            } else if(mShowGrid) {
+                mAxisPaint.setStrokeWidth(GRID_WIDTH);
+                canvas.drawLine(x, mInlineNumbers ? 0 : mLineMargin, x, getHeight(), mAxisPaint);
+            }
 
-            // Draw label on left
-            String text = mFormat.format(j * mZoomLevel);
-            int textLength = ((text.startsWith("-") ? text.length() - 1 : text.length()) + 1) / 2;
-            mTextPaint.setTextSize(mTextPaintSize / textLength);
-            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
-            int textWidth = bounds.right - bounds.left;
-            canvas.drawText(text, x - textWidth / 2, mLineMargin / 2 + mTextPaint.getTextSize() / 2, mTextPaint);
+            if (!mInlineNumbers) {
+                // Draw label on top
+                String text = mFormat.format(j * mZoomLevel);
+                int textLength = ((text.startsWith("-") ? text.length() - 1 : text.length()) + 1) / 2;
+                mTextPaint.setTextSize(mTextPaintSize / textLength);
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                int textWidth = bounds.right - bounds.left;
+                canvas.drawText(text, x - textWidth / 2, mLineMargin / 2 + mTextPaint.getTextSize() / 2, mTextPaint);
+            }
         }
         previousLine = 0;
-        for(int i = 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
+        for(int i = mInlineNumbers ? 0 : 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
             // Draw horizontal lines
             int y = i * mLineMargin + mDragRemainderY;
             if(y < mLineMargin || y - previousLine < mMinLineMargin) continue;
             previousLine = y;
 
-            if(j == 0) mAxisPaint.setStrokeWidth(6);
-            else mAxisPaint.setStrokeWidth(2);
-            canvas.drawLine(mLineMargin, y, getWidth(), y, mAxisPaint);
+            if(j == 0 && mShowAxis) {
+                mAxisPaint.setStrokeWidth(AXIS_WIDTH);
+                canvas.drawLine(mInlineNumbers ? 0 : mLineMargin, y, getWidth(), y, mAxisPaint);
+            } else if(mShowGrid) {
+                mAxisPaint.setStrokeWidth(GRID_WIDTH);
+                canvas.drawLine(mInlineNumbers ? 0 : mLineMargin, y, getWidth(), y, mAxisPaint);
+            }
 
-            // Draw label on left
-            String text = mFormat.format(-j * mZoomLevel);
-            int textLength = ((text.startsWith("-") ? text.length() - 1 : text.length()) + 1) / 2;
-            mTextPaint.setTextSize(mTextPaintSize / textLength);
-            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
-            int textHeight = bounds.bottom - bounds.top;
-            int textWidth = bounds.right - bounds.left;
-            canvas.drawText(text, mLineMargin / 2 - textWidth / 2, y + textHeight / 2, mTextPaint);
+            if (!mInlineNumbers) {
+                // Draw label on left
+                String text = mFormat.format(-j * mZoomLevel);
+                int textLength = ((text.startsWith("-") ? text.length() - 1 : text.length()) + 1) / 2;
+                mTextPaint.setTextSize(mTextPaintSize / textLength);
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                int textHeight = bounds.bottom - bounds.top;
+                int textWidth = bounds.right - bounds.left;
+                canvas.drawText(text, mLineMargin / 2 - textWidth / 2, y + textHeight / 2, mTextPaint);
+            }
         }
 
         // Restrict drawing the graph to the grid
-        canvas.clipRect(mLineMargin, mLineMargin,
-                getWidth() - BOX_STROKE, getHeight() - BOX_STROKE);
+        if (!mInlineNumbers) {
+            canvas.clipRect(mLineMargin, mLineMargin,
+                    getWidth() - BOX_STROKE, getHeight() - BOX_STROKE);
+        }
 
         // Create a path to draw smooth arcs
-        if(mDrawingAlgorithm == LINES) {
-            if(mData.size() != 0) {
+        if(mData.size() != 0) {
+            if (mDrawingAlgorithm == LINES) {
                 drawWithStraightLines(mData, canvas);
+            } else if (mDrawingAlgorithm == DOTS) {
+                drawDots(mData, canvas);
             }
-        } else if(mDrawingAlgorithm == DOTS) {
-            drawDots(mData, canvas);
         }
     }
 
@@ -254,7 +282,7 @@ public class GraphView extends View {
         if(p == null || Double.isNaN(p.getX()) || Double.isInfinite(p.getX())) return -1;
 
         // The left line is at pos
-        float leftLine = mLineMargin + mDragRemainderX;
+        float leftLine = (mInlineNumbers ? 0 : mLineMargin) + mDragRemainderX;
         // And equals
         float val = mOffsetX * mZoomLevel;
         // And changes at a rate of
@@ -269,7 +297,7 @@ public class GraphView extends View {
         if(p == null || Double.isNaN(p.getY()) || Double.isInfinite(p.getY())) return -1;
 
         // The top line is at pos
-        float topLine = mLineMargin + mDragRemainderY;
+        float topLine = (mInlineNumbers ? 0 : mLineMargin) + mDragRemainderY;
         // And equals
         float val = -mOffsetY * mZoomLevel;
         // And changes at a rate of
@@ -401,6 +429,54 @@ public class GraphView extends View {
 
     public void setZoomListener(ZoomListener l) {
         mZoomListener = l;
+    }
+
+    public boolean isGridShown() {
+        return mShowGrid;
+    }
+
+    public void setShowGrid(boolean show) {
+        mShowGrid = show;
+    }
+
+    public boolean isAxisShown() {
+        return mShowAxis;
+    }
+
+    public void setShowAxis(boolean show) {
+        mShowAxis = show;
+    }
+
+    public boolean isOutlineShown() {
+        return mShowOutline;
+    }
+
+    public void setShowOutline(boolean show) {
+        mShowOutline = show;
+    }
+
+    public boolean isPanEnabled() {
+        return mPanEnabled;
+    }
+
+    public void setPanEnabled(boolean enabled) {
+        mPanEnabled = enabled;
+    }
+
+    public boolean isZoomEnabled() {
+        return mZoomEnabled;
+    }
+
+    public void setZoomEnabled(boolean enabled) {
+        mZoomEnabled = enabled;
+    }
+
+    public boolean showInlineNumbers() {
+        return mInlineNumbers;
+    }
+
+    public void setShowInlineNumbers(boolean show) {
+        mInlineNumbers = show;
     }
 
     public static interface PanListener {
