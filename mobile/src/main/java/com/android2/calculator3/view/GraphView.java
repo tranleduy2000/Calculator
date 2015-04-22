@@ -11,6 +11,7 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.android2.calculator3.R;
 import com.xlythe.math.Point;
 
 import java.text.DecimalFormat;
@@ -19,7 +20,8 @@ import java.util.List;
 
 public class GraphView extends View {
     private static final int GRID_WIDTH = 2;
-    private static final int AXIS_WIDTH = 6;
+    private static final int AXIS_WIDTH = 4;
+    private static final int GRAPH_WIDTH = 6;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
     private static final int LINES = 1;
@@ -75,12 +77,12 @@ public class GraphView extends View {
         mAxisPaint = new Paint();
         mAxisPaint.setColor(Color.LTGRAY);
         mAxisPaint.setStyle(Style.STROKE);
-        mAxisPaint.setStrokeWidth(2);
+        mAxisPaint.setStrokeWidth(GRID_WIDTH);
 
         mGraphPaint = new Paint();
         mGraphPaint.setColor(Color.CYAN);
         mGraphPaint.setStyle(Style.STROKE);
-        mGraphPaint.setStrokeWidth(6);
+        mGraphPaint.setStrokeWidth(GRAPH_WIDTH);
 
         zoomReset();
 

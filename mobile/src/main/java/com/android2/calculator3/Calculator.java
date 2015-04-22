@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -49,7 +50,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -93,7 +93,7 @@ public class Calculator extends Activity
     public static final int INVALID_RES_ID = -1;
 
     private enum CalculatorState {
-        INPUT, EVALUATE, RESULT, ERROR
+        INPUT, EVALUATE, RESULT, ERROR, GRAPHING
     }
 
     private final TextWatcher mFormulaTextWatcher = new TextWatcher() {
@@ -105,7 +105,9 @@ public class Calculator extends Activity
 
         @Override
         public void afterTextChanged(Editable editable) {
-            setState(CalculatorState.INPUT);
+            if (mCurrentState != CalculatorState.GRAPHING) {
+                setState(CalculatorState.INPUT);
+            }
             mEvaluator.evaluate(editable, Calculator.this);
         }
     };
@@ -148,8 +150,9 @@ public class Calculator extends Activity
     private NumberBaseManager mBaseManager;
     private String mX;
     private GraphController mGraphController;
-    private FrameLayout.LayoutParams mLayoutParams =
-            new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0);
+    private final ViewGroup.LayoutParams mLayoutParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
     private boolean mShowBaseDetails;
     private boolean mShowTrigDetails;
 
@@ -223,6 +226,10 @@ public class Calculator extends Activity
         miniGraph.setShowOutline(false);
         miniGraph.setPanEnabled(false);
         miniGraph.setZoomEnabled(false);
+        miniGraph.setBackgroundColor(getResources().getColor(R.color.graph_background));
+        miniGraph.setGridColor(getResources().getColor(R.color.graph_axis));
+        miniGraph.setGraphColor(getResources().getColor(R.color.graph_line));
+        miniGraph.setTextColor(getResources().getColor(R.color.graph_text));
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
         mGraphController = new GraphController(graphModule, miniGraph);
 
@@ -233,7 +240,9 @@ public class Calculator extends Activity
 
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
+
         updateDetails();
+
         mEvaluator.evaluate(mFormulaEditText.getText(), this);
     }
 
@@ -264,6 +273,8 @@ public class Calculator extends Activity
             return;
         }
 
+        setState(CalculatorState.GRAPHING);
+
         // We don't want the display resizing, so hardcode its width for now.
         mMainDisplay.measure(
                 View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
@@ -276,6 +287,7 @@ public class Calculator extends Activity
 
         // Hide the result and then measure to grab new coordinates
         mResultEditText.setVisibility(View.GONE);
+        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         mCalculationsDisplay.measure(
                 View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -304,6 +316,7 @@ public class Calculator extends Activity
 
         // Show the result and then measure to grab new coordinates
         mResultEditText.setVisibility(View.VISIBLE);
+        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
         mCalculationsDisplay.measure(
                 View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -317,6 +330,12 @@ public class Calculator extends Activity
             public void onAnimationUpdate(ValueAnimator animation) {
                 mCalculationsDisplay.getLayoutParams().height = (int) animation.getAnimatedValue();
                 mCalculationsDisplay.requestLayout();
+            }
+        });
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                setState(CalculatorState.INPUT);
             }
         });
         animator.start();
@@ -469,7 +488,9 @@ public class Calculator extends Activity
                 mFormulaEditText.insert(((Button) view).getText());
                 break;
             default:
-                if(mCurrentState.equals(CalculatorState.INPUT) || mFormulaEditText.isCursorModified()) {
+                if(mCurrentState.equals(CalculatorState.INPUT) ||
+                        mCurrentState.equals(CalculatorState.GRAPHING) ||
+                        mFormulaEditText.isCursorModified()) {
                     mFormulaEditText.insert(((Button) view).getText());
                 }
                 else {
@@ -492,7 +513,8 @@ public class Calculator extends Activity
 
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
-        if (mCurrentState == CalculatorState.INPUT) {
+        if (mCurrentState == CalculatorState.INPUT
+                || mCurrentState == CalculatorState.GRAPHING) {
             if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.clear();
             }
@@ -513,6 +535,7 @@ public class Calculator extends Activity
         if (expr.contains(mX)) {
             transitionToGraph();
             mGraphController.startGraph(mFormulaEditText.getText());
+            mEqualButton.setState(State.NEXT);
         } else {
             transitionToDisplay();
             if (expr.equals(result) || mFormulaEditText.hasNext()) {
@@ -525,7 +548,7 @@ public class Calculator extends Activity
 
     @Override
     public void onTextSizeChanged(final AdvancedDisplay textView, float oldSize) {
-        if (mCurrentState != CalculatorState.INPUT) {
+        if (mCurrentState != CalculatorState.INPUT) { // TODO dont animate when showing graph
             // Only animate text changes that occur from user input.
             return;
         }
@@ -578,8 +601,6 @@ public class Calculator extends Activity
     private void reveal(View sourceView, int colorRes, final AnimatorListener listener) {
         // Make reveal cover the display
         final RevealView revealView = new RevealView(this);
-        mLayoutParams.height = mCalculationsDisplay.getMeasuredHeight()
-                - getResources().getDimensionPixelSize(R.dimen.above_display_margin);
         revealView.setLayoutParams(mLayoutParams);
         revealView.setRevealColor(getResources().getColor(colorRes));
         mCalculationsDisplay.addView(revealView);
@@ -821,10 +842,30 @@ public class Calculator extends Activity
                 setClickableSpan(mInfoView, units, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CalculatorSettings.setRadiansEnabled(getBaseContext(), !CalculatorSettings.useRadians(getBaseContext()));
-                        updateDetails();
-                        setState(CalculatorState.INPUT);
-                        mEvaluator.evaluate(mFormulaEditText.getText(), Calculator.this);
+                        final int RAD = 0;
+                        final int DEG = 1;
+                        final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                        final Menu menu = popupMenu.getMenu();
+                        menu.add(0, RAD, menu.size(), R.string.radians);
+                        menu.add(0, DEG, menu.size(), R.string.degrees);
+                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case RAD:
+                                        CalculatorSettings.setRadiansEnabled(getBaseContext(), true);
+                                        break;
+                                    case DEG:
+                                        CalculatorSettings.setRadiansEnabled(getBaseContext(), false);
+                                        break;
+                                }
+                                updateDetails();
+                                setState(CalculatorState.INPUT);
+                                mEvaluator.evaluate(mFormulaEditText.getText(), Calculator.this);
+                                return true;
+                            }
+                        });
+                        popupMenu.show();
                     }
                 });
             }
@@ -832,11 +873,12 @@ public class Calculator extends Activity
     }
 
     private void setClickableSpan(TextView textView, final String word, final View.OnClickListener listener) {
-        Spannable spans = (Spannable) textView.getText();
+        final Spannable spans = (Spannable) textView.getText();
         String text = spans.toString();
         ClickableSpan span = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
+                Selection.setSelection(spans, 0);
                 listener.onClick(null);
             }
 

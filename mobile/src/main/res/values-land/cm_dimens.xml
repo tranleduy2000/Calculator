@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- History -->
+    <dimen name="history_text_size">30sp</dimen>
+
+    <!-- Display -->
+    <dimen name="display_height">100dp</dimen>
+    <dimen name="display_height_small">50dp</dimen>
+    <dimen name="display_height_graph">50dp</dimen>
+</resources>

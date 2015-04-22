@@ -1,6 +1,8 @@
 package com.android2.calculator3;
 
 import android.view.View;
+import android.view.ViewTreeObserver;
+
 import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.GraphView.PanListener;
 import com.android2.calculator3.view.GraphView.ZoomListener;
@@ -26,6 +28,14 @@ public class GraphController implements
         mGraphModule = module;
         mMainGraphView = view;
         addGraphView(view);
+        mMainGraphView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (mEquation != null) {
+                    startGraph(mEquation);
+                }
+            }
+        });
     }
 
     public void addGraphView(GraphView view) {

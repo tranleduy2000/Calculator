@@ -8,4 +8,10 @@
     <color name="history_input">#E6E6E6</color>
     <color name="history_result">#999999</color>
     <color name="widget_text_color">#ffffff</color>
+
+    <!-- Graph colors -->
+    <color name="graph_background">#f5f5f5</color>
+    <color name="graph_axis">#cecece</color>
+    <color name="graph_line">@color/calculator_accent_color</color>
+    <color name="graph_text">#cecece</color>
 </resources>

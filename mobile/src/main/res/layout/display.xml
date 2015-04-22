@@ -43,7 +43,7 @@
         <RelativeLayout
             android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/display_height"
             android:background="@drawable/white_card">
 
             <com.android2.calculator3.view.display.AdvancedDisplay

@@ -14,7 +14,6 @@ import java.lang.reflect.Field;
 public class Button extends android.widget.Button {
 
 	private RippleManager mRippleManager = new RippleManager();
-    private OnClickListener mTempOnClickListener;
 
     public Button(Context context) {
         super(context);
@@ -42,7 +41,6 @@ public class Button extends android.widget.Button {
 
 	private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
         applyStyle(context, attrs, defStyleAttr, defStyleRes);
-        setOnClickListener(mTempOnClickListener);
 	}
 
     public void applyStyle(int resId){
@@ -52,18 +50,6 @@ public class Button extends android.widget.Button {
     private void applyStyle(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
         mRippleManager.onCreate(this, context, attrs, defStyleAttr, defStyleRes);
     }
-
-    @Override
-	public void setOnClickListener(OnClickListener l) {
-		if(l == mRippleManager) {
-            super.setOnClickListener(l);
-        } else if (mRippleManager == null) {
-            mTempOnClickListener = l;
-        } else {
-			mRippleManager.setOnClickListener(l);
-			setOnClickListener(mRippleManager);
-		}	
-	}
 	
 	@Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {

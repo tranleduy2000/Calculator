@@ -11,7 +11,6 @@ import com.rey.material.drawable.RippleDrawable;
 public class ImageButton extends android.widget.ImageButton {
 
 	private RippleManager mRippleManager = new RippleManager();
-    private OnClickListener mTempOnClickListener;
 
     public ImageButton(Context context) {
         super(context);
@@ -39,7 +38,6 @@ public class ImageButton extends android.widget.ImageButton {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
         applyStyle(context, attrs, defStyleAttr, defStyleRes);
-        setOnClickListener(mTempOnClickListener);
     }
 
     public void applyStyle(int resId){
@@ -58,18 +56,6 @@ public class ImageButton extends android.widget.ImageButton {
         else
             super.setBackgroundDrawable(drawable);
     }
-	
-	@Override
-	public void setOnClickListener(OnClickListener l) {
-		if(l == mRippleManager) {
-            super.setOnClickListener(l);
-        } else if (mRippleManager == null) {
-            mTempOnClickListener = l;
-        } else{
-			mRippleManager.setOnClickListener(l);
-			setOnClickListener(mRippleManager);
-		}	
-	}
 	
 	@Override
     public boolean onTouchEvent(@NonNull MotionEvent event) {
