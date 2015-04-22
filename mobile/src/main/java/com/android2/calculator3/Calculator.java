@@ -523,6 +523,10 @@ public class Calculator extends Activity
             }
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
+        } else if (expr.contains(mX)) {
+            mHistory.enter(expr, result);
+            mDisplayView.scrollToMostRecent();
+            onResult("");
         } else if (!TextUtils.isEmpty(result)) {
             mHistory.enter(expr, result);
             mDisplayView.scrollToMostRecent();
@@ -535,7 +539,6 @@ public class Calculator extends Activity
         if (expr.contains(mX)) {
             transitionToGraph();
             mGraphController.startGraph(mFormulaEditText.getText());
-            mEqualButton.setState(State.NEXT);
         } else {
             transitionToDisplay();
             if (expr.equals(result) || mFormulaEditText.hasNext()) {
@@ -590,6 +593,9 @@ public class Calculator extends Activity
                     mFormulaEditText.next();
                     break;
             }
+        } else if (mCurrentState == CalculatorState.GRAPHING) {
+            setState(CalculatorState.EVALUATE);
+            mEvaluator.evaluate(text, this);
         }
     }
 

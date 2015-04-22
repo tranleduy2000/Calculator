@@ -61,6 +61,7 @@
         <item name="android:paddingBottom">12dip</item>
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
+        <item name="android:layout_height">127.6dp</item>
         <item name="minTextSize">36sp</item>
         <item name="maxTextSize">64sp</item>
         <item name="stepTextSize">8sp</item>
@@ -71,6 +72,7 @@
         <item name="android:paddingBottom">34dip</item>
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
+        <item name="android:layout_height">85dp</item>
         <item name="textSize">36sp</item>
     </style>
 
