@@ -18,9 +18,9 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="X">X</string>
   <string name="Y">Y</string>
-  <string name="arcsin">asin</string>
-  <string name="arccos">acos</string>
-  <string name="arctan">atan</string>
+  <string name="fun_arcsin">asin</string>
+  <string name="fun_arccos">acos</string>
+  <string name="fun_arctan">atan</string>
   <string name="dx">dX</string>
   <string name="dy">dY</string>
   <string name="solveForX">Розв’язати по X</string>

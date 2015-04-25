@@ -12,7 +12,7 @@
     <dimen name="above_display_margin">7.33dp</dimen>
     <dimen name="below_display_margin">-7.33dp</dimen>
     <dimen name="graph_margin">8dp</dimen>
-    <dimen name="display_height">220dp</dimen>
+    <dimen name="display_height">227.33dp</dimen>
     <dimen name="display_height_small">120dp</dimen>
     <dimen name="display_height_graph">100dp</dimen>
 

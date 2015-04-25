@@ -36,11 +36,11 @@
     <string name="Y">Y</string>
 
     <!-- Displayed on buttons on screen for the arcsin function. -->
-    <string name="arcsin">asin</string>
+    <string name="fun_arcsin">asin</string>
     <!-- Displayed on buttons on screen for the arccos function. -->
-    <string name="arccos">acos</string>
+    <string name="fun_arccos">acos</string>
     <!-- Displayed on buttons on screen for the arctan function. -->
-    <string name="arctan">atan</string>
+    <string name="fun_arctan">atan</string>
 
     <string name="dot">.</string>
 
@@ -65,6 +65,7 @@
 
     <!-- Displayed on buttons on screen for parentheses. -->
     <string name="parentheses" translatable="false">( )</string>
+    <string name="desc_parentheses">Parentheses</string>
 
     <string name="text_copied_toast">Text copied.</string>
     <string name="copy">Copy \'%s\'</string>

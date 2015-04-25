@@ -10,6 +10,7 @@ import com.xlythe.math.GraphModule;
 import com.xlythe.math.GraphModule.OnGraphUpdatedListener;
 import com.xlythe.math.Point;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -55,6 +56,13 @@ public class GraphController implements
         invalidateModule();
         mEquation = equation;
         mGraphModule.updateGraph(equation, this);
+    }
+
+    public void clearGraph() {
+        for (GraphView view : mGraphViews) {
+            view.setData(new ArrayList<Point>());
+            view.invalidate();
+        }
     }
 
     private void invalidateModule() {

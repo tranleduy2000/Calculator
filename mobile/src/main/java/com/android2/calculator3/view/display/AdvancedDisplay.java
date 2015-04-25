@@ -147,9 +147,9 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
         setEditableFactory(factory);
 
         final List<String> keywords = Arrays.asList(
-                context.getString(R.string.arcsin) + "(",
-                context.getString(R.string.arccos) + "(",
-                context.getString(R.string.arctan) + "(",
+                context.getString(R.string.fun_arcsin) + "(",
+                context.getString(R.string.fun_arccos) + "(",
+                context.getString(R.string.fun_arctan) + "(",
                 context.getString(R.string.fun_sin) + "(",
                 context.getString(R.string.fun_cos) + "(",
                 context.getString(R.string.fun_tan) + "(",

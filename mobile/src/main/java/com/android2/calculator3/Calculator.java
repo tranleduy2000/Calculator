@@ -34,7 +34,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -52,6 +51,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
@@ -303,7 +303,7 @@ public class Calculator extends Activity
                 mCalculationsDisplay.requestLayout();
             }
         });
-        animator.start();
+        play(animator);
     }
 
     private void transitionToDisplay() {
@@ -316,12 +316,7 @@ public class Calculator extends Activity
 
         // Show the result and then measure to grab new coordinates
         mResultEditText.setVisibility(View.VISIBLE);
-        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mCalculationsDisplay.measure(
-                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-        int newHeight = mCalculationsDisplay.getMeasuredHeight();
+        int newHeight = getResources().getDimensionPixelSize(R.dimen.display_height);
 
         // Now animate between the old and new heights
         ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
@@ -336,9 +331,10 @@ public class Calculator extends Activity
             @Override
             public void onAnimationFinished() {
                 setState(CalculatorState.INPUT);
+                mGraphController.clearGraph();
             }
         });
-        animator.start();
+        play(animator);
     }
 
     @Override
@@ -427,9 +423,11 @@ public class Calculator extends Activity
             case R.id.clr:
                 onClear();
                 break;
-            case R.id.det:
-                // Add left parenthesis after functions.
-                mFormulaEditText.insert(((Button) view).getText() + "(");
+            case R.id.more:
+                revealMore();
+                break;
+            case R.id.parentheses:
+                mFormulaEditText.setText('(' + mFormulaEditText.getText() + ')');
                 break;
             case R.id.fun_cos:
             case R.id.fun_sin:
@@ -438,6 +436,7 @@ public class Calculator extends Activity
                 updateDetails();
             case R.id.fun_ln:
             case R.id.fun_log:
+            case R.id.fun_det:
                 // Add left parenthesis after functions.
                 mFormulaEditText.insert(((Button) view).getText() + "(");
                 break;
@@ -604,6 +603,43 @@ public class Calculator extends Activity
         mFormulaEditText.backspace();
     }
 
+    private void revealMore() {
+        ViewGroup advancedPad = (ViewGroup) findViewById(R.id.pad_advanced);
+        View sourceView = advancedPad.findViewById(R.id.more);
+        final View revealView = advancedPad.findViewById(R.id.pad_advanced_2);
+        boolean reverse = revealView.getVisibility() == View.VISIBLE;
+        revealView.setVisibility(View.VISIBLE);
+
+        final SupportAnimator revealAnimator;
+        final int[] clearLocation = new int[2];
+        sourceView.getLocationInWindow(clearLocation);
+        clearLocation[0] += sourceView.getWidth() / 2;
+        clearLocation[1] += sourceView.getHeight() / 2;
+        final int revealCenterX = clearLocation[0] - revealView.getLeft();
+        final int revealCenterY = clearLocation[1] - revealView.getTop();
+        final double x1_2 = Math.pow(revealView.getLeft() - revealCenterX, 2);
+        final double x2_2 = Math.pow(revealView.getRight() - revealCenterX, 2);
+        final double y_2 = Math.pow(revealView.getTop() - revealCenterY, 2);
+        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
+
+        float start = reverse ? revealRadius : 0;
+        float end = reverse ? 0 : revealRadius;
+        revealAnimator =
+                ViewAnimationUtils.createCircularReveal(revealView,
+                        revealCenterX, revealCenterY, start, end);
+        revealAnimator.setDuration(
+                getResources().getInteger(android.R.integer.config_longAnimTime));
+        if (reverse) {
+            revealAnimator.addListener(new AnimationFinishedListener() {
+                @Override
+                public void onAnimationFinished() {
+                    revealView.setVisibility(View.GONE);
+                }
+            });
+        }
+        play(revealAnimator);
+    }
+
     private void reveal(View sourceView, int colorRes, final AnimatorListener listener) {
         // Make reveal cover the display
         final RevealView revealView = new RevealView(this);
@@ -635,7 +671,7 @@ public class Calculator extends Activity
         alphaAnimator.addListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
-                mMainDisplay.removeView(revealView);
+                mCalculationsDisplay.removeView(revealView);
             }
         });
 

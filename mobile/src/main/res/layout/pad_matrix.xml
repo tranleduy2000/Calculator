@@ -28,7 +28,7 @@
         android:src="@drawable/matrix" />
 
     <com.android2.calculator3.view.Button
-        android:id="@+id/det"
+        android:id="@+id/fun_det"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/det" />

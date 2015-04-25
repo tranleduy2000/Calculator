@@ -42,8 +42,8 @@
     <string name="advanced" msgid="7122495413742976492">"დამატებითი ფუნქციების პანელი"</string>
     <string name="clear_history" msgid="8458043980601165012">"ისტორიის წაშლა"</string>
     <string name="text_copied_toast" msgid="5801480710472541833">"ტექსტი დაკოპირდა."</string>
-    <string name="leftParenDesc" msgid="8446428211982811379">"მარცხენა ფრჩხილი"</string>
-    <string name="rightParenDesc" msgid="9133691645148976523">"მარჯვენა ფრჩხილი"</string>
+    <string name="desc_lparen" msgid="8446428211982811379">"მარცხენა ფრჩხილი"</string>
+    <string name="desc_rparen" msgid="9133691645148976523">"მარჯვენა ფრჩხილი"</string>
     <string name="factorialDesc" msgid="9217024218012761574">"ფაქტორიალი"</string>
     <string name="lnDesc" msgid="1052579286300842270">"ნატურალური ლოგარითმი"</string>
     <string name="lgDesc" msgid="6490920451513731160">"ლოგარითმი"</string>

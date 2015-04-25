@@ -48,9 +48,9 @@ public class CalculatorExpressionTokenizer {
         mReplacements.add(new Localizer("/", context.getString(R.string.op_div)));
         mReplacements.add(new Localizer("*", context.getString(R.string.op_mul)));
         mReplacements.add(new Localizer("-", context.getString(R.string.op_sub)));
-        mReplacements.add(new Localizer("asin", context.getString(R.string.arcsin)));
-        mReplacements.add(new Localizer("acos", context.getString(R.string.arccos)));
-        mReplacements.add(new Localizer("atan", context.getString(R.string.arctan)));
+        mReplacements.add(new Localizer("asin", context.getString(R.string.fun_arcsin)));
+        mReplacements.add(new Localizer("acos", context.getString(R.string.fun_arccos)));
+        mReplacements.add(new Localizer("atan", context.getString(R.string.fun_arctan)));
         mReplacements.add(new Localizer("sin", context.getString(R.string.fun_sin)));
         mReplacements.add(new Localizer("cos", context.getString(R.string.fun_cos)));
         mReplacements.add(new Localizer("tan", context.getString(R.string.fun_tan)));

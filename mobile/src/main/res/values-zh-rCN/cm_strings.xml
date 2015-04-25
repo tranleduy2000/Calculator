@@ -19,9 +19,9 @@
   <string name="application_copyright">版权所有 \u00A9 2014 CyanogenMod 项目</string>
   <string name="X">X</string>
   <string name="Y">Y</string>
-  <string name="arcsin">asin</string>
-  <string name="arccos">acos</string>
-  <string name="arctan">atan</string>
+  <string name="fun_arcsin">asin</string>
+  <string name="fun_arccos">acos</string>
+  <string name="fun_arctan">atan</string>
   <string name="dx">dX</string>
   <string name="dy">dY</string>
   <string name="solveForX">求解 X</string>

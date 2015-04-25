@@ -42,8 +42,8 @@
     <string name="advanced" msgid="7122495413742976492">"Дэлгэрэнгүй самбар"</string>
     <string name="clear_history" msgid="8458043980601165012">"Түүх цэвэрлэх"</string>
     <string name="text_copied_toast" msgid="5801480710472541833">"Текст хуулагдав."</string>
-    <string name="leftParenDesc" msgid="8446428211982811379">"зүүн хаалт"</string>
-    <string name="rightParenDesc" msgid="9133691645148976523">"баруун хаалт"</string>
+    <string name="desc_lparen" msgid="8446428211982811379">"зүүн хаалт"</string>
+    <string name="desc_rparen" msgid="9133691645148976523">"баруун хаалт"</string>
     <string name="factorialDesc" msgid="9217024218012761574">"факториал"</string>
     <string name="lnDesc" msgid="1052579286300842270">"натурал логарифм"</string>
     <string name="lgDesc" msgid="6490920451513731160">"логарифм"</string>
