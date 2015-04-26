@@ -39,21 +39,17 @@
             android:id="@+id/calculations"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
+            android:paddingBottom="@dimen/above_display_margin"
             android:background="@drawable/white_card">
 
-            <com.android2.calculator3.view.display.AdvancedDisplay
+            <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/formula"
-                style="@style/Theme.Calculator.Display.Main.Formula"
-                android:layout_width="match_parent"
-                ui:textSize="23sp"
-                ui:textColor="@color/display_formula_text_color" />
+                style="@style/Theme.Calculator.Display.Main.Formula" />
 
-            <com.android2.calculator3.view.display.AdvancedDisplay
+            <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/result"
-                style="@style/Theme.Calculator.Display.Main.Result"
-                android:layout_width="match_parent"
                 android:layout_below="@id/formula"
-                ui:textColor="@color/display_result_text_color" />
+                style="@style/Theme.Calculator.Display.Main.Result" />
 
         </RelativeLayout>
 

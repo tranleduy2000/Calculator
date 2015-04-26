@@ -389,7 +389,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
         mRoot.removeAllViews();
 
         // Always start with a CalculatorEditText
-        mActiveEditText = CalculatorEditText.getInstance(getContext(), this);
+        mActiveEditText = createCalculatorEditText();
         addView(mActiveEditText);
 
         // Notify the text watcher
@@ -406,7 +406,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
     public void onRemoveView(View view) {
         removeView(view);
     }
-    
+
     /**
      * Loop around when arrow keys are pressed
      * */
@@ -560,7 +560,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
         getActiveEditText().setText(leftText);
 
         // Create a right EditText
-        EditText et = CalculatorEditText.getInstance(getContext(), this);
+        EditText et = createCalculatorEditText();
         et.setText(rightText);
         addView(et, index + 2);
 
@@ -698,7 +698,7 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
                     mRoot.addView(c.getView(getContext(), mSolver, equation, this));
 
                     // Keep EditTexts in between custom views
-                    addView(CalculatorEditText.getInstance(getContext(), this));
+                    addView(createCalculatorEditText());
 
                     // Update text and loop again
                     text = text.substring(equation.length());
@@ -737,6 +737,11 @@ public class AdvancedDisplay extends ScrollableDisplay implements EventListener 
 
     public Set<DisplayComponent> getComponents() {
         return mComponents;
+    }
+
+    private CalculatorEditText createCalculatorEditText() {
+        CalculatorEditText calculatorEditText = new CalculatorEditText(getContext());
+        return calculatorEditText;
     }
 
     public interface OnTextSizeChangeListener {

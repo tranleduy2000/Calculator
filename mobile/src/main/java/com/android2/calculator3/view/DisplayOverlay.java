@@ -1,5 +1,6 @@
 package com.android2.calculator3.view;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewCompat;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
@@ -37,7 +39,7 @@ public class DisplayOverlay extends RelativeLayout {
     /**
      * Alpha when history is pulled down
      * */
-    private static final float MAX_ALPHA = 0.3f;
+    private static final float MAX_ALPHA = 0.6f;
 
     private static boolean DEBUG = false;
     private static final String TAG = "DisplayOverlay";
@@ -317,34 +319,74 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void expand() {
-        settleAt(mMaxTranslation, MAX_ALPHA);
+        expand(null);
+    }
+
+    public void expand(Animator.AnimatorListener listener) {
+        settleAt(mMaxTranslation, MAX_ALPHA, listener);
         if (mFade != null) {
             mFade.setOnTouchListener(mFadeOnTouchListener);
         }
     }
 
     public void collapse() {
-        settleAt(mMinTranslation, 0);
+        collapse(null);
+    }
+
+    public void collapse(Animator.AnimatorListener listener) {
+        settleAt(mMinTranslation, 0, listener);
         if (mFade != null) {
             mFade.setOnTouchListener(null);
         }
-    }
-
-    public int getDisplayHeight() {
-        return mMainDisplay.getHeight();
     }
 
     /**
      * Smoothly translates the display overlay to the given target
      *
      * @param destTx target translation
+     * @param alpha background alpha
      */
     private void settleAt(float destTx, float alpha) {
-        animate().translationY(destTx).setListener(new AnimationFinishedListener() {
+        settleAt(destTx, alpha, null);
+    }
+
+    /**
+     * Smoothly translates the display overlay to the given target
+     *
+     * @param destTx target translation
+     * @param alpha background alpha
+     * @param listener listener for the end of the animation
+     */
+    private void settleAt(float destTx, float alpha, final Animator.AnimatorListener listener) {
+        animate().translationY(destTx).setListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationFinished() {
+            public void onAnimationStart(Animator animation) {
+                if (listener != null) {
+                    listener.onAnimationStart(animation);
+                }
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
                 if (mTranslateStateListener != null) {
                     mTranslateStateListener.onTranslateStateChanged(getTranslateState());
+                }
+                if (listener != null) {
+                    listener.onAnimationEnd(animation);
+                }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                if (listener != null) {
+                    listener.onAnimationCancel(animation);
+                }
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                if (listener != null) {
+                    listener.onAnimationRepeat(animation);
                 }
             }
         }).start();

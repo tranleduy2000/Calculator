@@ -17,74 +17,101 @@
 package com.android2.calculator3.view.display;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.MatrixView;
+import com.android2.calculator3.view.CalculatorEditable;
 import com.android2.calculator3.view.TextUtil;
 import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class CalculatorEditText extends EditText {
-    private static final int BLINK = 500;
-    private final long mShowCursor = SystemClock.uptimeMillis();
-    private final Paint mHighlightPaint = new Paint();
-    private final Handler mHandler = new Handler();
-    private final Runnable mRefresher = new Runnable() {
+    // Restrict keys from hardware keyboards
+    private static final char[] ACCEPTED_CHARS = "0123456789.+-*/\u2212\u00d7\u00f7()!%^".toCharArray();
+
+    private final Set<TextWatcher> mTextWatchers = new HashSet<>();
+    private boolean mTextWatchersEnabled = true;
+    private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public void run() {
-            invalidate();
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (mSolver == null) return;
+            mTextWatchersEnabled = false;
+
+            String text = removeFormatting(s.toString());
+
+            // Get the selection handle, since we're setting text and that'll overwrite it
+            mSelectionHandle = getSelectionStart();
+
+            // Adjust the handle by removing any comas or spacing to the left
+            String cs = s.subSequence(0, mSelectionHandle).toString();
+            mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
+
+            // Update the text with formatted (comas, etc) text
+            setText(formatText(text));
+            setSelection(Math.min(mSelectionHandle, getText().length()));
+
+            mTextWatchersEnabled = true;
         }
     };
     private EquationFormatter mEquationFormatter;
     private int mSelectionHandle = 0;
     private Solver mSolver;
     private EventListener mEventListener;
+    private List<String> mKeywords;
 
-    public static CalculatorEditText getInstance(Context context, EventListener eventListener) {
-        CalculatorEditText text = (CalculatorEditText) View.inflate(context, R.layout.view_edittext, null);
-        text.mEventListener = eventListener;
-        int padding = 0;//(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, context.getResources().getDisplayMetrics());
-        text.setPadding(padding, 0, padding, 0);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LayoutParams.WRAP_CONTENT,
-                LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL;
-        text.setLayoutParams(params);
-        return text;
-    }
+    private float mMaximumTextSize;
+    private float mMinimumTextSize;
+    private float mStepTextSize;
+
+    // Try and use as large a text as possible, if the width allows it
+    private int mWidthConstraint = -1;
+    private int mHeightConstraint = -1;
+    private final Paint mTempPaint = new TextPaint();
+    private AdvancedDisplay.OnTextSizeChangeListener mOnTextSizeChangeListener;
 
     public CalculatorEditText(Context context) {
         super(context);
-        setUp();
+        setUp(context, null);
     }
 
     public CalculatorEditText(Context context, AttributeSet attr) {
         super(context, attr);
-        setUp();
+        setUp(context, attr);
     }
 
-    private void setUp() {
+    private void setUp(Context context, AttributeSet attrs) {
         setLongClickable(false);
 
         // Disable highlighting text
@@ -92,44 +119,207 @@ public class CalculatorEditText extends EditText {
 
         // Display ^ , and other visual cues
         mEquationFormatter = new EquationFormatter();
-        addTextChangedListener(new TextWatcher() {
-            boolean updating = false;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(updating || mSolver == null) return;
-                updating = true;
-
-                String text = removeFormatting(s.toString());
-
-                // Get the selection handle, since we're setting text and that'll overwrite it
-                mSelectionHandle = getSelectionStart();
-
-                // Adjust the handle by removing any comas or spacing to the left
-                String cs = s.subSequence(0, mSelectionHandle).toString();
-                mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
-
-                // Update the text with formatted (comas, etc) text
-                setText(formatText(text));
-                setSelection(Math.min(mSelectionHandle, getText().length()));
-
-                updating = false;
-            }
-        });
-
+        addTextChangedListener(mTextWatcher);
         setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus)
+                if (hasFocus && mEventListener != null)
                     mEventListener.onEditTextChanged(CalculatorEditText.this);
             }
         });
+
+        if(attrs != null) {
+            final TypedArray a = context.obtainStyledAttributes(
+                    attrs, R.styleable.CalculatorEditText, 0, 0);
+            mMaximumTextSize = a.getDimension(
+                    R.styleable.CalculatorEditText_maxTextSize, getTextSize());
+            mMinimumTextSize = a.getDimension(
+                    R.styleable.CalculatorEditText_minTextSize, getTextSize());
+            mStepTextSize = a.getDimension(R.styleable.CalculatorEditText_stepTextSize,
+                    (mMaximumTextSize - mMinimumTextSize) / 3);
+            a.recycle();
+
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, mMaximumTextSize);
+            setMinimumHeight((int) (mMaximumTextSize * 1.2) + getPaddingBottom() + getPaddingTop());
+        }
+
+        Editable.Factory factory = new CalculatorEditable.Factory();
+        setEditableFactory(factory);
+
+        mKeywords = Arrays.asList(
+                context.getString(R.string.fun_arcsin) + "(",
+                context.getString(R.string.fun_arccos) + "(",
+                context.getString(R.string.fun_arctan) + "(",
+                context.getString(R.string.fun_sin) + "(",
+                context.getString(R.string.fun_cos) + "(",
+                context.getString(R.string.fun_tan) + "(",
+                context.getString(R.string.fun_log) + "(",
+                context.getString(R.string.mod) + "(",
+                context.getString(R.string.fun_ln) + "(",
+                context.getString(R.string.det) + "(",
+                context.getString(R.string.dx),
+                context.getString(R.string.dy),
+                context.getString(R.string.cbrt) + "(");
+        NumberKeyListener calculatorKeyListener = new NumberKeyListener() {
+            @Override
+            public int getInputType() {
+                return EditorInfo.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
+            }
+
+            @Override
+            protected char[] getAcceptedChars() {
+                return ACCEPTED_CHARS;
+            }
+
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                /*
+                 * the EditText should still accept letters (eg. 'sin') coming from the on-screen touch buttons, so don't filter anything.
+                 */
+                return null;
+            }
+
+            @Override
+            public boolean onKeyDown(View view, Editable content, int keyCode, KeyEvent event) {
+                if(keyCode == KeyEvent.KEYCODE_DEL) {
+                    CalculatorEditText.this.backspace();
+                }
+                return super.onKeyDown(view, content, keyCode, event);
+            }
+        };
+        setKeyListener(calculatorKeyListener);
+    }
+
+    @Override
+    public void addTextChangedListener(TextWatcher watcher) {
+        mTextWatchers.add(watcher);
+    }
+
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        if (mTextWatchersEnabled) {
+            for (TextWatcher textWatcher : mTextWatchers) {
+                textWatcher.beforeTextChanged(getText().toString(), 0, 0, 0);
+            }
+        }
+        super.setText(text, type);
+        if (text != null) {
+            setSelection(getText().length());
+        }
+        invalidateTextSize();
+        if (mTextWatchersEnabled) {
+            for (TextWatcher textWatcher : mTextWatchers) {
+                textWatcher.afterTextChanged(getText());
+                textWatcher.onTextChanged(getCleanText(), 0, 0, 0);
+            }
+        }
+    }
+
+    public String getCleanText() {
+        return toString();
+    }
+
+    public void insert(String text) {
+        if (mTextWatchersEnabled) {
+            for (TextWatcher textWatcher : mTextWatchers) {
+                textWatcher.beforeTextChanged(getText().toString(), 0, 0, 0);
+            }
+        }
+        getText().insert(getSelectionStart(), text);
+        invalidateTextSize();
+        if (mTextWatchersEnabled) {
+            for (TextWatcher textWatcher : mTextWatchers) {
+                textWatcher.afterTextChanged(getText());
+                textWatcher.onTextChanged(getText().toString(), 0, 0, 0);
+            }
+        }
+    }
+
+    private void invalidateTextSize() {
+        float oldTextSize = getTextSize();
+        float newTextSize = getVariableTextSize(getText().toString());
+        if (oldTextSize != newTextSize) {
+            setTextSize(newTextSize);
+//            ObjectAnimator.ofFloat(this, "textSize", oldTextSize, newTextSize).start();
+        }
+    }
+
+    public void clear() {
+        setText(null);
+    }
+
+    public boolean isCursorModified() {
+        return getSelectionStart() != getText().length();
+    }
+
+    public void next() {
+        if (getSelectionStart() == getText().length()) {
+            setSelection(0);
+        } else {
+            setSelection(getSelectionStart() + 1);
+        }
+    }
+
+    public void backspace() {
+        // Check and remove keywords
+        int selectionHandle = getSelectionStart();
+        String textBeforeInsertionHandle = getText().toString().substring(0, selectionHandle);
+        String textAfterInsertionHandle = getText().toString().substring(selectionHandle, getText().toString().length());
+
+        for(String s : mKeywords) {
+            if(textBeforeInsertionHandle.endsWith(s)) {
+                int deletionLength = s.length();
+                String text = textBeforeInsertionHandle.substring(0, textBeforeInsertionHandle.length() - deletionLength) + textAfterInsertionHandle;
+                setText(text);
+                setSelection(selectionHandle - deletionLength);
+                return;
+            }
+        }
+
+        if (selectionHandle != 0) {
+            setText(getText().subSequence(0, selectionHandle - 1).toString()
+                            + getText().subSequence(selectionHandle, getText().length()));
+        }
+    }
+
+    public void setOnTextSizeChangeListener(AdvancedDisplay.OnTextSizeChangeListener listener) {
+        mOnTextSizeChangeListener = listener;
+    }
+
+    public float getVariableTextSize(String text) {
+        if (mWidthConstraint < 0 || mMaximumTextSize <= mMinimumTextSize) {
+            // Not measured, bail early.
+            return getTextSize();
+        }
+
+        // Count exponents, which aren't measured properly.
+        int exponents = TextUtil.countOccurrences(text, '^');
+
+        // Step through increasing text sizes until the text would no longer fit.
+        float lastFitTextSize = mMinimumTextSize;
+        while (lastFitTextSize < mMaximumTextSize) {
+            final float nextSize = Math.min(lastFitTextSize + mStepTextSize, mMaximumTextSize);
+            mTempPaint.setTextSize(nextSize);
+            if (mTempPaint.measureText(text) > mWidthConstraint) {
+                break;
+            } else if(nextSize + nextSize * exponents / 2 > mHeightConstraint) {
+                break;
+            } else {
+                lastFitTextSize = nextSize;
+            }
+        }
+
+        return lastFitTextSize;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        mWidthConstraint =
+                MeasureSpec.getSize(widthMeasureSpec) - getPaddingLeft() - getPaddingRight();
+        mHeightConstraint =
+                MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop() - getPaddingBottom();
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, getVariableTextSize(getText().toString()));
     }
 
     public void setSolver(Solver solver) {
@@ -183,11 +373,6 @@ public class CalculatorEditText extends EditText {
                 v = mEventListener.previousView(this);
                 while(!v.isFocusable())
                     v = mEventListener.previousView(v);
-                if(MatrixView.class.isAssignableFrom(v.getClass())) {
-                    // TODO CalculatorEditText shouldn't know of MatrixView
-                    v = ((ViewGroup) v).getChildAt(((ViewGroup) v).getChildCount() - 1);
-                    v = ((ViewGroup) v).getChildAt(((ViewGroup) v).getChildCount() - 1);
-                }
                 return v;
         }
         return super.focusSearch(direction);
@@ -196,19 +381,13 @@ public class CalculatorEditText extends EditText {
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // TextViews don't draw the cursor if textLength is 0. Because we're an
-        // array of TextViews, we'd prefer that it did.
-        if(getText().length() == 0 && isEnabled() && (isFocused() || isPressed())) {
-            if((SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
-                mHighlightPaint.setColor(getCurrentTextColor());
-                mHighlightPaint.setStyle(Paint.Style.STROKE);
-                if (android.os.Build.VERSION.SDK_INT >= 21) {
-                    mHighlightPaint.setStrokeWidth(6f);
-                }
-                canvas.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight(), mHighlightPaint);
-                mHandler.postAtTime(mRefresher, SystemClock.uptimeMillis() + BLINK);
-            }
-        }
+//        if(isEnabled() && (SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
+//            mHighlightPaint.setColor(Color.RED);
+//            mHighlightPaint.setStyle(Paint.Style.STROKE);
+//            mHighlightPaint.setStrokeWidth(60f);
+//            canvas.drawRect(0, 0, getWidth(), getHeight(), mHighlightPaint);
+//        }
+//        mHandler.postDelayed(mRefresher, BLINK);
     }
 
     class NoTextSelectionMode implements ActionMode.Callback {
