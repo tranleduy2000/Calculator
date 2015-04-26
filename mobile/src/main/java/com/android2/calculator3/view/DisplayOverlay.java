@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
 import com.android2.calculator3.R;
@@ -111,17 +112,8 @@ public class DisplayOverlay extends RelativeLayout {
         });
     }
 
-    public boolean canChildScrollUp() {
-        return ViewCompat.canScrollVertically(mRecyclerView, -1);
-    }
-
-    public boolean canChildScrollDown() {
-        return ViewCompat.canScrollVertically(mRecyclerView, 1);
-    }
-
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
-        Log.d(TAG, "requestDisallowInterceptTouchEvent: " + b);
         // Nope.
     }
 
@@ -204,6 +196,21 @@ public class DisplayOverlay extends RelativeLayout {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            private boolean mCloseOnFling;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+                    mCloseOnFling = true;
+                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    if (mCloseOnFling && isScrolledToEnd()) {
+                        collapse();
+                    }
+                }
+            }
+        });
 
         mMainDisplay = findViewById(R.id.main_display);
     }
