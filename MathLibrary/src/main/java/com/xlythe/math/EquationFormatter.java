@@ -7,7 +7,7 @@ public class EquationFormatter {
      *
      * ie. sin(90 becomes sin(90)
      * */
-    public String appendParenthesis(String input) {
+    public static String appendParenthesis(String input) {
         final StringBuilder formattedInput = new StringBuilder(input);
 
         int unclosedParen = 0;

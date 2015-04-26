@@ -28,24 +28,29 @@ import com.android2.calculator3.view.HistoryLine;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
+import com.xlythe.math.Solver;
 
 import java.util.Vector;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     private final Context mContext;
+    private final Solver mSolver;
     private final Vector<HistoryEntry> mEntries;
     private final EquationFormatter mEquationFormatter;
+    private final String mX;
     protected HistoryItemCallback mCallback;
 
     public interface HistoryItemCallback {
         void onHistoryItemSelected(HistoryEntry entry);
     }
 
-    public HistoryAdapter(Context context, History history, HistoryItemCallback callback) {
+    public HistoryAdapter(Context context, Solver solver, History history, HistoryItemCallback callback) {
         mContext = context;
+        mSolver = solver;
         mEntries = history.getEntries();
         mEquationFormatter = new EquationFormatter();
         mCallback = callback;
+        mX = context.getString(R.string.var_x);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -81,7 +86,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             }
         });
         holder.historyExpr.setText(formatText(entry.getBase()));
-        holder.historyResult.setText(entry.getEdited());
+        holder.historyResult.setText(formatText(entry.getEdited()));
+
+        if (entry.getBase().contains(mX)) {
+            holder.historyResult.setText(R.string.graph);
+        }
     }
 
     @Override
@@ -95,7 +104,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     protected Spanned formatText(String text) {
-        return Html.fromHtml(mEquationFormatter.insertSupScripts(text));
+        return Html.fromHtml(
+                mEquationFormatter.insertSupScripts(
+                mEquationFormatter.addComas(mSolver, text)));
     }
 
     public Context getContext() {

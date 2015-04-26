@@ -113,7 +113,8 @@ public class FloatingCalculator extends FloatingView {
         });
         mClear.setOnClickListener(mListener);
 
-        FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(getContext(), mListener, mHistory);
+        FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(
+                getContext(), mListener, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
 

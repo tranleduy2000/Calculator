@@ -22,6 +22,7 @@
     android:layout_height="match_parent" >
 
     <com.android2.calculator3.view.CalculatorPadLayout
+        android:id="@+id/pad_advanced_grid"
         style="@style/PadLayoutStyle.Advanced"
         android:background="@color/pad_advanced_background_color">
 
@@ -126,7 +127,7 @@
             android:id="@+id/const_x"
             style="@style/PadButtonStyle.Advanced"
             android:onClick="onButtonClick"
-            android:text="@string/X" />
+            android:text="@string/var_x" />
 
     </com.android2.calculator3.view.CalculatorPadLayout>
 
@@ -139,7 +140,7 @@
         android:id="@+id/more"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_margin="10dp"
+        android:padding="10dp"
         android:layout_gravity="bottom|right"
         android:scaleType="centerInside"
         android:background="@android:color/transparent"

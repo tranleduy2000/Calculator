@@ -31,9 +31,9 @@
     <!-- Displayed letters for the hex digit buttons -->
     <string name="F" translatable="false">F</string>
     <!-- Displayed letters for the variable digit buttons -->
-    <string name="X">X</string>
+    <string name="var_x">X</string>
     <!-- Displayed letters for the variable digit buttons -->
-    <string name="Y">Y</string>
+    <string name="var_y">Y</string>
 
     <!-- Displayed on buttons on screen for the arcsin function. -->
     <string name="fun_arcsin">asin</string>
@@ -100,4 +100,5 @@
     <string name="history_line_equals">=</string>
 
     <string name="desc_fun_percentage">Percent</string>
+    <string name="graph">Graph</string>
 </resources>

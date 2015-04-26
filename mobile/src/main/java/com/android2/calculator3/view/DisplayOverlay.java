@@ -2,6 +2,7 @@ package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -37,7 +38,7 @@ public class DisplayOverlay extends RelativeLayout {
      * */
     private static final float MAX_ALPHA = 0.3f;
 
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static final String TAG = "DisplayOverlay";
 
     private RecyclerView mRecyclerView;
@@ -108,6 +109,20 @@ public class DisplayOverlay extends RelativeLayout {
                 initializeHistory();
             }
         });
+    }
+
+    public boolean canChildScrollUp() {
+        return ViewCompat.canScrollVertically(mRecyclerView, -1);
+    }
+
+    public boolean canChildScrollDown() {
+        return ViewCompat.canScrollVertically(mRecyclerView, 1);
+    }
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean b) {
+        Log.d(TAG, "requestDisallowInterceptTouchEvent: " + b);
+        // Nope.
     }
 
     public enum TranslateState {
@@ -195,9 +210,9 @@ public class DisplayOverlay extends RelativeLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Log.d(TAG, "onInterceptTouchEvent");
         int action = MotionEventCompat.getActionMasked(ev);
         float y = ev.getRawY();
+        boolean intercepted = false;
         TranslateState state = getTranslateState();
 
         switch (action) {
@@ -207,20 +222,21 @@ public class DisplayOverlay extends RelativeLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dy = y - mInitialMotionY;
-                if (Math.abs(dy) < mTouchSlop) {
-                    return false;
-                }
-
                 if (dy < 0) {
-                    return isScrolledToEnd() && state != TranslateState.COLLAPSED;
+                    intercepted = isScrolledToEnd() && state != TranslateState.COLLAPSED;
                 } else if (dy > 0) {
-                    return state != TranslateState.EXPANDED;
+                    intercepted = state != TranslateState.EXPANDED;
                 }
 
                 break;
         }
 
-        return false;
+        if (!intercepted) {
+            mInitialMotionY = y;
+            mLastMotionY = y;
+        }
+
+        return intercepted;
     }
 
     private boolean isScrolledToEnd() {
@@ -338,7 +354,7 @@ public class DisplayOverlay extends RelativeLayout {
 
         if (mFade != null) {
             float range = mMaxTranslation - mMinTranslation;
-            float percent = 1 - ((mMaxTranslation - clampedY) / range);
+            float percent = range == 0 ? 0 : 1 - ((mMaxTranslation - clampedY) / range);
             mFade.setAlpha(MAX_ALPHA * percent);
 
             if (mFade.getAlpha() > 0) {

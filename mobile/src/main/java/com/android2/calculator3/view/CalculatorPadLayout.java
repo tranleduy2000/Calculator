@@ -106,6 +106,14 @@ public class CalculatorPadLayout extends ViewGroup {
         }
     }
 
+    public int getRows() {
+        return mRowCount;
+    }
+
+    public int getColumns() {
+        return mColumnCount;
+    }
+
     @Override
     public LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new MarginLayoutParams(getContext(), attrs);

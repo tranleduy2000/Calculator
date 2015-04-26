@@ -17,8 +17,8 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="application_copyright">\u00A9 Проект CyanogenMod, 2014</string>
-  <string name="X">X</string>
-  <string name="Y">Y</string>
+  <string name="var_x">X</string>
+  <string name="var_y">Y</string>
   <string name="fun_arcsin">asin</string>
   <string name="fun_arccos">acos</string>
   <string name="fun_arctan">atan</string>

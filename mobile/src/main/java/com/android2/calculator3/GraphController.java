@@ -1,6 +1,5 @@
 package com.android2.calculator3;
 
-import android.view.View;
 import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.view.GraphView;
@@ -16,8 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 public class GraphController implements
-        OnGraphUpdatedListener, PanListener, ZoomListener,
-        View.OnClickListener {
+        OnGraphUpdatedListener, PanListener, ZoomListener {
 
     private final Set<GraphView> mGraphViews = new HashSet<>();
     private final GraphModule mGraphModule;
@@ -91,30 +89,6 @@ public class GraphController implements
     @Override
     public void zoomApplied(float level) {
         invalidateGraph();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.exitGraph:
-                exitGraphMode();
-                break;
-            case R.id.minusZoom:
-                for (GraphView view : mGraphViews) {
-                    view.zoomOut();
-                }
-                break;
-            case R.id.plusZoom:
-                for (GraphView view : mGraphViews) {
-                    view.zoomIn();
-                }
-                break;
-            case R.id.resetZoom:
-                for (GraphView view : mGraphViews) {
-                    view.zoomReset();
-                }
-                break;
-        }
     }
 
     private void invalidateGraph() {

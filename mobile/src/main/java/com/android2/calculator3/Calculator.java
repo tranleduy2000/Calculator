@@ -34,7 +34,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -54,6 +53,7 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.android2.calculator3.view.CalculatorPadLayout;
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
@@ -69,6 +69,7 @@ import com.android2.calculator3.view.EqualsImageButton.State;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.Constants;
+import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.GraphModule;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
@@ -168,7 +169,7 @@ public class Calculator extends Activity
         // Rebuild constants. If the user changed their locale, it won't kill the app
         // but it might change a decimal point from . to ,
         Constants.rebuildConstants();
-        mX = getString(R.string.X);
+        mX = getString(R.string.var_x);
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mDisplayView.setFade(findViewById(R.id.history_fade));
@@ -242,8 +243,9 @@ public class Calculator extends Activity
         mMoreButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                mMoreButton.getLayoutParams().width = mAdvancedPad.getWidth() / 4;
-                mMoreButton.getLayoutParams().height = mAdvancedPad.getHeight() / 4;
+                CalculatorPadLayout pad = (CalculatorPadLayout) mAdvancedPad.findViewById(R.id.pad_advanced_grid);
+                mMoreButton.getLayoutParams().width = mAdvancedPad.getWidth() / pad.getColumns();
+                mMoreButton.getLayoutParams().height = mAdvancedPad.getHeight() / pad.getRows();
             }
         });
 
@@ -264,11 +266,13 @@ public class Calculator extends Activity
         mPersist.load();
         mHistory = mPersist.getHistory();
 
-        mHistoryAdapter = new HistoryAdapter(this, mHistory,
+        mHistoryAdapter = new HistoryAdapter(this,
+                mEvaluator.getSolver(),
+                mHistory,
         new HistoryAdapter.HistoryItemCallback() {
             @Override
             public void onHistoryItemSelected(HistoryEntry entry) {
-                mFormulaEditText.setText(entry.getEdited());
+                mFormulaEditText.setText(entry.getBase());
                 mDisplayView.collapse();
             }
         });
@@ -349,8 +353,17 @@ public class Calculator extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        mHistory.enter(mFormulaEditText.getText(), mResultEditText.getText());
+        saveHistory(mFormulaEditText.getText(), mResultEditText.getText(), true);
         mPersist.save();
+    }
+
+    private boolean saveHistory(String expr, String result, boolean ensureResult) {
+        if (!ensureResult || (!TextUtils.isEmpty(expr) && !TextUtils.isEmpty(result))) {
+            expr = EquationFormatter.appendParenthesis(expr);
+            mHistory.enter(expr, result);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -438,8 +451,11 @@ public class Calculator extends Activity
                 mFormulaEditText.setText('(' + mFormulaEditText.getText() + ')');
                 break;
             case R.id.fun_cos:
+            case R.id.fun_acos:
             case R.id.fun_sin:
+            case R.id.fun_asin:
             case R.id.fun_tan:
+            case R.id.fun_atan:
                 mShowTrigDetails = true;
                 updateDetails();
             case R.id.fun_ln:
@@ -511,10 +527,7 @@ public class Calculator extends Activity
     public boolean onLongClick(View view) {
         mCurrentButton = view;
         if (view.getId() == R.id.del) {
-            String result = mResultEditText.getText();
-            if (!TextUtils.isEmpty(result)) {
-                mHistory.enter(mFormulaEditText.getText(), result);
-            }
+            saveHistory(mFormulaEditText.getText(), mResultEditText.getText(), true);
             onClear();
             return true;
         }
@@ -532,11 +545,10 @@ public class Calculator extends Activity
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
         } else if (expr.contains(mX)) {
-            mHistory.enter(expr, result);
+            saveHistory(expr, result, false);
             mDisplayView.scrollToMostRecent();
             onResult("");
-        } else if (!TextUtils.isEmpty(result)) {
-            mHistory.enter(expr, result);
+        } else if (saveHistory(expr, result, true)) {
             mDisplayView.scrollToMostRecent();
             onResult(result);
         } else if (mCurrentState == CalculatorState.EVALUATE) {

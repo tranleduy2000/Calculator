@@ -19,10 +19,11 @@ import android.content.Context;
 import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.xlythe.math.History;
+import com.xlythe.math.Solver;
 
 class FloatingHistoryAdapter extends HistoryAdapter {
-    public FloatingHistoryAdapter(Context context, History history, HistoryItemCallback callback) {
-        super(context, history, callback);
+    public FloatingHistoryAdapter(Context context, Solver solver, History history, HistoryItemCallback callback) {
+        super(context, solver, history, callback);
     }
 
     @Override

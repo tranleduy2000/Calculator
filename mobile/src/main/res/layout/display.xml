@@ -72,4 +72,10 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/main_display"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_above="@id/main_display"
+        android:background="@drawable/history_gradient"/>
+
 </com.android2.calculator3.view.DisplayOverlay>

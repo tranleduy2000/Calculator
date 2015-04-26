@@ -15,16 +15,19 @@ import com.android2.calculator3.R;
 import com.xlythe.math.Constants;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
+import com.xlythe.math.Solver;
 
 public class FloatingCalculatorPageAdapter extends PagerAdapter {
     private final Context mContext;
     private final View.OnClickListener mListener;
+    private final Solver mSolver;
     private final History mHistory;
     private final View[] mViews = new View[3];
 
-    public FloatingCalculatorPageAdapter(Context context, View.OnClickListener listener, History history) {
+    public FloatingCalculatorPageAdapter(Context context, View.OnClickListener listener, Solver solver, History history) {
         mContext = context;
         mListener = listener;
+        mSolver = solver;
         mHistory = history;
     }
 
@@ -121,7 +124,7 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
         layoutManager.scrollToPosition(0);
         historyView.setLayoutManager(layoutManager);
 
-        FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mHistory, listener);
+        FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mSolver, mHistory, listener);
         mHistory.setObserver(historyAdapter);
         historyView.setAdapter(historyAdapter);
     }
