@@ -38,7 +38,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     protected HistoryItemCallback mCallback;
 
     public interface HistoryItemCallback {
-        public void onHistoryItemSelected(HistoryEntry entry);
+        void onHistoryItemSelected(HistoryEntry entry);
     }
 
     public HistoryAdapter(Context context, History history, HistoryItemCallback callback) {
@@ -61,9 +61,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        HistoryLine view =
-                (HistoryLine)LayoutInflater.from(mContext)
-                        .inflate(getLayoutResourceId(), parent, false);
+        View view = LayoutInflater.from(getContext()).inflate(getLayoutResourceId(), parent, false);
         return new ViewHolder(view);
     }
 
@@ -73,9 +71,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        HistoryLine view = (HistoryLine)holder.itemView;
+        HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
         final HistoryEntry entry = mEntries.elementAt(position);
-        view.setAdapter(HistoryAdapter.this);
+        view.setAdapter(this);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

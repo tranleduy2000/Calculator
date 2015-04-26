@@ -77,15 +77,19 @@
     </style>
 
     <style name="HistoryText">
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/history_result</item>
         <item name="android:textSize">@dimen/history_text_size</item>
         <item name="android:maxLines">1</item>
-        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="HistoryText.Query">
+        <item name="android:textColor">@color/history_input</item>
     </style>
 
     <style name="HistoryText.Result">
-        <item name="android:textColor">@color/display_formula_text_color</item>
+        <item name="android:gravity">right</item>
+        <item name="android:textColor">@color/history_result</item>
     </style>
 
     <style name="Theme.Calculator.Display.Widget" >

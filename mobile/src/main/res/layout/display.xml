@@ -20,18 +20,13 @@
     xmlns:ui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/historyRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/main_display"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/historyRecycler">
+        android:layout_alignParentBottom="true">
 
         <com.android2.calculator3.view.GraphView
             android:id="@+id/mini_graph"
@@ -70,5 +65,11 @@
             android:textColor="@color/display_formula_text_color"/>
 
     </FrameLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/historyRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/main_display"/>
 
 </com.android2.calculator3.view.DisplayOverlay>

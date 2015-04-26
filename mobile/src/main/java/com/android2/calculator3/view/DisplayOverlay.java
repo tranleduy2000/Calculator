@@ -1,7 +1,5 @@
 package com.android2.calculator3.view;
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,9 +12,10 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.display.AdvancedDisplay;
+import com.xlythe.floatingview.AnimationFinishedListener;
 
 /**
  * The display overlay is a container that intercepts touch events on top of:
@@ -27,40 +26,47 @@ import com.android2.calculator3.view.display.AdvancedDisplay;
  * when applicable.  If the user attempts to scroll up and the recycler is already
  * scrolled all the way up, then we intercept the event and collapse the history.
  */
-public class DisplayOverlay extends FrameLayout {
+public class DisplayOverlay extends RelativeLayout {
     /**
      * Closing the history with a fling will finish at least this fast (ms)
      */
     private static final float MIN_SETTLE_DURATION = 200f;
 
     /**
-     * Do not settle overlay if velocity is less than this
-     */
-    private static float VELOCITY_SLOP = 0.1f;
+     * Alpha when history is pulled down
+     * */
+    private static final float MAX_ALPHA = 0.3f;
 
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
     private static final String TAG = "DisplayOverlay";
 
     private RecyclerView mRecyclerView;
-    private AdvancedDisplay mFormula;
-    private View mResult;
-    private View mGraphLayout;
+    private View mMainDisplay;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
     private int mTouchSlop;
-    private int mMaxTranslationInParent = -1;
+    private int mMinTranslation = -1;
+    private int mMaxTranslation = -1;
     private VelocityTracker mVelocityTracker;
     private float mMinVelocity = -1;
-    private int mParentHeight = -1;
+    private View mFade;
+    private final OnTouchListener mFadeOnTouchListener = new OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            collapse();
+            return true;
+        }
+    };
 
     /**
      * Reports when state changes to expanded or collapsed (partial is ignored)
      */
-    public static interface TranslateStateListener {
-        public void onTranslateStateChanged(TranslateState newState);
+    public interface TranslateStateListener {
+        void onTranslateStateChanged(TranslateState newState);
     }
+
     private TranslateStateListener mTranslateStateListener;
 
     public DisplayOverlay(Context context) {
@@ -86,28 +92,110 @@ public class DisplayOverlay extends FrameLayout {
     private void setup() {
         ViewConfiguration vc = ViewConfiguration.get(getContext());
         mTouchSlop = vc.getScaledTouchSlop();
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (android.os.Build.VERSION.SDK_INT >= 16) {
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                evaluateHeight();
+                setTranslationY(mMinTranslation);
+                if (DEBUG) {
+                    Log.v(TAG, String.format("mMinTranslation=%s, mMaxTranslation=%s", mMinTranslation, mMaxTranslation));
+                }
+                initializeHistory();
+            }
+        });
     }
 
-    public static enum TranslateState {
+    public enum TranslateState {
         EXPANDED, COLLAPSED, PARTIAL
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mRecyclerView = (RecyclerView)findViewById(R.id.historyRecycler);
-        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView = (RecyclerView) findViewById(R.id.historyRecycler);
+        mLayoutManager = new LinearLayoutManager(getContext()) {
+            private int[] mMeasuredDimension = new int[2];
+
+            @Override
+            public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state,
+                                  int widthSpec, int heightSpec) {
+                final int widthMode = View.MeasureSpec.getMode(widthSpec);
+                final int heightMode = View.MeasureSpec.getMode(heightSpec);
+                final int widthSize = View.MeasureSpec.getSize(widthSpec);
+                final int heightSize = View.MeasureSpec.getSize(heightSpec);
+                int width = 0;
+                int height = 0;
+                for (int i = 0; i < getItemCount(); i++) {
+                    measureScrapChild(recycler, i,
+                            View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
+                            View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
+                            mMeasuredDimension);
+
+                    if (getOrientation() == HORIZONTAL) {
+                        width = width + mMeasuredDimension[0];
+                        if (i == 0) {
+                            height = mMeasuredDimension[1];
+                        }
+                    } else {
+                        height = height + mMeasuredDimension[1];
+                        if (i == 0) {
+                            width = mMeasuredDimension[0];
+                        }
+                    }
+                }
+                // If child view is more than screen size, there is no need to make it wrap content. We can use original onMeasure() so we can scroll view.
+                if (height < heightSize && width < widthSize) {
+                    switch (widthMode) {
+                        case View.MeasureSpec.EXACTLY:
+                            width = widthSize;
+                        case View.MeasureSpec.AT_MOST:
+                        case View.MeasureSpec.UNSPECIFIED:
+                    }
+
+                    switch (heightMode) {
+                        case View.MeasureSpec.EXACTLY:
+                            height = heightSize;
+                        case View.MeasureSpec.AT_MOST:
+                        case View.MeasureSpec.UNSPECIFIED:
+                    }
+
+                    setMeasuredDimension(width, height);
+                } else {
+                    super.onMeasure(recycler, state, widthSpec, heightSpec);
+                }
+            }
+
+            private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec,
+                                           int heightSpec, int[] measuredDimension) {
+                View view = recycler.getViewForPosition(position);
+                if (view != null) {
+                    RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
+                    int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec,
+                            getPaddingLeft() + getPaddingRight(), p.width);
+                    int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
+                            getPaddingTop() + getPaddingBottom(), p.height);
+                    view.measure(childWidthSpec, childHeightSpec);
+                    measuredDimension[0] = view.getMeasuredWidth() + p.leftMargin + p.rightMargin;
+                    measuredDimension[1] = view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
+                    recycler.recycleView(view);
+                }
+            }
+        };
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mFormula = (AdvancedDisplay)findViewById(R.id.formula);
-        mResult = findViewById(R.id.result);
-        mGraphLayout = findViewById(R.id.graphLayout);
+        mMainDisplay = findViewById(R.id.main_display);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.d(TAG, "onInterceptTouchEvent");
         int action = MotionEventCompat.getActionMasked(ev);
         float y = ev.getRawY();
         TranslateState state = getTranslateState();
@@ -148,6 +236,7 @@ public class DisplayOverlay extends FrameLayout {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
+                evaluateHeight();
                 break;
             case MotionEvent.ACTION_MOVE:
                 handleMove(event);
@@ -194,116 +283,94 @@ public class DisplayOverlay extends FrameLayout {
             if (mTranslateStateListener != null) {
                 mTranslateStateListener.onTranslateStateChanged(curState);
             }
-        } else if (Math.abs(yvel) > VELOCITY_SLOP) {
+        } else {
             // the sign on velocity seems unreliable, so use last delta to determine direction
-            float destTx = mLastDeltaY > 0 ? getMaxTranslation() : 0;
-            float velocity = Math.max(Math.abs(yvel), Math.abs(mMinVelocity));
-            settleAt(destTx, velocity);
+            if (mLastDeltaY > 0) {
+                expand();
+            } else {
+                collapse();
+            }
         }
     }
 
-    public void expandHistory() {
-        if (getHeight() == 0) {
-            getViewTreeObserver().addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            if(android.os.Build.VERSION.SDK_INT < 16) {
-                                getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                            } else {
-                                getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            }
-                            settleAt(getMaxTranslation(), mMinVelocity);
-                        }
-                    });
-        }
-        else {
-            settleAt(getMaxTranslation(), mMinVelocity);
+    public void expand() {
+        settleAt(mMaxTranslation, MAX_ALPHA);
+        if (mFade != null) {
+            mFade.setOnTouchListener(mFadeOnTouchListener);
         }
     }
 
-    public void collapseHistory() {
-        settleAt(0, mMinVelocity);
+    public void collapse() {
+        settleAt(mMinTranslation, 0);
+        if (mFade != null) {
+            mFade.setOnTouchListener(null);
+        }
     }
 
     public int getDisplayHeight() {
-        return mFormula.getHeight() + mResult.getHeight();
+        return mMainDisplay.getHeight();
     }
 
     /**
      * Smoothly translates the display overlay to the given target
      *
      * @param destTx target translation
-     * @param yvel velocity at point of release
      */
-    private void settleAt(float destTx, float yvel) {
-        if (yvel != 0) {
-            float dist = destTx - getTranslationY();
-            float dt = Math.abs(dist / yvel);
-            if (DEBUG) {
-                Log.v(TAG, "settle display overlay yvel=" + yvel +
-                        ", dt = " + dt);
-            }
-
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(this, "translationY",
-                            getTranslationY(), destTx);
-            anim.setDuration((long)dt);
-            anim.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {}
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    if (mTranslateStateListener != null) {
-                        mTranslateStateListener.onTranslateStateChanged(getTranslateState());
-                    }
+    private void settleAt(float destTx, float alpha) {
+        animate().translationY(destTx).setListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                if (mTranslateStateListener != null) {
+                    mTranslateStateListener.onTranslateStateChanged(getTranslateState());
                 }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {}
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {}
-            });
-            anim.start();
-        }
-    }
-
-    /**
-     * The distance that we are able to pull down the display to reveal history.
-     */
-    private int getMaxTranslation() {
-        if (mMaxTranslationInParent < 0) {
-            int bottomPadding = getContext().getResources()
-                    .getDimensionPixelOffset(R.dimen.history_view_bottom_margin);
-            mMaxTranslationInParent = getParentHeight() - getDisplayHeight() - bottomPadding;
-            if (DEBUG) {
-                Log.v(TAG, "mMaxTranslationInParent = " + mMaxTranslationInParent);
             }
+        }).start();
+        if (mFade != null) {
+            mFade.animate().alpha(alpha).start();
         }
-        return mMaxTranslationInParent;
     }
 
     private void updateTranslation(float dy) {
         float txY = getTranslationY() + dy;
-        float clampedY = Math.min(Math.max(txY, 0), getMaxTranslation());
+
+        float clampedY = Math.min(Math.max(txY, mMinTranslation), mMaxTranslation);
         setTranslationY(clampedY);
+
+        if (mFade != null) {
+            float range = mMaxTranslation - mMinTranslation;
+            float percent = 1 - ((mMaxTranslation - clampedY) / range);
+            mFade.setAlpha(MAX_ALPHA * percent);
+
+            if (mFade.getAlpha() > 0) {
+                mFade.setOnTouchListener(mFadeOnTouchListener);
+            } else {
+                mFade.setOnTouchListener(null);
+            }
+        }
+    }
+
+    public boolean isExpanded() {
+        return getTranslateState() == TranslateState.EXPANDED;
     }
 
     private TranslateState getTranslateState() {
         float txY = getTranslationY();
-        if (txY <= 0) {
+        if (txY <= mMinTranslation) {
             return TranslateState.COLLAPSED;
-        } else if (txY >= getMaxTranslation()) {
+        } else if (txY >= mMaxTranslation) {
             return TranslateState.EXPANDED;
         } else {
             return TranslateState.PARTIAL;
         }
     }
 
-    public RecyclerView getHistoryView() {
-        return mRecyclerView;
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        mRecyclerView.setAdapter(adapter);
+    }
+
+    private void evaluateHeight() {
+        mMinTranslation = -getHeight() + mMainDisplay.getHeight();
+        mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
     }
 
     private void initVelocityTrackerIfNotExists() {
@@ -319,16 +386,8 @@ public class DisplayOverlay extends FrameLayout {
         }
     }
 
-    private int getParentHeight() {
-        if (mParentHeight < 0) {
-            ViewGroup parent = (ViewGroup)getParent();
-            mParentHeight = parent.getHeight();
-        }
-        return mParentHeight;
-    }
-
     /**
-     * Set the size and offset of the history view / graph view
+     * Set the size and offset of the history view
      *
      * We want the display+history to take up the full height of the parent minus some
      * predefined padding.  The normal way to do this would be to give the overlay a height
@@ -340,29 +399,11 @@ public class DisplayOverlay extends FrameLayout {
      * To account for this, we make this method available to setup the history and graph
      * views after layout completes.
      */
-    public void initializeHistoryAndGraphView() {
-        int maxTx = getMaxTranslation();
-        if (mRecyclerView.getLayoutParams().height <= 0
-                || mGraphLayout.getLayoutParams().height <= 0) {
-            MarginLayoutParams historyParams = (MarginLayoutParams)mRecyclerView.getLayoutParams();
-            historyParams.height = maxTx;
-
-            MarginLayoutParams graphParams = (MarginLayoutParams)mGraphLayout.getLayoutParams();
-            graphParams.height = maxTx + getDisplayHeight();
-            if (DEBUG) {
-                Log.v(TAG, "Set history height to " + maxTx
-                        + ", graph height to " + graphParams.height);
-            }
-
-            MarginLayoutParams overlayParams =
-                    (MarginLayoutParams)getLayoutParams();
-            overlayParams.topMargin = -maxTx;
-            requestLayout();
-            scrollToMostRecent();
-        }
+    public void initializeHistory() {
+        scrollToMostRecent();
 
         if (mMinVelocity < 0) {
-            int txDist = getMaxTranslation();
+            int txDist = mMaxTranslation;
             mMinVelocity = txDist / MIN_SETTLE_DURATION;
         }
     }
@@ -377,6 +418,10 @@ public class DisplayOverlay extends FrameLayout {
 
     public TranslateStateListener getTranslateStateListener() {
         return mTranslateStateListener;
+    }
+
+    public void setFade(View view) {
+        mFade = view;
     }
 
     private boolean isInBounds(float x, float y, View v) {

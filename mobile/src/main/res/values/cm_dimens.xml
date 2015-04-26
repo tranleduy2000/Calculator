@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- History -->
-    <dimen name="history_view_bottom_margin">60dp</dimen>
-    <dimen name="history_text_size">36sp</dimen>
+    <dimen name="history_text_size">18sp</dimen>
 
     <!-- Advanced keypad pager -->
     <dimen name="viewpager_indicator_margin_size">3dp</dimen>
@@ -10,7 +9,7 @@
 
     <!-- Display -->
     <dimen name="above_display_margin">7.33dp</dimen>
-    <dimen name="below_display_margin">-7.33dp</dimen>
+    <dimen name="below_display_margin">220dp</dimen>
     <dimen name="graph_margin">8dp</dimen>
     <dimen name="display_height">227.33dp</dimen>
     <dimen name="display_height_small">120dp</dimen>

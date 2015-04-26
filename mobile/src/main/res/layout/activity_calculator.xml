@@ -15,22 +15,17 @@
   limitations under the License.
   -->
 
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/display"
-        layout="@layout/display" />
 
     <com.android2.calculator3.view.CalculatorPadViewPager
         android:id="@+id/pad_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        android:layout_marginTop="@dimen/below_display_margin"
-        android:layout_below="@id/display">
+        android:layout_marginTop="@dimen/below_display_margin">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,4 +40,15 @@
 
     </com.android2.calculator3.view.CalculatorPadViewPager>
 
-</RelativeLayout>
+    <View
+        android:id="@+id/history_fade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/history_fade"
+        android:alpha="0"/>
+
+    <include
+        android:id="@+id/display"
+        layout="@layout/display" />
+
+</FrameLayout>

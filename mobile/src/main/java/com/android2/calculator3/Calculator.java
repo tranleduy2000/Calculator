@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,12 +47,12 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealView;
 
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
@@ -155,6 +156,9 @@ public class Calculator extends Activity
                     ViewGroup.LayoutParams.MATCH_PARENT);
     private boolean mShowBaseDetails;
     private boolean mShowTrigDetails;
+    private View mMoreButton;
+    private View mAdvancedPad;
+    private View mAdvancedPadMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,6 +171,7 @@ public class Calculator extends Activity
         mX = getString(R.string.X);
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
+        mDisplayView.setFade(findViewById(R.id.history_fade));
         mMainDisplay = (ViewGroup) mDisplayView.findViewById(R.id.main_display);
         mCalculationsDisplay = (ViewGroup) mMainDisplay.findViewById(R.id.calculations);
         mInfoView = (TextView) findViewById(R.id.info);
@@ -212,8 +217,6 @@ public class Calculator extends Activity
         }
         setSelectedBaseButton(base);
 
-        mDisplayView.bringToFront();
-
         // Disable IME for this application
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
 
@@ -233,10 +236,16 @@ public class Calculator extends Activity
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
         mGraphController = new GraphController(graphModule, miniGraph);
 
-//        findViewById(R.id.exitGraph).setOnClickListener(mGraphController);
-//        findViewById(R.id.minusZoom).setOnClickListener(mGraphController);
-//        findViewById(R.id.plusZoom).setOnClickListener(mGraphController);
-//        findViewById(R.id.resetZoom).setOnClickListener(mGraphController);
+        mAdvancedPad = findViewById(R.id.pad_advanced);
+        mAdvancedPadMore = mAdvancedPad.findViewById(R.id.pad_advanced_more);
+        mMoreButton = mAdvancedPad.findViewById(R.id.more);
+        mMoreButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mMoreButton.getLayoutParams().width = mAdvancedPad.getWidth() / 4;
+                mMoreButton.getLayoutParams().height = mAdvancedPad.getHeight() / 4;
+            }
+        });
 
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
@@ -259,12 +268,12 @@ public class Calculator extends Activity
         new HistoryAdapter.HistoryItemCallback() {
             @Override
             public void onHistoryItemSelected(HistoryEntry entry) {
-                mFormulaEditText.insert(entry.getEdited());
-                mDisplayView.collapseHistory();
+                mFormulaEditText.setText(entry.getEdited());
+                mDisplayView.collapse();
             }
         });
         mHistory.setObserver(mHistoryAdapter);
-        mDisplayView.getHistoryView().setAdapter(mHistoryAdapter);
+        mDisplayView.setAdapter(mHistoryAdapter);
         mDisplayView.scrollToMostRecent();
     }
 
@@ -391,13 +400,12 @@ public class Calculator extends Activity
 
     @Override
     public void onBackPressed() {
-        if (mPadViewPager == null || mPadViewPager.getCurrentItem() == 0) {
-            // If the user is currently looking at the first pad (or the pad is not paged),
-            // allow the system to handle the Back button.
-            super.onBackPressed();
-        } else {
-            // Otherwise, select the previous pad.
+        if (mDisplayView.isExpanded()) {
+            mDisplayView.collapse();
+        } else if (mPadViewPager != null && mPadViewPager.getCurrentItem() != 0) {
             mPadViewPager.setCurrentItem(mPadViewPager.getCurrentItem() - 1);
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -503,7 +511,10 @@ public class Calculator extends Activity
     public boolean onLongClick(View view) {
         mCurrentButton = view;
         if (view.getId() == R.id.del) {
-            mHistory.enter(mFormulaEditText.getText(), mResultEditText.getText());
+            String result = mResultEditText.getText();
+            if (!TextUtils.isEmpty(result)) {
+                mHistory.enter(mFormulaEditText.getText(), result);
+            }
             onClear();
             return true;
         }
@@ -512,12 +523,10 @@ public class Calculator extends Activity
 
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
-        if (mCurrentState == CalculatorState.INPUT
-                || mCurrentState == CalculatorState.GRAPHING) {
+        if (mCurrentState == CalculatorState.INPUT || mCurrentState == CalculatorState.GRAPHING) {
             if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.clear();
-            }
-            else {
+            } else {
                 mResultEditText.setText(result);
             }
         } else if (errorResourceId != INVALID_RES_ID) {
@@ -604,9 +613,8 @@ public class Calculator extends Activity
     }
 
     private void revealMore() {
-        ViewGroup advancedPad = (ViewGroup) findViewById(R.id.pad_advanced);
-        View sourceView = advancedPad.findViewById(R.id.more);
-        final View revealView = advancedPad.findViewById(R.id.pad_advanced_2);
+        View sourceView = mMoreButton;
+        final View revealView = mAdvancedPadMore;
         boolean reverse = revealView.getVisibility() == View.VISIBLE;
         revealView.setVisibility(View.VISIBLE);
 

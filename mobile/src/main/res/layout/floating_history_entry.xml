@@ -1,4 +1,5 @@
 <com.android2.calculator3.view.HistoryLine xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/history_line"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/menu_bg"
