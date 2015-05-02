@@ -34,20 +34,35 @@
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/above_display_margin"/>
 
+        <FrameLayout
+            android:id="@+id/the_card"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/display_height"
+            android:background="@drawable/white_card"
+            android:layout_alignParentBottom="true"/>
+
         <RelativeLayout
             android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height"
-            android:background="@drawable/white_card">
+            android:layout_height="@dimen/display_height">
 
             <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/formula"
-                style="@style/Theme.Calculator.Display.Main.Formula" />
+                style="@style/Theme.Calculator.Display.Main.Formula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text|textNoSuggestions"
+                android:textColor="@color/display_formula_text_color" />
 
             <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/result"
+                style="@style/Theme.Calculator.Display.Main.Result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/formula"
-                style="@style/Theme.Calculator.Display.Main.Result" />
+                android:inputType="none"
+                android:focusable="false"
+                android:textColor="@color/display_result_text_color" />
 
         </RelativeLayout>
 
@@ -57,6 +72,13 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/display_formula_text_color"/>
+
+        <FrameLayout
+            android:id="@+id/the_clear_animation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/display_height"
+            android:paddingBottom="@dimen/above_display_margin"
+            android:layout_alignParentBottom="true"/>
 
     </FrameLayout>
 

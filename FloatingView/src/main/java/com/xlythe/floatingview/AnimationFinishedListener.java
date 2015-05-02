@@ -4,7 +4,9 @@ import android.animation.Animator;
 
 public abstract class AnimationFinishedListener implements Animator.AnimatorListener {
     @Override
-    public void onAnimationCancel(Animator animation) {}
+    public void onAnimationCancel(Animator animation) {
+        onAnimationFinished();
+    }
 
     @Override
     public void onAnimationRepeat(Animator animation) {}

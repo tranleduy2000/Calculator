@@ -47,6 +47,7 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealView;
 
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -158,6 +159,8 @@ public class Calculator extends Activity
                     ViewGroup.LayoutParams.MATCH_PARENT);
     private boolean mShowBaseDetails;
     private boolean mShowTrigDetails;
+    private View mDisplayBackground;
+    private ViewGroup mDisplayForeground;
     private View mMoreButton;
     private View mAdvancedPad;
     private View mAdvancedPadMore;
@@ -175,6 +178,8 @@ public class Calculator extends Activity
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mDisplayView.setFade(findViewById(R.id.history_fade));
         mMainDisplay = (ViewGroup) mDisplayView.findViewById(R.id.main_display);
+        mDisplayBackground = findViewById(R.id.the_card);
+        mDisplayForeground = (ViewGroup) findViewById(R.id.the_clear_animation);
         mCalculationsDisplay = (ViewGroup) mMainDisplay.findViewById(R.id.calculations);
         mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
@@ -312,21 +317,18 @@ public class Calculator extends Activity
         int newHeight = mCalculationsDisplay.getMeasuredHeight();
 
         // Now animate between the old and new heights
-        ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
-        animator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCalculationsDisplay.getLayoutParams().height = (int) animation.getAnimatedValue();
-                mCalculationsDisplay.requestLayout();
-            }
-        });
-        animator.addListener(new AnimationFinishedListener() {
+        float scale = (float) newHeight / oldHeight;
+        mDisplayBackground.setPivotY(0f);
+        mDisplayBackground.animate().scaleY(scale).setListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 mGraphController.unlock();
             }
-        });
-        play(animator);
+        }).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
+
+        // Update the foreground too (even though it's invisible)
+        mDisplayForeground.setPivotY(0f);
+        mDisplayForeground.animate().scaleY(scale).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
     }
 
     private void transitionToDisplay() {
@@ -334,41 +336,21 @@ public class Calculator extends Activity
             return;
         }
 
-        if (mGraphController.isLocked()) {
-            mGraphController.setOnUnlockedListener(new GraphController.OnUnlockedListener() {
-                @Override
-                public void onUnlocked() {
-                    mGraphController.setOnUnlockedListener(null);
-                    transitionToDisplay();
-                }
-            });
-            return;
-        }
-
-        // Now we need to expand the calculations display
-        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
-
         // Show the result and then measure to grab new coordinates
         mResultEditText.setVisibility(View.VISIBLE);
-        final int newHeight = getResources().getDimensionPixelSize(R.dimen.display_height);
 
         // Now animate between the old and new heights
-        ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
-        animator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mCalculationsDisplay.getLayoutParams().height = (int) animation.getAnimatedValue();
-                mCalculationsDisplay.requestLayout();
-            }
-        });
-        animator.addListener(new AnimationFinishedListener() {
+        float scale = 1f;
+        mDisplayBackground.animate().scaleY(scale).setListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 setState(CalculatorState.INPUT);
                 mGraphController.clearGraph();
             }
-        });
-        play(animator);
+        }).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
+
+        // Update the foreground too (even though it's invisible)
+        mDisplayForeground.animate().scaleY(scale).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
     }
 
     @Override
@@ -666,7 +648,7 @@ public class Calculator extends Activity
         final RevealView revealView = new RevealView(this);
         revealView.setLayoutParams(mLayoutParams);
         revealView.setRevealColor(getResources().getColor(colorRes));
-        mCalculationsDisplay.addView(revealView);
+        mDisplayForeground.addView(revealView);
 
         final SupportAnimator revealAnimator;
         final int[] clearLocation = new int[2];
@@ -692,7 +674,7 @@ public class Calculator extends Activity
         alphaAnimator.addListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
-                mCalculationsDisplay.removeView(revealView);
+                mDisplayForeground.removeView(revealView);
                 mGraphController.unlock();
             }
         });
@@ -753,17 +735,10 @@ public class Calculator extends Activity
                 mFormulaEditText.getVariableTextSize(result) / mResultEditText.getTextSize();
         final float resultTranslationX = (1.0f - resultScale) *
                 (mResultEditText.getWidth() / 2.0f - mResultEditText.getPaddingRight());
-        float resultTranslationY = -1 * (1.0f - resultScale) *
-                (mResultEditText.getHeight() / 2.0f - mResultEditText.getPaddingBottom())
-                - mFormulaEditText.getHeight() + mFormulaEditText.getPaddingTop()
-                - mResultEditText.getPaddingTop();
-        Log.d("TEST", String.format("scale=%sformulaHeight=%s&resultPaddingBottom=%s&formulaPaddingBottom=%s",
-                resultScale,
-                mFormulaEditText.getHeight(),
-                mResultEditText.getPaddingBottom(),
-                mFormulaEditText.getPaddingBottom()));
-//        resultTranslationY += 25;
-
+        final float resultTranslationY = (1.0f - resultScale) *
+                (mResultEditText.getHeight() / 2.0f - mResultEditText.getPaddingBottom()) +
+                (mFormulaEditText.getBottom() - mResultEditText.getBottom()) +
+                (mResultEditText.getPaddingBottom() - mFormulaEditText.getPaddingBottom());
         final float formulaTranslationY = -mFormulaEditText.getBottom();
 
         // Use a value animator to fade to the final text color over the course of the animation.
