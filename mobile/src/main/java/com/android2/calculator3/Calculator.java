@@ -51,7 +51,6 @@ import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -289,6 +288,8 @@ public class Calculator extends Activity
             return;
         }
 
+        mGraphController.lock();
+
         setState(CalculatorState.GRAPHING);
 
         // We don't want the display resizing, so hardcode its width for now.
@@ -319,6 +320,12 @@ public class Calculator extends Activity
                 mCalculationsDisplay.requestLayout();
             }
         });
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                mGraphController.unlock();
+            }
+        });
         play(animator);
     }
 
@@ -327,12 +334,23 @@ public class Calculator extends Activity
             return;
         }
 
+        if (mGraphController.isLocked()) {
+            mGraphController.setOnUnlockedListener(new GraphController.OnUnlockedListener() {
+                @Override
+                public void onUnlocked() {
+                    mGraphController.setOnUnlockedListener(null);
+                    transitionToDisplay();
+                }
+            });
+            return;
+        }
+
         // Now we need to expand the calculations display
         int oldHeight = mCalculationsDisplay.getMeasuredHeight();
 
         // Show the result and then measure to grab new coordinates
         mResultEditText.setVisibility(View.VISIBLE);
-        int newHeight = getResources().getDimensionPixelSize(R.dimen.display_height);
+        final int newHeight = getResources().getDimensionPixelSize(R.dimen.display_height);
 
         // Now animate between the old and new heights
         ValueAnimator animator = ValueAnimator.ofInt(oldHeight, newHeight);
@@ -361,7 +379,7 @@ public class Calculator extends Activity
     }
 
     private boolean saveHistory(String expr, String result, boolean ensureResult) {
-        if (!ensureResult || (!TextUtils.isEmpty(expr) && !TextUtils.isEmpty(result))) {
+        if (!ensureResult || (!TextUtils.isEmpty(expr) && !TextUtils.isEmpty(result) && !Solver.equal(expr, result))) {
             expr = EquationFormatter.appendParenthesis(expr);
             mHistory.enter(expr, result);
             return true;
@@ -675,6 +693,7 @@ public class Calculator extends Activity
             @Override
             public void onAnimationFinished() {
                 mCalculationsDisplay.removeView(revealView);
+                mGraphController.unlock();
             }
         });
 
@@ -705,6 +724,7 @@ public class Calculator extends Activity
         reveal(mCurrentButton, R.color.calculator_accent_color, new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
+                mGraphController.lock();
                 mFormulaEditText.clear();
             }
         });
@@ -732,11 +752,18 @@ public class Calculator extends Activity
         final float resultScale =
                 mFormulaEditText.getVariableTextSize(result) / mResultEditText.getTextSize();
         final float resultTranslationX = (1.0f - resultScale) *
-                    (mResultEditText.getWidth() / 2.0f - mResultEditText.getPaddingRight());
-        final float resultTranslationY = (1.0f - resultScale) *
-                (mResultEditText.getHeight() / 2.0f - mResultEditText.getPaddingBottom()) +
-                (mFormulaEditText.getBottom() - mResultEditText.getBottom()) +
-                (mResultEditText.getPaddingBottom() - mFormulaEditText.getPaddingBottom());
+                (mResultEditText.getWidth() / 2.0f - mResultEditText.getPaddingRight());
+        float resultTranslationY = -1 * (1.0f - resultScale) *
+                (mResultEditText.getHeight() / 2.0f - mResultEditText.getPaddingBottom())
+                - mFormulaEditText.getHeight() + mFormulaEditText.getPaddingTop()
+                - mResultEditText.getPaddingTop();
+        Log.d("TEST", String.format("scale=%sformulaHeight=%s&resultPaddingBottom=%s&formulaPaddingBottom=%s",
+                resultScale,
+                mFormulaEditText.getHeight(),
+                mResultEditText.getPaddingBottom(),
+                mFormulaEditText.getPaddingBottom()));
+//        resultTranslationY += 25;
+
         final float formulaTranslationY = -mFormulaEditText.getBottom();
 
         // Use a value animator to fade to the final text color over the course of the animation.
@@ -750,6 +777,8 @@ public class Calculator extends Activity
                 mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue());
             }
         });
+        mFormulaEditText.setText(result);
+        mResultEditText.setText(result);
 
         final AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(

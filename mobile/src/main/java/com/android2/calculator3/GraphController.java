@@ -22,6 +22,10 @@ public class GraphController implements
     private final GraphView mMainGraphView;
 
     private String mEquation;
+    private List<Point> mPendingResults;
+
+    private boolean mLocked;
+    private OnUnlockedListener mOnUnlockedListener;
 
     public GraphController(GraphModule module, GraphView view) {
         mGraphModule = module;
@@ -43,13 +47,6 @@ public class GraphController implements
         view.setZoomListener(this);
     }
 
-    private void resetState() {
-        mEquation = null;
-        for (GraphView view : mGraphViews) {
-            view.zoomReset();
-        }
-    }
-
     public void startGraph(String equation) {
         invalidateModule();
         mEquation = equation;
@@ -69,15 +66,15 @@ public class GraphController implements
         mGraphModule.setZoomLevel(mMainGraphView.getZoomLevel());
     }
 
-    public void exitGraphMode() {
-        resetState();
-    }
-
     @Override
     public void onGraphUpdated(List<Point> result) {
-        for (GraphView view : mGraphViews) {
-            view.setData(result);
-            view.invalidate();
+        if (isLocked()) {
+            mPendingResults = result;
+        } else {
+            for (GraphView view : mGraphViews) {
+                view.setData(result);
+                view.invalidate();
+            }
         }
     }
 
@@ -96,5 +93,32 @@ public class GraphController implements
         if (mEquation != null) {
             mGraphModule.updateGraph(mEquation, this);
         }
+    }
+
+    public void lock() {
+        mLocked = true;
+    }
+
+    public void unlock() {
+        mLocked = false;
+        if (mOnUnlockedListener != null) {
+            mOnUnlockedListener.onUnlocked();
+        }
+        if (mPendingResults != null) {
+            onGraphUpdated(mPendingResults);
+            mPendingResults = null;
+        }
+    }
+
+    public boolean isLocked() {
+        return mLocked;
+    }
+
+    public void setOnUnlockedListener(OnUnlockedListener listener) {
+        mOnUnlockedListener = listener;
+    }
+
+    public interface OnUnlockedListener {
+        void onUnlocked();
     }
 }

@@ -66,7 +66,7 @@ public class CalculatorEditText extends EditText {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (mSolver == null) return;
+            if (!mTextWatchersEnabled || mSolver == null) return;
             mTextWatchersEnabled = false;
 
             String text = removeFormatting(s.toString());
@@ -90,6 +90,7 @@ public class CalculatorEditText extends EditText {
     private Solver mSolver;
     private EventListener mEventListener;
     private List<String> mKeywords;
+    private Editable.Factory mFactory = new CalculatorEditable.Factory();
 
     private float mMaximumTextSize;
     private float mMinimumTextSize;
@@ -143,8 +144,7 @@ public class CalculatorEditText extends EditText {
             setMinimumHeight((int) (mMaximumTextSize * 1.2) + getPaddingBottom() + getPaddingTop());
         }
 
-        Editable.Factory factory = new CalculatorEditable.Factory();
-        setEditableFactory(factory);
+        setEditableFactory(mFactory);
 
         mKeywords = Arrays.asList(
                 context.getString(R.string.fun_arcsin) + "(",
@@ -192,14 +192,18 @@ public class CalculatorEditText extends EditText {
 
     @Override
     public void addTextChangedListener(TextWatcher watcher) {
-        mTextWatchers.add(watcher);
+        if (watcher.equals(mTextWatcher)) {
+            super.addTextChangedListener(watcher);
+        } else {
+            mTextWatchers.add(watcher);
+        }
     }
 
     @Override
     public void setText(CharSequence text, BufferType type) {
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.beforeTextChanged(getText().toString(), 0, 0, 0);
+                textWatcher.beforeTextChanged(getCleanText(), 0, 0, 0);
             }
         }
         super.setText(text, type);
@@ -209,7 +213,7 @@ public class CalculatorEditText extends EditText {
         invalidateTextSize();
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.afterTextChanged(getText());
+                textWatcher.afterTextChanged(mFactory.newEditable(getCleanText()));
                 textWatcher.onTextChanged(getCleanText(), 0, 0, 0);
             }
         }
@@ -222,15 +226,15 @@ public class CalculatorEditText extends EditText {
     public void insert(String text) {
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.beforeTextChanged(getText().toString(), 0, 0, 0);
+                textWatcher.beforeTextChanged(getCleanText(), 0, 0, 0);
             }
         }
         getText().insert(getSelectionStart(), text);
         invalidateTextSize();
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.afterTextChanged(getText());
-                textWatcher.onTextChanged(getText().toString(), 0, 0, 0);
+                textWatcher.afterTextChanged(mFactory.newEditable(getCleanText()));
+                textWatcher.onTextChanged(getCleanText(), 0, 0, 0);
             }
         }
     }
