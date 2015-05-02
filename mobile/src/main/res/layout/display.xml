@@ -17,7 +17,6 @@
 
 <com.android2.calculator3.view.DisplayOverlay
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ui="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -39,7 +38,6 @@
             android:id="@+id/calculations"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
-            android:paddingBottom="@dimen/above_display_margin"
             android:background="@drawable/white_card">
 
             <com.android2.calculator3.view.display.CalculatorEditText
