@@ -17,6 +17,7 @@
 
 <com.android2.calculator3.view.DisplayOverlay
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:support="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -32,14 +33,17 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height_graph"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/above_display_margin"/>
+            android:layout_marginBottom="@dimen/above_display_margin"
+            android:visibility="gone"/>
 
-        <FrameLayout
+        <android.support.v7.widget.CardView
             android:id="@+id/the_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
-            android:background="@drawable/white_card"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            support:cardElevation="0dp"
+            support:cardUseCompatPadding="false"/>
+        <!-- TODO remove cardElevation-->
 
         <RelativeLayout
             android:id="@+id/calculations"
@@ -49,16 +53,12 @@
             <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/formula"
                 style="@style/Theme.Calculator.Display.Main.Formula"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:inputType="text|textNoSuggestions"
                 android:textColor="@color/display_formula_text_color" />
 
             <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/result"
                 style="@style/Theme.Calculator.Display.Main.Result"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_below="@id/formula"
                 android:inputType="none"
                 android:focusable="false"
@@ -86,12 +86,7 @@
         android:id="@+id/historyRecycler"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/main_display"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
         android:layout_above="@id/main_display"
-        android:background="@drawable/history_gradient"/>
+        android:layout_marginBottom="4dp"/>
 
 </com.android2.calculator3.view.DisplayOverlay>

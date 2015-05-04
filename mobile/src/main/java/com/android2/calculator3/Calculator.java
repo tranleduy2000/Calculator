@@ -47,7 +47,6 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealView;
 
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -59,9 +58,8 @@ import com.android2.calculator3.view.CalculatorPadLayout;
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
-import com.android2.calculator3.view.display.AdvancedDisplay.OnTextSizeChangeListener;
+import com.android2.calculator3.view.display.CalculatorEditText.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
-import com.android2.calculator3.view.display.AdvancedDisplay;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.MatrixInverseView;
 import com.android2.calculator3.view.MatrixTransposeView;
@@ -159,6 +157,7 @@ public class Calculator extends Activity
                     ViewGroup.LayoutParams.MATCH_PARENT);
     private boolean mShowBaseDetails;
     private boolean mShowTrigDetails;
+    private GraphView mMiniGraph;
     private View mDisplayBackground;
     private ViewGroup mDisplayForeground;
     private View mMoreButton;
@@ -227,18 +226,19 @@ public class Calculator extends Activity
         Button dot = (Button) findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
-        GraphView miniGraph = (GraphView) findViewById(R.id.mini_graph);
-        miniGraph.setShowGrid(false);
-        miniGraph.setShowInlineNumbers(true);
-        miniGraph.setShowOutline(false);
-        miniGraph.setPanEnabled(false);
-        miniGraph.setZoomEnabled(false);
-        miniGraph.setBackgroundColor(getResources().getColor(R.color.graph_background));
-        miniGraph.setGridColor(getResources().getColor(R.color.graph_axis));
-        miniGraph.setGraphColor(getResources().getColor(R.color.graph_line));
-        miniGraph.setTextColor(getResources().getColor(R.color.graph_text));
+        // TODO make these attributes
+        mMiniGraph = (GraphView) findViewById(R.id.mini_graph);
+        mMiniGraph.setShowGrid(false);
+        mMiniGraph.setShowInlineNumbers(true);
+        mMiniGraph.setShowOutline(false);
+        mMiniGraph.setPanEnabled(false);
+        mMiniGraph.setZoomEnabled(false);
+        mMiniGraph.setBackgroundColor(getResources().getColor(R.color.graph_background));
+        mMiniGraph.setGridColor(getResources().getColor(R.color.graph_axis));
+        mMiniGraph.setGraphColor(getResources().getColor(R.color.graph_line));
+        mMiniGraph.setTextColor(getResources().getColor(R.color.graph_text));
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
-        mGraphController = new GraphController(graphModule, miniGraph);
+        mGraphController = new GraphController(graphModule, mMiniGraph);
 
         mAdvancedPad = findViewById(R.id.pad_advanced);
         mAdvancedPadMore = mAdvancedPad.findViewById(R.id.pad_advanced_more);
@@ -296,39 +296,12 @@ public class Calculator extends Activity
         mGraphController.lock();
 
         setState(CalculatorState.GRAPHING);
-
-        // We don't want the display resizing, so hardcode its width for now.
-        mMainDisplay.measure(
-                View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-        mMainDisplay.getLayoutParams().height = mMainDisplay.getMeasuredHeight();
-
-        // Now we need to shrink the calculations display
-        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
-
-        // Hide the result and then measure to grab new coordinates
-        mResultEditText.setVisibility(View.GONE);
-        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mCalculationsDisplay.measure(
-                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-        int newHeight = mCalculationsDisplay.getMeasuredHeight();
-
-        // Now animate between the old and new heights
-        float scale = (float) newHeight / oldHeight;
-        mDisplayBackground.setPivotY(0f);
-        mDisplayBackground.animate().scaleY(scale).setListener(new AnimationFinishedListener() {
+        mDisplayView.transitionToGraph(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 mGraphController.unlock();
             }
-        }).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
-
-        // Update the foreground too (even though it's invisible)
-        mDisplayForeground.setPivotY(0f);
-        mDisplayForeground.animate().scaleY(scale).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
+        });
     }
 
     private void transitionToDisplay() {
@@ -336,21 +309,12 @@ public class Calculator extends Activity
             return;
         }
 
-        // Show the result and then measure to grab new coordinates
-        mResultEditText.setVisibility(View.VISIBLE);
-
-        // Now animate between the old and new heights
-        float scale = 1f;
-        mDisplayBackground.animate().scaleY(scale).setListener(new AnimationFinishedListener() {
+        mDisplayView.transitionToDisplay(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 setState(CalculatorState.INPUT);
-                mGraphController.clearGraph();
             }
-        }).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
-
-        // Update the foreground too (even though it's invisible)
-        mDisplayForeground.animate().scaleY(scale).setDuration(getResources().getInteger(android.R.integer.config_longAnimTime)).start();
+        });
     }
 
     @Override
@@ -553,7 +517,7 @@ public class Calculator extends Activity
     }
 
     @Override
-    public void onTextSizeChanged(final AdvancedDisplay textView, float oldSize) {
+    public void onTextSizeChanged(final TextView textView, float oldSize) {
         if (mCurrentState != CalculatorState.INPUT) { // TODO dont animate when showing graph
             // Only animate text changes that occur from user input.
             return;

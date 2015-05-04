@@ -18,7 +18,6 @@ package com.android2.calculator3.view.display;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.Editable;
 import android.text.Html;
@@ -28,7 +27,6 @@ import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.method.NumberKeyListener;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.KeyEvent;
@@ -37,6 +35,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.CalculatorEditable;
@@ -100,7 +99,7 @@ public class CalculatorEditText extends EditText {
     private int mWidthConstraint = -1;
     private int mHeightConstraint = -1;
     private final Paint mTempPaint = new TextPaint();
-    private AdvancedDisplay.OnTextSizeChangeListener mOnTextSizeChangeListener;
+    private OnTextSizeChangeListener mOnTextSizeChangeListener;
 
     public CalculatorEditText(Context context) {
         super(context);
@@ -243,8 +242,16 @@ public class CalculatorEditText extends EditText {
         float oldTextSize = getTextSize();
         float newTextSize = getVariableTextSize(getText().toString());
         if (oldTextSize != newTextSize) {
-            setTextSize(newTextSize);
-//            ObjectAnimator.ofFloat(this, "textSize", oldTextSize, newTextSize).start();
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, newTextSize);
+        }
+    }
+
+    @Override
+    public void setTextSize(int unit, float size) {
+        final float oldTextSize = getTextSize();
+        super.setTextSize(unit, size);
+        if (mOnTextSizeChangeListener != null && getTextSize() != oldTextSize) {
+            mOnTextSizeChangeListener.onTextSizeChanged(this, oldTextSize);
         }
     }
 
@@ -286,7 +293,7 @@ public class CalculatorEditText extends EditText {
         }
     }
 
-    public void setOnTextSizeChangeListener(AdvancedDisplay.OnTextSizeChangeListener listener) {
+    public void setOnTextSizeChangeListener(OnTextSizeChangeListener listener) {
         mOnTextSizeChangeListener = listener;
     }
 
@@ -382,18 +389,6 @@ public class CalculatorEditText extends EditText {
         return super.focusSearch(direction);
     }
 
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-//        if(isEnabled() && (SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
-//            mHighlightPaint.setColor(Color.RED);
-//            mHighlightPaint.setStyle(Paint.Style.STROKE);
-//            mHighlightPaint.setStrokeWidth(60f);
-//            canvas.drawRect(0, 0, getWidth(), getHeight(), mHighlightPaint);
-//        }
-//        mHandler.postDelayed(mRefresher, BLINK);
-    }
-
     class NoTextSelectionMode implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -414,5 +409,9 @@ public class CalculatorEditText extends EditText {
         @Override
         public void onDestroyActionMode(ActionMode mode) {
         }
+    }
+
+    public interface OnTextSizeChangeListener {
+        void onTextSizeChanged(TextView textView, float oldSize);
     }
 }

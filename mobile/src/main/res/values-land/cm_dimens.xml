@@ -5,6 +5,6 @@
 
     <!-- Display -->
     <dimen name="below_display_margin">100dp</dimen>
-    <dimen name="display_height">107.33dp</dimen>
+    <dimen name="display_height">106dp</dimen>
     <dimen name="display_height_graph">50dp</dimen>
 </resources>

@@ -1,20 +1,18 @@
 package com.android2.calculator3.view;
 
 import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 
@@ -41,20 +39,25 @@ public class DisplayOverlay extends RelativeLayout {
      * */
     private static final float MAX_ALPHA = 0.6f;
 
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
     private static final String TAG = "DisplayOverlay";
 
     private RecyclerView mRecyclerView;
     private View mMainDisplay;
+    private CardView mDisplayBackground;
+    private View mDisplayForeground;
+    private View mDisplayGraph;
+    private View mFormulaEditText;
+    private View mResultEditText;
+    private View mCalculationsDisplay;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
-    private int mTouchSlop;
     private int mMinTranslation = -1;
     private int mMaxTranslation = -1;
-    private VelocityTracker mVelocityTracker;
     private float mMinVelocity = -1;
+    private float mMaxDisplayScale = 1f;
     private View mFade;
     private final OnTouchListener mFadeOnTouchListener = new OnTouchListener() {
         @Override
@@ -63,15 +66,7 @@ public class DisplayOverlay extends RelativeLayout {
             return true;
         }
     };
-
-    /**
-     * Reports when state changes to expanded or collapsed (partial is ignored)
-     */
-    public interface TranslateStateListener {
-        void onTranslateStateChanged(TranslateState newState);
-    }
-
-    private TranslateStateListener mTranslateStateListener;
+    private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
 
     public DisplayOverlay(Context context) {
         super(context);
@@ -94,8 +89,6 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void setup() {
-        ViewConfiguration vc = ViewConfiguration.get(getContext());
-        mTouchSlop = vc.getScaledTouchSlop();
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -104,6 +97,7 @@ public class DisplayOverlay extends RelativeLayout {
                 } else {
                     getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
+                mDisplayBackground.setPivotY(0);
                 evaluateHeight();
                 setTranslationY(mMinTranslation);
                 if (DEBUG) {
@@ -215,6 +209,12 @@ public class DisplayOverlay extends RelativeLayout {
         });
 
         mMainDisplay = findViewById(R.id.main_display);
+        mDisplayBackground = (CardView) findViewById(R.id.the_card);
+        mDisplayForeground = findViewById(R.id.the_clear_animation);
+        mDisplayGraph = findViewById(R.id.mini_graph);
+        mFormulaEditText = findViewById(R.id.formula);
+        mResultEditText = findViewById(R.id.result);
+        mCalculationsDisplay = findViewById(R.id.calculations);
     }
 
     @Override
@@ -256,9 +256,6 @@ public class DisplayOverlay extends RelativeLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
-        initVelocityTrackerIfNotExists();
-        mVelocityTracker.addMovement(event);
-
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 evaluateHeight();
@@ -267,11 +264,7 @@ public class DisplayOverlay extends RelativeLayout {
                 handleMove(event);
                 break;
             case MotionEvent.ACTION_UP:
-                handleUp(event);
-                recycleVelocityTracker();
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                recycleVelocityTracker();
+                handleUp();
                 break;
         }
 
@@ -286,29 +279,19 @@ public class DisplayOverlay extends RelativeLayout {
             Log.v(TAG, "handleMove y=" + y + ", dy=" + dy);
         }
 
+        float percent = calculateCurrentPercent(dy);
         if (dy < 0 && state != TranslateState.COLLAPSED) {
-            updateTranslation(dy);
+            mAnimator.onUpdate(percent);
         } else if (dy > 0 && state != TranslateState.EXPANDED) {
-            updateTranslation(dy);
+            mAnimator.onUpdate(percent);
         }
         mLastMotionY = y;
         mLastDeltaY = dy;
     }
 
-    private void handleUp(MotionEvent event) {
-        mVelocityTracker.computeCurrentVelocity(1);
-        float yvel = mVelocityTracker.getYVelocity();
-        if (DEBUG) {
-            Log.v(TAG, "handleUp yvel=" + yvel + ", mLastDeltaY=" + mLastDeltaY);
-        }
-
+    private void handleUp() {
         TranslateState curState = getTranslateState();
-        if (curState != TranslateState.PARTIAL) {
-            // already settled
-            if (mTranslateStateListener != null) {
-                mTranslateStateListener.onTranslateStateChanged(curState);
-            }
-        } else {
+        if (curState == TranslateState.PARTIAL) {
             // the sign on velocity seems unreliable, so use last delta to determine direction
             if (mLastDeltaY > 0) {
                 expand();
@@ -318,12 +301,25 @@ public class DisplayOverlay extends RelativeLayout {
         }
     }
 
+    private float calculateCurrentPercent(float dy) {
+        float clampedY = Math.min(Math.max(getTranslationY() + dy, mMinTranslation), mMaxTranslation);
+        float range = mMaxTranslation - mMinTranslation;
+        float percent = range == 0 ? 0 : (clampedY - mMinTranslation) / range;
+        return percent;
+    }
+
     public void expand() {
         expand(null);
     }
 
     public void expand(Animator.AnimatorListener listener) {
-        settleAt(mMaxTranslation, MAX_ALPHA, listener);
+        DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 1f);
+        if (listener != null) {
+            animator.addListener(listener);
+        }
+        animator.start();
+
+        // Close history when tapping on the background
         if (mFade != null) {
             mFade.setOnTouchListener(mFadeOnTouchListener);
         }
@@ -334,88 +330,85 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void collapse(Animator.AnimatorListener listener) {
-        settleAt(mMinTranslation, 0, listener);
+        DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 0f);
+        if (listener != null) {
+            animator.addListener(listener);
+        }
+        animator.start();
+
+        // Remove the background onTouchListener
         if (mFade != null) {
             mFade.setOnTouchListener(null);
         }
     }
 
-    /**
-     * Smoothly translates the display overlay to the given target
-     *
-     * @param destTx target translation
-     * @param alpha background alpha
-     */
-    private void settleAt(float destTx, float alpha) {
-        settleAt(destTx, alpha, null);
-    }
-
-    /**
-     * Smoothly translates the display overlay to the given target
-     *
-     * @param destTx target translation
-     * @param alpha background alpha
-     * @param listener listener for the end of the animation
-     */
-    private void settleAt(float destTx, float alpha, final Animator.AnimatorListener listener) {
-        animate().translationY(destTx).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (listener != null) {
-                    listener.onAnimationStart(animation);
-                }
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (mTranslateStateListener != null) {
-                    mTranslateStateListener.onTranslateStateChanged(getTranslateState());
-                }
-                if (listener != null) {
-                    listener.onAnimationEnd(animation);
-                }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                if (listener != null) {
-                    listener.onAnimationCancel(animation);
-                }
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-                if (listener != null) {
-                    listener.onAnimationRepeat(animation);
-                }
-            }
-        }).start();
-        if (mFade != null) {
-            mFade.animate().alpha(alpha).start();
-        }
-    }
-
-    private void updateTranslation(float dy) {
-        float txY = getTranslationY() + dy;
-
-        float clampedY = Math.min(Math.max(txY, mMinTranslation), mMaxTranslation);
-        setTranslationY(clampedY);
-
-        if (mFade != null) {
-            float range = mMaxTranslation - mMinTranslation;
-            float percent = range == 0 ? 0 : 1 - ((mMaxTranslation - clampedY) / range);
-            mFade.setAlpha(MAX_ALPHA * percent);
-
-            if (mFade.getAlpha() > 0) {
-                mFade.setOnTouchListener(mFadeOnTouchListener);
-            } else {
-                mFade.setOnTouchListener(null);
-            }
-        }
-    }
-
     public boolean isExpanded() {
         return getTranslateState() == TranslateState.EXPANDED;
+    }
+
+    public void transitionToGraph(Animator.AnimatorListener listener) {
+        mDisplayGraph.setVisibility(View.VISIBLE);
+
+        // We don't want the display resizing, so hardcode its width for now.
+        mMainDisplay.measure(
+                View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        mMainDisplay.getLayoutParams().height = mMainDisplay.getMeasuredHeight();
+
+        // Now we need to shrink the calculations display
+        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Hide the result and then measure to grab new coordinates
+        mResultEditText.setVisibility(View.GONE);
+        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        mCalculationsDisplay.measure(
+                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        );
+        int newHeight = mCalculationsDisplay.getMeasuredHeight();
+
+        // Now animate between the old and new heights
+        float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
+        long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
+        mDisplayBackground.animate()
+                .scaleY(scale)
+                .setListener(listener)
+                .setDuration(duration)
+                .start();
+
+        // Update the foreground too (even though it's invisible)
+        mDisplayForeground.setPivotY(0f);
+        mDisplayForeground.animate()
+                .scaleY(scale)
+                .setDuration(duration)
+                .start();
+    }
+
+    public void transitionToDisplay(Animator.AnimatorListener listener) {
+        // Show the result again
+        mResultEditText.setVisibility(View.VISIBLE);
+
+        // Now animate between the old and new heights
+        float scale = mMaxDisplayScale = 1f;
+        long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
+        mDisplayBackground.animate()
+                .scaleY(scale)
+                .setListener(new AnimationFinishedListener() {
+                    @Override
+                    public void onAnimationFinished() {
+                        mDisplayGraph.setVisibility(View.GONE);
+                    }
+                })
+                .setDuration(duration)
+                .start();
+
+        // Update the foreground too (even though it's invisible)
+        mDisplayForeground.animate()
+                .scaleY(scale)
+                .setListener(listener)
+                .setDuration(duration)
+                .start();
     }
 
     private TranslateState getTranslateState() {
@@ -436,19 +429,6 @@ public class DisplayOverlay extends RelativeLayout {
     private void evaluateHeight() {
         mMinTranslation = -getHeight() + mMainDisplay.getHeight();
         mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
-    }
-
-    private void initVelocityTrackerIfNotExists() {
-        if (mVelocityTracker == null) {
-            mVelocityTracker = VelocityTracker.obtain();
-        }
-    }
-
-    private void recycleVelocityTracker() {
-        if (mVelocityTracker != null) {
-            mVelocityTracker.recycle();
-            mVelocityTracker = null;
-        }
     }
 
     /**
@@ -477,20 +457,65 @@ public class DisplayOverlay extends RelativeLayout {
         mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount()-1);
     }
 
-    public void setTranslateStateListener(TranslateStateListener listener) {
-        mTranslateStateListener = listener;
-    }
-
-    public TranslateStateListener getTranslateStateListener() {
-        return mTranslateStateListener;
-    }
-
     public void setFade(View view) {
         mFade = view;
     }
 
-    private boolean isInBounds(float x, float y, View v) {
-        return y >= v.getTop() && y <= v.getBottom() &&
-                x >= v.getLeft() && x <= v.getRight();
+    /**
+     * An animator that goes from 0 to 100%
+     **/
+    private class DisplayAnimator extends ValueAnimator {
+        public DisplayAnimator(float start, float end) {
+            super();
+            setFloatValues(start, end);
+            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float percent = (float) animation.getAnimatedValue();
+                    onUpdate(percent);
+                }
+            });
+        }
+
+        public void onUpdate(float percent) {
+            // Update the drag animation
+            float txY = mMinTranslation + percent * (mMaxTranslation - mMinTranslation);
+            setTranslationY(txY);
+
+            // Update the background alpha
+            if (mFade != null) {
+                mFade.setAlpha(MAX_ALPHA * percent);
+            }
+
+            // Update the display
+            float scalePercent = -1;
+            float scaledWidth = -1;
+            float scaledHeight = -1;
+            CardView child = (CardView) mRecyclerView.getChildAt(0);
+            if (child != null) {
+                int width = child.getWidth();
+                int height = child.getHeight();
+                int displayWidth = mDisplayBackground.getWidth();
+                int displayHeight = mDisplayBackground.getHeight();
+
+                scalePercent = Math.min(1f, (txY - mMinTranslation) / height);
+
+                scaledWidth = 1f - scalePercent * (1 - (float) width / displayWidth);
+                scaledHeight = 1f - scalePercent * (1 - (float) height / displayHeight);
+                scaledHeight = Math.min(scaledHeight, mMaxDisplayScale);
+
+                mDisplayBackground.setScaleX(scaledWidth);
+                mDisplayBackground.setScaleY(scaledHeight);
+
+                float graphTranslation = scalePercent * -height;
+                mDisplayGraph.setTranslationY(graphTranslation);
+                mDisplayGraph.setScaleX(scaledWidth);
+            }
+
+            if (DEBUG) {
+                Log.d(TAG, String.format("percent=%s,txY=%s,alpha=%s,scalePercent=%s,scaledWidth=%s,scaledHeight=%s",
+                        percent, txY, mFade.getAlpha(), scalePercent, scaledWidth, scaledHeight));
+            }
+        }
     }
 }
