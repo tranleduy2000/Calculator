@@ -55,6 +55,7 @@ public class DisplayOverlay extends RelativeLayout {
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
+    private float mInitialRelativeMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
     private int mMinTranslation = -1;
@@ -101,11 +102,12 @@ public class DisplayOverlay extends RelativeLayout {
                 } else {
                     getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
+                evaluateHeight();
                 setTranslationY(mMinTranslation);
                 if (DEBUG) {
                     Log.v(TAG, String.format("mMinTranslation=%s, mMaxTranslation=%s", mMinTranslation, mMaxTranslation));
                 }
-                initializeHistory();
+                scrollToMostRecent();
             }
         });
     }
@@ -230,6 +232,7 @@ public class DisplayOverlay extends RelativeLayout {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mInitialMotionY = y;
+                mInitialRelativeMotionY = ev.getY() + getTranslationY();
                 mLastMotionY = y;
                 handleDown(ev);
                 break;
@@ -278,12 +281,13 @@ public class DisplayOverlay extends RelativeLayout {
         evaluateHeight();
 
         if (isCollapsed()) {
-            mDisplayBackground.setPivotY(0);
-
             mFormulaInitColor = mFormulaEditText.getCurrentTextColor();
             mResultInitColor = mResultEditText.getCurrentTextColor();
 
-            mFormulaEditText.setPivotX(0);
+            mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
+            mDisplayBackground.setPivotY(mInitialRelativeMotionY);
+
+            mFormulaEditText.setPivotX(mFormulaEditText.getWidth());
             mFormulaEditText.setPivotY(0);
 
             mResultEditText.setPivotX(mResultEditText.getWidth());
@@ -462,23 +466,6 @@ public class DisplayOverlay extends RelativeLayout {
         mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
     }
 
-    /**
-     * Set the size and offset of the history view
-     *
-     * We want the display+history to take up the full height of the parent minus some
-     * predefined padding.  The normal way to do this would be to give the overlay a height
-     * of match_parent minus some margin, and set an initial translation.  The issue with
-     * this is that the display has a height of wrap content and the keypad fills the
-     * remaining space, so we cannot determine the proper height for the history view until
-     * after layout completes.
-     *
-     * To account for this, we make this method available to setup the history and graph
-     * views after layout completes.
-     */
-    public void initializeHistory() {
-        scrollToMostRecent();
-    }
-
     public void scrollToMostRecent() {
         mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount()-1);
     }
@@ -551,7 +538,8 @@ public class DisplayOverlay extends RelativeLayout {
                 float exprScale = expr.getTextSize() / mFormulaEditText.getTextSize();
                 mFormulaEditText.setScaleX(scale(scalePercent, exprScale));
                 mFormulaEditText.setScaleY(scale(scalePercent, exprScale));
-                mFormulaEditText.setTranslationX(scalePercent * -140);
+                float formulaWidth = expr.getPaint().measureText(mFormulaEditText.getText().toString());
+                mFormulaEditText.setTranslationX(scalePercent * (expr.getLeft() + formulaWidth - mFormulaEditText.getWidth()));
                 mFormulaEditText.setTextColor(mixColors(scalePercent, mFormulaInitColor, expr.getCurrentTextColor()));
 
                 // Move the result to keep in place with the display
@@ -563,10 +551,16 @@ public class DisplayOverlay extends RelativeLayout {
                 mResultEditText.setScaleX(scale(scalePercent, resultScale));
                 mResultEditText.setScaleY(scale(scalePercent, resultScale));
                 mResultEditText.setTranslationX(scalePercent * (result.getRight() - mResultEditText.getRight()) / 2);
-                mResultEditText.setTranslationY(scalePercent * -300);
+                mResultEditText.setTranslationY(scalePercent * (result.getTop() - mResultEditText.getTop()));
                 mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
 
                 mInfoText.setAlpha(scale(scalePercent, 0));
+
+                // Handle readjustment of everything so it follows the finger
+                float adjustedTranslation = scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+                mRecyclerView.setTranslationY(adjustedTranslation);
+                mCalculationsDisplay.setTranslationY(adjustedTranslation);
+                mInfoText.setTranslationY(adjustedTranslation);
             }
             mFormulaEditText.setEnabled(percent == 0);
 
@@ -602,12 +596,12 @@ public class DisplayOverlay extends RelativeLayout {
         }
 
         private void print(View view) {
-//            Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
-//                    view.getClass().getSimpleName(),
-//                    view.getLeft(),
-//                    view.getRight(),
-//                    view.getTop(),
-//                    view.getBottom()));
+            Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
+                    view.getClass().getSimpleName(),
+                    view.getLeft(),
+                    view.getRight(),
+                    view.getTop(),
+                    view.getBottom()));
         }
     }
 }
