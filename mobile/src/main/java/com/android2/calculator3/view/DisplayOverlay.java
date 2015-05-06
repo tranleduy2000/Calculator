@@ -358,6 +358,9 @@ public class DisplayOverlay extends RelativeLayout {
         animator.addListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
+                mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
+                mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
+
                 mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
                 mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
 
@@ -406,6 +409,7 @@ public class DisplayOverlay extends RelativeLayout {
         // Now animate between the old and new heights
         float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
         long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
+        mDisplayBackground.setPivotY(0);
         mDisplayBackground.animate()
                 .scaleY(scale)
                 .setListener(listener)
@@ -596,12 +600,14 @@ public class DisplayOverlay extends RelativeLayout {
         }
 
         private void print(View view) {
-            Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
-                    view.getClass().getSimpleName(),
-                    view.getLeft(),
-                    view.getRight(),
-                    view.getTop(),
-                    view.getBottom()));
+            if (DEBUG) {
+                Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
+                        view.getClass().getSimpleName(),
+                        view.getLeft(),
+                        view.getRight(),
+                        view.getTop(),
+                        view.getBottom()));
+            }
         }
     }
 }
