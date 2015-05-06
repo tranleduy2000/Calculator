@@ -17,7 +17,6 @@
 package com.xlythe.math;
 
 import android.support.v7.widget.RecyclerView;
-import android.widget.BaseAdapter;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -101,7 +100,7 @@ public class History {
         if(mEntries.size() >= MAX_ENTRIES) {
             mEntries.remove(0);
         }
-        if((mEntries.size() < 2 || !formula.equals(mEntries.elementAt(mEntries.size() - 2).getBase())) && !formula.isEmpty() && !formula.isEmpty()) {
+        if((mEntries.size() < 2 || !formula.equals(mEntries.elementAt(mEntries.size() - 2).getFormula())) && !formula.isEmpty() && !formula.isEmpty()) {
             mEntries.insertElementAt(new HistoryEntry(formula, result), mEntries.size() - 1);
         }
         mPos = mEntries.size() - 1;
@@ -109,11 +108,11 @@ public class History {
     }
 
     public String getText() {
-        return current().getEdited();
+        return current().getResult();
     }
 
     public String getBase() {
-        return current().getBase();
+        return current().getFormula();
     }
 
     public void remove(HistoryEntry he) {

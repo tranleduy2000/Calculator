@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -38,9 +37,9 @@ public class HistoryLine extends LinearLayout {
         if(mMenuItemsStrings == null) {
             Resources resources = getResources();
             mMenuItemsStrings = new String[4];
-            mMenuItemsStrings[COPY] = String.format(resources.getString(R.string.copy), mHistoryEntry.getBase() + "=" + mHistoryEntry.getEdited());
-            mMenuItemsStrings[COPY_BASE] = String.format(resources.getString(R.string.copy), mHistoryEntry.getBase());
-            mMenuItemsStrings[COPY_EDITED] = String.format(resources.getString(R.string.copy), mHistoryEntry.getEdited());
+            mMenuItemsStrings[COPY] = String.format(resources.getString(R.string.copy), mHistoryEntry.getFormula() + "=" + mHistoryEntry.getResult());
+            mMenuItemsStrings[COPY_BASE] = String.format(resources.getString(R.string.copy), mHistoryEntry.getFormula());
+            mMenuItemsStrings[COPY_EDITED] = String.format(resources.getString(R.string.copy), mHistoryEntry.getResult());
             mMenuItemsStrings[REMOVE] = resources.getString(R.string.remove_from_history);
         }
         for(int i = 0; i < mMenuItemsStrings.length; i++) {
@@ -51,13 +50,13 @@ public class HistoryLine extends LinearLayout {
     public boolean onTextContextMenuItem(CharSequence title) {
         boolean handled = false;
         if(TextUtils.equals(title, mMenuItemsStrings[COPY])) {
-            copyContent(mHistoryEntry.getBase() + "=" + mHistoryEntry.getEdited());
+            copyContent(mHistoryEntry.getFormula() + "=" + mHistoryEntry.getResult());
             handled = true;
         } else if(TextUtils.equals(title, mMenuItemsStrings[COPY_BASE])) {
-            copyContent(mHistoryEntry.getBase());
+            copyContent(mHistoryEntry.getFormula());
             handled = true;
         } else if(TextUtils.equals(title, mMenuItemsStrings[COPY_EDITED])) {
-            copyContent(mHistoryEntry.getEdited());
+            copyContent(mHistoryEntry.getResult());
             handled = true;
         } else if(TextUtils.equals(title, mMenuItemsStrings[REMOVE])) {
             removeContent();

@@ -53,7 +53,7 @@ public class HistoryEntry {
         mEdited = mBase;
     }
 
-    public String getEdited() {
+    public String getResult() {
         return mEdited;
     }
 
@@ -61,7 +61,7 @@ public class HistoryEntry {
         mEdited = edited;
     }
 
-    public String getBase() {
+    public String getFormula() {
         return mBase;
     }
 }

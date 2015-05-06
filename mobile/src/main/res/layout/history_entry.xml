@@ -4,9 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    support:cardElevation="0dp"
+    support:cardElevation="@dimen/display_elevation"
     support:cardUseCompatPadding="false">
-    <!-- TODO remove cardElevation-->
 
     <com.android2.calculator3.view.HistoryLine
         android:id="@+id/history_line"

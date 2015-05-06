@@ -85,10 +85,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 mCallback.onHistoryItemSelected(entry);
             }
         });
-        holder.historyExpr.setText(formatText(entry.getBase()));
-        holder.historyResult.setText(formatText(entry.getEdited()));
+        holder.historyExpr.setText(formatText(entry.getFormula()));
+        holder.historyResult.setText(formatText(entry.getResult()));
 
-        if (entry.getBase().contains(mX)) {
+        if (entry.getFormula().contains(mX)) {
             holder.historyResult.setText(R.string.graph);
         }
     }

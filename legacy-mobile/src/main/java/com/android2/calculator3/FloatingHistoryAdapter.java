@@ -50,7 +50,7 @@ class FloatingHistoryAdapter extends HistoryAdapter {
             @Override
             public void onClick(View v) {
                 if(mListener != null) mListener.onHistoryItemClick(entry);
-                // copyContent(entry.getEdited());
+                // copyContent(entry.getResult());
             }
         });
     }

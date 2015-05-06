@@ -3,6 +3,7 @@ package com.android2.calculator3.view;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android2.calculator3.R;
 import com.xlythe.floatingview.AnimationFinishedListener;
@@ -39,7 +41,7 @@ public class DisplayOverlay extends RelativeLayout {
      * */
     private static final float MAX_ALPHA = 0.6f;
 
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static final String TAG = "DisplayOverlay";
 
     private RecyclerView mRecyclerView;
@@ -47,17 +49,19 @@ public class DisplayOverlay extends RelativeLayout {
     private CardView mDisplayBackground;
     private View mDisplayForeground;
     private View mDisplayGraph;
-    private View mFormulaEditText;
-    private View mResultEditText;
+    private TextView mFormulaEditText;
+    private TextView mResultEditText;
     private View mCalculationsDisplay;
+    private View mInfoText;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
     private int mMinTranslation = -1;
     private int mMaxTranslation = -1;
-    private float mMinVelocity = -1;
     private float mMaxDisplayScale = 1f;
+    private int mFormulaInitColor = -1;
+    private int mResultInitColor = -1;
     private View mFade;
     private final OnTouchListener mFadeOnTouchListener = new OnTouchListener() {
         @Override
@@ -97,8 +101,6 @@ public class DisplayOverlay extends RelativeLayout {
                 } else {
                     getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
-                mDisplayBackground.setPivotY(0);
-                evaluateHeight();
                 setTranslationY(mMinTranslation);
                 if (DEBUG) {
                     Log.v(TAG, String.format("mMinTranslation=%s, mMaxTranslation=%s", mMinTranslation, mMaxTranslation));
@@ -212,9 +214,10 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayBackground = (CardView) findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
         mDisplayGraph = findViewById(R.id.mini_graph);
-        mFormulaEditText = findViewById(R.id.formula);
-        mResultEditText = findViewById(R.id.result);
+        mFormulaEditText = (TextView) findViewById(R.id.formula);
+        mResultEditText = (TextView) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
+        mInfoText = findViewById(R.id.info);
     }
 
     @Override
@@ -228,6 +231,7 @@ public class DisplayOverlay extends RelativeLayout {
             case MotionEvent.ACTION_DOWN:
                 mInitialMotionY = y;
                 mLastMotionY = y;
+                handleDown(ev);
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dy = y - mInitialMotionY;
@@ -236,7 +240,6 @@ public class DisplayOverlay extends RelativeLayout {
                 } else if (dy > 0) {
                     intercepted = state != TranslateState.EXPANDED;
                 }
-
                 break;
         }
 
@@ -258,7 +261,7 @@ public class DisplayOverlay extends RelativeLayout {
         int action = MotionEventCompat.getActionMasked(event);
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                evaluateHeight();
+                // Handled in intercept
                 break;
             case MotionEvent.ACTION_MOVE:
                 handleMove(event);
@@ -269,6 +272,23 @@ public class DisplayOverlay extends RelativeLayout {
         }
 
         return true;
+    }
+
+    private void handleDown(MotionEvent event) {
+        evaluateHeight();
+
+        if (isCollapsed()) {
+            mDisplayBackground.setPivotY(0);
+
+            mFormulaInitColor = mFormulaEditText.getCurrentTextColor();
+            mResultInitColor = mResultEditText.getCurrentTextColor();
+
+            mFormulaEditText.setPivotX(0);
+            mFormulaEditText.setPivotY(0);
+
+            mResultEditText.setPivotX(mResultEditText.getWidth());
+            mResultEditText.setPivotY(0);
+        }
     }
 
     private void handleMove(MotionEvent event) {
@@ -290,14 +310,11 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void handleUp() {
-        TranslateState curState = getTranslateState();
-        if (curState == TranslateState.PARTIAL) {
-            // the sign on velocity seems unreliable, so use last delta to determine direction
-            if (mLastDeltaY > 0) {
-                expand();
-            } else {
-                collapse();
-            }
+        // the sign on velocity seems unreliable, so use last delta to determine direction
+        if (mLastDeltaY > 0) {
+            expand();
+        } else {
+            collapse();
         }
     }
 
@@ -334,6 +351,16 @@ public class DisplayOverlay extends RelativeLayout {
         if (listener != null) {
             animator.addListener(listener);
         }
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
+                mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
+
+                mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
+                mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
+            }
+        });
         animator.start();
 
         // Remove the background onTouchListener
@@ -344,6 +371,10 @@ public class DisplayOverlay extends RelativeLayout {
 
     public boolean isExpanded() {
         return getTranslateState() == TranslateState.EXPANDED;
+    }
+
+    public boolean isCollapsed() {
+        return getTranslateState() == TranslateState.COLLAPSED;
     }
 
     public void transitionToGraph(Animator.AnimatorListener listener) {
@@ -446,11 +477,6 @@ public class DisplayOverlay extends RelativeLayout {
      */
     public void initializeHistory() {
         scrollToMostRecent();
-
-        if (mMinVelocity < 0) {
-            int txDist = mMaxTranslation;
-            mMinVelocity = txDist / MIN_SETTLE_DURATION;
-        }
     }
 
     public void scrollToMostRecent() {
@@ -485,6 +511,11 @@ public class DisplayOverlay extends RelativeLayout {
             // Update the background alpha
             if (mFade != null) {
                 mFade.setAlpha(MAX_ALPHA * percent);
+                if (mFade.getAlpha() > 0f) {
+                    mFade.setOnTouchListener(mFadeOnTouchListener);
+                } else {
+                    mFade.setOnTouchListener(null);
+                }
             }
 
             // Update the display
@@ -500,22 +531,83 @@ public class DisplayOverlay extends RelativeLayout {
 
                 scalePercent = Math.min(1f, (txY - mMinTranslation) / height);
 
-                scaledWidth = 1f - scalePercent * (1 - (float) width / displayWidth);
-                scaledHeight = 1f - scalePercent * (1 - (float) height / displayHeight);
+                scaledWidth = scale(scalePercent, (float) width / displayWidth);
+                scaledHeight = scale(scalePercent, (float) height / displayHeight);
                 scaledHeight = Math.min(scaledHeight, mMaxDisplayScale);
 
+                // Scale the card behind everything
                 mDisplayBackground.setScaleX(scaledWidth);
                 mDisplayBackground.setScaleY(scaledHeight);
 
-                float graphTranslation = scalePercent * -height;
-                mDisplayGraph.setTranslationY(graphTranslation);
+                // Scale the graph behind the card (may be invisible, but oh well)
+                mDisplayGraph.setTranslationY(scalePercent * -height);
                 mDisplayGraph.setScaleX(scaledWidth);
+
+                // Move the formula over to the far left
+                TextView expr = (TextView) child.findViewById(R.id.historyExpr);
+                print(expr);
+                print(mFormulaEditText);
+
+                float exprScale = expr.getTextSize() / mFormulaEditText.getTextSize();
+                mFormulaEditText.setScaleX(scale(scalePercent, exprScale));
+                mFormulaEditText.setScaleY(scale(scalePercent, exprScale));
+                mFormulaEditText.setTranslationX(scalePercent * -140);
+                mFormulaEditText.setTextColor(mixColors(scalePercent, mFormulaInitColor, expr.getCurrentTextColor()));
+
+                // Move the result to keep in place with the display
+                TextView result = (TextView) child.findViewById(R.id.historyResult);
+                print(result);
+                print(mResultEditText);
+
+                float resultScale = result.getTextSize() / mResultEditText.getTextSize();
+                mResultEditText.setScaleX(scale(scalePercent, resultScale));
+                mResultEditText.setScaleY(scale(scalePercent, resultScale));
+                mResultEditText.setTranslationX(scalePercent * (result.getRight() - mResultEditText.getRight()) / 2);
+                mResultEditText.setTranslationY(scalePercent * -300);
+                mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
+
+                mInfoText.setAlpha(scale(scalePercent, 0));
             }
+            mFormulaEditText.setEnabled(percent == 0);
 
             if (DEBUG) {
                 Log.d(TAG, String.format("percent=%s,txY=%s,alpha=%s,scalePercent=%s,scaledWidth=%s,scaledHeight=%s",
                         percent, txY, mFade.getAlpha(), scalePercent, scaledWidth, scaledHeight));
             }
+        }
+
+        float scale(float percent, float goal) {
+            return 1f - percent * (1f - goal);
+        }
+
+        int mixColors(float percent, int initColor, int goalColor) {
+            int a1 = Color.alpha(goalColor);
+            int r1 = Color.red(goalColor);
+            int g1 = Color.green(goalColor);
+            int b1 = Color.blue(goalColor);
+
+            int a2 = Color.alpha(initColor);
+            int r2 = Color.red(initColor);
+            int g2 = Color.green(initColor);
+            int b2 = Color.blue(initColor);
+
+            percent = Math.min(1, percent);
+            percent = Math.max(0, percent);
+            float a = a1 * percent + a2 * (1 - percent);
+            float r = r1 * percent + r2 * (1 - percent);
+            float g = g1 * percent + g2 * (1 - percent);
+            float b = b1 * percent + b2 * (1 - percent);
+
+            return Color.argb((int) a, (int) r, (int) g, (int) b);
+        }
+
+        private void print(View view) {
+//            Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
+//                    view.getClass().getSimpleName(),
+//                    view.getLeft(),
+//                    view.getRight(),
+//                    view.getTop(),
+//                    view.getBottom()));
         }
     }
 }

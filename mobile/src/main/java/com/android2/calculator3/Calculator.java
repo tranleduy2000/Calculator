@@ -34,7 +34,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -278,7 +277,7 @@ public class Calculator extends Activity
                 mDisplayView.collapse(new AnimationFinishedListener() {
                     @Override
                     public void onAnimationFinished() {
-                        mFormulaEditText.setText(entry.getBase());
+                        mFormulaEditText.setText(entry.getFormula());
                     }
                 });
             }
@@ -325,7 +324,11 @@ public class Calculator extends Activity
     }
 
     private boolean saveHistory(String expr, String result, boolean ensureResult) {
-        if (!ensureResult || (!TextUtils.isEmpty(expr) && !TextUtils.isEmpty(result) && !Solver.equal(expr, result))) {
+        if (!ensureResult ||
+                (!TextUtils.isEmpty(expr)
+                        && !TextUtils.isEmpty(result)
+                        && !Solver.equal(expr, result)
+                        && !mHistory.current().getFormula().equals(expr))) {
             expr = EquationFormatter.appendParenthesis(expr);
             mHistory.enter(expr, result);
             return true;

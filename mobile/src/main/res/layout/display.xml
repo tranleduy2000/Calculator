@@ -40,15 +40,14 @@
             android:id="@+id/the_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
-            android:layout_alignParentBottom="true"
-            support:cardElevation="0dp"
+            support:cardElevation="@dimen/display_elevation"
             support:cardUseCompatPadding="false"/>
-        <!-- TODO remove cardElevation-->
 
         <RelativeLayout
             android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height">
+            android:layout_height="@dimen/display_height"
+            android:elevation="@dimen/display_elevation">
 
             <com.android2.calculator3.view.display.CalculatorEditText
                 android:id="@+id/formula"
@@ -71,14 +70,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="@color/display_formula_text_color"/>
+            android:textColor="@color/display_formula_text_color"
+            android:elevation="@dimen/display_elevation"/>
 
         <FrameLayout
             android:id="@+id/the_clear_animation"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
             android:paddingBottom="@dimen/above_display_margin"
-            android:layout_alignParentBottom="true"/>
+            android:elevation="@dimen/display_elevation"/>
 
     </FrameLayout>
 

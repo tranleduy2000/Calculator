@@ -13,6 +13,7 @@
     <dimen name="display_height">226dp</dimen> <!-- Should equal above + below display margins -->
     <dimen name="display_height_graph">100dp</dimen> <!-- Formula + Graph should equal below -->
     <dimen name="graph_margin">8dp</dimen>
+    <dimen name="display_elevation">2dp</dimen>
 
     <!-- Number pad -->
     <dimen name="num_margin_horizontal">14dp</dimen>
