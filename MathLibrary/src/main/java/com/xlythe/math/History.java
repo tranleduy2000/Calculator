@@ -72,7 +72,7 @@ public class History {
     }
 
     void update(String text) {
-        current().setEdited(text);
+        current().setResult(text);
     }
 
     public HistoryEntry current() {
@@ -96,7 +96,7 @@ public class History {
     }
 
     public void enter(String formula, String result) {
-        current().clearEdited();
+        current().clearResult();
         if(mEntries.size() >= MAX_ENTRIES) {
             mEntries.remove(0);
         }

@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
@@ -31,10 +32,6 @@ import com.xlythe.floatingview.AnimationFinishedListener;
  * scrolled all the way up, then we intercept the event and collapse the history.
  */
 public class DisplayOverlay extends RelativeLayout {
-    /**
-     * Closing the history with a fling will finish at least this fast (ms)
-     */
-    private static final float MIN_SETTLE_DURATION = 200f;
 
     /**
      * Alpha when history is pulled down
@@ -137,7 +134,7 @@ public class DisplayOverlay extends RelativeLayout {
                 final int heightSize = View.MeasureSpec.getSize(heightSpec);
                 int width = 0;
                 int height = 0;
-                for (int i = 0; i < getItemCount(); i++) {
+                for (int i = 0; i < getItemCount() && height < heightSize&& width < widthSize; i++) {
                     measureScrapChild(recycler, i,
                             View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
                             View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
@@ -173,7 +170,8 @@ public class DisplayOverlay extends RelativeLayout {
 
                     setMeasuredDimension(width, height);
                 } else {
-                    super.onMeasure(recycler, state, widthSpec, heightSpec);
+                    // Override the size to match the entire screen (so when we drag it down it's not cut off)
+                    setMeasuredDimension(DisplayOverlay.this.getWidth(), DisplayOverlay.this.getHeight());
                 }
             }
 
@@ -196,7 +194,7 @@ public class DisplayOverlay extends RelativeLayout {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             private boolean mCloseOnFling;
 
             @Override
@@ -234,7 +232,7 @@ public class DisplayOverlay extends RelativeLayout {
                 mInitialMotionY = y;
                 mInitialRelativeMotionY = ev.getY() + getTranslationY();
                 mLastMotionY = y;
-                handleDown(ev);
+                handleDown();
                 break;
             case MotionEvent.ACTION_MOVE:
                 float dy = y - mInitialMotionY;
@@ -277,7 +275,7 @@ public class DisplayOverlay extends RelativeLayout {
         return true;
     }
 
-    private void handleDown(MotionEvent event) {
+    private void handleDown() {
         evaluateHeight();
 
         if (isCollapsed()) {
@@ -285,7 +283,11 @@ public class DisplayOverlay extends RelativeLayout {
             mResultInitColor = mResultEditText.getCurrentTextColor();
 
             mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-            mDisplayBackground.setPivotY(mInitialRelativeMotionY);
+            if (mDisplayGraph.getVisibility() != View.VISIBLE) {
+                mDisplayBackground.setPivotY(mInitialRelativeMotionY);
+            } else {
+                mDisplayBackground.setPivotY(0);
+            }
 
             mFormulaEditText.setPivotX(mFormulaEditText.getWidth());
             mFormulaEditText.setPivotY(0);
@@ -359,7 +361,11 @@ public class DisplayOverlay extends RelativeLayout {
             @Override
             public void onAnimationFinished() {
                 mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-                mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
+                if (mDisplayGraph.getVisibility() != View.VISIBLE) {
+                    mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
+                } else {
+                    mDisplayBackground.setPivotY(0);
+                }
 
                 mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
                 mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
@@ -409,7 +415,7 @@ public class DisplayOverlay extends RelativeLayout {
         // Now animate between the old and new heights
         float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
         long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
-        mDisplayBackground.setPivotY(0);
+        mDisplayBackground.setPivotY(0f);
         mDisplayBackground.animate()
                 .scaleY(scale)
                 .setListener(listener)
@@ -467,7 +473,11 @@ public class DisplayOverlay extends RelativeLayout {
 
     private void evaluateHeight() {
         mMinTranslation = -getHeight() + mMainDisplay.getHeight();
-        mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
+        if (mRecyclerView.getHeight() == getHeight()) {
+            mMaxTranslation = 0;
+        } else {
+            mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
+        }
     }
 
     public void scrollToMostRecent() {
@@ -502,17 +512,13 @@ public class DisplayOverlay extends RelativeLayout {
             // Update the background alpha
             if (mFade != null) {
                 mFade.setAlpha(MAX_ALPHA * percent);
-                if (mFade.getAlpha() > 0f) {
-                    mFade.setOnTouchListener(mFadeOnTouchListener);
-                } else {
-                    mFade.setOnTouchListener(null);
-                }
             }
 
             // Update the display
             float scalePercent = -1;
             float scaledWidth = -1;
             float scaledHeight = -1;
+            float adjustedTranslation = 0;
             CardView child = (CardView) mRecyclerView.getChildAt(0);
             if (child != null) {
                 int width = child.getWidth();
@@ -521,6 +527,25 @@ public class DisplayOverlay extends RelativeLayout {
                 int displayHeight = mDisplayBackground.getHeight();
 
                 scalePercent = Math.min(1f, (txY - mMinTranslation) / height);
+
+                HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
+                if (scalePercent == 1f) {
+                    if (adapter.getDisplayEntry() == null) {
+                        adapter.setDisplayEntry(
+                                mFormulaEditText.getText().toString(),
+                                mResultEditText.getText().toString());
+                        mDisplayBackground.setVisibility(View.GONE);
+                        mCalculationsDisplay.setVisibility(View.GONE);
+                        scrollToMostRecent();
+                    }
+                    adjustedTranslation = height +
+                            ((LayoutParams) mRecyclerView.getLayoutParams()).bottomMargin;
+                } else if (adapter.getDisplayEntry() != null) {
+                    adapter.clearDisplayEntry();
+                    adjustedTranslation = 0;
+                    mDisplayBackground.setVisibility(View.VISIBLE);
+                    mCalculationsDisplay.setVisibility(View.VISIBLE);
+                }
 
                 scaledWidth = scale(scalePercent, (float) width / displayWidth);
                 scaledHeight = scale(scalePercent, (float) height / displayHeight);
@@ -561,7 +586,7 @@ public class DisplayOverlay extends RelativeLayout {
                 mInfoText.setAlpha(scale(scalePercent, 0));
 
                 // Handle readjustment of everything so it follows the finger
-                float adjustedTranslation = scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+                adjustedTranslation += scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
                 mRecyclerView.setTranslationY(adjustedTranslation);
                 mCalculationsDisplay.setTranslationY(adjustedTranslation);
                 mInfoText.setTranslationY(adjustedTranslation);
@@ -601,7 +626,7 @@ public class DisplayOverlay extends RelativeLayout {
 
         private void print(View view) {
             if (DEBUG) {
-                Log.d("TEST", String.format("%s left=%s,right=%s,top=%s,bottom=%s",
+                Log.d(TAG, String.format("%s left=%s,right=%s,top=%s,bottom=%s",
                         view.getClass().getSimpleName(),
                         view.getLeft(),
                         view.getRight(),

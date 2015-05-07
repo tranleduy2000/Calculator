@@ -39,6 +39,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     private final EquationFormatter mEquationFormatter;
     private final String mX;
     protected HistoryItemCallback mCallback;
+    private HistoryEntry mDisplayEntry;
 
     public interface HistoryItemCallback {
         void onHistoryItemSelected(HistoryEntry entry);
@@ -77,7 +78,16 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
-        final HistoryEntry entry = mEntries.elementAt(position);
+        final HistoryEntry entry;
+        if (mDisplayEntry != null) {
+            if (position == mEntries.size()) {
+                entry = mDisplayEntry;
+            } else {
+                entry = mEntries.elementAt(position);
+            }
+        } else {
+            entry = mEntries.elementAt(position);
+        }
         view.setAdapter(this);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,9 +103,27 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         }
     }
 
+    public HistoryEntry getDisplayEntry() {
+        return mDisplayEntry;
+    }
+
+    public void setDisplayEntry(String formula, String result) {
+        mDisplayEntry = new HistoryEntry(formula, result);
+        notifyDataSetChanged();
+    }
+
+    public void clearDisplayEntry() {
+        mDisplayEntry = null;
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        return mEntries.size() - 1;
+        if (mDisplayEntry == null) {
+            return mEntries.size() - 1;
+        } else {
+            return mEntries.size();
+        }
     }
 
     @Override

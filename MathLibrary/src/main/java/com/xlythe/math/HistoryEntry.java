@@ -22,46 +22,46 @@ import java.io.IOException;
 
 public class HistoryEntry {
     private static final int VERSION_1 = 1;
-    private String mBase;
-    private String mEdited;
+    private String mFormula;
+    private String mResult;
 
-    HistoryEntry(String base, String edited) {
-        mBase = base;
-        mEdited = edited;
+    public HistoryEntry(String formula, String result) {
+        mFormula = formula;
+        mResult = result;
     }
 
     HistoryEntry(int version, DataInput in) throws IOException {
         if(version >= VERSION_1) {
-            mBase = in.readUTF();
-            mEdited = in.readUTF();
+            mFormula = in.readUTF();
+            mResult = in.readUTF();
         } else {
             throw new IOException("invalid version " + version);
         }
     }
 
     void write(DataOutput out) throws IOException {
-        out.writeUTF(mBase);
-        out.writeUTF(mEdited);
+        out.writeUTF(mFormula);
+        out.writeUTF(mResult);
     }
 
     @Override
     public String toString() {
-        return mBase;
+        return mFormula;
     }
 
-    void clearEdited() {
-        mEdited = mBase;
+    void clearResult() {
+        mResult = mFormula;
     }
 
     public String getResult() {
-        return mEdited;
+        return mResult;
     }
 
-    void setEdited(String edited) {
-        mEdited = edited;
+    void setResult(String result) {
+        mResult = result;
     }
 
     public String getFormula() {
-        return mBase;
+        return mFormula;
     }
 }
