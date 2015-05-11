@@ -79,12 +79,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public void onBindViewHolder(ViewHolder holder, int position) {
         HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
         final HistoryEntry entry;
-        if (mDisplayEntry != null) {
-            if (position == mEntries.size()) {
-                entry = mDisplayEntry;
-            } else {
-                entry = mEntries.elementAt(position);
-            }
+        if (mDisplayEntry != null && position == mEntries.size() - 1) {
+            entry = mDisplayEntry;
         } else {
             entry = mEntries.elementAt(position);
         }

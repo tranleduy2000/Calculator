@@ -39,7 +39,7 @@ public class DisplayOverlay extends RelativeLayout {
     private static final float MAX_ALPHA = 0.6f;
 
     private static boolean DEBUG = false;
-    private static final String TAG = "DisplayOverlay";
+    private static final String TAG = DisplayOverlay.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
     private View mMainDisplay;
@@ -52,7 +52,6 @@ public class DisplayOverlay extends RelativeLayout {
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
     private float mInitialMotionY;
-    private float mInitialRelativeMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
     private int mMinTranslation = -1;
@@ -209,6 +208,7 @@ public class DisplayOverlay extends RelativeLayout {
                 }
             }
         });
+        // TODO RecyclerView.ItemDecoration for overlapping cards
 
         mMainDisplay = findViewById(R.id.main_display);
         mDisplayBackground = (CardView) findViewById(R.id.the_card);
@@ -230,7 +230,6 @@ public class DisplayOverlay extends RelativeLayout {
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 mInitialMotionY = y;
-                mInitialRelativeMotionY = ev.getY() + getTranslationY();
                 mLastMotionY = y;
                 handleDown();
                 break;
@@ -284,12 +283,12 @@ public class DisplayOverlay extends RelativeLayout {
 
             mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
             if (mDisplayGraph.getVisibility() != View.VISIBLE) {
-                mDisplayBackground.setPivotY(mInitialRelativeMotionY);
+                mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
             } else {
                 mDisplayBackground.setPivotY(0);
             }
 
-            mFormulaEditText.setPivotX(mFormulaEditText.getWidth());
+            mFormulaEditText.setPivotX(0);
             mFormulaEditText.setPivotY(0);
 
             mResultEditText.setPivotX(mResultEditText.getWidth());
@@ -527,22 +526,23 @@ public class DisplayOverlay extends RelativeLayout {
                 int displayHeight = mDisplayBackground.getHeight();
 
                 scalePercent = Math.min(1f, (txY - mMinTranslation) / height);
+                scalePercent = percent;
 
                 HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
                 if (scalePercent == 1f) {
                     if (adapter.getDisplayEntry() == null) {
                         adapter.setDisplayEntry(
-                                mFormulaEditText.getText().toString(),
-                                mResultEditText.getText().toString());
+                                mFormulaEditText.toString(),
+                                mResultEditText.toString());
                         mDisplayBackground.setVisibility(View.GONE);
                         mCalculationsDisplay.setVisibility(View.GONE);
                         scrollToMostRecent();
                     }
-                    adjustedTranslation = height +
-                            ((LayoutParams) mRecyclerView.getLayoutParams()).bottomMargin;
+                    adjustedTranslation += height +
+                            ((RecyclerView.LayoutParams) child.getLayoutParams()).topMargin +
+                            ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;
                 } else if (adapter.getDisplayEntry() != null) {
                     adapter.clearDisplayEntry();
-                    adjustedTranslation = 0;
                     mDisplayBackground.setVisibility(View.VISIBLE);
                     mCalculationsDisplay.setVisibility(View.VISIBLE);
                 }
@@ -554,6 +554,7 @@ public class DisplayOverlay extends RelativeLayout {
                 // Scale the card behind everything
                 mDisplayBackground.setScaleX(scaledWidth);
                 mDisplayBackground.setScaleY(scaledHeight);
+                mDisplayBackground.setTranslationY(scalePercent * -((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
 
                 // Scale the graph behind the card (may be invisible, but oh well)
                 mDisplayGraph.setTranslationY(scalePercent * -height);
@@ -561,32 +562,41 @@ public class DisplayOverlay extends RelativeLayout {
 
                 // Move the formula over to the far left
                 TextView expr = (TextView) child.findViewById(R.id.historyExpr);
-                print(expr);
-                print(mFormulaEditText);
-
                 float exprScale = expr.getTextSize() / mFormulaEditText.getTextSize();
                 mFormulaEditText.setScaleX(scale(scalePercent, exprScale));
                 mFormulaEditText.setScaleY(scale(scalePercent, exprScale));
                 float formulaWidth = expr.getPaint().measureText(mFormulaEditText.getText().toString());
-                mFormulaEditText.setTranslationX(scalePercent * (expr.getLeft() + formulaWidth - mFormulaEditText.getWidth()));
+                mFormulaEditText.setTranslationX(scalePercent * (
+                        + formulaWidth
+                        - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
+                        + expr.getLeft()
+                        + ((RecyclerView.LayoutParams) child.getLayoutParams()).leftMargin
+                ));
+                mFormulaEditText.setTranslationY(scalePercent * (
+                        + expr.getTop()
+                        - exprScale * mFormulaEditText.getPaddingTop()
+                        + exprScale * mFormulaEditText.getPaddingBottom()
+                ));
+                Log.d("TEST", "trans: " + mFormulaEditText.getTranslationX());
                 mFormulaEditText.setTextColor(mixColors(scalePercent, mFormulaInitColor, expr.getCurrentTextColor()));
 
                 // Move the result to keep in place with the display
                 TextView result = (TextView) child.findViewById(R.id.historyResult);
-                print(result);
-                print(mResultEditText);
+                print("Real result", result);
+                print("Disp result", mResultEditText);
 
                 float resultScale = result.getTextSize() / mResultEditText.getTextSize();
                 mResultEditText.setScaleX(scale(scalePercent, resultScale));
                 mResultEditText.setScaleY(scale(scalePercent, resultScale));
                 mResultEditText.setTranslationX(scalePercent * (result.getRight() - mResultEditText.getRight()) / 2);
-                mResultEditText.setTranslationY(scalePercent * (result.getTop() - mResultEditText.getTop()));
+                mResultEditText.setTranslationY(scalePercent * (result.getTop() + mResultEditText.getPaddingBottom() + height - mCalculationsDisplay.getHeight()));
                 mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
 
                 mInfoText.setAlpha(scale(scalePercent, 0));
 
                 // Handle readjustment of everything so it follows the finger
-                adjustedTranslation += scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+                adjustedTranslation += scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight() -
+                        ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
                 mRecyclerView.setTranslationY(adjustedTranslation);
                 mCalculationsDisplay.setTranslationY(adjustedTranslation);
                 mInfoText.setTranslationY(adjustedTranslation);
@@ -624,10 +634,10 @@ public class DisplayOverlay extends RelativeLayout {
             return Color.argb((int) a, (int) r, (int) g, (int) b);
         }
 
-        private void print(View view) {
+        private void print(String name, View view) {
             if (DEBUG) {
                 Log.d(TAG, String.format("%s left=%s,right=%s,top=%s,bottom=%s",
-                        view.getClass().getSimpleName(),
+                        name,
                         view.getLeft(),
                         view.getRight(),
                         view.getTop(),
