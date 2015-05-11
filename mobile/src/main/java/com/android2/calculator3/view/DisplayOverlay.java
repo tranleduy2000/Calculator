@@ -11,7 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
@@ -41,6 +43,9 @@ public class DisplayOverlay extends RelativeLayout {
     private static boolean DEBUG = false;
     private static final String TAG = DisplayOverlay.class.getSimpleName();
 
+    private VelocityTracker mVelocityTracker;
+    private int mMinimumFlingVelocity;
+    private int mMaximumFlingVelocity;
     private RecyclerView mRecyclerView;
     private View mMainDisplay;
     private CardView mDisplayBackground;
@@ -90,6 +95,9 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void setup() {
+        ViewConfiguration vc = ViewConfiguration.get(getContext());
+        mMinimumFlingVelocity = vc.getScaledMinimumFlingVelocity();
+        mMaximumFlingVelocity = vc.getScaledMaximumFlingVelocity();
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -243,11 +251,6 @@ public class DisplayOverlay extends RelativeLayout {
                 break;
         }
 
-        if (!intercepted) {
-            mInitialMotionY = y;
-            mLastMotionY = y;
-        }
-
         return intercepted;
     }
 
@@ -259,6 +262,12 @@ public class DisplayOverlay extends RelativeLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
+
+        if (mVelocityTracker == null) {
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        mVelocityTracker.addMovement(event);
+
         switch (action) {
             case MotionEvent.ACTION_DOWN:
                 // Handled in intercept
@@ -267,7 +276,7 @@ public class DisplayOverlay extends RelativeLayout {
                 handleMove(event);
                 break;
             case MotionEvent.ACTION_UP:
-                handleUp();
+                handleUp(event);
                 break;
         }
 
@@ -314,13 +323,24 @@ public class DisplayOverlay extends RelativeLayout {
         mLastDeltaY = dy;
     }
 
-    private void handleUp() {
-        // the sign on velocity seems unreliable, so use last delta to determine direction
-        if (mLastDeltaY > 0) {
-            expand();
+    private void handleUp(MotionEvent event) {
+        mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+        if (Math.abs(mVelocityTracker.getYVelocity()) > mMinimumFlingVelocity) {
+            // the sign on velocity seems unreliable, so use last delta to determine direction
+            if (mLastDeltaY > 0) {
+                expand();
+            } else {
+                collapse();
+            }
         } else {
-            collapse();
+            if (calculateCurrentPercent(0) > 0.5f) {
+                expand();
+            } else {
+                collapse();
+            }
         }
+        mVelocityTracker.recycle();
+        mVelocityTracker = null;
     }
 
     private float calculateCurrentPercent(float dy) {
@@ -577,14 +597,10 @@ public class DisplayOverlay extends RelativeLayout {
                         - exprScale * mFormulaEditText.getPaddingTop()
                         + exprScale * mFormulaEditText.getPaddingBottom()
                 ));
-                Log.d("TEST", "trans: " + mFormulaEditText.getTranslationX());
                 mFormulaEditText.setTextColor(mixColors(scalePercent, mFormulaInitColor, expr.getCurrentTextColor()));
 
                 // Move the result to keep in place with the display
                 TextView result = (TextView) child.findViewById(R.id.historyResult);
-                print("Real result", result);
-                print("Disp result", mResultEditText);
-
                 float resultScale = result.getTextSize() / mResultEditText.getTextSize();
                 mResultEditText.setScaleX(scale(scalePercent, resultScale));
                 mResultEditText.setScaleY(scale(scalePercent, resultScale));
@@ -632,17 +648,6 @@ public class DisplayOverlay extends RelativeLayout {
             float b = b1 * percent + b2 * (1 - percent);
 
             return Color.argb((int) a, (int) r, (int) g, (int) b);
-        }
-
-        private void print(String name, View view) {
-            if (DEBUG) {
-                Log.d(TAG, String.format("%s left=%s,right=%s,top=%s,bottom=%s",
-                        name,
-                        view.getLeft(),
-                        view.getRight(),
-                        view.getTop(),
-                        view.getBottom()));
-            }
         }
     }
 }
