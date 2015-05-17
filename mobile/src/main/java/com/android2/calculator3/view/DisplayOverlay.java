@@ -660,10 +660,8 @@ public class DisplayOverlay extends RelativeLayout {
                         - mResultEditText.getRight()
                 ) / 2);
                 mResultEditText.setTranslationY(scalePercent * (
+                        - mResultEditText.getTop()
                         + result.getTop()
-                        + mResultEditText.getPaddingBottom()
-                        + height
-                        - mCalculationsDisplay.getHeight()
                 ));
                 mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
 
