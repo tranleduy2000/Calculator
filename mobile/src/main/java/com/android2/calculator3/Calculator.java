@@ -719,7 +719,6 @@ public class Calculator extends Activity
                 mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue());
             }
         });
-        mFormulaEditText.setText(result);
         mResultEditText.setText(result);
 
         final AnimatorSet animatorSet = new AnimatorSet();

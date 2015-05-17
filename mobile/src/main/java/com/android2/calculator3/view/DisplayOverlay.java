@@ -17,6 +17,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -73,6 +74,23 @@ public class DisplayOverlay extends RelativeLayout {
         }
     };
     private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
+    private final Animator.AnimatorListener mCollapseListener = new AnimationFinishedListener() {
+        @Override
+        public void onAnimationFinished() {
+            mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
+            if (mDisplayGraph.getVisibility() != View.VISIBLE) {
+                mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
+            } else {
+                mDisplayBackground.setPivotY(0);
+            }
+
+            mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
+            mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
+
+            mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
+            mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
+        }
+    };
 
     public DisplayOverlay(Context context) {
         super(context);
@@ -216,7 +234,6 @@ public class DisplayOverlay extends RelativeLayout {
                 }
             }
         });
-        // TODO RecyclerView.ItemDecoration for overlapping cards
 
         mMainDisplay = findViewById(R.id.main_display);
         mDisplayBackground = (CardView) findViewById(R.id.the_card);
@@ -286,6 +303,10 @@ public class DisplayOverlay extends RelativeLayout {
     private void handleDown() {
         evaluateHeight();
 
+        if (mMinTranslation == mMaxTranslation) {
+            return;
+        }
+
         if (isCollapsed()) {
             mFormulaInitColor = mFormulaEditText.getCurrentTextColor();
             mResultInitColor = mResultEditText.getCurrentTextColor();
@@ -324,6 +345,10 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void handleUp(MotionEvent event) {
+        if (mMinTranslation == mMaxTranslation) {
+            return;
+        }
+
         mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
         if (Math.abs(mVelocityTracker.getYVelocity()) > mMinimumFlingVelocity) {
             // the sign on velocity seems unreliable, so use last delta to determine direction
@@ -345,9 +370,12 @@ public class DisplayOverlay extends RelativeLayout {
 
     private float calculateCurrentPercent(float dy) {
         float clampedY = Math.min(Math.max(getTranslationY() + dy, mMinTranslation), mMaxTranslation);
-        float range = mMaxTranslation - mMinTranslation;
-        float percent = range == 0 ? 0 : (clampedY - mMinTranslation) / range;
+        float percent = getRange() == 0 ? 0 : (clampedY - mMinTranslation) / getRange();
         return percent;
+    }
+
+    private float getRange() {
+        return mMaxTranslation - mMinTranslation;
     }
 
     public void expand() {
@@ -355,6 +383,14 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void expand(Animator.AnimatorListener listener) {
+        if (mMinTranslation == mMaxTranslation) {
+            if (listener != null) {
+                listener.onAnimationStart(null);
+                listener.onAnimationEnd(null);
+            }
+            return;
+        }
+
         DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 1f);
         if (listener != null) {
             animator.addListener(listener);
@@ -372,27 +408,19 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void collapse(Animator.AnimatorListener listener) {
+        if (mMinTranslation == mMaxTranslation) {
+            if (listener != null) {
+                listener.onAnimationStart(null);
+                listener.onAnimationEnd(null);
+            }
+            return;
+        }
+
         DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 0f);
         if (listener != null) {
             animator.addListener(listener);
         }
-        animator.addListener(new AnimationFinishedListener() {
-            @Override
-            public void onAnimationFinished() {
-                mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-                if (mDisplayGraph.getVisibility() != View.VISIBLE) {
-                    mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
-                } else {
-                    mDisplayBackground.setPivotY(0);
-                }
-
-                mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
-                mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
-
-                mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
-                mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
-            }
-        });
+        animator.addListener(mCollapseListener);
         animator.start();
 
         // Remove the background onTouchListener
@@ -490,12 +518,29 @@ public class DisplayOverlay extends RelativeLayout {
         mRecyclerView.setAdapter(adapter);
     }
 
+    private boolean hasDisplayEntry() {
+        HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
+        return adapter.getDisplayEntry() != null;
+    }
+
     private void evaluateHeight() {
+        if (hasDisplayEntry()) {
+            // The display turns into an entry item, which increases the recycler height by 1.
+            // That means the height is dirty now :( Try again later.
+            return;
+        }
+
         mMinTranslation = -getHeight() + mMainDisplay.getHeight();
-        if (mRecyclerView.getHeight() == getHeight()) {
-            mMaxTranslation = 0;
+        CardView child = (CardView) mRecyclerView.getChildAt(0);
+        float childHeight = child == null ? 0 :
+                + child.getHeight()
+                + ((RecyclerView.LayoutParams) child.getLayoutParams()).topMargin
+                + ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;
+        int itemCount = mRecyclerView.getAdapter().getItemCount() + 1;
+        if (itemCount * childHeight < getHeight()) {
+            mMaxTranslation = -getHeight() + (int) (itemCount * childHeight);
         } else {
-            mMaxTranslation = mMinTranslation + mRecyclerView.getHeight();
+            mMaxTranslation = 0;
         }
     }
 
@@ -525,7 +570,7 @@ public class DisplayOverlay extends RelativeLayout {
 
         public void onUpdate(float percent) {
             // Update the drag animation
-            float txY = mMinTranslation + percent * (mMaxTranslation - mMinTranslation);
+            float txY = mMinTranslation + percent * (getRange());
             setTranslationY(txY);
 
             // Update the background alpha
@@ -534,7 +579,7 @@ public class DisplayOverlay extends RelativeLayout {
             }
 
             // Update the display
-            float scalePercent = -1;
+            float scalePercent = percent;
             float scaledWidth = -1;
             float scaledHeight = -1;
             float adjustedTranslation = 0;
@@ -544,9 +589,6 @@ public class DisplayOverlay extends RelativeLayout {
                 int height = child.getHeight();
                 int displayWidth = mDisplayBackground.getWidth();
                 int displayHeight = mDisplayBackground.getHeight();
-
-                scalePercent = Math.min(1f, (txY - mMinTranslation) / height);
-                scalePercent = percent;
 
                 HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
                 if (scalePercent == 1f) {
@@ -571,10 +613,19 @@ public class DisplayOverlay extends RelativeLayout {
                 scaledHeight = scale(scalePercent, (float) height / displayHeight);
                 scaledHeight = Math.min(scaledHeight, mMaxDisplayScale);
 
+                // Add corners to the card
+                if (percent > 0.07) {
+                    // Due to bugs in setRadius, ignore the first few percent
+                    mDisplayBackground.setRadius(scalePercent * child.getRadius());
+                }
+
                 // Scale the card behind everything
                 mDisplayBackground.setScaleX(scaledWidth);
                 mDisplayBackground.setScaleY(scaledHeight);
-                mDisplayBackground.setTranslationY(scalePercent * -((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
+                mDisplayBackground.setTranslationY(scalePercent * (
+                        - ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin
+                        - ((FrameLayout.LayoutParams) mDisplayBackground.getLayoutParams()).topMargin
+                ));
 
                 // Scale the graph behind the card (may be invisible, but oh well)
                 mDisplayGraph.setTranslationY(scalePercent * -height);
@@ -604,15 +655,25 @@ public class DisplayOverlay extends RelativeLayout {
                 float resultScale = result.getTextSize() / mResultEditText.getTextSize();
                 mResultEditText.setScaleX(scale(scalePercent, resultScale));
                 mResultEditText.setScaleY(scale(scalePercent, resultScale));
-                mResultEditText.setTranslationX(scalePercent * (result.getRight() - mResultEditText.getRight()) / 2);
-                mResultEditText.setTranslationY(scalePercent * (result.getTop() + mResultEditText.getPaddingBottom() + height - mCalculationsDisplay.getHeight()));
+                mResultEditText.setTranslationX(scalePercent * (
+                        + result.getRight()
+                        - mResultEditText.getRight()
+                ) / 2);
+                mResultEditText.setTranslationY(scalePercent * (
+                        + result.getTop()
+                        + mResultEditText.getPaddingBottom()
+                        + height
+                        - mCalculationsDisplay.getHeight()
+                ));
                 mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
 
                 mInfoText.setAlpha(scale(scalePercent, 0));
 
                 // Handle readjustment of everything so it follows the finger
-                adjustedTranslation += scalePercent * (mDisplayBackground.getPivotY() - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight() -
-                        ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
+                adjustedTranslation += scalePercent * (
+                        + mDisplayBackground.getPivotY()
+                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight()
+                        - ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
                 mRecyclerView.setTranslationY(adjustedTranslation);
                 mCalculationsDisplay.setTranslationY(adjustedTranslation);
                 mInfoText.setTranslationY(adjustedTranslation);

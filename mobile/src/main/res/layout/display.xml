@@ -42,6 +42,7 @@
             android:layout_height="@dimen/display_height"
             android:layout_marginLeft="@dimen/card_view_margin_fix"
             android:layout_marginRight="@dimen/card_view_margin_fix"
+            android:layout_marginTop="@dimen/card_view_margin_fix"
             support:cardElevation="@dimen/display_elevation"
             support:cardUseCompatPadding="false"
             support:cardCornerRadius="0dp">
