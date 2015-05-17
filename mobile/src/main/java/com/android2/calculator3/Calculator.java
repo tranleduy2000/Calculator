@@ -246,8 +246,9 @@ public class Calculator extends Activity
             @Override
             public void onGlobalLayout() {
                 CalculatorPadLayout pad = (CalculatorPadLayout) mAdvancedPad.findViewById(R.id.pad_advanced_grid);
-                mMoreButton.getLayoutParams().width = mAdvancedPad.getWidth() / pad.getColumns();
-                mMoreButton.getLayoutParams().height = mAdvancedPad.getHeight() / pad.getRows();
+
+                mAdvancedPadMore.getLayoutParams().width = 2 * mAdvancedPad.getWidth() / pad.getColumns();
+                mAdvancedPadMore.setTranslationX(-mAdvancedPad.getWidth() / pad.getColumns());
             }
         });
 
@@ -597,8 +598,7 @@ public class Calculator extends Activity
         revealAnimator =
                 ViewAnimationUtils.createCircularReveal(revealView,
                         revealCenterX, revealCenterY, start, end);
-        revealAnimator.setDuration(
-                getResources().getInteger(android.R.integer.config_longAnimTime));
+        revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_longAnimTime));
         if (reverse) {
             revealAnimator.addListener(new AnimationFinishedListener() {
                 @Override

@@ -83,13 +83,6 @@
             android:text="@string/const_e" />
 
         <com.android2.calculator3.view.Button
-            android:id="@+id/op_pow"
-            style="@style/PadButtonStyle.Advanced"
-            android:contentDescription="@string/desc_op_pow"
-            android:onClick="onButtonClick"
-            android:text="@string/op_pow" />
-
-        <com.android2.calculator3.view.Button
             android:id="@+id/lparen"
             style="@style/PadButtonStyle.Advanced"
             android:contentDescription="@string/desc_lparen"
@@ -111,17 +104,17 @@
             android:text="@string/op_sqrt" />
 
         <com.android2.calculator3.view.Button
+            android:id="@+id/op_pow"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_op_pow"
+            android:onClick="onButtonClick"
+            android:text="@string/op_pow" />
+
+        <com.android2.calculator3.view.Button
             android:id="@+id/const_i"
             style="@style/PadButtonStyle.Advanced"
             android:onClick="onButtonClick"
             android:text="@string/const_imaginary" />
-
-        <com.android2.calculator3.view.Button
-            android:id="@+id/fun_percent"
-            style="@style/PadButtonStyle.Advanced"
-            android:contentDescription="@string/fun_percentage"
-            android:onClick="onButtonClick"
-            android:text="@string/fun_percentage" />
 
         <com.android2.calculator3.view.Button
             android:id="@+id/const_x"
