@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Display -->
-    <dimen name="above_display_margin">0dp</dimen>
+    <dimen name="above_display_margin">0dp</dimen> <!-- Should equal 2 * card_view_margin_fix, but positive-->
     <dimen name="below_display_margin">226dp</dimen>
     <dimen name="display_height">226dp</dimen> <!-- Should equal above + below display margins -->
     <dimen name="card_view_margin_fix">0dp</dimen>

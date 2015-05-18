@@ -11,7 +11,7 @@ import com.rey.material.drawable.RippleDrawable;
 /**
  * RippleDrawable has to be set in code (for backwards compatibility reasons)
  */
-public class Button extends com.rey.material.widget.Button {
+public class Button extends ResizingButton {
     private int mColor;
 
     public Button(Context context) {

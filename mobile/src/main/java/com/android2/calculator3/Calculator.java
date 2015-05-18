@@ -57,14 +57,11 @@ import com.android2.calculator3.view.CalculatorPadLayout;
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
-import com.android2.calculator3.view.display.CalculatorEditText.OnTextSizeChangeListener;
+import com.android2.calculator3.view.CalculatorEditText.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.DisplayOverlay;
-import com.android2.calculator3.view.MatrixInverseView;
-import com.android2.calculator3.view.MatrixTransposeView;
-import com.android2.calculator3.view.MatrixView;
 import com.android2.calculator3.view.EqualsImageButton.State;
-import com.android2.calculator3.view.display.CalculatorEditText;
+import com.android2.calculator3.view.CalculatorEditText;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.Constants;
@@ -248,6 +245,7 @@ public class Calculator extends Activity
                 CalculatorPadLayout pad = (CalculatorPadLayout) mAdvancedPad.findViewById(R.id.pad_advanced_grid);
 
                 mAdvancedPadMore.getLayoutParams().width = 2 * mAdvancedPad.getWidth() / pad.getColumns();
+                mAdvancedPadMore.getLayoutParams().height = 2 * mAdvancedPad.getHeight() / pad.getRows();
                 mAdvancedPadMore.setTranslationX(-mAdvancedPad.getWidth() / pad.getColumns());
             }
         });
@@ -435,15 +433,6 @@ public class Calculator extends Activity
                 break;
             case R.id.dec:
                 setBase(Base.DECIMAL);
-                break;
-            case R.id.matrix:
-                mFormulaEditText.insert(MatrixView.getPattern());
-                break;
-            case R.id.matrix_inverse:
-                mFormulaEditText.insert(MatrixInverseView.PATTERN);
-                break;
-            case R.id.matrix_transpose:
-                mFormulaEditText.insert(MatrixTransposeView.PATTERN);
                 break;
             case R.id.op_add:
             case R.id.op_sub:

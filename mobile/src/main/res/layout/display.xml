@@ -60,13 +60,13 @@
             android:layout_height="@dimen/display_height"
             android:elevation="@dimen/display_elevation">
 
-            <com.android2.calculator3.view.display.CalculatorEditText
+            <com.android2.calculator3.view.CalculatorEditText
                 android:id="@+id/formula"
                 style="@style/Theme.Calculator.Display.Main.Formula"
                 android:inputType="text|textNoSuggestions"
                 android:textColor="@color/display_formula_text_color" />
 
-            <com.android2.calculator3.view.display.CalculatorEditText
+            <com.android2.calculator3.view.CalculatorEditText
                 android:id="@+id/result"
                 style="@style/Theme.Calculator.Display.Main.Result"
                 android:layout_below="@id/formula"

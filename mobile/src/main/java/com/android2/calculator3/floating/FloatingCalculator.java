@@ -1,21 +1,17 @@
 package com.android2.calculator3.floating;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.CalculatorExpressionEvaluator;
 import com.android2.calculator3.CalculatorExpressionTokenizer;
 import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.display.AdvancedDisplay;
+import com.android2.calculator3.view.CalculatorEditText;
 import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.Constants;
 import com.xlythe.math.History;
@@ -25,7 +21,7 @@ import com.xlythe.math.Persist;
 public class FloatingCalculator extends FloatingView {
     // Calc logic
     private View.OnClickListener mListener;
-    private AdvancedDisplay mDisplay;
+    private CalculatorEditText mDisplay;
     private ImageButton mDelete;
     private ImageButton mClear;
     private ViewPager mPager;
@@ -60,12 +56,12 @@ public class FloatingCalculator extends FloatingView {
 
         mHistory = mPersist.getHistory();
 
-        mDisplay = (AdvancedDisplay) child.findViewById(R.id.display);
+        mDisplay = (CalculatorEditText) child.findViewById(R.id.display);
         mDisplay.setSolver(mEvaluator.getSolver());
         mDisplay.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                copyContent(mDisplay.getText());
+                copyContent(mDisplay.toString());
                 return true;
             }
         });
@@ -124,7 +120,6 @@ public class FloatingCalculator extends FloatingView {
                 return true;
             }
         });
-        child.findViewById(R.id.display_wrapper).bringToFront();
 
         setState(State.DELETE);
 

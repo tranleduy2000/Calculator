@@ -5,7 +5,7 @@
 
     <!-- Display -->
     <dimen name="above_display_margin">6dp</dimen> <!-- Should equal 2 * card_view_margin_fix, but positive-->
-    <dimen name="below_display_margin">100dp</dimen>
-    <dimen name="display_height">106dp</dimen> <!-- Should equal above + below display margins -->
-    <dimen name="display_height_graph">50dp</dimen> <!-- Formula + Graph should equal below -->
+    <dimen name="below_display_margin">400dp</dimen>
+    <dimen name="display_height">406dp</dimen> <!-- Should equal above + below display margins -->
+    <dimen name="display_height_graph">200dp</dimen> <!-- Formula + Graph should equal below -->
 </resources>

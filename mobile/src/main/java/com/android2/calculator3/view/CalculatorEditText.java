@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android2.calculator3.view.display;
+package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -38,8 +38,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.CalculatorEditable;
-import com.android2.calculator3.view.TextUtil;
 import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
@@ -87,7 +85,6 @@ public class CalculatorEditText extends EditText {
     private EquationFormatter mEquationFormatter;
     private int mSelectionHandle = 0;
     private Solver mSolver;
-    private EventListener mEventListener;
     private List<String> mKeywords;
     private Editable.Factory mFactory = new CalculatorEditable.Factory();
 
@@ -120,13 +117,6 @@ public class CalculatorEditText extends EditText {
         // Display ^ , and other visual cues
         mEquationFormatter = new EquationFormatter();
         addTextChangedListener(mTextWatcher);
-        setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && mEventListener != null)
-                    mEventListener.onEditTextChanged(CalculatorEditText.this);
-            }
-        });
 
         if(attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(
@@ -369,24 +359,6 @@ public class CalculatorEditText extends EditText {
     @Override
     public String toString() {
         return removeFormatting(getText().toString());
-    }
-
-    @Override
-    public View focusSearch(int direction) {
-        View v;
-        switch(direction) {
-            case View.FOCUS_FORWARD:
-                v = mEventListener.nextView(this);
-                while(!v.isFocusable())
-                    v = mEventListener.nextView(v);
-                return v;
-            case View.FOCUS_BACKWARD:
-                v = mEventListener.previousView(this);
-                while(!v.isFocusable())
-                    v = mEventListener.previousView(v);
-                return v;
-        }
-        return super.focusSearch(direction);
     }
 
     class NoTextSelectionMode implements ActionMode.Callback {
