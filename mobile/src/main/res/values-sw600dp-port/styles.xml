@@ -31,7 +31,7 @@
 
     <style name="Theme.Calculator.Display.Main.Result">
         <item name="android:paddingTop">14dip</item>
-        <item name="android:paddingBottom">90dip</item>
+        <item name="android:paddingBottom">58dip</item>
         <item name="android:paddingLeft">44dip</item>
         <item name="android:paddingRight">44dip</item>
         <item name="textSize">48sp</item>
