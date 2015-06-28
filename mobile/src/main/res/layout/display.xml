@@ -32,6 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height_graph"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="@dimen/graph_margin"
             android:visibility="gone"/>
 
         <View

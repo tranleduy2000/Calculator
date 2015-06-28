@@ -53,10 +53,8 @@ import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.android2.calculator3.view.CalculatorPadLayout;
 import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.CalculatorPadViewExtended;
-import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.CalculatorEditText.OnTextSizeChangeListener;

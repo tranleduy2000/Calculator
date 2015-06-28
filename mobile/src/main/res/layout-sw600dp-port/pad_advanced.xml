@@ -122,22 +122,6 @@
             android:onClick="onButtonClick"
             android:text="@string/var_x" />
 
-        <ImageButton
-            android:id="@+id/more"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_gravity="bottom|right"
-            android:scaleType="centerInside"
-            android:background="@android:color/transparent"
-            android:onClick="onButtonClick"
-            android:src="@drawable/more_icon" />
-
     </com.android2.calculator3.view.CalculatorPadLayout>
-
-    <include layout="@layout/pad_advanced_more"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="bottom|right"/>
 
 </io.codetail.widget.RevealFrameLayout>

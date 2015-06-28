@@ -59,7 +59,7 @@
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/btn_zoomin"
+            android:src="@drawable/matrix"
             support:elevation="4dp"
             support:borderWidth="0dp"
             android:layout_gravity="bottom|right" />
