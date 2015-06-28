@@ -19,6 +19,7 @@
 
     <style name="Theme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/calculator_accent_color</item>
+        <item name="colorAccent">@color/pad_numeric_background_color</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="textAppearanceLargePopupMenu">@style/popupMenuTextAppearanceLarge</item>
         <item name="android:textAppearanceLargePopupMenu">@style/popupMenuTextAppearanceLarge</item>

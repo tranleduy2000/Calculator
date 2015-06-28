@@ -17,7 +17,6 @@
 
 <com.android2.calculator3.view.DisplayOverlay
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:support="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -33,32 +32,18 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height_graph"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/above_display_margin"
             android:visibility="gone"/>
 
-        <android.support.v7.widget.CardView
+        <View
             android:id="@+id/the_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height"
-            android:layout_marginLeft="@dimen/card_view_margin_fix"
-            android:layout_marginRight="@dimen/card_view_margin_fix"
-            android:layout_marginTop="@dimen/card_view_margin_fix"
-            support:cardElevation="@dimen/display_elevation"
-            support:cardUseCompatPadding="false"
-            support:cardCornerRadius="0dp">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/display_background_color" />
-
-        </android.support.v7.widget.CardView>
+            android:background="@drawable/white_card"/>
 
         <RelativeLayout
             android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height"
-            android:elevation="@dimen/display_elevation">
+            android:layout_height="@dimen/display_height">
 
             <com.android2.calculator3.view.CalculatorEditText
                 android:id="@+id/formula"
@@ -81,15 +66,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="@color/display_formula_text_color"
-            android:elevation="@dimen/display_elevation"/>
+            android:textColor="@color/display_formula_text_color"/>
 
         <FrameLayout
             android:id="@+id/the_clear_animation"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height"
-            android:paddingBottom="@dimen/above_display_margin"
-            android:elevation="@dimen/display_elevation"/>
+            android:layout_height="@dimen/display_height"/>
 
     </FrameLayout>
 

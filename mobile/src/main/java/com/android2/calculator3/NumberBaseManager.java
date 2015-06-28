@@ -14,7 +14,6 @@ import java.util.Set;
  * when changing base.
  */
 public class NumberBaseManager {
-
     private Base mBase;
     private Map<Base, Set<Integer>> mDisabledViewIds;
     private Set<Integer> mBasicViewIds;

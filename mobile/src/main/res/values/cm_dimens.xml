@@ -8,13 +8,11 @@
     <dimen name="viewpager_indicator_size">5dp</dimen>
 
     <!-- Display -->
-    <dimen name="above_display_margin">6dp</dimen> <!-- Should equal 2 * card_view_margin_fix, but positive-->
+    <dimen name="above_display_margin">18dp</dimen> <!-- Should equal 2 * card_view_margin_fix, but positive-->
     <dimen name="below_display_margin">220dp</dimen>
-    <dimen name="display_height">226dp</dimen> <!-- Should equal above + below display margins -->
+    <dimen name="display_height">238dp</dimen> <!-- Should equal above + below display margins -->
     <dimen name="display_height_graph">100dp</dimen> <!-- Formula + Graph should equal below -->
     <dimen name="graph_margin">8dp</dimen>
-    <dimen name="display_elevation">2dp</dimen>
-    <dimen name="card_view_margin_fix">-3dp</dimen>
 
     <!-- Number pad -->
     <dimen name="num_margin_horizontal">14dp</dimen>

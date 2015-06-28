@@ -1,31 +1,22 @@
-<android.support.v7.widget.CardView
+<com.android2.calculator3.view.HistoryLine
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:support="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/history_line"
+    android:layout_margin="4dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
-    support:cardElevation="@dimen/display_elevation"
-    support:cardUseCompatPadding="false">
+    android:orientation="vertical"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@drawable/white_card">
 
-    <com.android2.calculator3.view.HistoryLine
-        android:id="@+id/history_line"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:background="@color/display_background_color">
+    <TextView
+        android:id="@+id/historyExpr"
+        style="@style/HistoryText.Query"/>
 
-        <TextView
-            android:id="@+id/historyExpr"
-            style="@style/HistoryText.Query"/>
+    <TextView
+        android:id="@+id/historyResult"
+        style="@style/HistoryText.Result"/>
 
-        <TextView
-            android:id="@+id/historyResult"
-            style="@style/HistoryText.Result"/>
-
-    </com.android2.calculator3.view.HistoryLine>
-
-</android.support.v7.widget.CardView>
+</com.android2.calculator3.view.HistoryLine>

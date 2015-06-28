@@ -54,6 +54,8 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.android2.calculator3.view.CalculatorPadLayout;
+import com.android2.calculator3.view.CalculatorPadView;
+import com.android2.calculator3.view.CalculatorPadViewExtended;
 import com.android2.calculator3.view.CalculatorPadViewPager;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
@@ -132,11 +134,10 @@ public class Calculator extends Activity
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
     private ViewGroup mMainDisplay;
-    private ViewGroup mCalculationsDisplay;
     private TextView mInfoView;
     private CalculatorEditText mFormulaEditText;
     private CalculatorEditText mResultEditText;
-    private CalculatorPadViewPager mPadViewPager;
+    private CalculatorPadViewExtended mPadViewPager;
     private View mDeleteButton;
     private EqualsImageButton mEqualButton;
     private View mClearButton;
@@ -154,11 +155,7 @@ public class Calculator extends Activity
     private boolean mShowBaseDetails;
     private boolean mShowTrigDetails;
     private GraphView mMiniGraph;
-    private View mDisplayBackground;
     private ViewGroup mDisplayForeground;
-    private View mMoreButton;
-    private View mAdvancedPad;
-    private View mAdvancedPadMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,13 +170,11 @@ public class Calculator extends Activity
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mDisplayView.setFade(findViewById(R.id.history_fade));
         mMainDisplay = (ViewGroup) mDisplayView.findViewById(R.id.main_display);
-        mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = (ViewGroup) findViewById(R.id.the_clear_animation);
-        mCalculationsDisplay = (ViewGroup) mMainDisplay.findViewById(R.id.calculations);
         mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
         mResultEditText = (CalculatorEditText) findViewById(R.id.result);
-        mPadViewPager = (CalculatorPadViewPager) findViewById(R.id.pad_pager);
+        mPadViewPager = (CalculatorPadViewExtended) findViewById(R.id.pad_pager);
         mDeleteButton = findViewById(R.id.del);
         mClearButton = findViewById(R.id.clr);
         mEqualButton = (EqualsImageButton) findViewById(R.id.pad_numeric).findViewById(R.id.eq);
@@ -235,20 +230,6 @@ public class Calculator extends Activity
         mMiniGraph.setTextColor(getResources().getColor(R.color.graph_text));
         GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
         mGraphController = new GraphController(graphModule, mMiniGraph);
-
-        mAdvancedPad = findViewById(R.id.pad_advanced);
-        mAdvancedPadMore = mAdvancedPad.findViewById(R.id.pad_advanced_more);
-        mMoreButton = mAdvancedPad.findViewById(R.id.more);
-        mMoreButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                CalculatorPadLayout pad = (CalculatorPadLayout) mAdvancedPad.findViewById(R.id.pad_advanced_grid);
-
-                mAdvancedPadMore.getLayoutParams().width = 2 * mAdvancedPad.getWidth() / pad.getColumns();
-                mAdvancedPadMore.getLayoutParams().height = 2 * mAdvancedPad.getHeight() / pad.getRows();
-                mAdvancedPadMore.setTranslationX(-mAdvancedPad.getWidth() / pad.getColumns());
-            }
-        });
 
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
@@ -386,8 +367,8 @@ public class Calculator extends Activity
     public void onBackPressed() {
         if (mDisplayView.isExpanded()) {
             mDisplayView.collapse();
-        } else if (mPadViewPager != null && mPadViewPager.getCurrentItem() != 0) {
-            mPadViewPager.setCurrentItem(mPadViewPager.getCurrentItem() - 1);
+        } else if (mPadViewPager != null && mPadViewPager.getState() == CalculatorPadView.TranslateState.EXPANDED) {
+            mPadViewPager.collapse();
         } else {
             super.onBackPressed();
         }
@@ -404,9 +385,6 @@ public class Calculator extends Activity
                 break;
             case R.id.clr:
                 onClear();
-                break;
-            case R.id.more:
-                revealMore();
                 break;
             case R.id.parentheses:
                 mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
@@ -562,41 +540,6 @@ public class Calculator extends Activity
     private void onDelete() {
         // Delete works like backspace; remove the last character from the expression.
         mFormulaEditText.backspace();
-    }
-
-    private void revealMore() {
-        View sourceView = mMoreButton;
-        final View revealView = mAdvancedPadMore;
-        boolean reverse = revealView.getVisibility() == View.VISIBLE;
-        revealView.setVisibility(View.VISIBLE);
-
-        final SupportAnimator revealAnimator;
-        final int[] clearLocation = new int[2];
-        sourceView.getLocationInWindow(clearLocation);
-        clearLocation[0] += sourceView.getWidth() / 2;
-        clearLocation[1] += sourceView.getHeight() / 2;
-        final int revealCenterX = clearLocation[0] - revealView.getLeft();
-        final int revealCenterY = clearLocation[1] - revealView.getTop();
-        final double x1_2 = Math.pow(revealView.getLeft() - revealCenterX, 2);
-        final double x2_2 = Math.pow(revealView.getRight() - revealCenterX, 2);
-        final double y_2 = Math.pow(revealView.getTop() - revealCenterY, 2);
-        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
-
-        float start = reverse ? revealRadius : 0;
-        float end = reverse ? 0 : revealRadius;
-        revealAnimator =
-                ViewAnimationUtils.createCircularReveal(revealView,
-                        revealCenterX, revealCenterY, start, end);
-        revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_longAnimTime));
-        if (reverse) {
-            revealAnimator.addListener(new AnimationFinishedListener() {
-                @Override
-                public void onAnimationFinished() {
-                    revealView.setVisibility(View.GONE);
-                }
-            });
-        }
-        play(revealAnimator);
     }
 
     private void reveal(View sourceView, int colorRes, final AnimatorListener listener) {
@@ -760,7 +703,15 @@ public class Calculator extends Activity
         setSelectedBaseButton(base);
 
         // Disable any buttons that are not relevant to the current base
-        for (int resId : mBaseManager.getViewIds(mPadViewPager == null ? -1 : mPadViewPager.getCurrentItem())) {
+        int page = -1;
+        if (mPadViewPager != null) {
+            if (mPadViewPager.isExpanded()) {
+                page = 1;
+            } else {
+                page = 0;
+            }
+        }
+        for (int resId : mBaseManager.getViewIds(page)) {
             View view = findViewById(resId);
             if (view != null) {
                 view.setEnabled(!mBaseManager.isViewDisabled(resId));

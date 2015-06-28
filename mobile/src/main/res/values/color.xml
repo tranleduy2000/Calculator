@@ -24,7 +24,7 @@
     <color name="calculator_error_color">#F40056</color>
 
     <!-- Background color of the calculator display. -->
-    <color name="display_background_color">#FFF</color>
+    <color name="display_background_color">#FFFFFF</color>
 
     <!-- Text color for the formula in the calculator display. -->
     <color name="display_formula_text_color">#8A000000</color>
