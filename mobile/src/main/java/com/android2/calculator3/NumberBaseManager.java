@@ -57,19 +57,11 @@ public class NumberBaseManager {
     /**
      * @return the set of view resource IDs managed by the enabled/disabled list
      */
-    public Set<Integer> getViewIds(int page) {
-        if(page == -1) {
-            HashSet<Integer> set = new HashSet<Integer>();
-            set.addAll(mBasicViewIds);
-            set.addAll(mHexViewIds);
-            return set;
-        }
-        else if(page == 0) {
-            return mBasicViewIds;
-        }
-        else {
-            return mHexViewIds;
-        }
+    public Set<Integer> getViewIds() {
+        HashSet<Integer> set = new HashSet<Integer>();
+        set.addAll(mBasicViewIds);
+        set.addAll(mHexViewIds);
+        return set;
     }
 
     /**

@@ -58,27 +58,6 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
         mBaseManager = baseManager;
     }
 
-    private void recursivelyEnable(View view, boolean enabled) {
-        if (view instanceof ViewGroup) {
-            final ViewGroup viewGroup = (ViewGroup) view;
-            for (int childIndex = 0; childIndex < viewGroup.getChildCount(); ++childIndex) {
-                recursivelyEnable(viewGroup.getChildAt(childIndex), enabled);
-            }
-        } else {
-            if(mBaseManager != null) {
-                enabled &= !mBaseManager.isViewDisabled(view.getId());
-            }
-            view.setEnabled(enabled);
-        }
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-//        for (int childIndex = 0; childIndex < 2; ++childIndex) {
-//            recursivelyEnable(getChildAt(childIndex), childIndex == position);
-//        }
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -117,6 +96,14 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
                 child.setVisibility(View.GONE);
             } else {
                 child.setVisibility(View.VISIBLE);
+            }
+        }
+
+        if (getTray().getVisibility() == View.VISIBLE) {
+            if (android.os.Build.VERSION.SDK_INT >= 15) {
+                getFab().callOnClick();
+            } else {
+                getFab().performClick();
             }
         }
     }

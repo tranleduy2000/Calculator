@@ -202,6 +202,7 @@ public class Calculator extends Activity
             base = Base.values()[baseOrdinal];
         }
         mBaseManager = new NumberBaseManager(base);
+        invalidateSelectedBase(base);
         if (mPadViewPager != null) {
             mPadViewPager.setBaseManager(mBaseManager);
         }
@@ -363,7 +364,7 @@ public class Calculator extends Activity
     public void onBackPressed() {
         if (mDisplayView.isExpanded()) {
             mDisplayView.collapse();
-        } else if (mPadViewPager != null && mPadViewPager.getState() == CalculatorPadView.TranslateState.EXPANDED) {
+        } else if (mPadViewPager != null && mPadViewPager.isExpanded()) {
             mPadViewPager.collapse();
         } else {
             super.onBackPressed();
@@ -696,18 +697,14 @@ public class Calculator extends Activity
                 }
             }
         });
+        invalidateSelectedBase(base);
+    }
+
+    private void invalidateSelectedBase(Base base) {
         setSelectedBaseButton(base);
 
         // Disable any buttons that are not relevant to the current base
-        int page = -1;
-        if (mPadViewPager != null) {
-            if (mPadViewPager.isExpanded()) {
-                page = 1;
-            } else {
-                page = 0;
-            }
-        }
-        for (int resId : mBaseManager.getViewIds(page)) {
+        for (int resId : mBaseManager.getViewIds()) {
             View view = findViewById(resId);
             if (view != null) {
                 view.setEnabled(!mBaseManager.isViewDisabled(resId));
