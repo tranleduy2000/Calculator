@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,14 +47,12 @@ import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealView;
 
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.CalculatorPadViewExtended;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
@@ -631,10 +630,29 @@ public class Calculator extends Activity
                 mFormulaEditText.getVariableTextSize(result) / mResultEditText.getTextSize();
         final float resultTranslationX = (1.0f - resultScale) *
                 (mResultEditText.getWidth() / 2.0f - mResultEditText.getPaddingRight());
-        final float resultTranslationY = (1.0f - resultScale) *
-                (mResultEditText.getHeight() / 2.0f - mResultEditText.getPaddingBottom()) +
-                (mFormulaEditText.getBottom() - mResultEditText.getBottom()) +
-                (mResultEditText.getPaddingBottom() - mFormulaEditText.getPaddingBottom());
+
+        // Calculate the height of the formula (without padding)
+        final float formulaRealHeight = mFormulaEditText.getHeight()
+                - mFormulaEditText.getPaddingTop()
+                - mFormulaEditText.getPaddingBottom();
+
+        // Calculate the height of the resized result (without padding)
+        final float resultRealHeight = resultScale *
+                (mResultEditText.getHeight()
+                        - mResultEditText.getPaddingTop()
+                        - mResultEditText.getPaddingBottom());
+
+        // Now adjust the result upwards!
+        final float resultTranslationY =
+                // Move the result up (so both formula + result heights match)
+                - mFormulaEditText.getHeight()
+                // Now switch the result's padding top with the formula's padding top
+                - resultScale * mResultEditText.getPaddingTop()
+                + mFormulaEditText.getPaddingTop()
+                // But the result centers its text! And it's taller now! So adjust for that centered text
+                + (formulaRealHeight - resultRealHeight) / 2;
+
+        // Move the formula all the way to the top of the screen
         final float formulaTranslationY = -mFormulaEditText.getBottom();
 
         // Use a value animator to fade to the final text color over the course of the animation.
@@ -649,6 +667,7 @@ public class Calculator extends Activity
             }
         });
         mResultEditText.setText(result);
+        mResultEditText.setPivotY(0f);
 
         final AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(
@@ -664,6 +683,7 @@ public class Calculator extends Activity
             @Override
             public void onAnimationFinished() {
                 // Reset all of the values modified during the animation.
+                mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
                 mResultEditText.setTextColor(resultTextColor);
                 mResultEditText.setScaleX(1.0f);
                 mResultEditText.setScaleY(1.0f);

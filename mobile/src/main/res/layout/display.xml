@@ -51,7 +51,7 @@
                 style="@style/Theme.Calculator.Display.Main.Formula"
                 android:inputType="text|textNoSuggestions"
                 android:textColor="@color/display_formula_text_color"
-                android:layout_height="@dimen/display_formula_height"/>
+                android:layout_height="@dimen/display_formula_height" />
 
             <com.android2.calculator3.view.CalculatorEditText
                 android:id="@+id/result"
