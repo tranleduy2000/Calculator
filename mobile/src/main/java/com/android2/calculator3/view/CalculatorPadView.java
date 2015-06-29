@@ -28,6 +28,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.android2.calculator3.R;
@@ -156,6 +157,7 @@ public class CalculatorPadView extends RevealFrameLayout {
             mOverlay.setTranslationX(getWidth() + mOffset - mOverlayMargin);
             mFab.setScaleX(0f);
             mFab.setScaleY(0f);
+            mFab.setVisibility(View.GONE);
         }
 
         int trayHeight = getHeight() / 4;
@@ -325,6 +327,12 @@ public class CalculatorPadView extends RevealFrameLayout {
         if (listener != null) {
             animator.addListener(listener);
         }
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                showFab();
+            }
+        });
         animator.start();
         setState(TranslateState.EXPANDED);
     }
@@ -338,8 +346,32 @@ public class CalculatorPadView extends RevealFrameLayout {
         if (listener != null) {
             animator.addListener(listener);
         }
+        animator.addListener(new AnimationFinishedListener() {
+            @Override
+            public void onAnimationFinished() {
+                hideFab();
+            }
+        });
         animator.start();
         setState(TranslateState.COLLAPSED);
+    }
+
+    protected void showFab() {
+        mFab.setVisibility(View.VISIBLE);
+        mFab.setScaleX(0f);
+        mFab.setScaleY(0f);
+        mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
+    }
+
+    protected void hideFab() {
+        if (mFab.getVisibility() == View.VISIBLE) {
+            mFab.animate().scaleX(0f).scaleY(0f).setDuration(100).setListener(new AnimationFinishedListener() {
+                @Override
+                public void onAnimationFinished() {
+                    mFab.setVisibility(View.GONE);
+                }
+            });
+        }
     }
 
     private void setState(TranslateState state) {
@@ -361,6 +393,7 @@ public class CalculatorPadView extends RevealFrameLayout {
                         mFab.performClick();
                     }
                 }
+                hideFab();
             }
         }
     }
@@ -397,14 +430,6 @@ public class CalculatorPadView extends RevealFrameLayout {
             // Update the drag animation
             View overlay = getChildAt(1);
             overlay.setTranslationX((getWidth() + mOffset) * (1 - percent) - mOverlayMargin);
-
-            if (percent < 0.3f) {
-                mFab.setScaleX(0f);
-                mFab.setScaleY(0f);
-            } else {
-                mFab.setScaleX(percent);
-                mFab.setScaleY(percent);
-            }
         }
 
         float scale(float percent, float goal) {
