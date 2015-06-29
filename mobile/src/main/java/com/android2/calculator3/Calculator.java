@@ -667,6 +667,7 @@ public class Calculator extends Activity
             }
         });
         mResultEditText.setText(result);
+        mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
         mResultEditText.setPivotY(0f);
 
         final AnimatorSet animatorSet = new AnimatorSet();
