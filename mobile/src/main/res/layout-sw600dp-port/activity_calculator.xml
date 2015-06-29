@@ -20,15 +20,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include
-        android:id="@+id/pad_auxiliary"
-        layout="@layout/pad_auxiliary"
+    <FrameLayout
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="@dimen/below_display_margin"/>
+        android:layout_marginTop="@dimen/display_height">
+
+        <include
+            android:id="@+id/pad_advanced"
+            layout="@layout/pad_advanced" />
+
+        <include
+            android:id="@+id/pad_hex"
+            layout="@layout/pad_hex" />
+
+        <include
+            android:id="@+id/pad_matrix"
+            layout="@layout/pad_matrix" />
+
+    </FrameLayout>
 
     <LinearLayout
-        android:layout_below="@id/pad_auxiliary"
+        android:layout_below="@id/overlay"
         style="@style/PadLinearLayoutStyle">
 
         <include layout="@layout/pad_numeric" />

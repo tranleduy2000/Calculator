@@ -3,16 +3,12 @@
     <!-- History -->
     <dimen name="history_text_size">18sp</dimen>
 
-    <!-- Advanced keypad pager -->
-    <dimen name="viewpager_indicator_margin_size">3dp</dimen>
-    <dimen name="viewpager_indicator_size">5dp</dimen>
-
     <!-- Display -->
     <dimen name="display_height">230dp</dimen>
-    <dimen name="display_height_with_shadow">238dp</dimen>
+    <dimen name="display_height_with_shadow">236dp</dimen>
     <dimen name="display_formula_height">130dp</dimen>
     <dimen name="display_result_height">100dp</dimen>
-    <dimen name="display_shadow">8dp</dimen>
+    <dimen name="display_shadow">6dp</dimen>
     <dimen name="history_margin">4dp</dimen>
 
     <!-- Number pad -->

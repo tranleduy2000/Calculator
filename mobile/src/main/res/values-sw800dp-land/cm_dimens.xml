@@ -4,8 +4,9 @@
     <dimen name="history_text_size">30sp</dimen>
 
     <!-- Display -->
-    <dimen name="above_display_margin">6dp</dimen> <!-- Should equal 2 * card_view_margin_fix, but positive-->
-    <dimen name="below_display_margin">350dp</dimen>
-    <dimen name="display_height">356dp</dimen> <!-- Should equal above + below display margins -->
-    <dimen name="display_height_graph">135dp</dimen> <!-- Formula + Graph should equal below -->
+    <dimen name="display_height">350dp</dimen>
+    <dimen name="display_height_with_shadow">356dp</dimen>
+    <dimen name="display_formula_height">215dp</dimen>
+    <dimen name="display_result_height">135dp</dimen>
+    <dimen name="display_shadow">6dp</dimen>
 </resources>
