@@ -204,10 +204,12 @@ public class CalculatorPadView extends RevealFrameLayout {
                 float start = reverse ? revealRadius : 0;
                 float end = reverse ? 0 : revealRadius;
                 if (android.os.Build.VERSION.SDK_INT >= 21) {
+                    // The lollipop reveal uses local cords, so use tray height / 2
                     revealAnimator =
                             ViewAnimationUtils.createCircularReveal(mTray,
                                     revealCenterX, mTray.getHeight() / 2, start, end);
                 } else {
+                    // The legacy support doesn't work with gravity bottom, so use the global cords
                     revealAnimator =
                             ViewAnimationUtils.createCircularReveal(mTray,
                                     revealCenterX, revealCenterY, start, end);

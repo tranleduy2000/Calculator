@@ -17,14 +17,13 @@ package com.android2.calculator3.view;
  */
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.text.Layout.Alignment;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
-
-import com.rey.material.widget.*;
 
 /**
  * Text view that auto adjusts text size to fit within the view.
@@ -70,6 +69,9 @@ public class ResizingButton extends com.rey.material.widget.Button {
 
     // Add ellipsis to text that overflows at the smallest text size
     private boolean mAddEllipsis = true;
+
+    // Used for measuring width
+    private final Rect mTempRect = new Rect();
 
     // Default constructor override
     public ResizingButton(Context context) {
@@ -222,7 +224,6 @@ public class ResizingButton extends com.rey.material.widget.Button {
      * Resize the text size with default width and height
      */
     public void resizeText() {
-
         int heightLimit = getHeight() - getPaddingBottom() - getPaddingTop();
         int widthLimit = getWidth() - getPaddingLeft() - getPaddingRight();
         resizeText(widthLimit, heightLimit);
@@ -254,11 +255,17 @@ public class ResizingButton extends com.rey.material.widget.Button {
 
         // Get the required text height
         int textHeight = getTextHeight(text, textPaint, width, targetTextSize);
+        int textWidth = getTextWidth(text, textPaint, targetTextSize);
 
         // Until we either fit within our text view or we had reached our min text size, incrementally try smaller sizes
         while (textHeight > height && targetTextSize > mMinTextSize) {
             targetTextSize = Math.max(targetTextSize - 2, mMinTextSize);
             textHeight = getTextHeight(text, textPaint, width, targetTextSize);
+        }
+        // We multiply the width by 0.95, because even though it might barely fit, TextView wraps anyway.
+        while (textWidth > width * 0.95 && targetTextSize > mMinTextSize) {
+            targetTextSize = Math.max(targetTextSize - 2, mMinTextSize);
+            textWidth = getTextWidth(text, textPaint, targetTextSize);
         }
 
         // If we had reached our minimum text size and still don't fit, append an ellipsis
@@ -318,6 +325,14 @@ public class ResizingButton extends com.rey.material.widget.Button {
         // Measure using a static layout
         StaticLayout layout = new StaticLayout(source, paintCopy, width, Alignment.ALIGN_NORMAL, mSpacingMult, mSpacingAdd, true);
         return layout.getHeight();
+    }
+
+    // Set the text size of the text paint object and use a static layout to render text off screen before measuring
+    private int getTextWidth(CharSequence source, TextPaint paint, float textSize) {
+        TextPaint paintCopy = new TextPaint(paint);
+        paintCopy.setTextSize(textSize);
+        paintCopy.getTextBounds(source.toString(), 0, source.length(), mTempRect);
+        return mTempRect.width();
     }
 
 }
