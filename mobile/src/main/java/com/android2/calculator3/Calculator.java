@@ -131,7 +131,6 @@ public class Calculator extends Activity
     private CalculatorExpressionTokenizer mTokenizer;
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
-    private ViewGroup mMainDisplay;
     private TextView mInfoView;
     private CalculatorEditText mFormulaEditText;
     private CalculatorEditText mResultEditText;
@@ -167,7 +166,6 @@ public class Calculator extends Activity
 
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
         mDisplayView.setFade(findViewById(R.id.history_fade));
-        mMainDisplay = (ViewGroup) mDisplayView.findViewById(R.id.main_display);
         mDisplayForeground = (ViewGroup) findViewById(R.id.the_clear_animation);
         mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);

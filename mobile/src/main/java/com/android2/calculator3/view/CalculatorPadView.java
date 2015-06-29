@@ -19,29 +19,25 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import com.android2.calculator3.HistoryAdapter;
-import com.android2.calculator3.NumberBaseManager;
 import com.android2.calculator3.R;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 
-public class CalculatorPadView extends FrameLayout {
+public class CalculatorPadView extends RevealFrameLayout {
     private VelocityTracker mVelocityTracker;
     private int mTouchSlop;
     private int mMinimumFlingVelocity;
@@ -50,6 +46,7 @@ public class CalculatorPadView extends FrameLayout {
     private float mLastMotion;
     private float mLastDelta;
     private float mOffset;
+    private float mOverlayMargin;
     private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private TranslateState mLastState = TranslateState.COLLAPSED;
     private TranslateState mState = TranslateState.COLLAPSED;
@@ -85,6 +82,18 @@ public class CalculatorPadView extends FrameLayout {
         mMaximumFlingVelocity = vc.getScaledMaximumFlingVelocity();
         mTouchSlop = vc.getScaledTouchSlop();
         mOffset = getResources().getDimensionPixelSize(R.dimen.pad_page_margin);
+        mOverlayMargin = getResources().getDimensionPixelSize(R.dimen.shadow_margin);
+        getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (android.os.Build.VERSION.SDK_INT >= 16) {
+                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                } else {
+                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                }
+                initializeLayout(getState());
+            }
+        });
     }
 
     public enum TranslateState {
@@ -122,56 +131,57 @@ public class CalculatorPadView extends FrameLayout {
         return mTray;
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (initializeLayout(getState())) {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        }
-    }
-
     /**
      * Sets up the height / position of the fab and tray
      *
      * Returns true if it requires a relayout
      * */
     protected boolean initializeLayout(TranslateState state) {
+        boolean invalidate = false;
+
+        int overlayWidth = getWidth() + (int) mOverlayMargin;
+        if (mOverlay.getLayoutParams().width != overlayWidth) {
+            mOverlay.getLayoutParams().width = overlayWidth;
+            mOverlay.setLayoutParams(mOverlay.getLayoutParams());
+            invalidate = true;
+        }
+
         mFab.setTranslationX((mFab.getWidth() - getWidth() / 4) / 2);
         mFab.setTranslationY((mFab.getHeight() - getHeight() / 4) / 2);
         if (state == TranslateState.EXPANDED) {
-            mOverlay.setTranslationX(0);
+            mOverlay.setTranslationX(-mOverlayMargin);
             mFab.setScaleX(1f);
             mFab.setScaleY(1f);
         } else {
-            mOverlay.setTranslationX(mOverlay.getWidth() + mOffset);
+            mOverlay.setTranslationX(getWidth() + mOffset - mOverlayMargin);
             mFab.setScaleX(0f);
             mFab.setScaleY(0f);
         }
 
         int trayHeight = getHeight() / 4;
-        Log.d("TEST", "tray height: " + trayHeight);
         if (mTray.getLayoutParams().height != trayHeight) {
             mTray.getLayoutParams().height = trayHeight;
-            return true;
+            mTray.setLayoutParams(mTray.getLayoutParams());
+            invalidate = true;
         }
 
-        return false;
+        return invalidate;
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mBase = getChildAt(0);
-        mOverlay = getChildAt(1);
-        mFab = getChildAt(2);
-        mTray = getChildAt(3);
+        mBase = findViewById(R.id.base);
+        mOverlay = findViewById(R.id.overlay);
+        mTray = findViewById(R.id.tray);
+        mFab = findViewById(R.id.fab);
+
         mOverlay.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return true;
             }
         });
-        mTray.setVisibility(View.INVISIBLE);
         mFab.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,9 +203,15 @@ public class CalculatorPadView extends FrameLayout {
 
                 float start = reverse ? revealRadius : 0;
                 float end = reverse ? 0 : revealRadius;
-                revealAnimator =
-                        ViewAnimationUtils.createCircularReveal(mTray,
-                                revealCenterX, mTray.getHeight() / 2, start, end);
+                if (android.os.Build.VERSION.SDK_INT >= 21) {
+                    revealAnimator =
+                            ViewAnimationUtils.createCircularReveal(mTray,
+                                    revealCenterX, mTray.getHeight() / 2, start, end);
+                } else {
+                    revealAnimator =
+                            ViewAnimationUtils.createCircularReveal(mTray,
+                                    revealCenterX, revealCenterY, start, end);
+                }
                 revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
                 if (reverse) {
                     revealAnimator.addListener(new AnimationFinishedListener() {
@@ -208,11 +224,6 @@ public class CalculatorPadView extends FrameLayout {
                 revealAnimator.start();
             }
         });
-    }
-
-    @Override
-    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-        // no
     }
 
     @Override
@@ -229,7 +240,7 @@ public class CalculatorPadView extends FrameLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
                 // Reset initial motion if the user drags in a different direction suddenly
-                if (pos - mInitialMotion / Math.abs(pos - mInitialMotion) != (pos - mLastMotion) / Math.abs(pos - mLastMotion)) {
+                if ((pos - mInitialMotion) / Math.abs(pos - mInitialMotion) != (pos - mLastMotion) / Math.abs(pos - mLastMotion)) {
                     mInitialMotion = mLastMotion;
                 }
 
@@ -341,9 +352,7 @@ public class CalculatorPadView extends FrameLayout {
             }
 
             if (mState != TranslateState.EXPANDED) {
-                Log.d("TEST", "settin' state");
                 if (mTray.getVisibility() == View.VISIBLE) {
-                    Log.d("TEST", "but da tray is visible. fix ittt");
                     if (android.os.Build.VERSION.SDK_INT >= 15) {
                         mFab.callOnClick();
                     } else {
@@ -363,7 +372,6 @@ public class CalculatorPadView extends FrameLayout {
             percent += 1f;
         }
         percent = Math.min(Math.max(percent, 0f), 1f);
-        Log.d("TEST", "percent: "+percent);
         return percent;
     }
 
@@ -386,15 +394,14 @@ public class CalculatorPadView extends FrameLayout {
         public void onUpdate(float percent) {
             // Update the drag animation
             View overlay = getChildAt(1);
-            overlay.setTranslationX((getWidth() + mOffset) * (1 - percent));
+            overlay.setTranslationX((getWidth() + mOffset) * (1 - percent) - mOverlayMargin);
 
-            View fab = getChildAt(2);
             if (percent < 0.3f) {
-                fab.setScaleX(0f);
-                fab.setScaleY(0f);
+                mFab.setScaleX(0f);
+                mFab.setScaleY(0f);
             } else {
-                fab.setScaleX(percent);
-                fab.setScaleY(percent);
+                mFab.setScaleX(percent);
+                mFab.setScaleY(percent);
             }
         }
 

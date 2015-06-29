@@ -30,15 +30,15 @@
         <com.android2.calculator3.view.GraphView
             android:id="@+id/mini_graph"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height_graph"
+            android:layout_height="@dimen/display_result_height"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/graph_margin"
+            android:layout_marginBottom="@dimen/display_shadow"
             android:visibility="gone"/>
 
         <View
             android:id="@+id/the_card"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height"
+            android:layout_height="@dimen/display_height_with_shadow"
             android:background="@drawable/white_card"/>
 
         <RelativeLayout
@@ -81,6 +81,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/main_display"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="@dimen/history_margin"/>
 
 </com.android2.calculator3.view.DisplayOverlay>

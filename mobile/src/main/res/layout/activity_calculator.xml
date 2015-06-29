@@ -26,9 +26,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
-        android:layout_marginTop="@dimen/below_display_margin">
+        android:layout_marginTop="@dimen/display_height">
 
         <LinearLayout
+            android:id="@+id/base"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -38,8 +39,10 @@
         </LinearLayout>
 
         <FrameLayout
+            android:id="@+id/overlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/color_card">
 
             <include
                 android:id="@+id/pad_advanced"
@@ -55,20 +58,13 @@
 
         </FrameLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/matrix"
-            support:elevation="4dp"
-            support:borderWidth="0dp"
-            android:layout_gravity="bottom|right" />
-
         <LinearLayout
+            android:id="@+id/tray"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/pad_numeric_background_color"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:visibility="invisible">
 
             <Button
                 android:id="@+id/btn_advanced"
@@ -100,6 +96,15 @@
                 android:layout_weight="1"/>
 
         </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/matrix"
+            support:elevation="4dp"
+            support:borderWidth="0dp"
+            android:layout_gravity="bottom|right" />
 
     </com.android2.calculator3.view.CalculatorPadViewExtended>
 

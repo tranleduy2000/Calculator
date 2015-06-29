@@ -34,6 +34,11 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
         mRevealPath = new Path();
     }
 
+    public RevealFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        mRevealPath = new Path();
+    }
+
     /**
      * Animation target
      *
