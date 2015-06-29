@@ -280,6 +280,7 @@ public class CalculatorEditText extends EditText {
         if (selectionHandle != 0) {
             setText(getText().subSequence(0, selectionHandle - 1).toString()
                             + getText().subSequence(selectionHandle, getText().length()));
+            setSelection(selectionHandle - 1);
         }
     }
 
