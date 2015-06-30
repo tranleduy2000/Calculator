@@ -18,6 +18,7 @@ package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.text.Editable;
 import android.text.Html;
@@ -26,6 +27,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextWatcher;
 import android.text.method.NumberKeyListener;
+import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -145,7 +147,7 @@ public class CalculatorEditText extends EditText {
                 context.getString(R.string.fun_log) + "(",
                 context.getString(R.string.mod) + "(",
                 context.getString(R.string.fun_ln) + "(",
-                context.getString(R.string.det) + "(",
+                context.getString(R.string.fun_det) + "(",
                 context.getString(R.string.dx),
                 context.getString(R.string.dy),
                 context.getString(R.string.cbrt) + "(");
@@ -362,6 +364,53 @@ public class CalculatorEditText extends EditText {
         return removeFormatting(getText().toString());
     }
 
+    public void invalidateSpannables() {
+        // Logic to insert, split text if there's another view, etc
+//        TypefaceSpan
+//
+//        int cursor, cacheCursor;
+//        cursor = cacheCursor = getActiveEditText().getSelectionStart();
+//        final int index = mRoot.getChildIndex(getActiveEditText());
+//        StringBuilder cache = new StringBuilder();
+//
+//        // Loop over the text, adding custom views when needed
+//        loop: while(!delta.isEmpty()) {
+//            for(DisplayComponent c : mComponents) {
+//                String equation = c.parse(delta);
+//                if(equation != null) {
+//                    // Update the EditText with the cached text
+//                    getActiveEditText().getText().insert(cursor, cache);
+//                    cache.setLength(0);
+//                    cacheCursor = 0;
+//
+//                    // We found a custom view
+//                    mRoot.addView(c.getView(getContext(), mSolver, equation, this));
+//
+//                    // Keep EditTexts in between custom views
+//                    splitText(cursor, index, delta);
+//                    mRoot.getChildAt(index + 2).requestFocus();
+//
+//                    // Update text and loop again
+//                    delta = delta.substring(equation.length());
+//                    continue loop;
+//                }
+//            }
+//
+//            // Don't allow leading operators
+//            if(cursor == 0 && getActiveEditText() == mRoot.getChildAt(0)
+//                    && Solver.isOperator(delta)
+//                    && !delta.equals(String.valueOf(Constants.MINUS))) {
+//                delta = delta.substring(1);
+//                continue loop;
+//            }
+//
+//            // Append the next character to the EditText
+//            cache.append(delta.charAt(0));
+//            delta = delta.substring(1);
+//            cursor++;
+//        }
+    }
+
     class NoTextSelectionMode implements ActionMode.Callback {
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -386,5 +435,17 @@ public class CalculatorEditText extends EditText {
 
     public interface OnTextSizeChangeListener {
         void onTextSizeChanged(TextView textView, float oldSize);
+    }
+
+    public class MatrixSpannable extends ReplacementSpan {
+        @Override
+        public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
+            return 0;
+        }
+
+        @Override
+        public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
+
+        }
     }
 }

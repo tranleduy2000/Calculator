@@ -33,8 +33,8 @@ import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
 
 public class CalculatorPadViewExtended extends CalculatorPadView implements View.OnClickListener {
-    private NumberBaseManager mBaseManager;
     private View mAdvancedPad;
+    private View mTrigPad;
     private View mHexPad;
     private View mMatrixPad;
 
@@ -54,24 +54,18 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    public void setBaseManager(NumberBaseManager baseManager) {
-        mBaseManager = baseManager;
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         findViewById(R.id.btn_advanced).setOnClickListener(this);
+        findViewById(R.id.btn_trig).setOnClickListener(this);
         findViewById(R.id.btn_hex).setOnClickListener(this);
         findViewById(R.id.btn_matrix).setOnClickListener(this);
         mAdvancedPad = findViewById(R.id.pad_advanced);
+        mTrigPad = findViewById(R.id.pad_trig);
         mHexPad = findViewById(R.id.pad_hex);
         mMatrixPad = findViewById(R.id.pad_matrix);
-        if (android.os.Build.VERSION.SDK_INT >= 15) {
-            findViewById(R.id.btn_advanced).callOnClick();
-        } else {
-            findViewById(R.id.btn_advanced).performClick();
-        }
+        show(mAdvancedPad);
     }
 
     @Override
@@ -81,6 +75,9 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
             case R.id.btn_advanced:
                 layout = mAdvancedPad;
                 break;
+            case R.id.btn_trig:
+                layout = mTrigPad;
+                break;
             case R.id.btn_hex:
                 layout = mHexPad;
                 break;
@@ -88,7 +85,12 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
                 layout = mMatrixPad;
                 break;
         }
+        show(layout);
+        showFab();
+        hideTray();
+    }
 
+    private void show(View layout) {
         FrameLayout baseOverlay = getBaseOverlay();
         for (int i = 0; i < baseOverlay.getChildCount(); i++) {
             View child = baseOverlay.getChildAt(i);
@@ -96,14 +98,6 @@ public class CalculatorPadViewExtended extends CalculatorPadView implements View
                 child.setVisibility(View.GONE);
             } else {
                 child.setVisibility(View.VISIBLE);
-            }
-        }
-
-        if (getTray().getVisibility() == View.VISIBLE) {
-            if (android.os.Build.VERSION.SDK_INT >= 15) {
-                getFab().callOnClick();
-            } else {
-                getFab().performClick();
             }
         }
     }

@@ -41,6 +41,29 @@
     <string name="fun_arccos">acos</string>
     <!-- Displayed on buttons on screen for the arctan function. -->
     <string name="fun_arctan">atan</string>
+    <!-- Displayed on buttons on screen for the csc function. -->
+    <string name="fun_csc">csc</string>
+    <!-- Displayed on buttons on screen for the sec function. -->
+    <string name="fun_sec">sec</string>
+    <!-- Displayed on buttons on screen for the cot function. -->
+    <string name="fun_cot">cot</string>
+    <!-- Displayed on buttons on screen for the arccsc function. -->
+    <string name="fun_arccsc">acsc</string>
+    <!-- Displayed on buttons on screen for the arcsec function. -->
+    <string name="fun_arcsec">asec</string>
+    <!-- Displayed on buttons on screen for the arccot function. -->
+    <string name="fun_arccot">acot</string>
+
+    <!-- Descriptions for trig functions -->
+    <string name="desc_fun_arcsin">Arc Sine</string>
+    <string name="desc_fun_arccos">Arc Cosine</string>
+    <string name="desc_fun_arctan">Arc Tangent</string>
+    <string name="desc_fun_csc">Cosecent</string>
+    <string name="desc_fun_sec">Secent</string>
+    <string name="desc_fun_cot">Cotangent</string>
+    <string name="desc_fun_arccsc">Arc Cosecent</string>
+    <string name="desc_fun_arcsec">Arc Secent</string>
+    <string name="desc_fun_arccot">Arc Cotangent</string>
 
     <string name="dot">.</string>
 
@@ -71,23 +94,19 @@
     <string name="copy">Copy \'%s\'</string>
 
     <!-- Matrix page text -->
-    <string name="det">det</string>
     <string name="eigenvalue">Eigen</string>
-    <string name="solve">Solve</string>
-    <string name="dotProduct">Dot</string>
-    <string name="crossProduct">Cross</string>
-    <string name="determinantDesc">det</string>
-    <string name="eigenvalueDesc">Eigenvalues</string>
+    <string name="desc_fun_det">Determinant</string>
+    <string name="desc_fun_eigen_value">Eigenvalues</string>
     <string name="plus_row">+Row</string>
     <string name="minus_row">-Row</string>
     <string name="plus_col">+Col</string>
     <string name="minus_col">-Col</string>
-    <string name="matrix_new" translatable="false">[]</string>
-    <string name="matrix_inverse" translatable="false">-1</string>
-    <string name="matrix_transpose">T</string>
-    <string name="next">Next</string>
-    <string name="radians">RAD</string>
-    <string name="degrees">DEG</string>
+    <string name="fun_det">det</string>
+    <string name="fun_inverse">inver</string>
+    <string name="fun_transpose">trans</string>
+    <string name="fun_trace">trace</string>
+    <string name="fun_norm">norm</string>
+    <string name="fun_polar">polar</string>
 
     <!-- Hex page text -->
     <string name="hex">Hex</string>
@@ -97,8 +116,10 @@
     <string name="desc_bin">Binary</string>
     <string name="desc_dec">Decimal</string>
 
-    <string name="history_line_equals">=</string>
-
     <string name="desc_fun_percentage">Percent</string>
+
     <string name="graph">Graph</string>
+
+    <string name="radians">RAD</string>
+    <string name="degrees">DEG</string>
 </resources>

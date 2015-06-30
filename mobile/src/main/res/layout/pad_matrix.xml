@@ -18,7 +18,7 @@
 <com.android2.calculator3.view.CalculatorPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_matrix"
-    style="@style/PadLayoutStyle.Matrix"
+    style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
 
     <ImageButton
@@ -27,23 +27,23 @@
         android:onClick="onButtonClick"
         android:src="@drawable/matrix" />
 
-    <com.android2.calculator3.view.Button
-        android:id="@+id/fun_det"
+    <ImageButton
+        android:id="@+id/identity_matrix"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/det" />
+        android:src="@drawable/matrix" />
 
     <com.android2.calculator3.view.Button
-        android:id="@+id/matrix_transpose"
+        android:id="@+id/fun_dot_product"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/matrix_transpose" />
+        android:text="\u2219" />
 
     <com.android2.calculator3.view.Button
-        android:id="@+id/matrix_inverse"
+        android:id="@+id/fun_cross_product"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/matrix_inverse" />
+        android:text="\u2715" />
 
     <com.android2.calculator3.view.Button
         android:id="@+id/plus_row"
@@ -68,5 +68,41 @@
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/minus_col" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_transpose"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_transpose" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_inverse"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_inverse" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_trace"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_inverse" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_det"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_det" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_norm"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_norm" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/fun_polar"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="@string/fun_polar" />
 
 </com.android2.calculator3.view.CalculatorPadLayout>

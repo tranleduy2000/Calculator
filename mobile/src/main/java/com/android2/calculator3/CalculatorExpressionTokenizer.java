@@ -61,7 +61,7 @@ public class CalculatorExpressionTokenizer {
         }
         mReplacements.add(new Localizer("ln", context.getString(R.string.fun_ln)));
         mReplacements.add(new Localizer("log", context.getString(R.string.fun_log)));
-        mReplacements.add(new Localizer("det", context.getString(R.string.det)));
+        mReplacements.add(new Localizer("det", context.getString(R.string.fun_det)));
         mReplacements.add(new Localizer("Infinity", context.getString(R.string.inf)));
     }
 

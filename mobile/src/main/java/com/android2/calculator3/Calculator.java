@@ -202,10 +202,6 @@ public class Calculator extends Activity
         }
         mBaseManager = new NumberBaseManager(base);
         invalidateSelectedBase(base);
-        if (mPadViewPager != null) {
-            mPadViewPager.setBaseManager(mBaseManager);
-        }
-        setSelectedBaseButton(base);
 
         // Disable IME for this application
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);

@@ -18,7 +18,7 @@
 <com.android2.calculator3.view.CalculatorPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_hex"
-    style="@style/PadLayoutStyle.Hex"
+    style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
 
     <com.android2.calculator3.view.Button
@@ -56,6 +56,42 @@
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/F" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_xand"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u21D4" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_xor"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u2295" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_implies"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u2192" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_and"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u2227" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_or"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u2228" />
+
+    <com.android2.calculator3.view.Button
+        android:id="@+id/op_not"
+        style="@style/PadButtonStyle.Advanced"
+        android:onClick="onButtonClick"
+        android:text="\u00AC" />
 
     <com.android2.calculator3.view.Button
         android:id="@+id/dec"
