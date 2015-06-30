@@ -19,7 +19,9 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Animatable;
 import android.os.Build;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -54,7 +56,7 @@ public class CalculatorPadView extends RevealFrameLayout {
 
     private View mBase;
     private View mOverlay;
-    private View mFab;
+    private FloatingActionButton mFab;
     private View mTray;
 
     public CalculatorPadView(Context context) {
@@ -176,7 +178,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         mBase = findViewById(R.id.base);
         mOverlay = findViewById(R.id.overlay);
         mTray = findViewById(R.id.tray);
-        mFab = findViewById(R.id.fab);
+        mFab = (FloatingActionButton) findViewById(R.id.fab);
 
         mOverlay.setOnTouchListener(new OnTouchListener() {
             @Override
@@ -358,19 +360,23 @@ public class CalculatorPadView extends RevealFrameLayout {
 
     protected void showFab() {
         mFab.setVisibility(View.VISIBLE);
-        mFab.setScaleX(0f);
-        mFab.setScaleY(0f);
+        mFab.setScaleX(0.65f);
+        mFab.setScaleY(0.65f);
         mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
+        mFab.setImageResource(R.drawable.fab_btn_open);
+        ((Animatable) mFab.getDrawable()).start();
     }
 
     protected void hideFab() {
         if (mFab.getVisibility() == View.VISIBLE) {
-            mFab.animate().scaleX(0f).scaleY(0f).setDuration(100).setListener(new AnimationFinishedListener() {
+            mFab.animate().scaleX(0.65f).scaleY(0.65f).setDuration(100).setListener(new AnimationFinishedListener() {
                 @Override
                 public void onAnimationFinished() {
                     mFab.setVisibility(View.GONE);
                 }
             });
+            mFab.setImageResource(R.drawable.fab_btn_close);
+            ((Animatable) mFab.getDrawable()).start();
         }
     }
 
