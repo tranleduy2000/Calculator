@@ -85,7 +85,7 @@
         android:id="@+id/fun_trace"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/fun_inverse" />
+        android:text="@string/fun_trace" />
 
     <com.android2.calculator3.view.Button
         android:id="@+id/fun_det"
