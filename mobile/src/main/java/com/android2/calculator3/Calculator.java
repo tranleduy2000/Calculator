@@ -56,7 +56,7 @@ import android.widget.TextView;
 import com.android2.calculator3.view.CalculatorPadViewExtended;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
-import com.android2.calculator3.view.CalculatorEditText.OnTextSizeChangeListener;
+import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.EqualsImageButton.State;
