@@ -45,7 +45,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
     }
 
     private void setUp(Context context, AttributeSet attrs) {
-        //setMovementMethod(new MathMovementMethod());
+        setMovementMethod(new MathMovementMethod());
     }
 
     public void invalidateSpannables() {

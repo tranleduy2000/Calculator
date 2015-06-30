@@ -22,7 +22,6 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.android2.calculator3.R;
 import com.xlythe.math.BaseModule;
@@ -196,12 +195,31 @@ public class FormattedNumberEditText extends NumberEditText {
             }
         }
 
-        super.backspace();
+        // Override NumberEditText's method -- because commas might disappear, it complicates things
+        if (selectionHandle != 0) {
+            setText(textBeforeInsertionHandle.substring(0, textBeforeInsertionHandle.length() - 1)
+                    + textAfterInsertionHandle);
+
+            if (getText().length() == text.length() - 2) {
+                // 2 characters were deleted (likely a comma and a number)
+                selectionHandle -= 2;
+            } else {
+                --selectionHandle;
+            }
+
+            setSelection(selectionHandle);
+        }
     }
 
     @Override
     public void setSelection(int index) {
         super.setSelection(Math.max(0, Math.min(getText().length(), index)));
+    }
+
+    @Override
+    public int getSelectionStart() {
+        // When setting a movement method, selectionStart() suddenly defaults to -1 instead of 0.
+        return Math.max(0, super.getSelectionStart());
     }
 
     public void setSolver(Solver solver) {
