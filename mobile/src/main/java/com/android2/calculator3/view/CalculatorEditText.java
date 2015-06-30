@@ -269,7 +269,7 @@ public class CalculatorEditText extends EditText {
         // Check and remove keywords
         int selectionHandle = getSelectionStart();
         String textBeforeInsertionHandle = getText().toString().substring(0, selectionHandle);
-        String textAfterInsertionHandle = getText().toString().substring(selectionHandle, getText().toString().length());
+        String textAfterInsertionHandle = getText().toString().substring(selectionHandle, getText().length());
 
         for(String s : mKeywords) {
             if(textBeforeInsertionHandle.endsWith(s)) {
@@ -282,8 +282,7 @@ public class CalculatorEditText extends EditText {
         }
 
         if (selectionHandle != 0) {
-            setText(getText().subSequence(0, selectionHandle - 1).toString()
-                            + getText().subSequence(selectionHandle, getText().length()));
+            setText(textBeforeInsertionHandle.substring(0, selectionHandle - 1) + textAfterInsertionHandle);
             setSelection(selectionHandle - 1);
         }
     }
