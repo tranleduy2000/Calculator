@@ -23,9 +23,11 @@ import android.graphics.Paint;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
+import android.text.Spannable;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextWatcher;
+import android.text.method.LinkMovementMethod;
 import android.text.method.NumberKeyListener;
 import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
@@ -364,51 +366,21 @@ public class CalculatorEditText extends EditText {
         return removeFormatting(getText().toString());
     }
 
+    private List<SpanComponent> mComponents;
     public void invalidateSpannables() {
-        // Logic to insert, split text if there's another view, etc
-//        TypefaceSpan
-//
-//        int cursor, cacheCursor;
-//        cursor = cacheCursor = getActiveEditText().getSelectionStart();
-//        final int index = mRoot.getChildIndex(getActiveEditText());
-//        StringBuilder cache = new StringBuilder();
-//
-//        // Loop over the text, adding custom views when needed
-//        loop: while(!delta.isEmpty()) {
-//            for(DisplayComponent c : mComponents) {
-//                String equation = c.parse(delta);
-//                if(equation != null) {
-//                    // Update the EditText with the cached text
-//                    getActiveEditText().getText().insert(cursor, cache);
-//                    cache.setLength(0);
-//                    cacheCursor = 0;
-//
-//                    // We found a custom view
-//                    mRoot.addView(c.getView(getContext(), mSolver, equation, this));
-//
-//                    // Keep EditTexts in between custom views
-//                    splitText(cursor, index, delta);
-//                    mRoot.getChildAt(index + 2).requestFocus();
-//
-//                    // Update text and loop again
-//                    delta = delta.substring(equation.length());
-//                    continue loop;
-//                }
-//            }
-//
-//            // Don't allow leading operators
-//            if(cursor == 0 && getActiveEditText() == mRoot.getChildAt(0)
-//                    && Solver.isOperator(delta)
-//                    && !delta.equals(String.valueOf(Constants.MINUS))) {
-//                delta = delta.substring(1);
-//                continue loop;
-//            }
-//
-//            // Append the next character to the EditText
-//            cache.append(delta.charAt(0));
-//            delta = delta.substring(1);
-//            cursor++;
-//        }
+        final Spannable spans = getText();
+        final String text = spans.toString();
+        for (int i=0; i<text.length(); i++) {
+            for (SpanComponent component : mComponents) {
+                String equation = component.parse(text.substring(i));
+                if (equation != null) {
+                    Spannable span = component.getSpan(equation);
+                    spans.setSpan(span, i, i + equation.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    i += equation.length();
+                    break;
+                }
+            }
+        }
     }
 
     class NoTextSelectionMode implements ActionMode.Callback {
@@ -437,6 +409,16 @@ public class CalculatorEditText extends EditText {
         void onTextSizeChanged(TextView textView, float oldSize);
     }
 
+    public class SpanComponent {
+        public String parse(String str) {
+            return null;
+        }
+
+        public Spannable getSpan(String equation) {
+            return null;
+        }
+    }
+
     public class MatrixSpannable extends ReplacementSpan {
         @Override
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
@@ -447,5 +429,9 @@ public class CalculatorEditText extends EditText {
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
 
         }
+    }
+
+    public class MatrixMovementMethod extends LinkMovementMethod {
+
     }
 }
