@@ -152,11 +152,6 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     public void insert(String text) {
-        if (getSelectionStart() == -1) {
-            setText(text);
-            return;
-        }
-
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {
                 textWatcher.beforeTextChanged(getCleanText(), 0, 0, 0);

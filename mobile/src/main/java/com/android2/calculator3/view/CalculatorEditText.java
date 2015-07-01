@@ -90,6 +90,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
             }
             cache.append(input.charAt(i));
         }
+        cleanText.append(super.removeFormatting(cache.toString()));
         return cleanText.toString();
     }
 
