@@ -98,10 +98,21 @@ public class FormattedNumberEditText extends NumberEditText {
                 context.getString(R.string.fun_sin) + "(",
                 context.getString(R.string.fun_cos) + "(",
                 context.getString(R.string.fun_tan) + "(",
+                context.getString(R.string.fun_arccsc) + "(",
+                context.getString(R.string.fun_arcsec) + "(",
+                context.getString(R.string.fun_arccot) + "(",
+                context.getString(R.string.fun_csc) + "(",
+                context.getString(R.string.fun_sec) + "(",
+                context.getString(R.string.fun_cot) + "(",
                 context.getString(R.string.fun_log) + "(",
                 context.getString(R.string.mod) + "(",
                 context.getString(R.string.fun_ln) + "(",
                 context.getString(R.string.fun_det) + "(",
+                context.getString(R.string.fun_transpose) + "(",
+                context.getString(R.string.fun_inverse) + "(",
+                context.getString(R.string.fun_trace) + "(",
+                context.getString(R.string.fun_norm) + "(",
+                context.getString(R.string.fun_polar) + "(",
                 context.getString(R.string.dx),
                 context.getString(R.string.dy),
                 context.getString(R.string.cbrt) + "(");
@@ -226,7 +237,7 @@ public class FormattedNumberEditText extends NumberEditText {
         mSolver = solver;
     }
 
-    private String removeFormatting(String input) {
+    protected String removeFormatting(String input) {
         input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
         if(mSolver != null) {
             input = input.replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
@@ -234,7 +245,7 @@ public class FormattedNumberEditText extends NumberEditText {
         return input;
     }
 
-    private Spanned formatText(String input) {
+    protected Spanned formatText(String input) {
         if(mSolver != null) {
             // Add grouping, and then split on the selection handle
             // which is saved as a unique char

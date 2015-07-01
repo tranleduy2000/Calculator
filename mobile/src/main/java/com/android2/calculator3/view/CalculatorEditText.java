@@ -17,8 +17,10 @@
 package com.android2.calculator3.view;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.Layout;
 import android.text.Spannable;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ReplacementSpan;
@@ -46,6 +48,54 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     private void setUp(Context context, AttributeSet attrs) {
         setMovementMethod(new MathMovementMethod());
+        addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                invalidateSpannables();
+            }
+        });
+        addSpanComponent(new MatrixComponent(getContext()));
+    }
+
+    @Override
+    protected String removeFormatting(String input) {
+        StringBuilder cleanText = new StringBuilder();
+        StringBuilder cache = new StringBuilder();
+
+        loop: for (int i = 0; i < input.length(); i++) {
+            for (SpanComponent component : mComponents) {
+                String equation = component.parse(input.substring(i));
+                if (equation != null) {
+                    // Apply super.removeFormatting on the cache (the part we didn't really care about)
+                    cleanText.append(super.removeFormatting(cache.toString()));
+                    cache = new StringBuilder();
+
+                    // Leave the parsed equation as-is (TODO: clean this too? via component?)
+                    cleanText.append(equation);
+                    i += equation.length();
+
+                    // Go to the next character
+                    continue loop;
+                }
+            }
+            cache.append(input.charAt(i));
+        }
+        return cleanText.toString();
+    }
+
+    public void addSpanComponent(SpanComponent component) {
+        mComponents.add(component);
+        invalidateSpannables();
     }
 
     public void invalidateSpannables() {
@@ -62,7 +112,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
             for (SpanComponent component : mComponents) {
                 String equation = component.parse(text.substring(i));
                 if (equation != null) {
-                    Spannable span = component.getSpan(equation);
+                    MathSpannable span = component.getSpan(equation);
                     spans.setSpan(span, i, i + equation.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     i += equation.length();
                     break;
@@ -73,8 +123,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     public static abstract class SpanComponent {
         public abstract String parse(String formula);
-
-        public abstract Spannable getSpan(String equation);
+        public abstract MathSpannable getSpan(String equation);
     }
 
     /**
@@ -86,6 +135,10 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
         public MathSpannable(String equation) {
             mEquation = equation;
+        }
+
+        public String getEquation() {
+            return mEquation;
         }
 
         public boolean onTouchEvent(MotionEvent event) {

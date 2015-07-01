@@ -56,6 +56,7 @@ import android.widget.TextView;
 import com.android2.calculator3.view.CalculatorPadViewExtended;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.GraphView;
+import com.android2.calculator3.view.MatrixComponent;
 import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.DisplayOverlay;
@@ -381,17 +382,31 @@ public class Calculator extends Activity
             case R.id.parentheses:
                 mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
                 break;
+            case R.id.matrix:
+                mFormulaEditText.insert(MatrixComponent.getPattern());
+                break;
             case R.id.fun_cos:
             case R.id.fun_acos:
             case R.id.fun_sin:
             case R.id.fun_asin:
             case R.id.fun_tan:
             case R.id.fun_atan:
+            case R.id.fun_csc:
+            case R.id.fun_sec:
+            case R.id.fun_cot:
+            case R.id.fun_acsc:
+            case R.id.fun_asec:
+            case R.id.fun_acot:
                 mShowTrigDetails = true;
                 updateDetails();
             case R.id.fun_ln:
             case R.id.fun_log:
             case R.id.fun_det:
+            case R.id.fun_transpose:
+            case R.id.fun_inverse:
+            case R.id.fun_trace:
+            case R.id.fun_norm:
+            case R.id.fun_polar:
                 // Add left parenthesis after functions.
                 mFormulaEditText.insert(((Button) view).getText() + "(");
                 break;
