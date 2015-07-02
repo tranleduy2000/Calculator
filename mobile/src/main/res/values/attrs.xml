@@ -16,11 +16,6 @@
 -->
 
 <resources>
-    <declare-styleable name="ScrollableDisplay">
-        <!-- Used to limit the height of Scrollable Display -->
-        <attr name="max_height" format="dimension" />
-    </declare-styleable>
-
     <declare-styleable name="CalculatorEditText">
         <attr name="textSize" format="dimension" />
         <attr name="minTextSize" format="dimension" />
@@ -31,7 +26,18 @@
 
     <declare-styleable name="EqualsImageButton">
         <attr name="state_equals" format="boolean" />
-        <attr name="state_graph" format="boolean" />
         <attr name="state_next" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GraphView">
+        <attr name="showGrid" format="boolean" />
+        <attr name="showInlineNumbers" format="boolean" />
+        <attr name="showOutline" format="boolean" />
+        <attr name="panEnabled" format="boolean" />
+        <attr name="zoomEnabled" format="boolean" />
+        <attr name="backgroundColor" format="color|reference" />
+        <attr name="gridColor" format="color|reference" />
+        <attr name="graphColor" format="color|reference" />
+        <attr name="numberTextColor" format="color|reference" />
     </declare-styleable>
 </resources>

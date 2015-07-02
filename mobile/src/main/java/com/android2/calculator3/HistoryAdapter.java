@@ -24,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.HistoryLine;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
@@ -56,13 +58,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+        public HistoryLine historyLine;
         public TextView historyExpr;
         public TextView historyResult;
+        public GraphView graphView;
 
         public ViewHolder(View v) {
             super(v);
-            historyExpr = (TextView)v.findViewById(R.id.historyExpr);
-            historyResult = (TextView)v.findViewById(R.id.historyResult);
+            historyLine = (HistoryLine) v.findViewById(R.id.history_line);
+            historyExpr = (TextView) v.findViewById(R.id.historyExpr);
+            historyResult = (TextView) v.findViewById(R.id.historyResult);
+            graphView = (GraphView) v.findViewById(R.id.mini_graph);
         }
     }
 
@@ -78,7 +84,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
+        final HistoryLine view = holder.historyLine;
         final HistoryEntry entry = getEntry(position);
         final HistoryEntry nextEntry = getNextEntry(position);
 

@@ -1,6 +1,7 @@
 package com.android2.calculator3.view;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -28,7 +29,7 @@ public class GraphView extends View {
     private int mDrawingAlgorithm = LINES;
     private static final int DOTS = 2;
     private static final int BOX_STROKE = 6;
-    DecimalFormat mFormat = new DecimalFormat("#.#####");
+    private DecimalFormat mFormat = new DecimalFormat("#.#####");
     private PanListener mPanListener;
     private ZoomListener mZoomListener;
     private Paint mBackgroundPaint;
@@ -61,10 +62,25 @@ public class GraphView extends View {
 
     public GraphView(Context context) {
         super(context);
-        setup();
+        setup(context, null);
     }
 
-    private void setup() {
+    public GraphView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setup(context, attrs);
+    }
+
+    public GraphView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setup(context, attrs);
+    }
+
+    public GraphView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        setup(context, attrs);
+    }
+
+    private void setup(Context context, AttributeSet attrs) {
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(Color.WHITE);
         mBackgroundPaint.setStyle(Style.FILL);
@@ -87,6 +103,20 @@ public class GraphView extends View {
         zoomReset();
 
         mData = new ArrayList<Point>();
+
+        if (attrs != null) {
+            final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GraphView, 0, 0);
+            setShowGrid(a.getBoolean(R.styleable.GraphView_showGrid, mShowGrid));
+            setShowInlineNumbers(a.getBoolean(R.styleable.GraphView_showInlineNumbers, mInlineNumbers));
+            setShowOutline(a.getBoolean(R.styleable.GraphView_showOutline, mShowOutline));
+            setPanEnabled(a.getBoolean(R.styleable.GraphView_panEnabled, mPanEnabled));
+            setZoomEnabled(a.getBoolean(R.styleable.GraphView_zoomEnabled, mZoomEnabled));
+            setBackgroundColor(a.getColor(R.styleable.GraphView_backgroundColor, mBackgroundPaint.getColor()));
+            setGridColor(a.getColor(R.styleable.GraphView_gridColor, mAxisPaint.getColor()));
+            setGraphColor(a.getColor(R.styleable.GraphView_graphColor, mGraphPaint.getColor()));
+            setTextColor(a.getColor(R.styleable.GraphView_numberTextColor, mTextPaint.getColor()));
+            a.recycle();
+        }
     }
 
     public void zoomReset() {
@@ -96,16 +126,6 @@ public class GraphView extends View {
         invalidate();
         if(mPanListener != null) mPanListener.panApplied();
         if(mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
-    }
-
-    public GraphView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setup();
-    }
-
-    public GraphView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setup();
     }
 
     private Point average(Point... args) {

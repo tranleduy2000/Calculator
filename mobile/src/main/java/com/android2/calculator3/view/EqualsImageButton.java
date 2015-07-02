@@ -23,11 +23,10 @@ import com.android2.calculator3.R;
 
 public class EqualsImageButton extends ImageButton {
     private static final int[] STATE_EQUALS = { R.attr.state_equals };
-    private static final int[] STATE_GRAPH = { R.attr.state_graph };
     private static final int[] STATE_NEXT = { R.attr.state_next };
 
     public enum State {
-        EQUALS, GRAPH, NEXT;
+        EQUALS, NEXT;
     }
 
     private State mState = State.EQUALS;
@@ -73,9 +72,6 @@ public class EqualsImageButton extends ImageButton {
         switch(mState) {
             case EQUALS:
                 mergeDrawableStates(state, STATE_EQUALS);
-                break;
-            case GRAPH:
-                mergeDrawableStates(state, STATE_GRAPH);
                 break;
             case NEXT:
                 mergeDrawableStates(state, STATE_NEXT);

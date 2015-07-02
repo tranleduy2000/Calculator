@@ -17,6 +17,7 @@
 
 <com.android2.calculator3.view.DisplayOverlay
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:graph="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -33,7 +34,16 @@
             android:layout_height="@dimen/display_result_height"
             android:layout_gravity="bottom"
             android:layout_marginBottom="@dimen/display_shadow"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            graph:showGrid="false"
+            graph:showInlineNumbers="true"
+            graph:showOutline="false"
+            graph:panEnabled="false"
+            graph:zoomEnabled="false"
+            graph:backgroundColor="@color/graph_background"
+            graph:gridColor="@color/graph_axis"
+            graph:graphColor="@color/graph_line"
+            graph:numberTextColor="@color/graph_text"/>
 
         <View
             android:id="@+id/the_card"

@@ -210,19 +210,8 @@ public class Calculator extends Activity
         Button dot = (Button) findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
-        // TODO make these attributes
         mMiniGraph = (GraphView) findViewById(R.id.mini_graph);
-        mMiniGraph.setShowGrid(false);
-        mMiniGraph.setShowInlineNumbers(true);
-        mMiniGraph.setShowOutline(false);
-        mMiniGraph.setPanEnabled(false);
-        mMiniGraph.setZoomEnabled(false);
-        mMiniGraph.setBackgroundColor(getResources().getColor(R.color.graph_background));
-        mMiniGraph.setGridColor(getResources().getColor(R.color.graph_axis));
-        mMiniGraph.setGraphColor(getResources().getColor(R.color.graph_line));
-        mMiniGraph.setTextColor(getResources().getColor(R.color.graph_text));
-        GraphModule graphModule = new GraphModule(mEvaluator.getSolver());
-        mGraphController = new GraphController(graphModule, mMiniGraph);
+        mGraphController = new GraphController(new GraphModule(mEvaluator.getSolver()), mMiniGraph);
 
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
