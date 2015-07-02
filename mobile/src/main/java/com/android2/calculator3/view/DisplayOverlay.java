@@ -536,10 +536,7 @@ public class DisplayOverlay extends RelativeLayout {
 
         mMinTranslation = -getHeight() + mMainDisplay.getHeight();
         View child = mRecyclerView.getChildAt(0);
-        float childHeight = child == null ? 0 :
-                + child.getHeight()
-                + ((RecyclerView.LayoutParams) child.getLayoutParams()).topMargin
-                + ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;
+        float childHeight = child == null ? 0 : child.getHeight();
         int itemCount = mRecyclerView.getAdapter().getItemCount() + 1;
         if (itemCount * childHeight < getHeight()) {
             mMaxTranslation = mMinTranslation + (int) (itemCount * childHeight);
@@ -623,10 +620,6 @@ public class DisplayOverlay extends RelativeLayout {
                 // Scale the card behind everything
                 mDisplayBackground.setScaleX(scaledWidth);
                 mDisplayBackground.setScaleY(scaledHeight);
-                mDisplayBackground.setTranslationY(scalePercent * (
-                        - ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin
-                        - ((FrameLayout.LayoutParams) mDisplayBackground.getLayoutParams()).topMargin
-                ));
 
                 // Scale the graph behind the card (may be invisible, but oh well)
                 mDisplayGraph.setTranslationY(scalePercent * -height);
@@ -672,8 +665,7 @@ public class DisplayOverlay extends RelativeLayout {
                 // Handle readjustment of everything so it follows the finger
                 adjustedTranslation += scalePercent * (
                         + mDisplayBackground.getPivotY()
-                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight()
-                        - ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin);
+                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
 
                 mRecyclerView.setTranslationY(adjustedTranslation);
                 mCalculationsDisplay.setTranslationY(adjustedTranslation);
