@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.android2.calculator3.view.HistoryLine;
+import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
@@ -77,13 +78,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
-        final HistoryEntry entry;
-        if (mDisplayEntry != null && position == mEntries.size() - 1) {
-            entry = mDisplayEntry;
-        } else {
-            entry = mEntries.elementAt(position);
-        }
+        final HistoryLine view = (HistoryLine) holder.itemView.findViewById(R.id.history_line);
+        final HistoryEntry entry = getEntry(position);
+        final HistoryEntry nextEntry = getNextEntry(position);
+
         view.setAdapter(this);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,11 +89,48 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 mCallback.onHistoryItemSelected(entry);
             }
         });
+
         holder.historyExpr.setText(formatText(entry.getFormula()));
         holder.historyResult.setText(formatText(entry.getResult()));
 
         if (entry.getFormula().contains(mX)) {
             holder.historyResult.setText(R.string.graph);
+        }
+
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
+        if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
+            view.setBackgroundResource(R.drawable.white_card_subitem);
+            params.bottomMargin = 0;
+        } else {
+            view.setBackgroundResource(R.drawable.white_card);
+            params.bottomMargin = dp(0);
+        }
+        // Due to a bug, setBackgroundResource resets padding
+        view.setPadding(dp(16), dp(8), dp(16), dp(8));
+    }
+
+    private int dp(int dp) {
+        float density = getContext().getResources().getDisplayMetrics().density;
+        return (int) (dp * density);
+    }
+
+    private HistoryEntry getEntry(int position) {
+        final HistoryEntry entry;
+        if (mDisplayEntry != null && position == mEntries.size() - 1) {
+            entry = mDisplayEntry;
+        } else {
+            entry = mEntries.elementAt(position);
+        }
+        return entry;
+    }
+
+    private HistoryEntry getNextEntry(int position) {
+        ++position;
+
+        if (mEntries.size() == position) {
+            return null;
+        } else {
+            return getEntry(position);
         }
     }
 
@@ -104,7 +139,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     public void setDisplayEntry(String formula, String result) {
-        mDisplayEntry = new HistoryEntry(formula, result);
+        mDisplayEntry = new HistoryEntry(formula, result, -1);
         notifyDataSetChanged();
     }
 
@@ -128,6 +163,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     protected Spanned formatText(String text) {
+        if (text.matches(".*\\de[-" + Constants.MINUS + "]?\\d.*")) {
+            text = text.replace("e", Constants.MUL + "10^");
+        }
         return Html.fromHtml(
                 mEquationFormatter.insertSupScripts(
                 mEquationFormatter.addComas(mSolver, text)));

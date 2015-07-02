@@ -25,9 +25,11 @@ import java.util.Vector;
 
 public class History {
     private static final int VERSION_1 = 1;
+    private static final int VERSION_4 = 4;
     private static final int MAX_ENTRIES = 100;
     private Vector<HistoryEntry> mEntries = new Vector<HistoryEntry>();
     private int mPos;
+    private int mGroupId;
     private RecyclerView.Adapter mObserver;
 
     History() {
@@ -36,8 +38,9 @@ public class History {
 
     public void clear() {
         mEntries.clear();
-        mEntries.add(new HistoryEntry("", ""));
+        mEntries.add(new HistoryEntry("", "", 0));
         mPos = 0;
+        mGroupId = 0;
         notifyChanged();
     }
 
@@ -48,14 +51,15 @@ public class History {
     }
 
     History(int version, DataInput in) throws IOException {
-        if(version >= VERSION_1) {
+        if (version >= VERSION_1) {
             int size = in.readInt();
             for(int i = 0; i < size; ++i) {
                 mEntries.add(new HistoryEntry(version, in));
             }
             mPos = in.readInt();
-        } else {
-            throw new IOException("invalid version " + version);
+        }
+        if (version >= VERSION_4) {
+            mGroupId = in.readInt();
         }
     }
 
@@ -69,6 +73,7 @@ public class History {
             entry.write(out);
         }
         out.writeInt(mPos);
+        out.writeInt(mGroupId);
     }
 
     void update(String text) {
@@ -101,10 +106,14 @@ public class History {
             mEntries.remove(0);
         }
         if((mEntries.size() < 2 || !formula.equals(mEntries.elementAt(mEntries.size() - 2).getFormula())) && !formula.isEmpty() && !formula.isEmpty()) {
-            mEntries.insertElementAt(new HistoryEntry(formula, result), mEntries.size() - 1);
+            mEntries.insertElementAt(new HistoryEntry(formula, result, mGroupId), mEntries.size() - 1);
         }
         mPos = mEntries.size() - 1;
         notifyChanged();
+    }
+
+    public void incrementGroupId() {
+        ++mGroupId;
     }
 
     public String getText() {

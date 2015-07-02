@@ -408,7 +408,15 @@ public class Calculator extends Activity
             case R.id.fun_norm:
             case R.id.fun_polar:
                 // Add left parenthesis after functions.
-                mFormulaEditText.insert(((Button) view).getText() + "(");
+                if(mCurrentState.equals(CalculatorState.INPUT) ||
+                        mCurrentState.equals(CalculatorState.GRAPHING) ||
+                        mFormulaEditText.isCursorModified()) {
+                    mFormulaEditText.insert(((Button) view).getText() + "(");
+                }
+                else {
+                    mFormulaEditText.setText(((Button) view).getText());
+                    mHistory.incrementGroupId();
+                }
                 break;
             case R.id.hex:
                 setBase(Base.HEXADECIMAL);
@@ -435,6 +443,7 @@ public class Calculator extends Activity
                 }
                 else {
                     mFormulaEditText.setText(((Button) view).getText());
+                    mHistory.incrementGroupId();
                 }
                 break;
         }
@@ -614,6 +623,7 @@ public class Calculator extends Activity
             public void onAnimationFinished() {
                 mGraphController.lock();
                 mFormulaEditText.clear();
+                mHistory.incrementGroupId();
             }
         });
     }

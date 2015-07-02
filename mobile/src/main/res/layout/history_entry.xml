@@ -1,14 +1,11 @@
 <com.android2.calculator3.view.HistoryLine
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/history_line"
-    android:layout_margin="@dimen/history_margin"
+    android:layout_marginLeft="@dimen/history_margin"
+    android:layout_marginRight="@dimen/history_margin"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingRight="16dp"
-    android:paddingLeft="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
     android:background="@drawable/white_card">
 
     <TextView

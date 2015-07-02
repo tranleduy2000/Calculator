@@ -30,7 +30,7 @@ import java.io.OutputStream;
 
 public class Persist {
     private static final String TAG = Persist.class.getSimpleName();
-    private static final int LAST_VERSION = 3;
+    private static final int LAST_VERSION = 4;
     private static final String FILE_NAME = "calculator.data";
     private final Context mContext;
     History mHistory = new History();

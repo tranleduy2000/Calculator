@@ -22,26 +22,31 @@ import java.io.IOException;
 
 public class HistoryEntry {
     private static final int VERSION_1 = 1;
+    private static final int VERSION_4 = 4;
     private String mFormula;
     private String mResult;
+    private int mGroupId;
 
-    public HistoryEntry(String formula, String result) {
+    public HistoryEntry(String formula, String result, int groupId) {
         mFormula = formula;
         mResult = result;
+        mGroupId = groupId;
     }
 
     HistoryEntry(int version, DataInput in) throws IOException {
-        if(version >= VERSION_1) {
+        if (version >= VERSION_1) {
             mFormula = in.readUTF();
             mResult = in.readUTF();
-        } else {
-            throw new IOException("invalid version " + version);
+        }
+        if (version >= VERSION_4) {
+            mGroupId = in.readInt();
         }
     }
 
     void write(DataOutput out) throws IOException {
         out.writeUTF(mFormula);
         out.writeUTF(mResult);
+        out.writeInt(mGroupId);
     }
 
     @Override
@@ -63,5 +68,13 @@ public class HistoryEntry {
 
     public String getFormula() {
         return mFormula;
+    }
+
+    void setGroupId(int groupId) {
+        mGroupId = groupId;
+    }
+
+    public int getGroupId() {
+        return mGroupId;
     }
 }
