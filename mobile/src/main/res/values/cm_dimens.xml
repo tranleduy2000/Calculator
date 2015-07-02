@@ -5,10 +5,10 @@
 
     <!-- Display -->
     <dimen name="display_height">230dp</dimen>
-    <dimen name="display_height_with_shadow">237dp</dimen>
+    <dimen name="display_height_with_shadow">236dp</dimen>
     <dimen name="display_formula_height">130dp</dimen>
     <dimen name="display_result_height">100dp</dimen>
-    <dimen name="display_shadow">7dp</dimen>
+    <dimen name="display_shadow">6dp</dimen>
     <dimen name="history_margin">4dp</dimen>
 
     <!-- Number pad -->

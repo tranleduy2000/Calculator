@@ -34,6 +34,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.drawable.AnimatingDrawable;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
@@ -326,7 +327,15 @@ public class CalculatorPadView extends RevealFrameLayout {
         mFab.setScaleX(0.65f);
         mFab.setScaleY(0.65f);
         mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
-        mFab.setImageResource(R.drawable.fab_btn_open);
+        mFab.setImageDrawable(new AnimatingDrawable.Builder(getContext())
+                        .frames(
+                                R.drawable.fab_open_1,
+                                R.drawable.fab_open_2,
+                                R.drawable.fab_open_3,
+                                R.drawable.fab_open_4,
+                                R.drawable.fab_open_5)
+                        .build()
+        );
         ((Animatable) mFab.getDrawable()).start();
     }
 
@@ -338,7 +347,15 @@ public class CalculatorPadView extends RevealFrameLayout {
                     mFab.setVisibility(View.GONE);
                 }
             });
-            mFab.setImageResource(R.drawable.fab_btn_close);
+            mFab.setImageDrawable(new AnimatingDrawable.Builder(getContext())
+                            .frames(
+                                    R.drawable.fab_close_1,
+                                    R.drawable.fab_close_2,
+                                    R.drawable.fab_close_3,
+                                    R.drawable.fab_close_4,
+                                    R.drawable.fab_close_5)
+                            .build()
+            );
             ((Animatable) mFab.getDrawable()).start();
         }
     }

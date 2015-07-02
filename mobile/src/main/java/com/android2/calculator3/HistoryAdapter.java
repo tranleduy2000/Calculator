@@ -68,7 +68,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             historyLine = (HistoryLine) v.findViewById(R.id.history_line);
             historyExpr = (TextView) v.findViewById(R.id.historyExpr);
             historyResult = (TextView) v.findViewById(R.id.historyResult);
-            graphView = (GraphView) v.findViewById(R.id.mini_graph);
+            graphView = (GraphView) v.findViewById(R.id.graph);
         }
     }
 
@@ -103,7 +103,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             holder.historyResult.setText(R.string.graph);
         }
 
-        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
             view.setBackgroundResource(R.drawable.white_card_subitem);
         } else {

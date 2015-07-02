@@ -5,8 +5,8 @@
 
     <!-- Display -->
     <dimen name="display_height">300dp</dimen>
-    <dimen name="display_height_with_shadow">307dp</dimen>
+    <dimen name="display_height_with_shadow">306dp</dimen>
     <dimen name="display_formula_height">150dp</dimen>
     <dimen name="display_result_height">150dp</dimen>
-    <dimen name="display_shadow">7dp</dimen>
+    <dimen name="display_shadow">6dp</dimen>
 </resources>
