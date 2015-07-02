@@ -100,10 +100,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) view.getLayoutParams();
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
             view.setBackgroundResource(R.drawable.white_card_subitem);
-            params.bottomMargin = 0;
         } else {
             view.setBackgroundResource(R.drawable.white_card);
-            params.bottomMargin = dp(0);
         }
         // Due to a bug, setBackgroundResource resets padding
         view.setPadding(dp(16), dp(8), dp(16), dp(8));

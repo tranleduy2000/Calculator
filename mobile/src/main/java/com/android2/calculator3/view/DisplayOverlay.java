@@ -608,9 +608,7 @@ public class DisplayOverlay extends RelativeLayout {
                     }
 
                     // Adjust margins to match the entry
-                    adjustedTranslation += height +
-                            ((RecyclerView.LayoutParams) child.getLayoutParams()).topMargin +
-                            ((RecyclerView.LayoutParams) child.getLayoutParams()).bottomMargin;
+                    adjustedTranslation += height;
                 } else if (adapter.getDisplayEntry() != null) {
                     // We're no longer at 100%, so remove the entry (if it's attached)
                     adapter.clearDisplayEntry();
