@@ -601,8 +601,8 @@ public class DisplayOverlay extends RelativeLayout {
             float adjustedTranslation = 0;
 
             // Get both our current width/height and the width/height we want to be
-            int width = mEvaluatedDisplay.getWidth();
-            int height = mEvaluatedDisplay.getHeight();
+            int width = mEvaluatedDisplay.findViewById(R.id.history_line).getWidth();
+            int height = mEvaluatedDisplay.findViewById(R.id.history_line).getHeight();
             int displayWidth = mDisplayBackground.getWidth();
             int displayHeight = mDisplayBackground.getHeight();
 
@@ -618,7 +618,7 @@ public class DisplayOverlay extends RelativeLayout {
                 }
 
                 // Adjust margins to match the entry
-                adjustedTranslation += height;
+                adjustedTranslation += mEvaluatedDisplay.getHeight();
             } else if (adapter.getDisplayEntry() != null) {
                 // We're no longer at 100%, so remove the entry (if it's attached)
                 adapter.clearDisplayEntry();
@@ -635,9 +635,6 @@ public class DisplayOverlay extends RelativeLayout {
             // Scale the card behind everything
             mDisplayBackground.setScaleX(scaledWidth);
             mDisplayBackground.setScaleY(scaledHeight);
-
-            // But! We're scaling the shadow on the card too...
-            int displayShadow = getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow);
 
             // Scale the graph behind the card (may be invisible, but oh well) TODO -- proper translations
             mDisplayGraph.setTranslationY(percent * -height);

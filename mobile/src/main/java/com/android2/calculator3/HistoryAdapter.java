@@ -202,6 +202,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     protected Spanned formatText(String text) {
+        if (text == null) {
+            return null;
+        }
+
         if (text.matches(".*\\de[-" + Constants.MINUS + "]?\\d.*")) {
             text = text.replace("e", Constants.MUL + "10^");
         }

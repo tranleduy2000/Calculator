@@ -538,7 +538,7 @@ public class Calculator extends Activity
             }
         } else if (mCurrentState == CalculatorState.GRAPHING) {
             setState(CalculatorState.EVALUATE);
-            mEvaluator.evaluate(text, this);
+            onEvaluate(text, null, INVALID_RES_ID);
         }
     }
 
