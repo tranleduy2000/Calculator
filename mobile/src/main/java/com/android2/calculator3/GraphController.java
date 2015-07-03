@@ -1,5 +1,6 @@
 package com.android2.calculator3;
 
+import android.os.AsyncTask;
 import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.view.GraphView;
@@ -47,10 +48,10 @@ public class GraphController implements
         view.setZoomListener(this);
     }
 
-    public void startGraph(String equation) {
+    public AsyncTask startGraph(String equation) {
         invalidateModule();
         mEquation = equation;
-        mGraphModule.updateGraph(equation, this);
+        return mGraphModule.updateGraph(equation, this);
     }
 
     public void clearGraph() {

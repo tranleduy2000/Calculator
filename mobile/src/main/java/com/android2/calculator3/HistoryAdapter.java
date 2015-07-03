@@ -17,6 +17,7 @@
 package com.android2.calculator3;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -29,6 +30,7 @@ import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.HistoryLine;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
+import com.xlythe.math.GraphModule;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Solver;
@@ -62,6 +64,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         public TextView historyExpr;
         public TextView historyResult;
         public GraphView graphView;
+        public AsyncTask pendingGraphTask;
 
         public ViewHolder(View v) {
             super(v);
@@ -84,9 +87,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final HistoryLine view = holder.historyLine;
         final HistoryEntry entry = getEntry(position);
         final HistoryEntry nextEntry = getNextEntry(position);
+        invalidate(holder, entry, nextEntry);
+    }
+
+    private void invalidate(final ViewHolder holder, final HistoryEntry entry, final HistoryEntry nextEntry) {
+        final HistoryLine view = holder.historyLine;
 
         view.setAdapter(this);
         view.setOnClickListener(new View.OnClickListener() {
@@ -99,17 +106,46 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.historyExpr.setText(formatText(entry.getFormula()));
         holder.historyResult.setText(formatText(entry.getResult()));
 
-        if (entry.getFormula().contains(mX)) {
-            holder.historyResult.setText(R.string.graph);
+        // Disable any and all graphs (the default state)
+        holder.graphView.setVisibility(View.GONE);
+        if (holder.pendingGraphTask != null) {
+            holder.pendingGraphTask.cancel(true);
+            holder.pendingGraphTask = null;
         }
 
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
+            // Set a subitem background (so there's a divider instead of a shadow
             view.setBackgroundResource(R.drawable.white_card_subitem);
+            view.setPadding(dp(16), dp(8), dp(16), dp(8));
         } else {
             view.setBackgroundResource(R.drawable.white_card);
+            view.setPadding(dp(16), dp(8), dp(16), dp(8+6));
+
+            // If this is a graph formula, start drawing the graph
+            if (hasGraph(entry.getFormula())) {
+                holder.historyResult.setText(R.string.graph);
+                holder.graphView.setVisibility(View.VISIBLE);
+
+                if (holder.graphView.getTag() == null) {
+                    GraphController controller = new GraphController(new GraphModule(new Solver()), holder.graphView);
+                    holder.graphView.setTag(controller);
+                }
+                GraphController controller = (GraphController) holder.graphView.getTag();
+                holder.pendingGraphTask = controller.startGraph(entry.getFormula());
+            }
         }
         // Due to a bug, setBackgroundResource resets padding
-        view.setPadding(dp(16), dp(8), dp(16), dp(8));
+//        view.setPadding(dp(16), dp(8), dp(16), dp(8));
+    }
+
+    public View parseView(ViewGroup parent, String formula, String result) {
+        ViewHolder holder = onCreateViewHolder(parent, 0);
+        invalidate(holder, new HistoryEntry(formula, result, -1), null);
+        return holder.itemView;
+    }
+
+    public boolean hasGraph(String formula) {
+        return formula.contains(mX);
     }
 
     private int dp(int dp) {

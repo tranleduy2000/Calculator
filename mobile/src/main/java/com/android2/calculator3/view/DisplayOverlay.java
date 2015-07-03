@@ -40,7 +40,7 @@ public class DisplayOverlay extends RelativeLayout {
      * */
     private static final float MAX_ALPHA = 0.6f;
 
-    private static boolean DEBUG = false;
+    private static boolean DEBUG = true;
     private static final String TAG = DisplayOverlay.class.getSimpleName();
 
     private VelocityTracker mVelocityTracker;
@@ -91,6 +91,7 @@ public class DisplayOverlay extends RelativeLayout {
             mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
         }
     };
+    private View mEvaluatedDisplay;
 
     public DisplayOverlay(Context context) {
         super(context);
@@ -327,6 +328,16 @@ public class DisplayOverlay extends RelativeLayout {
 
             mResultEditText.setPivotX(mResultEditText.getWidth());
             mResultEditText.setPivotY(0);
+
+            final String formula = mFormulaEditText.getText().toString();
+            final String result = mResultEditText.getText().toString();
+            mEvaluatedDisplay = getAdapter().parseView(mRecyclerView, formula, result);
+            int leftMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).leftMargin;
+            int topMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).topMargin;
+            int rightMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).rightMargin;
+            mEvaluatedDisplay.measure(MeasureSpec.makeMeasureSpec(getWidth() - leftMargin - rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2, MeasureSpec.AT_MOST));
+            mEvaluatedDisplay.layout(leftMargin, topMargin, mEvaluatedDisplay.getMeasuredWidth() + leftMargin, mEvaluatedDisplay.getMeasuredHeight() + topMargin);
+            Log.d(TAG, String.format("l=%s,t=%s,r=%s,b=%s,width=%s,height=%s", mEvaluatedDisplay.getLeft(), mEvaluatedDisplay.getTop(), mEvaluatedDisplay.getRight(), mEvaluatedDisplay.getBottom(), mEvaluatedDisplay.getWidth(), mEvaluatedDisplay.getHeight()));
         }
     }
 
@@ -522,6 +533,10 @@ public class DisplayOverlay extends RelativeLayout {
         mRecyclerView.setAdapter(adapter);
     }
 
+    public HistoryAdapter getAdapter() {
+        return ((HistoryAdapter) mRecyclerView.getAdapter());
+    }
+
     private boolean hasDisplayEntry() {
         HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
         return adapter.getDisplayEntry() != null;
@@ -580,109 +595,116 @@ public class DisplayOverlay extends RelativeLayout {
             }
 
             // Update the display
-            float scalePercent = percent;
-            float scaledWidth = -1;
-            float scaledHeight = -1;
+            final HistoryAdapter adapter = getAdapter();
+            final String formula = mFormulaEditText.getText().toString();
+            final String result = mResultEditText.getText().toString();
             float adjustedTranslation = 0;
-            View child = mRecyclerView.getChildAt(0);
-            if (child != null) {
-                int width = child.getWidth();
-                int height = child.getHeight();
-                int displayWidth = mDisplayBackground.getWidth();
-                int displayHeight = mDisplayBackground.getHeight();
 
-                // When we're fully expanded, turn the display into another row on the history adapter
-                HistoryAdapter adapter = (HistoryAdapter) mRecyclerView.getAdapter();
-                if (scalePercent == 1f) {
-                    if (adapter.getDisplayEntry() == null) {
-                        // We're at 100%, but haven't switched to the adapter yet. Time to do your thing.
-                        adapter.setDisplayEntry(
-                                mFormulaEditText.toString(),
-                                mResultEditText.toString());
-                        mDisplayBackground.setVisibility(View.GONE);
-                        mCalculationsDisplay.setVisibility(View.GONE);
-                        scrollToMostRecent();
-                    }
+            // Get both our current width/height and the width/height we want to be
+            int width = mEvaluatedDisplay.getWidth();
+            int height = mEvaluatedDisplay.getHeight();
+            int displayWidth = mDisplayBackground.getWidth();
+            int displayHeight = mDisplayBackground.getHeight();
 
-                    // Adjust margins to match the entry
-                    adjustedTranslation += height;
-                } else if (adapter.getDisplayEntry() != null) {
-                    // We're no longer at 100%, so remove the entry (if it's attached)
-                    adapter.clearDisplayEntry();
-                    mDisplayBackground.setVisibility(View.VISIBLE);
-                    mCalculationsDisplay.setVisibility(View.VISIBLE);
+            // When we're fully expanded, turn the display into another row on the history adapter
+            if (percent == 1f) {
+                if (adapter.getDisplayEntry() == null) {
+                    // We're at 100%, but haven't switched to the adapter yet. Time to do your thing.
+                    adapter.setDisplayEntry(formula, result);
+                    mDisplayBackground.setVisibility(View.GONE);
+                    mCalculationsDisplay.setVisibility(View.GONE);
+                    mDisplayGraph.setVisibility(View.GONE);
+                    scrollToMostRecent();
                 }
 
-                scaledWidth = scale(scalePercent, (float) width / displayWidth);
-                scaledHeight = scale(scalePercent, (float) height / displayHeight);
-                scaledHeight = Math.min(scaledHeight, mMaxDisplayScale);
-
-                // Scale the card behind everything
-                mDisplayBackground.setScaleX(scaledWidth);
-                mDisplayBackground.setScaleY(scaledHeight);
-
-                // Scale the graph behind the card (may be invisible, but oh well)
-                mDisplayGraph.setTranslationY(scalePercent * -height);
-                mDisplayGraph.setScaleX(scaledWidth);
-
-                // Move the formula over to the far left
-                TextView expr = (TextView) child.findViewById(R.id.historyExpr);
-                float exprScale = expr.getTextSize() / mFormulaEditText.getTextSize();
-                mFormulaEditText.setScaleX(scale(scalePercent, exprScale));
-                mFormulaEditText.setScaleY(scale(scalePercent, exprScale));
-                float formulaWidth = expr.getPaint().measureText(mFormulaEditText.getText().toString());
-                mFormulaEditText.setTranslationX(scalePercent * (
-                        + formulaWidth
-                        - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
-                        + expr.getLeft()
-                        + ((RecyclerView.LayoutParams) child.getLayoutParams()).leftMargin
-                ));
-                mFormulaEditText.setTranslationY(scalePercent * (
-                        + expr.getTop()
-                        - exprScale * mFormulaEditText.getPaddingTop()
-                        + exprScale * mFormulaEditText.getPaddingBottom()
-                ));
-                mFormulaEditText.setTextColor(mixColors(scalePercent, mFormulaInitColor, expr.getCurrentTextColor()));
-
-                // Move the result to keep in place with the display
-                TextView result = (TextView) child.findViewById(R.id.historyResult);
-                float resultScale = result.getTextSize() / mResultEditText.getTextSize();
-                mResultEditText.setScaleX(scale(scalePercent, resultScale));
-                mResultEditText.setScaleY(scale(scalePercent, resultScale));
-                mResultEditText.setTranslationX(scalePercent * (
-                        + result.getRight()
-                        - mResultEditText.getRight()
-                ) / 2);
-                mResultEditText.setTranslationY(scalePercent * (
-                        - mResultEditText.getTop()
-                        + result.getTop()
-                ));
-                mResultEditText.setTextColor(mixColors(scalePercent, mResultInitColor, result.getCurrentTextColor()));
-
-                // Fade away HEX/RAD info text
-                mInfoText.setAlpha(scale(scalePercent, 0));
-
-                // Handle readjustment of everything so it follows the finger
-                adjustedTranslation += scalePercent * (
-                        + mDisplayBackground.getPivotY()
-                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
-
-                mRecyclerView.setTranslationY(adjustedTranslation);
-                mCalculationsDisplay.setTranslationY(adjustedTranslation);
-                mInfoText.setTranslationY(adjustedTranslation);
-
-                // When there isn't much history to show, move everything up so it aligns to the top
-                int newHeight = height * mRecyclerView.getAdapter().getItemCount() + 1;
-                if (newHeight < displayHeight) {
-//                    mMainDisplay.setTranslationY(mMainDisplay.getTranslationY() - scale(percent, displayHeight));
-//                    mRecyclerView.setTranslationY(mRecyclerView.getTranslationY() - scale(percent, displayHeight));
+                // Adjust margins to match the entry
+                adjustedTranslation += height;
+            } else if (adapter.getDisplayEntry() != null) {
+                // We're no longer at 100%, so remove the entry (if it's attached)
+                adapter.clearDisplayEntry();
+                mDisplayBackground.setVisibility(View.VISIBLE);
+                mCalculationsDisplay.setVisibility(View.VISIBLE);
+                if (adapter.hasGraph(formula)) {
+                    mDisplayGraph.setVisibility(View.VISIBLE);
                 }
             }
+
+            float scaledWidth = scale(percent, (float) width / displayWidth);
+            float scaledHeight = Math.min(scale(percent, (float) height / displayHeight), mMaxDisplayScale);
+
+            // Scale the card behind everything
+            mDisplayBackground.setScaleX(scaledWidth);
+            mDisplayBackground.setScaleY(scaledHeight);
+
+            // But! We're scaling the shadow on the card too...
+            int displayShadow = getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow);
+
+            // Scale the graph behind the card (may be invisible, but oh well) TODO -- proper translations
+            mDisplayGraph.setTranslationY(percent * -height);
+            mDisplayGraph.setScaleX(scaledWidth);
+
+            // Move the formula over to the far left
+            TextView exprView = (TextView) mEvaluatedDisplay.findViewById(R.id.historyExpr);
+            float exprScale = exprView.getTextSize() / mFormulaEditText.getTextSize();
+            mFormulaEditText.setScaleX(scale(percent, exprScale));
+            mFormulaEditText.setScaleY(scale(percent, exprScale));
+            float formulaWidth = exprView.getPaint().measureText(mFormulaEditText.getText().toString());
+            mFormulaEditText.setTranslationX(percent * (
+                    + formulaWidth
+                    - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
+                    + getLeft(exprView, null)
+            ));
+            mFormulaEditText.setTranslationY(percent * (
+                    + getTop(exprView, null)
+                    - exprScale * mFormulaEditText.getPaddingTop()
+                    + exprScale * mFormulaEditText.getPaddingBottom()
+            ));
+            mFormulaEditText.setTextColor(mixColors(percent, mFormulaInitColor, exprView.getCurrentTextColor()));
+
+            // Move the result to keep in place with the display TODO 'graph' text for graphs
+            TextView resultView = (TextView) mEvaluatedDisplay.findViewById(R.id.historyResult);
+            float resultScale = resultView.getTextSize() / mResultEditText.getTextSize();
+            mResultEditText.setScaleX(scale(percent, resultScale));
+            mResultEditText.setScaleY(scale(percent, resultScale));
+            mResultEditText.setTranslationX(percent * (
+                    // We have pivotX set at getWidth(), so the right sides will match up.
+                    // Adjust the right edges of the real and the calculated views
+                    - getRight(mResultEditText, mCalculationsDisplay)
+                    + getRight(resultView, null)
+
+                    // But getRight() doesn't include padding! So match the padding as well
+                    + mResultEditText.getPaddingRight() * scale(percent, resultScale)
+                    - resultView.getPaddingRight()
+            ));
+            mResultEditText.setTranslationY(percent * (
+                    // Likewise, pivotY is set to 0, so the top sides will match up
+                    // Adjust the top edges of the real and the calculated views
+                    - getTop(mResultEditText, mCalculationsDisplay)
+                    + getTop(resultView, null)
+
+                    // But getTop() doesn't include padding! So match the padding as well
+                    - mResultEditText.getPaddingTop() * scale(percent, resultScale)
+                    + resultView.getPaddingTop()
+            ));
+            mResultEditText.setTextColor(mixColors(percent, mResultInitColor, resultView.getCurrentTextColor()));
+
+            // Fade away HEX/RAD info text
+            mInfoText.setAlpha(scale(percent, 0));
+
+            // Handle readjustment of everything so it follows the finger
+            adjustedTranslation += percent * (
+                    + mDisplayBackground.getPivotY()
+                    - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+
+            mRecyclerView.setTranslationY(adjustedTranslation);
+            mCalculationsDisplay.setTranslationY(adjustedTranslation);
+            mInfoText.setTranslationY(adjustedTranslation);
+
             mFormulaEditText.setEnabled(percent == 0);
 
             if (DEBUG) {
-                Log.d(TAG, String.format("percent=%s,txY=%s,alpha=%s,scalePercent=%s,scaledWidth=%s,scaledHeight=%s",
-                        percent, txY, mFade.getAlpha(), scalePercent, scaledWidth, scaledHeight));
+                Log.d(TAG, String.format("percent=%s,txY=%s,alpha=%s,width=%s,height=%s,scaledWidth=%s,scaledHeight=%s",
+                        percent, txY, mFade.getAlpha(), width, height, scaledWidth, scaledHeight));
             }
         }
 
@@ -710,5 +732,23 @@ public class DisplayOverlay extends RelativeLayout {
 
             return Color.argb((int) a, (int) r, (int) g, (int) b);
         }
+    }
+
+    private int getLeft(View view, View relativeTo) {
+        if (view == null || view == relativeTo) {
+            return 0;
+        }
+        return view.getLeft() + (view.getParent() instanceof View ? getLeft((View) view.getParent(), relativeTo) : 0);
+    }
+
+    private int getRight(View view, View relativeTo) {
+        return getLeft(view, relativeTo) + view.getWidth();
+    }
+
+    private int getTop(View view, View relativeTo) {
+        if (view == null || view == relativeTo) {
+            return 0;
+        }
+        return view.getTop() + (view.getParent() instanceof View ? getTop((View) view.getParent(), relativeTo) : 0);
     }
 }

@@ -34,17 +34,18 @@ public class GraphModule extends Module {
         mZoomLevel = level;
     }
 
-    public void updateGraph(String text, OnGraphUpdatedListener l) {
+    public AsyncTask updateGraph(String text, OnGraphUpdatedListener l) {
         boolean endsWithOperator = text.length() != 0 &&
                 (Solver.isOperator(text.charAt(text.length() - 1)) || text.endsWith("("));
         boolean containsMatrices = getSolver().displayContainsMatrices(text);
         if(endsWithOperator || containsMatrices) {
-            return;
+            return null;
         }
 
         if(mGraphTask != null) mGraphTask.cancel(true);
         mGraphTask = new GraphTask(getSolver(), mMinY, mMaxY, mMinX, mMaxX, mZoomLevel, l);
         mGraphTask.execute(text);
+        return mGraphTask;
     }
 
     class GraphTask extends AsyncTask<String, String, List<Point>> {
