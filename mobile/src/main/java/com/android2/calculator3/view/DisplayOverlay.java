@@ -16,6 +16,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -50,7 +51,7 @@ public class DisplayOverlay extends RelativeLayout {
     private View mDisplayBackground;
     private View mDisplayForeground;
     private View mDisplayGraph;
-    private TextView mFormulaEditText;
+    private EditText mFormulaEditText;
     private TextView mResultEditText;
     private View mCalculationsDisplay;
     private View mInfoText;
@@ -235,7 +236,7 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
         mDisplayGraph = findViewById(R.id.mini_graph);
-        mFormulaEditText = (TextView) findViewById(R.id.formula);
+        mFormulaEditText = (EditText) findViewById(R.id.formula);
         mResultEditText = (TextView) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
         mInfoText = findViewById(R.id.info);
@@ -723,6 +724,9 @@ public class DisplayOverlay extends RelativeLayout {
             mMainDisplay.setTranslationY(0);
 
             mFormulaEditText.setEnabled(percent == 0);
+            if (percent == 0) {
+                mFormulaEditText.setSelection(mFormulaEditText.getText().length());
+            }
 
             if (mMaxTranslation != 0) {
                 for (int i = 0; i < getChildCount(); i++) {
