@@ -116,10 +116,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
             // Set a subitem background (so there's a divider instead of a shadow
             view.setBackgroundResource(R.drawable.white_card_subitem);
-            view.setPadding(dp(16), dp(8), dp(16), dp(8));
         } else {
             view.setBackgroundResource(R.drawable.white_card);
-            view.setPadding(dp(16), dp(8), dp(16), dp(8+6));
 
             // If this is a graph formula, start drawing the graph
             if (hasGraph(entry.getFormula())) {
@@ -135,7 +133,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             }
         }
         // Due to a bug, setBackgroundResource resets padding
-//        view.setPadding(dp(16), dp(8), dp(16), dp(8));
+        view.setPadding(dp(16), dp(8), dp(16), dp(8));
     }
 
     public View parseView(ViewGroup parent, String formula, String result) {

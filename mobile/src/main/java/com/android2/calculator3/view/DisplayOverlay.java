@@ -16,7 +16,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -91,7 +90,7 @@ public class DisplayOverlay extends RelativeLayout {
             mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
         }
     };
-    private View mEvaluatedDisplay;
+    private View mTemplateDisplay;
 
     public DisplayOverlay(Context context) {
         super(context);
@@ -308,7 +307,7 @@ public class DisplayOverlay extends RelativeLayout {
     private void handleDown() {
         evaluateHeight();
 
-        if (mMinTranslation == mMaxTranslation) {
+        if (getRange() == 0) {
             return;
         }
 
@@ -328,16 +327,6 @@ public class DisplayOverlay extends RelativeLayout {
 
             mResultEditText.setPivotX(mResultEditText.getWidth());
             mResultEditText.setPivotY(0);
-
-            final String formula = mFormulaEditText.getText().toString();
-            final String result = mResultEditText.getText().toString();
-            mEvaluatedDisplay = getAdapter().parseView(mRecyclerView, formula, result);
-            int leftMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).leftMargin;
-            int topMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).topMargin;
-            int rightMargin = ((MarginLayoutParams) mEvaluatedDisplay.getLayoutParams()).rightMargin;
-            mEvaluatedDisplay.measure(MeasureSpec.makeMeasureSpec(getWidth() - leftMargin - rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2, MeasureSpec.AT_MOST));
-            mEvaluatedDisplay.layout(leftMargin, topMargin, mEvaluatedDisplay.getMeasuredWidth() + leftMargin, mEvaluatedDisplay.getMeasuredHeight() + topMargin);
-            Log.d(TAG, String.format("l=%s,t=%s,r=%s,b=%s,width=%s,height=%s", mEvaluatedDisplay.getLeft(), mEvaluatedDisplay.getTop(), mEvaluatedDisplay.getRight(), mEvaluatedDisplay.getBottom(), mEvaluatedDisplay.getWidth(), mEvaluatedDisplay.getHeight()));
         }
     }
 
@@ -360,7 +349,7 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void handleUp(MotionEvent event) {
-        if (mMinTranslation == mMaxTranslation) {
+        if (getRange() == 0) {
             return;
         }
 
@@ -383,6 +372,29 @@ public class DisplayOverlay extends RelativeLayout {
         mVelocityTracker = null;
     }
 
+    private void ensureTemplateViewExists() {
+        final String formula = mFormulaEditText.getText().toString();
+        final String result = mResultEditText.getText().toString();
+
+        if (mTemplateDisplay != null) {
+            final String currentFormula = ((TextView) mTemplateDisplay.findViewById(R.id.historyExpr)).getText().toString();
+            final String currentResult = ((TextView) mTemplateDisplay.findViewById(R.id.historyResult)).getText().toString();
+            if (currentFormula.equals(formula) && currentResult.equals(result)) {
+                return;
+            }
+        }
+
+        mTemplateDisplay = getAdapter().parseView(mRecyclerView, formula, result);
+        int leftMargin = ((MarginLayoutParams) mTemplateDisplay.getLayoutParams()).leftMargin;
+        int topMargin = ((MarginLayoutParams) mTemplateDisplay.getLayoutParams()).topMargin;
+        int rightMargin = ((MarginLayoutParams) mTemplateDisplay.getLayoutParams()).rightMargin;
+        mTemplateDisplay.measure(MeasureSpec.makeMeasureSpec(getWidth() - leftMargin - rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2, MeasureSpec.AT_MOST));
+        mTemplateDisplay.layout(leftMargin, topMargin, mTemplateDisplay.getMeasuredWidth() + leftMargin, mTemplateDisplay.getMeasuredHeight() + topMargin);
+        if (DEBUG) {
+            Log.d(TAG, String.format("l=%s,t=%s,r=%s,b=%s,width=%s,height=%s", mTemplateDisplay.getLeft(), mTemplateDisplay.getTop(), mTemplateDisplay.getRight(), mTemplateDisplay.getBottom(), mTemplateDisplay.getWidth(), mTemplateDisplay.getHeight()));
+        }
+    }
+
     private float calculateCurrentPercent(float dy) {
         float clampedY = Math.min(Math.max(getTranslationY() + dy, mMinTranslation), mMaxTranslation);
         float percent = getRange() <= 0 ? 0 : (clampedY - mMinTranslation) / getRange();
@@ -398,7 +410,7 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void expand(Animator.AnimatorListener listener) {
-        if (mMinTranslation == mMaxTranslation) {
+        if (getRange() == 0) {
             if (listener != null) {
                 listener.onAnimationStart(null);
                 listener.onAnimationEnd(null);
@@ -423,7 +435,7 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void collapse(Animator.AnimatorListener listener) {
-        if (mMinTranslation == mMaxTranslation) {
+        if (getRange() == 0) {
             if (listener != null) {
                 listener.onAnimationStart(null);
                 listener.onAnimationEnd(null);
@@ -549,12 +561,20 @@ public class DisplayOverlay extends RelativeLayout {
             return;
         }
 
+        if (mRecyclerView.getChildCount() == 0) {
+            // If there's no history, set the range to 0
+            mMinTranslation = mMaxTranslation = -getHeight() + mMainDisplay.getHeight();
+            return;
+        }
+
+        ensureTemplateViewExists();
         mMinTranslation = -getHeight() + mMainDisplay.getHeight();
-        View child = mRecyclerView.getChildAt(0);
-        float childHeight = child == null ? 0 : child.getHeight();
-        int itemCount = mRecyclerView.getAdapter().getItemCount() + 1;
-        if (itemCount * childHeight < getHeight()) {
-            mMaxTranslation = mMinTranslation + (int) (itemCount * childHeight);
+        int childHeight = mTemplateDisplay.getHeight();
+        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
+            childHeight += mRecyclerView.getChildAt(i).getHeight();
+        }
+        if (childHeight < getHeight()) {
+            mMaxTranslation = mMinTranslation + childHeight;
         } else {
             mMaxTranslation = 0;
         }
@@ -585,6 +605,10 @@ public class DisplayOverlay extends RelativeLayout {
         }
 
         public void onUpdate(float percent) {
+            if (getRange() == 0) {
+                return;
+            }
+
             // Update the drag animation
             float txY = mMinTranslation + percent * (getRange());
             setTranslationY(txY);
@@ -601,8 +625,8 @@ public class DisplayOverlay extends RelativeLayout {
             float adjustedTranslation = 0;
 
             // Get both our current width/height and the width/height we want to be
-            int width = mEvaluatedDisplay.findViewById(R.id.history_line).getWidth();
-            int height = mEvaluatedDisplay.findViewById(R.id.history_line).getHeight();
+            int width = mTemplateDisplay.findViewById(R.id.history_line).getWidth();
+            int height = mTemplateDisplay.findViewById(R.id.history_line).getHeight();
             int displayWidth = mDisplayBackground.getWidth();
             int displayHeight = mDisplayBackground.getHeight();
 
@@ -618,7 +642,7 @@ public class DisplayOverlay extends RelativeLayout {
                 }
 
                 // Adjust margins to match the entry
-                adjustedTranslation += mEvaluatedDisplay.getHeight();
+                adjustedTranslation += mTemplateDisplay.getHeight();
             } else if (adapter.getDisplayEntry() != null) {
                 // We're no longer at 100%, so remove the entry (if it's attached)
                 adapter.clearDisplayEntry();
@@ -641,7 +665,7 @@ public class DisplayOverlay extends RelativeLayout {
             mDisplayGraph.setScaleX(scaledWidth);
 
             // Move the formula over to the far left
-            TextView exprView = (TextView) mEvaluatedDisplay.findViewById(R.id.historyExpr);
+            TextView exprView = (TextView) mTemplateDisplay.findViewById(R.id.historyExpr);
             float exprScale = exprView.getTextSize() / mFormulaEditText.getTextSize();
             mFormulaEditText.setScaleX(scale(percent, exprScale));
             mFormulaEditText.setScaleY(scale(percent, exprScale));
@@ -659,7 +683,7 @@ public class DisplayOverlay extends RelativeLayout {
             mFormulaEditText.setTextColor(mixColors(percent, mFormulaInitColor, exprView.getCurrentTextColor()));
 
             // Move the result to keep in place with the display TODO 'graph' text for graphs
-            TextView resultView = (TextView) mEvaluatedDisplay.findViewById(R.id.historyResult);
+            TextView resultView = (TextView) mTemplateDisplay.findViewById(R.id.historyResult);
             float resultScale = resultView.getTextSize() / mResultEditText.getTextSize();
             mResultEditText.setScaleX(scale(percent, resultScale));
             mResultEditText.setScaleY(scale(percent, resultScale));
@@ -696,8 +720,21 @@ public class DisplayOverlay extends RelativeLayout {
             mRecyclerView.setTranslationY(adjustedTranslation);
             mCalculationsDisplay.setTranslationY(adjustedTranslation);
             mInfoText.setTranslationY(adjustedTranslation);
+            mMainDisplay.setTranslationY(0);
 
             mFormulaEditText.setEnabled(percent == 0);
+
+            if (mMaxTranslation != 0) {
+                for (int i = 0; i < getChildCount(); i++) {
+                    View child = getChildAt(i);
+                    float currentTranslationY = child.getTranslationY();
+                    if (child != mRecyclerView) {
+                        Log.d(TAG, "scaled range: " + (percent * mMainDisplay.getHeight()));
+                        Log.d(TAG, "currentTranslationY: " + currentTranslationY);
+                    }
+                    child.setTranslationY(currentTranslationY - (percent * mMainDisplay.getHeight()));
+                }
+            }
 
             if (DEBUG) {
                 Log.d(TAG, String.format("percent=%s,txY=%s,alpha=%s,width=%s,height=%s,scaledWidth=%s,scaledHeight=%s",

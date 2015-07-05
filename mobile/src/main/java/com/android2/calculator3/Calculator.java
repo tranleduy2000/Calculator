@@ -462,7 +462,7 @@ public class Calculator extends Activity
         } else if (expr.contains(mX)) {
             saveHistory(expr, result, false);
             mDisplayView.scrollToMostRecent();
-            onResult("");
+            onResult(result);
         } else if (saveHistory(expr, result, true)) {
             mDisplayView.scrollToMostRecent();
             onResult(result);
@@ -538,7 +538,7 @@ public class Calculator extends Activity
             }
         } else if (mCurrentState == CalculatorState.GRAPHING) {
             setState(CalculatorState.EVALUATE);
-            onEvaluate(text, null, INVALID_RES_ID);
+            onEvaluate(text, "", INVALID_RES_ID);
         }
     }
 
