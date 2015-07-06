@@ -35,12 +35,13 @@ import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Solver;
 
+import java.util.List;
 import java.util.Vector;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     private final Context mContext;
     private final Solver mSolver;
-    private final Vector<HistoryEntry> mEntries;
+    private final List<HistoryEntry> mEntries;
     private final EquationFormatter mEquationFormatter;
     private final String mX;
     protected HistoryItemCallback mCallback;
@@ -152,23 +153,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     private HistoryEntry getEntry(int position) {
-        final HistoryEntry entry;
-        if (mDisplayEntry != null && position == mEntries.size() - 1) {
-            entry = mDisplayEntry;
-        } else {
-            entry = mEntries.elementAt(position);
+        if (mDisplayEntry != null && position == mEntries.size()) {
+            return mDisplayEntry;
         }
-        return entry;
+
+        if (position < 0 || position >= mEntries.size()) {
+            return null;
+        }
+
+        return mEntries.get(position);
     }
 
     private HistoryEntry getNextEntry(int position) {
-        ++position;
-
-        if (mEntries.size() == position) {
-            return null;
-        } else {
-            return getEntry(position);
-        }
+        return getEntry(++position);
     }
 
     public HistoryEntry getDisplayEntry() {
@@ -188,9 +185,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public int getItemCount() {
         if (mDisplayEntry == null) {
-            return mEntries.size() - 1;
-        } else {
             return mEntries.size();
+        } else {
+            return mEntries.size() + 1;
         }
     }
 

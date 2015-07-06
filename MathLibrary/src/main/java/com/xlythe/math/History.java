@@ -21,13 +21,15 @@ import android.support.v7.widget.RecyclerView;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
 
 public class History {
     private static final int VERSION_1 = 1;
     private static final int VERSION_4 = 4;
     private static final int MAX_ENTRIES = 100;
-    private Vector<HistoryEntry> mEntries = new Vector<HistoryEntry>();
+    private List<HistoryEntry> mEntries = new LinkedList<HistoryEntry>();
     private int mPos;
     private int mGroupId;
     private RecyclerView.Adapter mObserver;
@@ -38,8 +40,7 @@ public class History {
 
     public void clear() {
         mEntries.clear();
-        mEntries.add(new HistoryEntry("", "", 0));
-        mPos = 0;
+        mPos = -1;
         mGroupId = 0;
         notifyChanged();
     }
@@ -76,38 +77,18 @@ public class History {
         out.writeInt(mGroupId);
     }
 
-    void update(String text) {
-        current().setResult(text);
-    }
-
     public HistoryEntry current() {
-        return mEntries.elementAt(mPos);
-    }
-
-    boolean moveToPrevious() {
-        if(mPos > 0) {
-            --mPos;
-            return true;
+        if (mPos == -1) {
+            return null;
         }
-        return false;
-    }
-
-    boolean moveToNext() {
-        if(mPos < mEntries.size() - 1) {
-            ++mPos;
-            return true;
-        }
-        return false;
+        return mEntries.get(mPos);
     }
 
     public void enter(String formula, String result) {
-        current().clearResult();
         if(mEntries.size() >= MAX_ENTRIES) {
             mEntries.remove(0);
         }
-        if((mEntries.size() < 2 || !formula.equals(mEntries.elementAt(mEntries.size() - 2).getFormula())) && !formula.isEmpty() && !formula.isEmpty()) {
-            mEntries.insertElementAt(new HistoryEntry(formula, result, mGroupId), mEntries.size() - 1);
-        }
+        mEntries.add(new HistoryEntry(formula, result, mGroupId));
         mPos = mEntries.size() - 1;
         notifyChanged();
     }
@@ -129,7 +110,7 @@ public class History {
         mPos--;
     }
 
-    public Vector<HistoryEntry> getEntries() {
+    public List<HistoryEntry> getEntries() {
         return mEntries;
     }
 }

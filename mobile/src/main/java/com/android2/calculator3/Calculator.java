@@ -290,7 +290,7 @@ public class Calculator extends Activity
                 (!TextUtils.isEmpty(expr)
                         && !TextUtils.isEmpty(result)
                         && !Solver.equal(expr, result)
-                        && !mHistory.current().getFormula().equals(expr))) {
+                        && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr)))) {
             expr = EquationFormatter.appendParenthesis(expr);
             mHistory.enter(expr, result);
             return true;

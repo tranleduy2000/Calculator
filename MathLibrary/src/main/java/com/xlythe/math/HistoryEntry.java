@@ -54,10 +54,6 @@ public class HistoryEntry {
         return mFormula;
     }
 
-    void clearResult() {
-        mResult = mFormula;
-    }
-
     public String getResult() {
         return mResult;
     }

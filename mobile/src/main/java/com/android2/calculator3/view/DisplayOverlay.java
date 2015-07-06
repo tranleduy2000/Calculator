@@ -56,10 +56,13 @@ public class DisplayOverlay extends RelativeLayout {
     private View mCalculationsDisplay;
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
+    private int mDisplayHeight;
     private int mTouchSlop;
     private float mInitialMotionY;
     private float mLastMotionY;
     private float mLastDeltaY;
+    private TranslateState mLastState = TranslateState.COLLAPSED;
+    private TranslateState mState = TranslateState.COLLAPSED;
     private int mMinTranslation = -1;
     private int mMaxTranslation = -1;
     private float mMaxDisplayScale = 1f;
@@ -78,11 +81,7 @@ public class DisplayOverlay extends RelativeLayout {
         @Override
         public void onAnimationFinished() {
             mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-            if (mDisplayGraph.getVisibility() != View.VISIBLE) {
-                mDisplayBackground.setPivotY(mDisplayBackground.getHeight() / 2);
-            } else {
-                mDisplayBackground.setPivotY(0);
-            }
+            mDisplayBackground.setPivotY(0);
 
             mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
             mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
@@ -128,6 +127,7 @@ public class DisplayOverlay extends RelativeLayout {
                 }
                 evaluateHeight();
                 setTranslationY(mMinTranslation);
+                mRecyclerView.setTranslationY(-mDisplayHeight);
                 if (DEBUG) {
                     Log.v(TAG, String.format("mMinTranslation=%s, mMaxTranslation=%s", mMinTranslation, mMaxTranslation));
                 }
@@ -140,79 +140,18 @@ public class DisplayOverlay extends RelativeLayout {
         EXPANDED, COLLAPSED, PARTIAL
     }
 
+    private void setState(TranslateState state) {
+        if (mState != state) {
+            mLastState = mState;
+            mState = state;
+        }
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         mRecyclerView = (RecyclerView) findViewById(R.id.historyRecycler);
-        mLayoutManager = new LinearLayoutManager(getContext()) {
-            private int[] mMeasuredDimension = new int[2];
-
-            @Override
-            public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state,
-                                  int widthSpec, int heightSpec) {
-                final int widthMode = View.MeasureSpec.getMode(widthSpec);
-                final int heightMode = View.MeasureSpec.getMode(heightSpec);
-                final int widthSize = View.MeasureSpec.getSize(widthSpec);
-                final int heightSize = View.MeasureSpec.getSize(heightSpec);
-                int width = 0;
-                int height = 0;
-                for (int i = 0; i < getItemCount() && height < heightSize&& width < widthSize; i++) {
-                    measureScrapChild(recycler, i,
-                            View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                            View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                            mMeasuredDimension);
-
-                    if (getOrientation() == HORIZONTAL) {
-                        width = width + mMeasuredDimension[0];
-                        if (i == 0) {
-                            height = mMeasuredDimension[1];
-                        }
-                    } else {
-                        height = height + mMeasuredDimension[1];
-                        if (i == 0) {
-                            width = mMeasuredDimension[0];
-                        }
-                    }
-                }
-                // If child view is more than screen size, there is no need to make it wrap content. We can use original onMeasure() so we can scroll view.
-                if (height < heightSize && width < widthSize) {
-                    switch (widthMode) {
-                        case View.MeasureSpec.EXACTLY:
-                            width = widthSize;
-                        case View.MeasureSpec.AT_MOST:
-                        case View.MeasureSpec.UNSPECIFIED:
-                    }
-
-                    switch (heightMode) {
-                        case View.MeasureSpec.EXACTLY:
-                            height = heightSize;
-                        case View.MeasureSpec.AT_MOST:
-                        case View.MeasureSpec.UNSPECIFIED:
-                    }
-
-                    setMeasuredDimension(width, height);
-                } else {
-                    // Override the size to match the entire screen (so when we drag it down it's not cut off)
-                    setMeasuredDimension(DisplayOverlay.this.getWidth(), DisplayOverlay.this.getHeight());
-                }
-            }
-
-            private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec,
-                                           int heightSpec, int[] measuredDimension) {
-                View view = recycler.getViewForPosition(position);
-                if (view != null) {
-                    RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
-                    int childWidthSpec = ViewGroup.getChildMeasureSpec(widthSpec,
-                            getPaddingLeft() + getPaddingRight(), p.width);
-                    int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
-                            getPaddingTop() + getPaddingBottom(), p.height);
-                    view.measure(childWidthSpec, childHeightSpec);
-                    measuredDimension[0] = view.getMeasuredWidth() + p.leftMargin + p.rightMargin;
-                    measuredDimension[1] = view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
-                    recycler.recycleView(view);
-                }
-            }
-        };
+        mLayoutManager = new LinearLayoutManager(getContext());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -332,21 +271,11 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private void handleMove(MotionEvent event) {
-        TranslateState state = getTranslateState();
-        float y = event.getRawY();
-        float dy = y - mLastMotionY;
-        if (DEBUG) {
-            Log.v(TAG, "handleMove y=" + y + ", dy=" + dy);
-        }
-
-        float percent = calculateCurrentPercent(dy);
-        if (dy < 0 && state != TranslateState.COLLAPSED) {
-            mAnimator.onUpdate(percent);
-        } else if (dy > 0 && state != TranslateState.EXPANDED) {
-            mAnimator.onUpdate(percent);
-        }
-        mLastMotionY = y;
-        mLastDeltaY = dy;
+        float percent = getCurrentPercent();
+        mAnimator.onUpdate(percent);
+        mLastDeltaY = mLastMotionY - event.getRawY();
+        mLastMotionY = event.getRawY();
+        setState(TranslateState.PARTIAL);
     }
 
     private void handleUp(MotionEvent event) {
@@ -357,13 +286,13 @@ public class DisplayOverlay extends RelativeLayout {
         mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
         if (Math.abs(mVelocityTracker.getYVelocity()) > mMinimumFlingVelocity) {
             // the sign on velocity seems unreliable, so use last delta to determine direction
-            if (mLastDeltaY > 0) {
+            if (mLastDeltaY < 0) {
                 expand();
             } else {
                 collapse();
             }
         } else {
-            if (calculateCurrentPercent(0) > 0.5f) {
+            if (getCurrentPercent() > 0.5f) {
                 expand();
             } else {
                 collapse();
@@ -396,9 +325,15 @@ public class DisplayOverlay extends RelativeLayout {
         }
     }
 
-    private float calculateCurrentPercent(float dy) {
-        float clampedY = Math.min(Math.max(getTranslationY() + dy, mMinTranslation), mMaxTranslation);
-        float percent = getRange() <= 0 ? 0 : (clampedY - mMinTranslation) / getRange();
+    private float getCurrentPercent() {
+        float percent = (mLastMotionY - mInitialMotionY) / getHeight();
+
+        // Start at 100% if open
+        if (mState == TranslateState.EXPANDED ||
+                (mState == TranslateState.PARTIAL && mLastState == TranslateState.EXPANDED)) {
+            percent += 1f;
+        }
+        percent = Math.min(Math.max(percent, 0f), 1f);
         return percent;
     }
 
@@ -419,7 +354,7 @@ public class DisplayOverlay extends RelativeLayout {
             return;
         }
 
-        DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 1f);
+        DisplayAnimator animator = new DisplayAnimator(getCurrentPercent(), 1f);
         if (listener != null) {
             animator.addListener(listener);
         }
@@ -429,6 +364,7 @@ public class DisplayOverlay extends RelativeLayout {
         if (mFade != null) {
             mFade.setOnTouchListener(mFadeOnTouchListener);
         }
+        setState(TranslateState.EXPANDED);
     }
 
     public void collapse() {
@@ -444,7 +380,7 @@ public class DisplayOverlay extends RelativeLayout {
             return;
         }
 
-        DisplayAnimator animator = new DisplayAnimator(calculateCurrentPercent(0), 0f);
+        DisplayAnimator animator = new DisplayAnimator(getCurrentPercent(), 0f);
         if (listener != null) {
             animator.addListener(listener);
         }
@@ -455,6 +391,7 @@ public class DisplayOverlay extends RelativeLayout {
         if (mFade != null) {
             mFade.setOnTouchListener(null);
         }
+        setState(TranslateState.COLLAPSED);
     }
 
     public boolean isExpanded() {
@@ -562,20 +499,22 @@ public class DisplayOverlay extends RelativeLayout {
             return;
         }
 
+        mDisplayHeight = mMainDisplay.getHeight();
+
         if (mRecyclerView.getChildCount() == 0) {
             // If there's no history, set the range to 0
-            mMinTranslation = mMaxTranslation = -getHeight() + mMainDisplay.getHeight();
+            mMinTranslation = mMaxTranslation = -getHeight() + mDisplayHeight;
             return;
         }
 
         ensureTemplateViewExists();
-        mMinTranslation = -getHeight() + mMainDisplay.getHeight();
+        mMinTranslation = -getHeight() + mDisplayHeight;
         int childHeight = mTemplateDisplay.getHeight();
         for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
             childHeight += mRecyclerView.getChildAt(i).getHeight();
         }
         if (childHeight < getHeight()) {
-            mMaxTranslation = mMinTranslation + childHeight;
+            mMaxTranslation = -getHeight() + childHeight;
         } else {
             mMaxTranslation = 0;
         }
@@ -716,28 +655,19 @@ public class DisplayOverlay extends RelativeLayout {
             // Handle readjustment of everything so it follows the finger
             adjustedTranslation += percent * (
                     + mDisplayBackground.getPivotY()
-                    - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+                            - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
 
-            mRecyclerView.setTranslationY(adjustedTranslation);
             mCalculationsDisplay.setTranslationY(adjustedTranslation);
             mInfoText.setTranslationY(adjustedTranslation);
+            mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
             mMainDisplay.setTranslationY(0);
 
-            mFormulaEditText.setEnabled(percent == 0);
+            // Enable/disable the edit text.
             if (percent == 0) {
+                mFormulaEditText.setEnabled(true);
                 mFormulaEditText.setSelection(mFormulaEditText.getText().length());
-            }
-
-            if (mMaxTranslation != 0) {
-                for (int i = 0; i < getChildCount(); i++) {
-                    View child = getChildAt(i);
-                    float currentTranslationY = child.getTranslationY();
-                    if (child != mRecyclerView) {
-                        Log.d(TAG, "scaled range: " + (percent * mMainDisplay.getHeight()));
-                        Log.d(TAG, "currentTranslationY: " + currentTranslationY);
-                    }
-                    child.setTranslationY(currentTranslationY - (percent * mMainDisplay.getHeight()));
-                }
+            } else {
+                mFormulaEditText.setEnabled(false);
             }
 
             if (DEBUG) {

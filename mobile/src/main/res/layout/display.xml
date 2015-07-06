@@ -91,8 +91,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/historyRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/main_display"
-        android:layout_marginBottom="@dimen/history_margin"/>
+        android:layout_height="match_parent"/>
 
 </com.android2.calculator3.view.DisplayOverlay>
