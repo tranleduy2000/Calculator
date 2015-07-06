@@ -326,7 +326,8 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     private float getCurrentPercent() {
-        float percent = (mLastMotionY - mInitialMotionY) / getHeight();
+        int maxDistance = mMaxTranslation == 0 ? getHeight() : getRecyclerHeight();
+        float percent = (mLastMotionY - mInitialMotionY) / maxDistance;
 
         // Start at 100% if open
         if (mState == TranslateState.EXPANDED ||
@@ -507,17 +508,22 @@ public class DisplayOverlay extends RelativeLayout {
             return;
         }
 
-        ensureTemplateViewExists();
         mMinTranslation = -getHeight() + mDisplayHeight;
-        int childHeight = mTemplateDisplay.getHeight();
-        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
-            childHeight += mRecyclerView.getChildAt(i).getHeight();
-        }
+        int childHeight = getRecyclerHeight();
         if (childHeight < getHeight()) {
             mMaxTranslation = -getHeight() + childHeight;
         } else {
             mMaxTranslation = 0;
         }
+    }
+
+    private int getRecyclerHeight() {
+        ensureTemplateViewExists();
+        int childHeight = getAdapter().getDisplayEntry() != null ? 0 : mTemplateDisplay.getHeight();
+        for (int i = 0; i < mRecyclerView.getChildCount(); i++) {
+            childHeight += mRecyclerView.getChildAt(i).getHeight();
+        }
+        return childHeight;
     }
 
     public void scrollToMostRecent() {
