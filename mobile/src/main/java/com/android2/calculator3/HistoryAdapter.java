@@ -126,7 +126,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 holder.graphView.setVisibility(View.VISIBLE);
 
                 if (holder.graphView.getTag() == null) {
-                    GraphController controller = new GraphController(new GraphModule(new Solver()), holder.graphView);
+                    GraphController controller = new GraphController(new GraphModule(mSolver), holder.graphView);
                     holder.graphView.setTag(controller);
                 }
                 GraphController controller = (GraphController) holder.graphView.getTag();

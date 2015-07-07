@@ -33,6 +33,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
+import com.android2.calculator3.Calculator;
 import com.android2.calculator3.R;
 import com.android2.calculator3.drawable.AnimatingDrawable;
 import com.xlythe.floatingview.AnimationFinishedListener;
@@ -187,13 +188,6 @@ public class CalculatorPadView extends RevealFrameLayout {
                 return true;
             }
         });
-        mFab.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showTray();
-                hideFab();
-            }
-        });
     }
 
     @Override
@@ -323,129 +317,19 @@ public class CalculatorPadView extends RevealFrameLayout {
     }
 
     protected void showFab() {
-        mFab.setVisibility(View.VISIBLE);
-        mFab.setScaleX(0.65f);
-        mFab.setScaleY(0.65f);
-        mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
-        mFab.setImageDrawable(new AnimatingDrawable.Builder(getContext())
-                        .frames(
-                                R.drawable.fab_open_1,
-                                R.drawable.fab_open_2,
-                                R.drawable.fab_open_3,
-                                R.drawable.fab_open_4,
-                                R.drawable.fab_open_5)
-                        .build()
-        );
-        ((Animatable) mFab.getDrawable()).start();
+        ((Calculator) getContext()).showFab();
     }
 
     protected void hideFab() {
-        if (mFab.getVisibility() == View.VISIBLE) {
-            mFab.animate().scaleX(0.65f).scaleY(0.65f).setDuration(100).setListener(new AnimationFinishedListener() {
-                @Override
-                public void onAnimationFinished() {
-                    mFab.setVisibility(View.GONE);
-                }
-            });
-            mFab.setImageDrawable(new AnimatingDrawable.Builder(getContext())
-                            .frames(
-                                    R.drawable.fab_close_1,
-                                    R.drawable.fab_close_2,
-                                    R.drawable.fab_close_3,
-                                    R.drawable.fab_close_4,
-                                    R.drawable.fab_close_5)
-                            .build()
-            );
-            ((Animatable) mFab.getDrawable()).start();
-        }
+        ((Calculator) getContext()).hideFab();
     }
 
     protected void showTray() {
-        View sourceView = mFab;
-        boolean reverse = false;
-        mTray.setVisibility(View.VISIBLE);
-
-        final SupportAnimator revealAnimator;
-        final int[] clearLocation = new int[2];
-        sourceView.getLocationInWindow(clearLocation);
-        clearLocation[0] += sourceView.getWidth() / 2;
-        clearLocation[1] += sourceView.getHeight() / 2;
-        final int revealCenterX = clearLocation[0] - mTray.getLeft();
-        final int revealCenterY = clearLocation[1] - mTray.getTop();
-        final double x1_2 = Math.pow(mTray.getLeft() - revealCenterX, 2);
-        final double x2_2 = Math.pow(mTray.getRight() - revealCenterX, 2);
-        final double y_2 = Math.pow(mTray.getTop() - revealCenterY, 2);
-        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
-
-        float start = reverse ? revealRadius : 0;
-        float end = reverse ? 0 : revealRadius;
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            // The lollipop reveal uses local cords, so use tray height / 2
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, mTray.getHeight() / 2, start, end);
-        } else {
-            // The legacy support doesn't work with gravity bottom, so use the global cords
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, revealCenterY, start, end);
-        }
-        revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        if (reverse) {
-            revealAnimator.addListener(new AnimationFinishedListener() {
-                @Override
-                public void onAnimationFinished() {
-                    mTray.setVisibility(View.INVISIBLE);
-                }
-            });
-        }
-        revealAnimator.start();
+        ((Calculator) getContext()).showTray();
     }
 
     protected void hideTray() {
-        if (mTray.getVisibility() != View.VISIBLE) {
-            return;
-        }
-
-        View sourceView = mFab;
-        boolean reverse = true;
-        mTray.setVisibility(View.VISIBLE);
-
-        final SupportAnimator revealAnimator;
-        final int[] clearLocation = new int[2];
-        sourceView.getLocationInWindow(clearLocation);
-        clearLocation[0] += sourceView.getWidth() / 2;
-        clearLocation[1] += sourceView.getHeight() / 2;
-        final int revealCenterX = clearLocation[0] - mTray.getLeft();
-        final int revealCenterY = clearLocation[1] - mTray.getTop();
-        final double x1_2 = Math.pow(mTray.getLeft() - revealCenterX, 2);
-        final double x2_2 = Math.pow(mTray.getRight() - revealCenterX, 2);
-        final double y_2 = Math.pow(mTray.getTop() - revealCenterY, 2);
-        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
-
-        float start = reverse ? revealRadius : 0;
-        float end = reverse ? 0 : revealRadius;
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            // The lollipop reveal uses local cords, so use tray height / 2
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, mTray.getHeight() / 2, start, end);
-        } else {
-            // The legacy support doesn't work with gravity bottom, so use the global cords
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, revealCenterY, start, end);
-        }
-        revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        if (reverse) {
-            revealAnimator.addListener(new AnimationFinishedListener() {
-                @Override
-                public void onAnimationFinished() {
-                    mTray.setVisibility(View.INVISIBLE);
-                }
-            });
-        }
-        revealAnimator.start();
+        ((Calculator) getContext()).hideTray();
     }
 
     private void setState(TranslateState state) {
