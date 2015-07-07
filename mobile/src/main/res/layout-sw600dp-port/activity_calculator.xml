@@ -17,31 +17,94 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:support="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/overlay"
+        android:id="@+id/topPanel"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginTop="@dimen/display_height">
 
-        <include
-            android:id="@+id/pad_advanced"
-            layout="@layout/pad_advanced" />
+        <FrameLayout
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/pad_hex"
-            layout="@layout/pad_hex" />
+            <include
+                android:id="@+id/pad_advanced"
+                layout="@layout/pad_advanced" />
 
-        <include
-            android:id="@+id/pad_matrix"
-            layout="@layout/pad_matrix" />
+            <include
+                android:id="@+id/pad_trig"
+                layout="@layout/pad_trig" />
+
+            <include
+                android:id="@+id/pad_hex"
+                layout="@layout/pad_hex" />
+
+            <include
+                android:id="@+id/pad_matrix"
+                layout="@layout/pad_matrix" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/tray"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/pad_numeric_background_color"
+            android:layout_gravity="bottom"
+            android:visibility="invisible">
+
+            <Button
+                android:id="@+id/btn_advanced"
+                android:text="Adv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/btn_trig"
+                android:text="Trig"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_hex"
+                android:text="Hex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1" />
+
+            <Button
+                android:id="@+id/btn_matrix"
+                android:text="Matrix"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            support:elevation="4dp"
+            support:borderWidth="0dp"
+            android:layout_gravity="bottom|right" />
 
     </FrameLayout>
 
     <LinearLayout
-        android:layout_below="@id/overlay"
+        android:layout_below="@id/topPanel"
         style="@style/PadLinearLayoutStyle">
 
         <include layout="@layout/pad_numeric" />

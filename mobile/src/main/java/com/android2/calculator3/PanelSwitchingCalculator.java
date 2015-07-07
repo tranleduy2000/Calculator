@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.drawable.AnimatingDrawable;
+import com.android2.calculator3.view.CalculatorPadLayout;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
@@ -74,11 +75,15 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
      * Returns true if it requires a relayout
      * */
     protected void initializeLayout() {
-        View parent = (View) mFab.getParent();
-        mFab.setTranslationX((mFab.getWidth() - parent.getWidth() / 4) / 2);
-        mFab.setTranslationY((mFab.getHeight() - parent.getHeight() / 4) / 2);
+        CalculatorPadLayout layout = (CalculatorPadLayout) findViewById(R.id.pad_advanced_grid);
+        int rows = layout.getRows();
+        int columns = layout.getColumns();
 
-        int trayHeight = parent.getHeight() / 4;
+        View parent = (View) mFab.getParent();
+        mFab.setTranslationX((mFab.getWidth() - parent.getWidth() / columns) / 2);
+        mFab.setTranslationY((mFab.getHeight() - parent.getHeight() / rows) / 2);
+
+        int trayHeight = parent.getHeight() / rows;
         if (mTray.getLayoutParams().height != trayHeight) {
             mTray.getLayoutParams().height = trayHeight;
             mTray.setLayoutParams(mTray.getLayoutParams());

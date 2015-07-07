@@ -58,24 +58,10 @@
         android:text="@string/F" />
 
     <com.android2.calculator3.view.Button
-        android:id="@+id/op_xand"
-        style="@style/PadButtonStyle.Advanced"
-        android:onClick="onButtonClick"
-        android:text="\u21D4"
-        android:visibility="invisible" />
-
-    <com.android2.calculator3.view.Button
         android:id="@+id/op_xor"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="\u2295"
-        android:visibility="invisible" />
-
-    <com.android2.calculator3.view.Button
-        android:id="@+id/op_implies"
-        style="@style/PadButtonStyle.Advanced"
-        android:onClick="onButtonClick"
-        android:text="\u2192"
         android:visibility="invisible" />
 
     <com.android2.calculator3.view.Button
