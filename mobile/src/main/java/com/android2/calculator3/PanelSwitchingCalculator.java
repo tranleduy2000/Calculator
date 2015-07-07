@@ -124,54 +124,18 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
     }
 
     public void showTray() {
-        View sourceView = mFab;
-        boolean reverse = false;
-        mTray.setVisibility(View.VISIBLE);
-
-        final SupportAnimator revealAnimator;
-        final int[] clearLocation = new int[2];
-        sourceView.getLocationInWindow(clearLocation);
-        clearLocation[0] += sourceView.getWidth() / 2;
-        clearLocation[1] += sourceView.getHeight() / 2;
-        final int revealCenterX = clearLocation[0] - mTray.getLeft();
-        final int revealCenterY = clearLocation[1] - mTray.getTop();
-        final double x1_2 = Math.pow(mTray.getLeft() - revealCenterX, 2);
-        final double x2_2 = Math.pow(mTray.getRight() - revealCenterX, 2);
-        final double y_2 = Math.pow(mTray.getTop() - revealCenterY, 2);
-        final float revealRadius = (float) Math.max(Math.sqrt(x1_2 + y_2), Math.sqrt(x2_2 + y_2));
-
-        float start = reverse ? revealRadius : 0;
-        float end = reverse ? 0 : revealRadius;
-        if (android.os.Build.VERSION.SDK_INT >= 21) {
-            // The lollipop reveal uses local cords, so use tray height / 2
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, mTray.getHeight() / 2, start, end);
-        } else {
-            // The legacy support doesn't work with gravity bottom, so use the global cords
-            revealAnimator =
-                    ViewAnimationUtils.createCircularReveal(mTray,
-                            revealCenterX, revealCenterY, start, end);
-        }
-        revealAnimator.setDuration(getResources().getInteger(android.R.integer.config_shortAnimTime));
-        if (reverse) {
-            revealAnimator.addListener(new AnimationFinishedListener() {
-                @Override
-                public void onAnimationFinished() {
-                    mTray.setVisibility(View.INVISIBLE);
-                }
-            });
-        }
-        revealAnimator.start();
+        revealTray(false);
     }
 
     public void hideTray() {
         if (mTray.getVisibility() != View.VISIBLE) {
             return;
         }
+        revealTray(true);
+    }
 
+    private void revealTray(boolean reverse) {
         View sourceView = mFab;
-        boolean reverse = true;
         mTray.setVisibility(View.VISIBLE);
 
         final SupportAnimator revealAnimator;
@@ -208,7 +172,7 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
                 }
             });
         }
-        revealAnimator.start();
+        play(revealAnimator);
     }
 
     private void setupTray() {

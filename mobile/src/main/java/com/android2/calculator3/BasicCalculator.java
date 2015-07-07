@@ -517,6 +517,15 @@ public class BasicCalculator extends Activity
         animator.start();
     }
 
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        if (mCurrentAnimator != null) {
+            mCurrentAnimator.cancel();
+            mCurrentAnimator = null;
+        }
+    }
+
     protected void onClear() {
         if (TextUtils.isEmpty(mFormulaEditText.getCleanText())) {
             return;
