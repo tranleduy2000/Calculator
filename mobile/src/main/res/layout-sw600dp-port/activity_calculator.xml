@@ -50,47 +50,9 @@
 
         </FrameLayout>
 
-        <LinearLayout
+        <include
             android:id="@+id/tray"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/pad_numeric_background_color"
-            android:layout_gravity="bottom"
-            android:visibility="invisible">
-
-            <Button
-                android:id="@+id/btn_advanced"
-                android:text="Adv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/btn_trig"
-                android:text="Trig"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/btn_hex"
-                android:text="Hex"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/btn_matrix"
-                android:text="Matrix"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1" />
-
-        </LinearLayout>
+            layout="@layout/fab_tray" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
