@@ -393,6 +393,7 @@ public class BasicCalculator extends Activity
             // The current expression cannot be evaluated -> return to the input state.
             setState(CalculatorState.INPUT);
         }
+        invalidateEqualsButton();
     }
 
     private void invalidateEqualsButton() {
