@@ -40,7 +40,7 @@ public class DisplayOverlay extends RelativeLayout {
      * */
     private static final float MAX_ALPHA = 0.6f;
 
-    private static boolean DEBUG = true;
+    private static boolean DEBUG = false;
     private static final String TAG = DisplayOverlay.class.getSimpleName();
 
     private VelocityTracker mVelocityTracker;
