@@ -29,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -55,6 +56,8 @@ import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
+
+import java.util.regex.Pattern;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -227,6 +230,8 @@ public class BasicCalculator extends Activity
                         && !Solver.equal(expr, result)
                         && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr)))) {
             expr = EquationFormatter.appendParenthesis(expr);
+            expr = expr.replaceAll(Pattern.quote("*"), Character.toString(Constants.MUL));
+            expr = expr.replaceAll(Pattern.quote("/"), Character.toString(Constants.DIV));
             mHistory.enter(expr, result);
             return true;
         }
