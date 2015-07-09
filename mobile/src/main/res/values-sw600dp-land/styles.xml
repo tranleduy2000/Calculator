@@ -23,7 +23,7 @@
         <item name="android:paddingBottom">16dip</item>
         <item name="android:paddingLeft">44dip</item>
         <item name="android:paddingRight">44dip</item>
-        <item name="textSize">48sp</item>
+        <item name="android:textSize">48sp</item>
     </style>
 
     <style name="Theme.Calculator.Display.Main.Result">
@@ -31,7 +31,7 @@
         <item name="android:paddingBottom">36dip</item>
         <item name="android:paddingLeft">44dip</item>
         <item name="android:paddingRight">44dip</item>
-        <item name="textSize">48sp</item>
+        <item name="android:textSize">48sp</item>
     </style>
 
     <style name="PadButtonStyle.Advanced">

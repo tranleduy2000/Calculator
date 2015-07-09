@@ -152,6 +152,7 @@ public class GraphingCalculator extends BasicCalculator
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (getState() == CalculatorState.EVALUATE && expr.contains(mX)) {
             saveHistory(expr, result, false);
+            incrementGroupId();
             mDisplayView.scrollToMostRecent();
             onResult(result);
         } else {

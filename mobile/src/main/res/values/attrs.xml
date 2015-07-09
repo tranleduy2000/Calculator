@@ -17,11 +17,9 @@
 
 <resources>
     <declare-styleable name="CalculatorEditText">
-        <attr name="textSize" format="dimension" />
         <attr name="minTextSize" format="dimension" />
         <attr name="maxTextSize" format="dimension" />
         <attr name="stepTextSize" format="dimension" />
-        <attr name="textColor" format="color|reference" />
     </declare-styleable>
 
     <declare-styleable name="EqualsImageButton">

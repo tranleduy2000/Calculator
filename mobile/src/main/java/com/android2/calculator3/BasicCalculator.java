@@ -224,6 +224,10 @@ public class BasicCalculator extends Activity
     }
 
     protected boolean saveHistory(String expr, String result, boolean ensureResult) {
+        if (mHistory == null) {
+            return false;
+        }
+
         if (!ensureResult ||
                 (!TextUtils.isEmpty(expr)
                         && !TextUtils.isEmpty(result)
@@ -345,7 +349,7 @@ public class BasicCalculator extends Activity
                 }
                 else {
                     mFormulaEditText.setText(((Button) view).getText());
-                    mHistory.incrementGroupId();
+                    incrementGroupId();
                 }
                 break;
             case R.id.op_add:
@@ -364,7 +368,7 @@ public class BasicCalculator extends Activity
                 }
                 else {
                     mFormulaEditText.setText(((Button) view).getText());
-                    mHistory.incrementGroupId();
+                    incrementGroupId();
                 }
                 break;
         }
@@ -399,6 +403,10 @@ public class BasicCalculator extends Activity
             setState(CalculatorState.INPUT);
         }
         invalidateEqualsButton();
+    }
+
+    protected void incrementGroupId() {
+        mHistory.incrementGroupId();
     }
 
     private void invalidateEqualsButton() {
@@ -540,7 +548,7 @@ public class BasicCalculator extends Activity
             @Override
             public void onAnimationFinished() {
                 mFormulaEditText.clear();
-                mHistory.incrementGroupId();
+                incrementGroupId();
             }
         });
     }

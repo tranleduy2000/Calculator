@@ -155,21 +155,21 @@ public class DisplayOverlay extends RelativeLayout {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            private boolean mCloseOnFling;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                    mCloseOnFling = true;
-                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                    if (mCloseOnFling && isScrolledToEnd()) {
-                        collapse();
-                    }
-                }
-            }
-        });
+//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            private boolean mCloseOnFling;
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
+//                    mCloseOnFling = true;
+//                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+//                    if (mCloseOnFling && isScrolledToEnd()) {
+//                        collapse();
+//                    }
+//                }
+//            }
+//        });
 
         mMainDisplay = findViewById(R.id.main_display);
         mDisplayBackground = findViewById(R.id.the_card);
