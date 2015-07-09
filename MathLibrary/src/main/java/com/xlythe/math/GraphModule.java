@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.javia.arity.SyntaxException;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,7 +94,7 @@ public class GraphModule extends Module {
             }
             mSolver.popFrame();
 
-            return series;
+            return Collections.unmodifiableList(series);
         }
 
         @Override

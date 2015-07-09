@@ -20,9 +20,9 @@ import java.util.Set;
 
 public class GraphController implements
         OnGraphUpdatedListener, PanListener, ZoomListener {
+    private static final String TAG = GraphController.class.getSimpleName();
     private static final int MAX_CACHE_SIZE = 10;
 
-    private final Set<GraphView> mGraphViews = new HashSet<>();
     private final GraphModule mGraphModule;
     private final GraphView mMainGraphView;
 
@@ -32,7 +32,7 @@ public class GraphController implements
     private boolean mLocked;
     private OnUnlockedListener mOnUnlockedListener;
 
-    private final Map<String, List<Point>> mCachedEquations = new LinkedHashMap<String, List<Point>>(MAX_CACHE_SIZE, 1f, true) {
+    private static final Map<String, List<Point>> mCachedEquations = new LinkedHashMap<String, List<Point>>(MAX_CACHE_SIZE, 1f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, List<Point>> eldest) {
             return size() > MAX_CACHE_SIZE;
@@ -42,10 +42,14 @@ public class GraphController implements
     public GraphController(GraphModule module, GraphView view) {
         mGraphModule = module;
         mMainGraphView = view;
-        addGraphView(view);
         mMainGraphView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                if(android.os.Build.VERSION.SDK_INT < 16) {
+                    mMainGraphView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mMainGraphView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
                 if (mEquation != null) {
                     startGraph(mEquation);
                 }
@@ -53,21 +57,19 @@ public class GraphController implements
         });
     }
 
-    public void addGraphView(GraphView view) {
-        mGraphViews.add(view);
-        view.setPanListener(this);
-        view.setZoomListener(this);
-    }
-
     public AsyncTask startGraph(final String equation) {
         // If we've already asked this before, quick quick show the result again
         if (mCachedEquations.containsKey(equation)) {
             onGraphUpdated(mCachedEquations.get(equation));
-            Log.d("TEST", "Equation (" + equation + ") has (" + mCachedEquations.get(equation).size() + ") cached points");
+        }
+
+        mEquation = equation;
+        if (mMainGraphView.getXAxisMin() == mMainGraphView.getXAxisMax()) {
+            Log.d(TAG, "This view hasn't been laid out yet. Will delay graphing " + equation);
+            return null;
         }
 
         invalidateModule();
-        mEquation = equation;
         return mGraphModule.updateGraph(equation, new OnGraphUpdatedListener() {
             @Override
             public void onGraphUpdated(List<Point> result) {
@@ -78,10 +80,7 @@ public class GraphController implements
     }
 
     public void clearGraph() {
-        for (GraphView view : mGraphViews) {
-            view.setData(new ArrayList<Point>());
-            view.invalidate();
-        }
+        mMainGraphView.setData(new ArrayList<Point>());
     }
 
     private void invalidateModule() {
@@ -95,9 +94,7 @@ public class GraphController implements
         if (isLocked()) {
             mPendingResults = result;
         } else {
-            for (GraphView view : mGraphViews) {
-                view.setData(result);
-            }
+            mMainGraphView.setData(result);
         }
     }
 
