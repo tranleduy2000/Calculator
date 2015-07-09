@@ -9,7 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GraphModule extends Module {
-    private GraphTask mGraphTask;
     private double mMinY;
     private double mMaxY;
     private double mMinX;
@@ -42,10 +41,9 @@ public class GraphModule extends Module {
             return null;
         }
 
-        if(mGraphTask != null) mGraphTask.cancel(true);
-        mGraphTask = new GraphTask(getSolver(), mMinY, mMaxY, mMinX, mMaxX, mZoomLevel, l);
-        mGraphTask.execute(text);
-        return mGraphTask;
+        GraphTask newTask = new GraphTask(getSolver(), mMinY, mMaxY, mMinX, mMaxX, mZoomLevel, l);
+        newTask.execute(text);
+        return newTask;
     }
 
     class GraphTask extends AsyncTask<String, String, List<Point>> {

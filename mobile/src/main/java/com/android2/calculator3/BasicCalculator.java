@@ -234,8 +234,7 @@ public class BasicCalculator extends Activity
                         && !Solver.equal(expr, result)
                         && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr)))) {
             expr = EquationFormatter.appendParenthesis(expr);
-            expr = expr.replaceAll(Pattern.quote("*"), Character.toString(Constants.MUL));
-            expr = expr.replaceAll(Pattern.quote("/"), Character.toString(Constants.DIV));
+            expr = Solver.clean(expr);
             mHistory.enter(expr, result);
             return true;
         }

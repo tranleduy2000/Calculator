@@ -1,5 +1,6 @@
 package com.android2.calculator3.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -75,6 +77,7 @@ public class GraphView extends View {
         setup(context, attrs);
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public GraphView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setup(context, attrs);
@@ -415,6 +418,7 @@ public class GraphView extends View {
     public void setData(List<Point> data) {
         mData = data;
         mDrawingAlgorithm = LINES;
+        invalidate();
     }
 
     private double getDistance(Point a, Point b) {

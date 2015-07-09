@@ -416,7 +416,13 @@ public class DisplayOverlay extends RelativeLayout {
         // Now animate between the old and new heights
         float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
         long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
-        mDisplayBackground.setPivotY(0f);
+
+        // Due to a bug (?) setPivotY(0) does not work unless it's been set to a different pivotY
+        // So we set it to the view's height first before setting it to 0 (where we want it).
+        // Bug seen on Amazon's Fire Phone (4.2)
+        mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
+
+        mDisplayBackground.setPivotY(0);
         mDisplayBackground.animate()
                 .scaleY(scale)
                 .setListener(listener)

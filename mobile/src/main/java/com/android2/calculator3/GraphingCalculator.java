@@ -15,6 +15,7 @@
 */
 package com.android2.calculator3;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Selection;
@@ -62,6 +63,7 @@ public class GraphingCalculator extends BasicCalculator
     private String mX;
     private GraphController mGraphController;
     private GraphView mMiniGraph;
+    private AsyncTask mGraphTask;
 
     @Override
     protected void initialize(Bundle savedInstanceState) {
@@ -161,7 +163,10 @@ public class GraphingCalculator extends BasicCalculator
 
         if (expr.contains(mX)) {
             transitionToGraph();
-            mGraphController.startGraph(mFormulaEditText.getCleanText());
+            if (mGraphTask != null) {
+                mGraphTask.cancel(true);
+            }
+            mGraphTask = mGraphController.startGraph(mFormulaEditText.getCleanText());
         } else {
             transitionToDisplay();
         }

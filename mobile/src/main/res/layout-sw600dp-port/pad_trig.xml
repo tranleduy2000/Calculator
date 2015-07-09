@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2014 The Android Open Source Project
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<io.codetail.widget.RevealFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pad_advanced"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <com.android2.calculator3.view.CalculatorPadLayout
+        android:id="@+id/pad_advanced_grid"
+        style="@style/PadLayoutStyle.Advanced"
+        android:background="@color/pad_advanced_background_color">
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_sin"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_sin"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_sin" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_cos"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_cos"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_cos" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_tan"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_tan"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_tan" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_asin"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arcsin"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arcsin" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_csc"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_csc"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_csc" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_acsc"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arccsc"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arccsc" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_acos"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arccos"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arccos" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_sec"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_sec"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_sec" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_asec"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arcsec"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arcsec" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_atan"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arctan"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arctan" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_cot"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_cot"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_cot" />
+
+        <com.android2.calculator3.view.Button
+            android:id="@+id/fun_acot"
+            style="@style/PadButtonStyle.Advanced"
+            android:contentDescription="@string/desc_fun_arccot"
+            android:onClick="onButtonClick"
+            android:text="@string/fun_arccot" />
+
+    </com.android2.calculator3.view.CalculatorPadLayout>
+
+</io.codetail.widget.RevealFrameLayout>

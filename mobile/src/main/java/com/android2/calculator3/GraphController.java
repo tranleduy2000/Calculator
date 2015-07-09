@@ -1,6 +1,7 @@
 package com.android2.calculator3;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.view.GraphView;
@@ -61,7 +62,8 @@ public class GraphController implements
     public AsyncTask startGraph(final String equation) {
         // If we've already asked this before, quick quick show the result again
         if (mCachedEquations.containsKey(equation)) {
-            GraphController.this.onGraphUpdated(mCachedEquations.get(equation));
+            onGraphUpdated(mCachedEquations.get(equation));
+            Log.d("TEST", "Equation (" + equation + ") has (" + mCachedEquations.get(equation).size() + ") cached points");
         }
 
         invalidateModule();
@@ -95,7 +97,6 @@ public class GraphController implements
         } else {
             for (GraphView view : mGraphViews) {
                 view.setData(result);
-                view.invalidate();
             }
         }
     }
