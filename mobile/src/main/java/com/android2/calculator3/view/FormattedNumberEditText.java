@@ -157,9 +157,7 @@ public class FormattedNumberEditText extends NumberEditText {
                 textWatcher.beforeTextChanged(getCleanText(), 0, 0, 0);
             }
         }
-        int handle = getSelectionStart();
         getText().insert(getSelectionStart(), text);
-        setSelection(handle + text.length());
         invalidateTextSize();
         if (mTextWatchersEnabled) {
             for (TextWatcher textWatcher : mTextWatchers) {

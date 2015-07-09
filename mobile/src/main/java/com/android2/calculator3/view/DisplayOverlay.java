@@ -2,8 +2,10 @@ package com.android2.calculator3.view;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,8 +53,8 @@ public class DisplayOverlay extends RelativeLayout {
     private View mDisplayBackground;
     private View mDisplayForeground;
     private View mDisplayGraph;
-    private EditText mFormulaEditText;
-    private TextView mResultEditText;
+    private CalculatorEditText mFormulaEditText;
+    private CalculatorEditText mResultEditText;
     private View mCalculationsDisplay;
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
@@ -107,6 +109,7 @@ public class DisplayOverlay extends RelativeLayout {
         setup();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public DisplayOverlay(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setup();
@@ -155,28 +158,13 @@ public class DisplayOverlay extends RelativeLayout {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mLayoutManager.setStackFromEnd(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            private boolean mCloseOnFling;
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-//                    mCloseOnFling = true;
-//                } else if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-//                    if (mCloseOnFling && isScrolledToEnd()) {
-//                        collapse();
-//                    }
-//                }
-//            }
-//        });
 
         mMainDisplay = findViewById(R.id.main_display);
         mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
         mDisplayGraph = findViewById(R.id.mini_graph);
-        mFormulaEditText = (EditText) findViewById(R.id.formula);
-        mResultEditText = (TextView) findViewById(R.id.result);
+        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
+        mResultEditText = (CalculatorEditText) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
         mInfoText = findViewById(R.id.info);
     }
@@ -580,7 +568,7 @@ public class DisplayOverlay extends RelativeLayout {
             if (percent == 1f) {
                 if (adapter.getDisplayEntry() == null) {
                     // We're at 100%, but haven't switched to the adapter yet. Time to do your thing.
-                    adapter.setDisplayEntry(formula, result);
+                    adapter.setDisplayEntry(mFormulaEditText.getCleanText(), mResultEditText.getCleanText());
                     mDisplayBackground.setVisibility(View.GONE);
                     mCalculationsDisplay.setVisibility(View.GONE);
                     mDisplayGraph.setVisibility(View.GONE);
