@@ -22,6 +22,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.android2.calculator3.R;
 import com.xlythe.math.BaseModule;
@@ -76,6 +77,7 @@ public class FormattedNumberEditText extends NumberEditText {
     private int mSelectionHandle = 0;
     private Solver mSolver;
     private List<String> mKeywords;
+    private boolean mIsInserting;
 
     public FormattedNumberEditText(Context context) {
         super(context);
@@ -135,7 +137,7 @@ public class FormattedNumberEditText extends NumberEditText {
             }
         }
         super.setText(text, type);
-        if (text != null) {
+        if (text != null && !mIsInserting) {
             setSelection(getText().length());
         }
         invalidateTextSize();
@@ -151,20 +153,14 @@ public class FormattedNumberEditText extends NumberEditText {
         return toString();
     }
 
-    public void insert(String text) {
-        if (mTextWatchersEnabled) {
-            for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.beforeTextChanged(getCleanText(), 0, 0, 0);
-            }
-        }
-        getText().insert(getSelectionStart(), text);
-        invalidateTextSize();
-        if (mTextWatchersEnabled) {
-            for (TextWatcher textWatcher : mTextWatchers) {
-                textWatcher.afterTextChanged(getEditableFactory().newEditable(getCleanText()));
-                textWatcher.onTextChanged(getCleanText(), 0, 0, 0);
-            }
-        }
+    public void insert(String delta) {
+        String text = getText().toString();
+        int selectionHandle = getSelectionStart();
+        String textBeforeInsertionHandle = text.substring(0, selectionHandle);
+        String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
+        mIsInserting = true;
+        setText(textBeforeInsertionHandle + delta + BaseModule.SELECTION_HANDLE + textAfterInsertionHandle);
+        mIsInserting = false;
     }
 
     public void clear() {
@@ -244,6 +240,11 @@ public class FormattedNumberEditText extends NumberEditText {
         if(mSolver != null) {
             // Add grouping, and then split on the selection handle
             // which is saved as a unique char
+            int customHandle = input.indexOf(BaseModule.SELECTION_HANDLE);
+            if (customHandle >= 0) {
+                mSelectionHandle = customHandle;
+                input = input.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
+            }
             String grouped = mEquationFormatter.addComas(mSolver, input, mSelectionHandle);
             if (grouped.contains(String.valueOf(BaseModule.SELECTION_HANDLE))) {
                 String[] temp = grouped.split(String.valueOf(BaseModule.SELECTION_HANDLE));

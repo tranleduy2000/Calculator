@@ -286,7 +286,7 @@ public class BaseModule extends Module {
         StringBuilder sb = new StringBuilder();
         int digitsSeen = 0;
 
-        for (int i=wholeNumber.length()-1; i>=0; --i) {
+        for (int i = wholeNumber.length()-1; i >= 0; --i) {
             char curChar = wholeNumber.charAt(i);
             sb.insert(0, curChar);
             if (curChar != SELECTION_HANDLE && i != 0 && !(i == 1 && wholeNumber.charAt(0) == SELECTION_HANDLE)) {
