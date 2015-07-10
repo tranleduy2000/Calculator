@@ -82,12 +82,6 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
         View parent = (View) mFab.getParent();
         mFab.setTranslationX((mFab.getWidth() - parent.getWidth() / columns) / 2);
         mFab.setTranslationY((mFab.getHeight() - parent.getHeight() / rows) / 2);
-
-        int trayHeight = parent.getHeight() / rows;
-        if (mTray.getLayoutParams().height != trayHeight) {
-            mTray.getLayoutParams().height = trayHeight;
-            mTray.setLayoutParams(mTray.getLayoutParams());
-        }
     }
 
     public void showFab() {

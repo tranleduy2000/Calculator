@@ -361,7 +361,7 @@ public class BasicCalculator extends Activity
                     mFormulaEditText.insert(((Button) view).getText() + "(");
                 }
                 else {
-                    mFormulaEditText.setText(((Button) view).getText());
+                    mFormulaEditText.setText(((Button) view).getText() + "(");
                     incrementGroupId();
                 }
                 break;

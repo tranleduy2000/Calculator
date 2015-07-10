@@ -164,13 +164,6 @@ public class CalculatorPadView extends RevealFrameLayout {
             mFab.setVisibility(View.GONE);
         }
 
-        int trayHeight = getHeight() / 4;
-        if (mTray.getLayoutParams().height != trayHeight) {
-            mTray.getLayoutParams().height = trayHeight;
-            mTray.setLayoutParams(mTray.getLayoutParams());
-            invalidate = true;
-        }
-
         return invalidate;
     }
 
