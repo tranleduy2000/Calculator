@@ -255,6 +255,8 @@ public class DisplayOverlay extends RelativeLayout {
 
             mResultEditText.setPivotX(mResultEditText.getWidth());
             mResultEditText.setPivotY(0);
+
+            scrollToMostRecent();
         }
     }
 
