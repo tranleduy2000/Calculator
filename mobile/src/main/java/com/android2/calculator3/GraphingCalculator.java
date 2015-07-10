@@ -129,7 +129,6 @@ public class GraphingCalculator extends BasicCalculator
 
     @Override
     public void onButtonClick(View view) {
-        super.onButtonClick(view);
         switch (view.getId()) {
             case R.id.fun_cos:
             case R.id.fun_acos:
@@ -145,9 +144,18 @@ public class GraphingCalculator extends BasicCalculator
             case R.id.fun_acot:
                 mShowTrigDetails = true;
                 updateDetails();
-            default:
                 break;
+            case R.id.hex:
+                setBase(Base.HEXADECIMAL);
+                return;
+            case R.id.bin:
+                setBase(Base.BINARY);
+                return;
+            case R.id.dec:
+                setBase(Base.DECIMAL);
+                return;
         }
+        super.onButtonClick(view);
     }
 
     @Override

@@ -108,7 +108,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.historyResult.setText(formatText(entry.getResult()));
 
         // Disable any and all graphs (the default state)
-        holder.graphView.setVisibility(View.GONE);
+        if (holder.graphView != null) {
+            holder.graphView.setVisibility(View.GONE);
+        }
         if (holder.pendingGraphTask != null) {
             holder.pendingGraphTask.cancel(true);
             holder.pendingGraphTask = null;
@@ -116,21 +118,29 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
             // Set a subitem background (so there's a divider instead of a shadow
-            view.setBackgroundResource(R.drawable.white_card_subitem);
+            if (holder.graphView != null) {
+                // TODO Floating calculator has no graph. Using that as a differentiator for now.
+                view.setBackgroundResource(R.drawable.white_card_subitem);
+            }
         } else {
-            view.setBackgroundResource(R.drawable.white_card);
+            if (holder.graphView != null) {
+                // TODO Floating calculator has no graph. Using that as a differentiator for now.
+                view.setBackgroundResource(R.drawable.white_card);
+            }
 
             // If this is a graph formula, start drawing the graph
             if (hasGraph(entry.getFormula())) {
                 holder.historyResult.setText(R.string.graph);
-                holder.graphView.setVisibility(View.VISIBLE);
+                if (holder.graphView != null) {
+                    holder.graphView.setVisibility(View.VISIBLE);
 
-                if (holder.graphView.getTag() == null) {
-                    GraphController controller = new GraphController(new GraphModule(mSolver), holder.graphView);
-                    holder.graphView.setTag(controller);
+                    if (holder.graphView.getTag() == null) {
+                        GraphController controller = new GraphController(new GraphModule(mSolver), holder.graphView);
+                        holder.graphView.setTag(controller);
+                    }
+                    GraphController controller = (GraphController) holder.graphView.getTag();
+                    holder.pendingGraphTask = controller.startGraph(entry.getFormula());
                 }
-                GraphController controller = (GraphController) holder.graphView.getTag();
-                holder.pendingGraphTask = controller.startGraph(entry.getFormula());
             }
         }
         // Due to a bug, setBackgroundResource resets padding

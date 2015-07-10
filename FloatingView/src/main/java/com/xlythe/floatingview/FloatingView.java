@@ -10,11 +10,14 @@ import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.IBinder;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Interpolator;
@@ -75,6 +78,7 @@ public abstract class FloatingView extends Service implements OnTouchListener {
     private View mDeleteIconHolder;
     private boolean mIsAnimationLocked = false;
     private boolean mDontVibrate = false;
+    private BroadcastReceiver mHomeKeyReceiver;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -82,9 +86,23 @@ public abstract class FloatingView extends Service implements OnTouchListener {
     }
 
     private void addView() {
-        mRootView = new RelativeLayout(getContext());
+        mRootView = new RelativeLayout(getContext()) {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent event) {
+                // We can only detect KEYCODE_BACK (but not KEYCODE_HOME). sad face :(
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    closeView();
+                    return true;
+                }
+                return super.dispatchKeyEvent(event);
+            }
+        };
         mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.TYPE_PHONE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                PixelFormat.TRANSLUCENT);
         mWindowManager.addView(mRootView, params);
         mRootView.setVisibility(View.GONE);
 
@@ -261,13 +279,15 @@ public abstract class FloatingView extends Service implements OnTouchListener {
 		ACTIVE_VIEW = this;
 
         // Load margins, distances, etc
-        MARGIN_VERTICAL = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
-        MARGIN_HORIZONTAL = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, -10, getResources().getDisplayMetrics());
-        MARGIN_VIEW = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics());
-        CLOSE_ANIMATION_DISTANCE = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 250, getResources().getDisplayMetrics());
-        CLOSE_OFFSET = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        DRAG_DELTA = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        STARTING_POINT_Y = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics());
+        ViewConfiguration vc = ViewConfiguration.get(getContext());
+        float density = getResources().getDisplayMetrics().density;
+        MARGIN_VERTICAL = (int) (5 * density);
+        MARGIN_HORIZONTAL = (int) (-10 * density);
+        MARGIN_VIEW = (int) (20 * density);
+        CLOSE_ANIMATION_DISTANCE = (int) (250 * density);
+        CLOSE_OFFSET = (int) (2 * density);
+        DRAG_DELTA = vc.getScaledTouchSlop();
+        STARTING_POINT_Y = (int) (50 * density);
         DELETE_BOX_WIDTH = (int) getResources().getDimension(R.dimen.floating_window_delete_box_width);
         DELETE_BOX_HEIGHT = (int) getResources().getDimension(R.dimen.floating_window_delete_box_height);
         FLOATING_WINDOW_ICON_SIZE = (int) getResources().getDimension(R.dimen.floating_window_icon);
@@ -490,15 +510,20 @@ public abstract class FloatingView extends Service implements OnTouchListener {
                     return true;
                 }
             });
-            Intent intent = new Intent(getContext(), FloatingActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra(FloatingActivity.EXTRA_HIDE_STATUS_BAR, mRootView.getHeight() != getScreenHeight());
-            startActivity(intent);
+
+            // Home and Recent Apps send ACTION_CLOSE_SYSTEM_DIALOGS so we can use that to hide our self.
+            mHomeKeyReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    closeView();
+                }
+            };
+            getContext().registerReceiver(mHomeKeyReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
         }
     }
 
     private int getOpenX() {
-        return (int) (getScreenWidth() - mDraggableIcon.getWidth() * 1.2);
+        return (int) (getScreenWidth() - mDraggableIcon.getWidth() - MARGIN_VIEW);
     }
 
     private int getOpenY() {
@@ -524,8 +549,11 @@ public abstract class FloatingView extends Service implements OnTouchListener {
                 });
                 mAnimationTask.run();
             }
-            if(FloatingActivity.ACTIVE_ACTIVITY != null) FloatingActivity.ACTIVE_ACTIVITY.finish();
             hide();
+            if (mHomeKeyReceiver != null) {
+                getContext().unregisterReceiver(mHomeKeyReceiver);
+                mHomeKeyReceiver = null;
+            }
         }
     }
 
@@ -537,7 +565,6 @@ public abstract class FloatingView extends Service implements OnTouchListener {
             mView = new FrameLayout(getContext());
             mView.addView(child);
             mRootView.addView(mView);
-
         }
         else {
             mView.setVisibility(View.VISIBLE);

@@ -130,7 +130,7 @@ public class BasicCalculator extends Activity
     private View mCurrentButton;
     private Animator mCurrentAnimator;
     private History mHistory;
-    private RecyclerView.Adapter mHistoryAdapter;
+    private HistoryAdapter mHistoryAdapter;
     private Persist mPersist;
     private final ViewGroup.LayoutParams mLayoutParams = new ViewGroup.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
@@ -192,11 +192,18 @@ public class BasicCalculator extends Activity
     protected void onResume() {
         super.onResume();
 
-        // Load new history
+        // Load up to date history
         mPersist = new Persist(this);
         mPersist.load();
         mHistory = mPersist.getHistory();
 
+        // When history is open, the display is saved as a Display Entry. Cache it if it exists.
+        HistoryEntry displayEntry = null;
+        if (mHistoryAdapter != null) {
+            displayEntry = mHistoryAdapter.getDisplayEntry();
+        }
+
+        // Create a new History Adapter (with the up-to-date history)
         mHistoryAdapter = new HistoryAdapter(this,
                 mEvaluator.getSolver(),
                 mHistory,
@@ -211,6 +218,13 @@ public class BasicCalculator extends Activity
                 });
             }
         });
+
+        // Restore the Display Entry (if it existed)
+        if (displayEntry != null) {
+            mHistoryAdapter.setDisplayEntry(displayEntry.getFormula(), displayEntry.getResult());
+        }
+
+        // Observe! Set! Typical adapter stuff.
         mHistory.setObserver(mHistoryAdapter);
         mDisplayView.setAdapter(mHistoryAdapter);
         mDisplayView.scrollToMostRecent();
