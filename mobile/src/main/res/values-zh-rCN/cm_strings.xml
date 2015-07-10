@@ -27,10 +27,10 @@
   <string name="solveForX">求解 X</string>
   <string name="solveForY">求解 Y</string>
   <string name="mod">取余数</string>
-  <string name="matrix">矩阵面板</string>
-  <string name="graph">图表面板</string>
-  <string name="function">函数面板</string>
-  <string name="hexPanel">十六进制面板</string>
+  <string name="panel_matrix">矩阵面板</string>
+  <string name="panel_graph">图表面板</string>
+  <string name="panel_function">函数面板</string>
+  <string name="panel_hex">十六进制面板</string>
   <string name="lock">锁定页面</string>
   <string name="unlock">解锁页面</string>
   <string name="info">信息</string>

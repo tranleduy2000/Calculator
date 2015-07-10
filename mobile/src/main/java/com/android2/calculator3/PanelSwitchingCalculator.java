@@ -15,15 +15,21 @@
 */
 package com.android2.calculator3;
 
+import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.widget.Toast;
 
 import com.android2.calculator3.drawable.AnimatingDrawable;
 import com.android2.calculator3.view.CalculatorPadLayout;
+import com.rey.material.widget.TextView;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
@@ -202,10 +208,48 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
                 hideTray();
             }
         };
-        findViewById(R.id.btn_advanced).setOnClickListener(listener);
-        findViewById(R.id.btn_trig).setOnClickListener(listener);
-        findViewById(R.id.btn_hex).setOnClickListener(listener);
-        findViewById(R.id.btn_matrix).setOnClickListener(listener);
+        View.OnLongClickListener longClickListener = new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast toast = Toast.makeText(v.getContext(), v.getContentDescription(), Toast.LENGTH_SHORT);
+                // Adjust the toast so it's centered over the button
+                positionToast(toast, v, getWindow(), 0, (int) (getResources().getDisplayMetrics().density * -5));
+                toast.show();
+                return true;
+            }
+
+            public void positionToast(Toast toast, View view, Window window, int offsetX, int offsetY) {
+                // toasts are positioned relatively to decor view, views relatively to their parents, we have to gather additional data to have a common coordinate system
+                Rect rect = new Rect();
+                window.getDecorView().getWindowVisibleDisplayFrame(rect);
+                // covert anchor view absolute position to a position which is relative to decor view
+                int[] viewLocation = new int[2];
+                view.getLocationInWindow(viewLocation);
+                int viewLeft = viewLocation[0] - rect.left;
+                int viewTop = viewLocation[1] - rect.top;
+
+                // measure toast to center it relatively to the anchor view
+                DisplayMetrics metrics = new DisplayMetrics();
+                window.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+                int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(metrics.widthPixels, View.MeasureSpec.UNSPECIFIED);
+                int heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(metrics.heightPixels, View.MeasureSpec.UNSPECIFIED);
+                toast.getView().measure(widthMeasureSpec, heightMeasureSpec);
+                int toastWidth = toast.getView().getMeasuredWidth();
+
+                // compute toast offsets
+                int toastX = viewLeft + (view.getWidth() - toastWidth) / 2 + offsetX;
+                int toastY = viewTop - toast.getView().getMeasuredHeight() + offsetY;
+
+                toast.setGravity(Gravity.LEFT | Gravity.TOP, toastX, toastY);
+            }
+        };
+
+        int[] buttons = {R.id.btn_advanced, R.id.btn_trig, R.id.btn_hex, R.id.btn_matrix};
+        for (int resId : buttons) {
+            View button = mTray.findViewById(resId);
+            button.setOnClickListener(listener);
+            button.setOnLongClickListener(longClickListener);
+        }
         showPage(advancedPad);
     }
 

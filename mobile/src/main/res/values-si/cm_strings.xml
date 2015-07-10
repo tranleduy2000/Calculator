@@ -27,10 +27,10 @@
   <string name="solveForX">X සඳහා විසඳන්න</string>
   <string name="solveForY">Y සඳහා විසඳන්න</string>
   <string name="mod">mod</string>
-  <string name="matrix">න්‍යාස පුවරුව</string>
-  <string name="graph">ප්‍රස්තාර පුවරුව</string>
-  <string name="function">ශ්‍රිත පුවරුව</string>
-  <string name="hexPanel">16 පාදයේ පුවරුව</string>
+  <string name="panel_matrix">න්‍යාස පුවරුව</string>
+  <string name="panel_graph">ප්‍රස්තාර පුවරුව</string>
+  <string name="panel_function">ශ්‍රිත පුවරුව</string>
+  <string name="panel_hex">16 පාදයේ පුවරුව</string>
   <string name="lock">අගුළු පිටුව</string>
   <string name="unlock">විවෘත පිටුව</string>
   <string name="info">තොරතුරු</string>

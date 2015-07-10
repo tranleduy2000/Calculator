@@ -27,10 +27,10 @@
   <string name="solveForX">Los op vir X</string>
   <string name="solveForY">Los op vir Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matriks paneel</string>
-  <string name="graph">Grafiese paneel</string>
-  <string name="function">Funksie paneel</string>
-  <string name="hexPanel">Hex paneel</string>
+  <string name="panel_matrix">Matriks paneel</string>
+  <string name="panel_graph">Grafiese paneel</string>
+  <string name="panel_function">Funksie paneel</string>
+  <string name="panel_hex">Hex paneel</string>
   <string name="lock">Sluit bladsy</string>
   <string name="unlock">Ontsluit bladsy</string>
   <string name="info">Inligting</string>

@@ -27,10 +27,10 @@
   <string name="solveForX">Rezolvă pentru X</string>
   <string name="solveForY">Rezolvă pentru Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Panou matrice</string>
-  <string name="graph">Panou grafic</string>
-  <string name="function">Panou funcție</string>
-  <string name="hexPanel">Panou hex</string>
+  <string name="panel_matrix">Panou matrice</string>
+  <string name="panel_graph">Panou grafic</string>
+  <string name="panel_function">Panou funcție</string>
+  <string name="panel_hex">Panou hex</string>
   <string name="lock">Blocare pagină</string>
   <string name="unlock">Deblocare pagină</string>
   <string name="info">Informații</string>

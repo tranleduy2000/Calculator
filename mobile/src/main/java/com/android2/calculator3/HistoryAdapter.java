@@ -36,7 +36,6 @@ import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Solver;
 
 import java.util.List;
-import java.util.Vector;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
     private final Context mContext;
@@ -130,7 +129,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
             // If this is a graph formula, start drawing the graph
             if (hasGraph(entry.getFormula())) {
-                holder.historyResult.setText(R.string.graph);
+                holder.historyResult.setText(R.string.panel_graph);
                 if (holder.graphView != null) {
                     holder.graphView.setVisibility(View.VISIBLE);
 

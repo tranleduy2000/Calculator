@@ -27,10 +27,10 @@
   <string name="solveForX">x oplossen</string>
   <string name="solveForY">y oplossen</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matrix</string>
-  <string name="graph">Grafiek</string>
-  <string name="function">Functies</string>
-  <string name="hexPanel">Hex</string>
+  <string name="panel_matrix">Matrix</string>
+  <string name="panel_graph">Grafiek</string>
+  <string name="panel_function">Functies</string>
+  <string name="panel_hex">Hex</string>
   <string name="lock">Pagina vergrendelen</string>
   <string name="unlock">Pagina ontgrendelen</string>
   <string name="info">Info</string>

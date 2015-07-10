@@ -27,10 +27,10 @@
   <string name="solveForX">Lahenda X</string>
   <string name="solveForY">Lahenda Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matrix panel</string>
-  <string name="graph">Graafiline paneel</string>
-  <string name="function">Funktsiooni paneel</string>
-  <string name="hexPanel">Hex paneel</string>
+  <string name="panel_matrix">Matrix panel</string>
+  <string name="panel_graph">Graafiline paneel</string>
+  <string name="panel_function">Funktsiooni paneel</string>
+  <string name="panel_hex">Hex paneel</string>
   <string name="lock">Lukusta leht</string>
   <string name="unlock">Ava leht</string>
   <string name="info">Lisainfo</string>

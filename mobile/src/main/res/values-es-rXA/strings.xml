@@ -47,8 +47,8 @@
   <string name="sqrt">\u221a</string>
   <string name="power">^</string>
   <string name="factorial">!</string>
-  <string name="basic">Funciones básiques</string>
-  <string name="advanced">Funciones avanzaes</string>
+  <string name="panel_basic">Funciones básiques</string>
+  <string name="panel_advanced">Funciones avanzaes</string>
   <string name="clear_history">Llimpiar l\'historial</string>
   <string name="text_copied_toast">Testu copiáu</string>
 </resources>

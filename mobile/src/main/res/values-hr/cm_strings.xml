@@ -26,10 +26,10 @@
   <string name="dy">dY</string>
   <string name="solveForX">Riješi za X</string>
   <string name="solveForY">Riješi za Y</string>
-  <string name="matrix">Matrice</string>
-  <string name="graph">Grafovi</string>
-  <string name="function">Funkcije</string>
-  <string name="hexPanel">Heksadecimalni</string>
+  <string name="panel_matrix">Matrice</string>
+  <string name="panel_graph">Grafovi</string>
+  <string name="panel_function">Funkcije</string>
+  <string name="panel_hex">Heksadecimalni</string>
   <string name="lock">Zaključaj stranicu</string>
   <string name="unlock">Otključaj stranicu</string>
   <string name="info">Info</string>

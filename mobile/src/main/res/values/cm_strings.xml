@@ -118,7 +118,11 @@
 
     <string name="desc_fun_percentage">Percent</string>
 
-    <string name="graph">Graph</string>
+    <string name="panel_graph">Graph</string>
+    <string name="panel_advanced">Advanced</string>
+    <string name="panel_trig">Trigonometry</string>
+    <string name="panel_hex">Hexadecimal</string>
+    <string name="panel_matrix">Matrix</string>
 
     <string name="radians">RAD</string>
     <string name="degrees">DEG</string>

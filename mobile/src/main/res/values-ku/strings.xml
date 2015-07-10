@@ -47,8 +47,8 @@
   <string name="sqrt">\u221a</string>
   <string name="power">^</string>
   <string name="factorial">!</string>
-  <string name="basic">تەختەی بنەڕەت</string>
-  <string name="advanced">تەختەی پێشکەوتوو</string>
+  <string name="panel_basic">تەختەی بنەڕەت</string>
+  <string name="panel_advanced">تەختەی پێشکەوتوو</string>
   <string name="clear_history">پاکردنەوەی مێژوو</string>
   <string name="text_copied_toast">دەق لەبەریگرا.</string>
 </resources>

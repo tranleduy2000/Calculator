@@ -27,10 +27,10 @@
   <string name="solveForX">Menyelesaikan X</string>
   <string name="solveForY">Menyelesaikan Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Panel matriks</string>
-  <string name="graph">Panel grafik</string>
-  <string name="function">Panel fungsi</string>
-  <string name="hexPanel">Panel hex</string>
+  <string name="panel_matrix">Panel matriks</string>
+  <string name="panel_graph">Panel grafik</string>
+  <string name="panel_function">Panel fungsi</string>
+  <string name="panel_hex">Panel hex</string>
   <string name="lock">Kunci halaman</string>
   <string name="unlock">Buka kunci halaman</string>
   <string name="info">Info</string>

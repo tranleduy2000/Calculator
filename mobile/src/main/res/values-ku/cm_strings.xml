@@ -27,10 +27,10 @@
   <string name="solveForX">Solve for X</string>
   <string name="solveForY">Solve for Y</string>
   <string name="mod">بار</string>
-  <string name="matrix">جۆری ماتریکس</string>
-  <string name="graph">جۆری نه‌خشه‌</string>
-  <string name="function">جۆری فرمان</string>
-  <string name="hexPanel">جۆری گۆشه‌یی</string>
+  <string name="panel_matrix">جۆری ماتریکس</string>
+  <string name="panel_graph">جۆری نه‌خشه‌</string>
+  <string name="panel_function">جۆری فرمان</string>
+  <string name="panel_hex">جۆری گۆشه‌یی</string>
   <string name="lock">قوفڵکردنی په‌ڕه‌</string>
   <string name="unlock">لابردنی قوفڵی په‌ڕه‌</string>
   <string name="info">زانیاری</string>

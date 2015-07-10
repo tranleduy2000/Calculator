@@ -47,8 +47,8 @@
   <string name="sqrt">\u221a</string>
   <string name="power">^</string>
   <string name="factorial">!</string>
-  <string name="basic">Einfache Panneau</string>
-  <string name="advanced">Erweiderte Panneau</string>
+  <string name="panel_basic">Einfache Panneau</string>
+  <string name="panel_advanced">Erweiderte Panneau</string>
   <string name="clear_history">Historique läschen</string>
   <string name="text_copied_toast">Text kopéiert.</string>
 </resources>

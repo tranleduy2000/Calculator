@@ -27,10 +27,10 @@
   <string name="solveForX">Vyřešit pro X</string>
   <string name="solveForY">Vyřešit pro Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Panel matice</string>
-  <string name="graph">Panel grafu</string>
-  <string name="function">Panel funkce</string>
-  <string name="hexPanel">Binární panel</string>
+  <string name="panel_matrix">Panel matice</string>
+  <string name="panel_graph">Panel grafu</string>
+  <string name="panel_function">Panel funkce</string>
+  <string name="panel_hex">Binární panel</string>
   <string name="lock">Zamknout panel</string>
   <string name="unlock">Odemknout panel</string>
   <string name="info">Informace</string>

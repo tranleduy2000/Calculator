@@ -27,10 +27,10 @@
   <string name="solveForX">X için çöz</string>
   <string name="solveForY">Y için çöz</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matris paneli</string>
-  <string name="graph">Grafik paneli</string>
-  <string name="function">Fonksiyon paneli</string>
-  <string name="hexPanel">Taban aritmetiği paneli</string>
+  <string name="panel_matrix">Matris paneli</string>
+  <string name="panel_graph">Grafik paneli</string>
+  <string name="panel_function">Fonksiyon paneli</string>
+  <string name="panel_hex">Taban aritmetiği paneli</string>
   <string name="lock">Sayfayı kilitle</string>
   <string name="unlock">Sayfanın kilidini kaldır</string>
   <string name="info">Bilgi</string>

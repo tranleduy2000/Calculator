@@ -27,10 +27,10 @@
   <string name="solveForX">Λύση ως προς x</string>
   <string name="solveForY">Λύση ως προς y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Πίνακες</string>
-  <string name="graph">Γραφικές παράστασεις</string>
-  <string name="function">Συναρτήσεις</string>
-  <string name="hexPanel">Δεκαεξαδικές πράξεις</string>
+  <string name="panel_matrix">Πίνακες</string>
+  <string name="panel_graph">Γραφικές παράστασεις</string>
+  <string name="panel_function">Συναρτήσεις</string>
+  <string name="panel_hex">Δεκαεξαδικές πράξεις</string>
   <string name="lock">Κλείδωμα σελίδας</string>
   <string name="unlock">Ξεκλείδωμα σελίδας</string>
   <string name="info">Πληροφορίες</string>

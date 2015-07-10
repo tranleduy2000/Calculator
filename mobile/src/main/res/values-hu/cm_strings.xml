@@ -27,10 +27,10 @@
   <string name="solveForX">Megoldás X-re</string>
   <string name="solveForY">Megoldás Y-ra</string>
   <string name="mod">mod</string>
-  <string name="matrix">Mátrix panel</string>
-  <string name="graph">Grafikon panel</string>
-  <string name="function">Függvény panel</string>
-  <string name="hexPanel">Hexadecimális panel</string>
+  <string name="panel_matrix">Mátrix panel</string>
+  <string name="panel_graph">Grafikon panel</string>
+  <string name="panel_function">Függvény panel</string>
+  <string name="panel_hex">Hexadecimális panel</string>
   <string name="lock">Lap zárolása</string>
   <string name="unlock">Lap feloldása</string>
   <string name="info">Információ</string>

@@ -27,10 +27,10 @@
   <string name="solveForX">หาค่า X</string>
   <string name="solveForY">หาค่า Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">แผงเมทริกซ์</string>
-  <string name="graph">แผงกราฟ</string>
-  <string name="function">แผงฟังก์ชัน</string>
-  <string name="hexPanel">แผงเลขฐาน</string>
+  <string name="panel_matrix">แผงเมทริกซ์</string>
+  <string name="panel_graph">แผงกราฟ</string>
+  <string name="panel_function">แผงฟังก์ชัน</string>
+  <string name="panel_hex">แผงเลขฐาน</string>
   <string name="lock">ล็อคหน้า</string>
   <string name="unlock">ปลดล็อคหน้า</string>
   <string name="info">ข้อมูล</string>

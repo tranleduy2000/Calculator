@@ -27,10 +27,10 @@
   <string name="solveForX">Résoudre pour X</string>
   <string name="solveForY">Résoudre pour Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Panneau matrice</string>
-  <string name="graph">Panneau graphique</string>
-  <string name="function">Panneau fonction</string>
-  <string name="hexPanel">Panneau hexadécimal</string>
+  <string name="panel_matrix">Panneau matrice</string>
+  <string name="panel_graph">Panneau graphique</string>
+  <string name="panel_function">Panneau fonction</string>
+  <string name="panel_hex">Panneau hexadécimal</string>
   <string name="lock">Verrouiller la page</string>
   <string name="unlock">Déverrouiller la page</string>
   <string name="info">Info</string>

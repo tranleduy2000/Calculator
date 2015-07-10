@@ -27,10 +27,10 @@
   <string name="solveForX">Solución pa X</string>
   <string name="solveForY">Solución pa Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matrices</string>
-  <string name="graph">Gráfiques</string>
-  <string name="function">Funciones</string>
-  <string name="hexPanel">Dec/Bin/Hex</string>
+  <string name="panel_matrix">Matrices</string>
+  <string name="panel_graph">Gráfiques</string>
+  <string name="panel_function">Funciones</string>
+  <string name="panel_hex">Dec/Bin/Hex</string>
   <string name="lock">Bloquiar páxina</string>
   <string name="unlock">Desbloquiar páxina</string>
   <string name="info">Info</string>

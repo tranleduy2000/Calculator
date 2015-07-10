@@ -27,10 +27,10 @@
   <string name="solveForX">Xについて解く</string>
   <string name="solveForY">Yについて解く</string>
   <string name="mod">mod</string>
-  <string name="matrix">行列パネル</string>
-  <string name="graph">グラフパネル</string>
-  <string name="function">関数パネル</string>
-  <string name="hexPanel">Hexパネル</string>
+  <string name="panel_matrix">行列パネル</string>
+  <string name="panel_graph">グラフパネル</string>
+  <string name="panel_function">関数パネル</string>
+  <string name="panel_hex">Hexパネル</string>
   <string name="lock">ページを固定</string>
   <string name="unlock">ページの固定を解除</string>
   <string name="info">情報</string>

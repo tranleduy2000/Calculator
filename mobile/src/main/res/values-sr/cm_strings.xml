@@ -27,10 +27,10 @@
   <string name="solveForX">Реши за X</string>
   <string name="solveForY">Реши за Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Матрични панел</string>
-  <string name="graph">Графички панел</string>
-  <string name="function">Функцијски панел</string>
-  <string name="hexPanel">Хексадекадни панел</string>
+  <string name="panel_matrix">Матрични панел</string>
+  <string name="panel_graph">Графички панел</string>
+  <string name="panel_function">Функцијски панел</string>
+  <string name="panel_hex">Хексадекадни панел</string>
   <string name="lock">Закључај страну</string>
   <string name="unlock">Откључај страну</string>
   <string name="info">Информација</string>

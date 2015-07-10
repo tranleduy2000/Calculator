@@ -27,10 +27,10 @@
   <string name="solveForX">Bestäm X</string>
   <string name="solveForY">Bestäm Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matrispanel</string>
-  <string name="graph">Grafpanel</string>
-  <string name="function">Funktionspanel</string>
-  <string name="hexPanel">Hexpanel</string>
+  <string name="panel_matrix">Matrispanel</string>
+  <string name="panel_graph">Grafpanel</string>
+  <string name="panel_function">Funktionspanel</string>
+  <string name="panel_hex">Hexpanel</string>
   <string name="lock">Lås sida</string>
   <string name="unlock">Lås upp sida</string>
   <string name="info">Info</string>

@@ -27,10 +27,10 @@
   <string name="solveForX">Решить для X</string>
   <string name="solveForY">Решить для Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Панель матриц</string>
-  <string name="graph">Панель графиков</string>
-  <string name="function">Панель функций</string>
-  <string name="hexPanel">Шестн. панель</string>
+  <string name="panel_matrix">Панель матриц</string>
+  <string name="panel_graph">Панель графиков</string>
+  <string name="panel_function">Панель функций</string>
+  <string name="panel_hex">Шестн. панель</string>
   <string name="lock">Заблокировать</string>
   <string name="unlock">Разблокировать</string>
   <string name="info">Информация</string>

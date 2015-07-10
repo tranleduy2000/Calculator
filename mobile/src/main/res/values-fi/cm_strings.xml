@@ -27,10 +27,10 @@
   <string name="solveForX">Ratkaise X</string>
   <string name="solveForY">Ratkaise Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matriisitoiminnot</string>
-  <string name="graph">Graafitoiminnot</string>
-  <string name="function">Funktiotoiminnot</string>
-  <string name="hexPanel">Heksatoiminnot</string>
+  <string name="panel_matrix">Matriisitoiminnot</string>
+  <string name="panel_graph">Graafitoiminnot</string>
+  <string name="panel_function">Funktiotoiminnot</string>
+  <string name="panel_hex">Heksatoiminnot</string>
   <string name="lock">Lukitse sivu</string>
   <string name="unlock">Vapauta sivu</string>
   <string name="info">Tietoja</string>

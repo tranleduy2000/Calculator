@@ -27,10 +27,10 @@
   <string name="solveForX">Spręsti už X</string>
   <string name="solveForY">Spręsti už Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matricos skydelis</string>
-  <string name="graph">Grafinis skydelis</string>
-  <string name="function">Funkcijų skydelis</string>
-  <string name="hexPanel">Hex skydelis</string>
+  <string name="panel_matrix">Matricos skydelis</string>
+  <string name="panel_graph">Grafinis skydelis</string>
+  <string name="panel_function">Funkcijų skydelis</string>
+  <string name="panel_hex">Hex skydelis</string>
   <string name="lock">Užrakinti puslapį</string>
   <string name="unlock">Atrakinti puslapį</string>
   <string name="info">Informacija</string>

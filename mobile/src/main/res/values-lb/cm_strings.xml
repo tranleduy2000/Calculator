@@ -26,10 +26,10 @@
   <string name="solveForX">Fir X léisen</string>
   <string name="solveForY">Fir Y léisen</string>
   <string name="mod">mod</string>
-  <string name="matrix">Matrisseberechnung</string>
-  <string name="graph">Diagrammen</string>
-  <string name="function">Funktiounen</string>
-  <string name="hexPanel">Dez/Bin/Hex</string>
+  <string name="panel_matrix">Matrisseberechnung</string>
+  <string name="panel_graph">Diagrammen</string>
+  <string name="panel_function">Funktiounen</string>
+  <string name="panel_hex">Dez/Bin/Hex</string>
   <string name="lock">Säit spären</string>
   <string name="unlock">Säit entspären</string>
   <string name="copy">\"%s\" kopéieren</string>

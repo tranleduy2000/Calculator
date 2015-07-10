@@ -27,10 +27,10 @@
   <string name="solveForX">Rozwiąż dla X</string>
   <string name="solveForY">Rozwiąż dla Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">Macierze</string>
-  <string name="graph">Wykresy</string>
-  <string name="function">Funkcje</string>
-  <string name="hexPanel">Hex</string>
+  <string name="panel_matrix">Macierze</string>
+  <string name="panel_graph">Wykresy</string>
+  <string name="panel_function">Funkcje</string>
+  <string name="panel_hex">Hex</string>
   <string name="lock">Zablokuj stronę</string>
   <string name="unlock">Odblokuj stronę</string>
   <string name="info">Informacje</string>

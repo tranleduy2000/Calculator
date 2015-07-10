@@ -36,9 +36,9 @@
     <!-- Displayed on buttons on screen for the log function. -->
     <string name="lg" msgid="873623857385418182">log</string>
     <!-- Menu item text to take user to the screen with the basic digits and operators. -->
-    <string name="basic" msgid="7691469861698059753">Основная панель</string>
+    <string name="panel_basic" msgid="7691469861698059753">Основная панель</string>
     <!-- Menu item text to take user to the screen with the advanced functions, such as sin, cos, ln, log, etc. -->
-    <string name="advanced" msgid="7122495413742976492">Дополнительная панель</string>
+    <string name="panel_advanced" msgid="7122495413742976492">Дополнительная панель</string>
     <!-- Menu item text to clear the calculation history. -->
     <string name="clear_history" msgid="8458043980601165012">Очистить историю</string>
     <!-- Toast shown when text is copied to the clipboard. -->

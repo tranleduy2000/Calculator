@@ -27,10 +27,10 @@
   <string name="solveForX">حل ل x</string>
   <string name="solveForY">حل ل y</string>
   <string name="mod">mod</string>
-  <string name="matrix">لوحة المصفوفة</string>
-  <string name="graph">لوحة الرسم البياني</string>
-  <string name="function">لوحة الدالة</string>
-  <string name="hexPanel">لوحة التعريف</string>
+  <string name="panel_matrix">لوحة المصفوفة</string>
+  <string name="panel_graph">لوحة الرسم البياني</string>
+  <string name="panel_function">لوحة الدالة</string>
+  <string name="panel_hex">لوحة التعريف</string>
   <string name="lock">قفل الصفحة</string>
   <string name="unlock">افتح قفل الصفحة</string>
   <string name="info">معلومات</string>

@@ -27,10 +27,10 @@
   <string name="solveForX">הפתרון עבור X</string>
   <string name="solveForY">הפתרון עבור Y</string>
   <string name="mod">mod</string>
-  <string name="matrix">מטריצה</string>
-  <string name="graph">גרף</string>
-  <string name="function">פונקציה</string>
-  <string name="hexPanel">הקס</string>
+  <string name="panel_matrix">מטריצה</string>
+  <string name="panel_graph">גרף</string>
+  <string name="panel_function">פונקציה</string>
+  <string name="panel_hex">הקס</string>
   <string name="lock">נעל עמוד</string>
   <string name="unlock">פתח עמוד</string>
   <string name="info">מידע נוסף</string>
