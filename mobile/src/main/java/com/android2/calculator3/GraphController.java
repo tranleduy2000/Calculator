@@ -1,6 +1,7 @@
 package com.android2.calculator3;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
@@ -32,6 +33,8 @@ public class GraphController implements
     private boolean mLocked;
     private OnUnlockedListener mOnUnlockedListener;
 
+    private final Handler mHandler = new Handler();
+
     private static final Map<String, List<Point>> mCachedEquations = new LinkedHashMap<String, List<Point>>(MAX_CACHE_SIZE, 1f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, List<Point>> eldest) {
@@ -42,15 +45,17 @@ public class GraphController implements
     public GraphController(GraphModule module, GraphView view) {
         mGraphModule = module;
         mMainGraphView = view;
+
         mMainGraphView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if(android.os.Build.VERSION.SDK_INT < 16) {
+                if (android.os.Build.VERSION.SDK_INT < 16) {
                     mMainGraphView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 } else {
                     mMainGraphView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
                 if (mEquation != null) {
+                    Log.d(TAG, "View was laid out. Attempting to graph " + mEquation);
                     startGraph(mEquation);
                 }
             }
@@ -66,6 +71,14 @@ public class GraphController implements
         mEquation = equation;
         if (mMainGraphView.getXAxisMin() == mMainGraphView.getXAxisMax()) {
             Log.d(TAG, "This view hasn't been laid out yet. Will delay graphing " + equation);
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (mMainGraphView.getXAxisMin() != mMainGraphView.getXAxisMax()) {
+                        startGraph(equation);
+                    }
+                }
+            });
             return null;
         }
 
