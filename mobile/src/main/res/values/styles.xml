@@ -155,6 +155,7 @@
         <item name="android:background">@color/pad_button_advanced_ripple_color</item>
         <item name="android:textColor">@color/pad_button_advanced_text_color</item>
         <item name="android:textSize">20sp</item>
+        <item name="android:layout_margin">7dp</item>
     </style>
 
     <style name="PadButtonStyle.Advanced.Toggle">
@@ -188,6 +189,7 @@
     <style name="PadLayoutStyle.Advanced">
         <item name="android:columnCount">4</item>
         <item name="android:rowCount">4</item>
+        <item name="android:padding">7dp</item>
     </style>
 
     <style name="PadLayoutStyle.Hex" parent="@style/PadLayoutStyle.Advanced">

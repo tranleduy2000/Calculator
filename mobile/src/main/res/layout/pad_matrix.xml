@@ -21,13 +21,13 @@
     style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
 
-    <ImageButton
+    <com.android2.calculator3.view.ImageButton
         android:id="@+id/matrix"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:src="@drawable/matrix" />
 
-    <ImageButton
+    <com.android2.calculator3.view.ImageButton
         android:id="@+id/identity_matrix"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
