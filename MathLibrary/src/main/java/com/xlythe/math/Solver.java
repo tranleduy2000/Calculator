@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class Solver {
     // Used for solving basic math
-    private Symbols mSymbols = new Symbols();
+    private static final Symbols mSymbols = new Symbols();
     private BaseModule mBaseModule;
     private MatrixModule mMatrixModule;
     private GraphModule mGraphModule;

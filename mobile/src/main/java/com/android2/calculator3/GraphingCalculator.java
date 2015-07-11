@@ -112,7 +112,6 @@ public class GraphingCalculator extends BasicCalculator
         outState.putInt(KEY_BASE, mBaseManager.getNumberBase().ordinal());
     }
 
-
     private void transitionToDisplay() {
         if (mResultEditText.getVisibility() == View.VISIBLE) {
             return;

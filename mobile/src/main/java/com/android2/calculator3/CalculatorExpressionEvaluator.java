@@ -15,15 +15,10 @@
 */
 package com.android2.calculator3;
 
-import android.util.Log;
-
 import com.xlythe.math.Base;
-import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 
-import org.javia.arity.Symbols;
 import org.javia.arity.SyntaxException;
-import org.javia.arity.Util;
 
 public class CalculatorExpressionEvaluator {
     private final Solver mSolver;

@@ -18,6 +18,7 @@ package com.android2.calculator3;
 import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -28,9 +29,13 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.android2.calculator3.drawable.AnimatingDrawable;
+import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.CalculatorPadLayout;
+import com.android2.calculator3.view.DisplayOverlay;
+import com.android2.calculator3.view.GraphView;
 import com.rey.material.widget.TextView;
 import com.xlythe.floatingview.AnimationFinishedListener;
+import com.xlythe.math.Base;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -39,13 +44,21 @@ import io.codetail.animation.ViewAnimationUtils;
  * Controls the fab and what pages are shown / hidden.
  * */
 public class PanelSwitchingCalculator extends GraphingCalculator {
+
+    // instance state keys
+    private static final String KEY_PANEL = NAME + "_panel";
+
+    private enum Panel {
+        Advanced, Trig, Hex, Matrix;
+    }
+
     private ViewGroup mOverlay;
     private FloatingActionButton mFab;
     private View mTray;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void initialize(Bundle savedInstanceState) {
+        super.initialize(savedInstanceState);
 
         mOverlay = (ViewGroup) findViewById(R.id.overlay);
         mTray = findViewById(R.id.tray);
@@ -69,10 +82,32 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
                 hideFab();
             }
         });
-        setupTray();
+        setupTray(savedInstanceState);
         if (findViewById(R.id.pad_pager) == null) {
             showFab();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        final View advancedPad = findViewById(R.id.pad_advanced);
+        final View trigPad = findViewById(R.id.pad_trig);
+        final View hexPad = findViewById(R.id.pad_hex);
+        final View matrixPad = findViewById(R.id.pad_matrix);
+
+        Panel panel = null;
+        if (advancedPad.getVisibility() == View.VISIBLE) {
+            panel = Panel.Advanced;
+        } else if (trigPad.getVisibility() == View.VISIBLE) {
+            panel = Panel.Trig;
+        } else if (hexPad.getVisibility() == View.VISIBLE) {
+            panel = Panel.Hex;
+        } else if (matrixPad.getVisibility() == View.VISIBLE) {
+            panel = Panel.Matrix;
+        }
+        outState.putSerializable(KEY_PANEL, panel);
     }
 
     /**
@@ -180,7 +215,7 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
         play(revealAnimator);
     }
 
-    private void setupTray() {
+    private void setupTray(Bundle savedInstanceState) {
         final View advancedPad = findViewById(R.id.pad_advanced);
         final View trigPad = findViewById(R.id.pad_trig);
         final View hexPad = findViewById(R.id.pad_hex);
@@ -250,7 +285,25 @@ public class PanelSwitchingCalculator extends GraphingCalculator {
             button.setOnClickListener(listener);
             button.setOnLongClickListener(longClickListener);
         }
-        showPage(advancedPad);
+        Panel panel = (Panel) savedInstanceState.getSerializable(KEY_PANEL);
+        if (panel != null) {
+            switch (panel) {
+                case Advanced:
+                    showPage(advancedPad);
+                    break;
+                case Trig:
+                    showPage(trigPad);
+                    break;
+                case Hex:
+                    showPage(hexPad);
+                    break;
+                case Matrix:
+                    showPage(matrixPad);
+                    break;
+            }
+        } else {
+            showPage(advancedPad);
+        }
     }
 
     private void showPage(View layout) {
