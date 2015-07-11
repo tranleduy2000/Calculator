@@ -79,19 +79,6 @@ public class DisplayOverlay extends RelativeLayout {
         }
     };
     private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
-    private final Animator.AnimatorListener mCollapseListener = new AnimationFinishedListener() {
-        @Override
-        public void onAnimationFinished() {
-            mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-            mDisplayBackground.setPivotY(0);
-
-            mFormulaEditText.setPivotX(mFormulaEditText.getWidth() / 2);
-            mFormulaEditText.setPivotY(mFormulaEditText.getHeight() / 2);
-
-            mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
-            mResultEditText.setPivotY(mResultEditText.getHeight() / 2);
-        }
-    };
     private View mTemplateDisplay;
 
     public DisplayOverlay(Context context) {
@@ -297,8 +284,8 @@ public class DisplayOverlay extends RelativeLayout {
         final String result = mResultEditText.getText().toString();
 
         if (mTemplateDisplay != null) {
-            final String currentFormula = ((TextView) mTemplateDisplay.findViewById(R.id.historyExpr)).getText().toString();
-            final String currentResult = ((TextView) mTemplateDisplay.findViewById(R.id.historyResult)).getText().toString();
+            final String currentFormula = ((TemplateHolder) mTemplateDisplay.getTag()).formula.getText().toString();
+            final String currentResult = ((TemplateHolder) mTemplateDisplay.getTag()).result.getText().toString();
             if (currentFormula.equals(formula) && currentResult.equals(result)) {
                 return;
             }
@@ -310,6 +297,14 @@ public class DisplayOverlay extends RelativeLayout {
         int rightMargin = ((MarginLayoutParams) mTemplateDisplay.getLayoutParams()).rightMargin;
         mTemplateDisplay.measure(MeasureSpec.makeMeasureSpec(getWidth() - leftMargin - rightMargin, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(Integer.MAX_VALUE / 2, MeasureSpec.AT_MOST));
         mTemplateDisplay.layout(leftMargin, topMargin, mTemplateDisplay.getMeasuredWidth() + leftMargin, mTemplateDisplay.getMeasuredHeight() + topMargin);
+
+        // Cache all the children (so we don't keep calling findViewById
+        TemplateHolder holder = new TemplateHolder();
+        holder.formula = (TextView) mTemplateDisplay.findViewById(R.id.historyExpr);
+        holder.result = (TextView) mTemplateDisplay.findViewById(R.id.historyResult);
+        holder.historyLine = mTemplateDisplay.findViewById(R.id.history_line);
+        holder.graph = mTemplateDisplay.findViewById(R.id.graph);
+        mTemplateDisplay.setTag(holder);
         if (DEBUG) {
             Log.d(TAG, String.format("l=%s,t=%s,r=%s,b=%s,width=%s,height=%s", mTemplateDisplay.getLeft(), mTemplateDisplay.getTop(), mTemplateDisplay.getRight(), mTemplateDisplay.getBottom(), mTemplateDisplay.getWidth(), mTemplateDisplay.getHeight()));
         }
@@ -375,7 +370,6 @@ public class DisplayOverlay extends RelativeLayout {
         if (listener != null) {
             animator.addListener(listener);
         }
-        animator.addListener(mCollapseListener);
         animator.start();
 
         // Remove the background onTouchListener
@@ -568,8 +562,9 @@ public class DisplayOverlay extends RelativeLayout {
             float adjustedTranslation = 0;
 
             // Get both our current width/height and the width/height we want to be
-            int width = mTemplateDisplay.findViewById(R.id.history_line).getWidth();
-            int height = mTemplateDisplay.findViewById(R.id.history_line).getHeight();
+            View historyLine = ((TemplateHolder) mTemplateDisplay.getTag()).historyLine;
+            int width = historyLine.getWidth();
+            int height = historyLine.getHeight();
             int displayWidth = mDisplayBackground.getWidth();
             int displayHeight = mDisplayBackground.getHeight();
 
@@ -608,7 +603,7 @@ public class DisplayOverlay extends RelativeLayout {
             mDisplayGraph.setScaleX(scaledWidth);
 
             // Move the formula over to the far left
-            TextView exprView = (TextView) mTemplateDisplay.findViewById(R.id.historyExpr);
+            TextView exprView = ((TemplateHolder) mTemplateDisplay.getTag()).formula;
             float exprScale = exprView.getTextSize() / mFormulaEditText.getTextSize();
             mFormulaEditText.setScaleX(scale(percent, exprScale));
             mFormulaEditText.setScaleY(scale(percent, exprScale));
@@ -626,44 +621,54 @@ public class DisplayOverlay extends RelativeLayout {
             mFormulaEditText.setTextColor(mixColors(percent, mFormulaInitColor, exprView.getCurrentTextColor()));
 
             // Move the result to keep in place with the display TODO 'graph' text for graphs
-            TextView resultView = (TextView) mTemplateDisplay.findViewById(R.id.historyResult);
+            TextView resultView = ((TemplateHolder) mTemplateDisplay.getTag()).result;
             float resultScale = resultView.getTextSize() / mResultEditText.getTextSize();
             mResultEditText.setScaleX(scale(percent, resultScale));
             mResultEditText.setScaleY(scale(percent, resultScale));
             mResultEditText.setTranslationX(percent * (
                     // We have pivotX set at getWidth(), so the right sides will match up.
                     // Adjust the right edges of the real and the calculated views
-                    - getRight(mResultEditText, mCalculationsDisplay)
-                    + getRight(resultView, null)
+                    -getRight(mResultEditText, mCalculationsDisplay)
+                            + getRight(resultView, null)
 
-                    // But getRight() doesn't include padding! So match the padding as well
-                    + mResultEditText.getPaddingRight() * scale(percent, resultScale)
-                    - resultView.getPaddingRight()
+                            // But getRight() doesn't include padding! So match the padding as well
+                            + mResultEditText.getPaddingRight() * scale(percent, resultScale)
+                            - resultView.getPaddingRight()
             ));
             mResultEditText.setTranslationY(percent * (
                     // Likewise, pivotY is set to 0, so the top sides will match up
                     // Adjust the top edges of the real and the calculated views
-                    - getTop(mResultEditText, mCalculationsDisplay)
-                    + getTop(resultView, null)
+                    -getTop(mResultEditText, mCalculationsDisplay)
+                            + getTop(resultView, null)
 
-                    // But getTop() doesn't include padding! So match the padding as well
-                    - mResultEditText.getPaddingTop() * scale(percent, resultScale)
-                    + resultView.getPaddingTop()
+                            // But getTop() doesn't include padding! So match the padding as well
+                            - mResultEditText.getPaddingTop() * scale(percent, resultScale)
+                            + resultView.getPaddingTop()
             ));
             mResultEditText.setTextColor(mixColors(percent, mResultInitColor, resultView.getCurrentTextColor()));
 
             // Fade away HEX/RAD info text
             mInfoText.setAlpha(scale(percent, 0));
 
-            // Handle readjustment of everything so it follows the finger
-            adjustedTranslation += percent * (
-                    + mDisplayBackground.getPivotY()
-                            - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+            if (mDisplayBackground.getPivotY() == 0) {
+                // Graph is visible, so pivot y is set to 0
+                View graph = ((TemplateHolder) mTemplateDisplay.getTag()).graph;
 
-            mCalculationsDisplay.setTranslationY(adjustedTranslation);
-            mInfoText.setTranslationY(adjustedTranslation);
-            mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
-            mMainDisplay.setTranslationY(0);
+                mDisplayGraph.setTranslationY(percent * (graph.getTop() - mDisplayGraph.getTop()));
+                adjustedTranslation += percent * (mDisplayGraph.getTop() - graph.getTop());
+
+                mMainDisplay.setTranslationY(adjustedTranslation);
+                mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
+            } else {
+                // Handle readjustment of everything so it follows the finger
+                adjustedTranslation += percent * (
+                        + mDisplayBackground.getPivotY()
+                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+
+                mCalculationsDisplay.setTranslationY(adjustedTranslation);
+                mInfoText.setTranslationY(adjustedTranslation);
+                mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
+            }
 
             // Enable/disable the edit text.
             if (percent == 0) {
@@ -721,5 +726,12 @@ public class DisplayOverlay extends RelativeLayout {
             return 0;
         }
         return view.getTop() + (view.getParent() instanceof View ? getTop((View) view.getParent(), relativeTo) : 0);
+    }
+
+    private static class TemplateHolder {
+        View graph;
+        TextView formula;
+        TextView result;
+        View historyLine;
     }
 }
