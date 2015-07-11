@@ -427,8 +427,8 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayBackground.setPivotY(0);
         mDisplayBackground.animate()
                 .scaleY(scale)
-                .setListener(listener)
                 .setDuration(duration)
+                .setListener(null)
                 .start();
 
         // Update the foreground too (even though it's invisible)
@@ -436,6 +436,7 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayForeground.animate()
                 .scaleY(scale)
                 .setDuration(duration)
+                .setListener(listener)
                 .start();
     }
 

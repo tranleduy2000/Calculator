@@ -27,7 +27,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
-import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -301,7 +300,9 @@ public class GraphingCalculator extends BasicCalculator
                                         break;
                                 }
                                 updateDetails();
-                                setState(CalculatorState.INPUT);
+                                if (getState() != CalculatorState.GRAPHING) {
+                                    setState(CalculatorState.INPUT);
+                                }
                                 getEvaluator().evaluate(mFormulaEditText.getCleanText(), GraphingCalculator.this);
                                 return true;
                             }

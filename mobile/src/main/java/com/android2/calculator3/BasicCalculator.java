@@ -25,11 +25,9 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -46,7 +44,6 @@ import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.EqualsImageButton.State;
-import com.android2.calculator3.view.GraphView;
 import com.android2.calculator3.view.MatrixComponent;
 import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.xlythe.floatingview.AnimationFinishedListener;
@@ -56,8 +53,6 @@ import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
-
-import java.util.regex.Pattern;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -426,7 +421,7 @@ public class BasicCalculator extends Activity
         String formula = mFormulaEditText.getCleanText();
         String result = mResultEditText.getCleanText();
         if (!TextUtils.isEmpty(formula)
-                && (TextUtils.isEmpty(result) || formula.equals(result))
+                && TextUtils.isEmpty(result)
                 && mCurrentState == CalculatorState.INPUT) {
             mEqualButton.setState(State.NEXT);
         } else {
