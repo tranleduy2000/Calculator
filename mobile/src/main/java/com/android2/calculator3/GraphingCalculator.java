@@ -44,8 +44,7 @@ import java.util.Locale;
 /**
  * Adds graphing and base switching to the basic calculator.
  * */
-public class GraphingCalculator extends BasicCalculator
-        implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
+public class GraphingCalculator extends BasicCalculator {
 
     // instance state keys
     private static final String KEY_BASE = NAME + "_base";
@@ -63,6 +62,12 @@ public class GraphingCalculator extends BasicCalculator
     private GraphController mGraphController;
     private GraphView mMiniGraph;
     private AsyncTask mGraphTask;
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_BASE, mBaseManager.getNumberBase().ordinal());
+    }
 
     @Override
     protected void initialize(Bundle savedInstanceState) {
@@ -104,12 +109,6 @@ public class GraphingCalculator extends BasicCalculator
                 mGraphController.unlock();
             }
         });
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(KEY_BASE, mBaseManager.getNumberBase().ordinal());
     }
 
     private void transitionToDisplay() {

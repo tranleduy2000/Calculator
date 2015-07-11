@@ -43,7 +43,7 @@ import io.codetail.animation.ViewAnimationUtils;
 /**
  * Controls the fab and what pages are shown / hidden.
  * */
-public class PanelSwitchingCalculator extends GraphingCalculator {
+public class PanelSwitchingCalculator extends MatrixCalculator {
 
     // instance state keys
     private static final String KEY_PANEL = NAME + "_panel";
