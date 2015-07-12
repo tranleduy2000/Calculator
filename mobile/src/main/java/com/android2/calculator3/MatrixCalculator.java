@@ -15,16 +15,32 @@
 */
 package com.android2.calculator3;
 
+import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
+
+import com.android2.calculator3.view.CalculatorEditText;
+import com.android2.calculator3.view.DisplayOverlay;
+import com.android2.calculator3.view.MatrixComponent;
 
 /**
  * Adds graphing and base switching to the basic calculator.
  * */
 public class MatrixCalculator extends GraphingCalculator {
 
+    private CalculatorEditText mFormulaEditText;
+
+    protected void initialize(Bundle savedInstanceState) {
+        super.initialize(savedInstanceState);
+        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
+    }
+
     @Override
     public void onButtonClick(View view) {
         switch (view.getId()) {
+            case R.id.matrix:
+                mFormulaEditText.insert(MatrixComponent.getPattern());
+                return;
             case R.id.plus_col:
             case R.id.plus_row:
             case R.id.minus_col:

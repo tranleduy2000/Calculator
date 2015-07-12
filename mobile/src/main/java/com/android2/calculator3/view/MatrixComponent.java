@@ -78,9 +78,19 @@ public class MatrixComponent extends SpanComponent {
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            Drawable background = mContext.getResources().getDrawable(R.drawable.matrix_background, null);
+            Drawable background;
+            if (android.os.Build.VERSION.SDK_INT >= 21) {
+                background = mContext.getResources().getDrawable(R.drawable.matrix_background, null);
+            } else {
+                background = mContext.getResources().getDrawable(R.drawable.matrix_background);
+            }
             background.setBounds((int) x, top, (int) x + 500, bottom);
             background.draw(canvas);
+        }
+
+        @Override
+        public boolean removeOnBackspace() {
+            return true;
         }
     }
 }

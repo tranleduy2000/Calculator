@@ -122,6 +122,30 @@ public class CalculatorEditText extends FormattedNumberEditText {
         }
     }
 
+    @Override
+    public void backspace() {
+        if (getSelectionStart() > 0) {
+            MathSpannable[] spans = getText().getSpans(getSelectionStart() - 1, getSelectionStart() - 1, MathSpannable.class);
+            if (spans.length != 0) {
+                if (spans[0].removeOnBackspace()) {
+                    String text = getText().toString();
+                    int selectionHandle = getSelectionStart();
+                    String textBeforeInsertionHandle = text.substring(0, selectionHandle);
+                    String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
+
+                    int deletionLength = spans[0].getEquation().length();
+                    String newText = textBeforeInsertionHandle.substring(0, textBeforeInsertionHandle.length() - deletionLength) + textAfterInsertionHandle;
+                    setText(newText);
+                    setSelection(selectionHandle - deletionLength);
+
+                    return;
+                }
+            }
+        }
+
+        super.backspace();
+    }
+
     public static abstract class SpanComponent {
         public abstract String parse(String formula);
         public abstract MathSpannable getSpan(String equation);
@@ -145,6 +169,10 @@ public class CalculatorEditText extends FormattedNumberEditText {
         public boolean onTouchEvent(MotionEvent event) {
             return false;
         }
+
+        public boolean removeOnBackspace() {
+            return false;
+        }
     }
 
     /**
@@ -166,10 +194,10 @@ public class CalculatorEditText extends FormattedNumberEditText {
             int line = layout.getLineForVertical(y);
             int off = layout.getOffsetForHorizontal(line, x);
 
-            MathSpannable[] link = buffer.getSpans(off, off, MathSpannable.class);
+            MathSpannable[] spans = buffer.getSpans(off, off, MathSpannable.class);
 
-            if (link.length != 0) {
-                return link[0].onTouchEvent(event);
+            if (spans.length != 0) {
+                return spans[0].onTouchEvent(event);
             }
 
             return super.onTouchEvent(widget, buffer, event);

@@ -44,7 +44,6 @@ import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.EqualsImageButton.State;
-import com.android2.calculator3.view.MatrixComponent;
 import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Constants;
@@ -325,9 +324,6 @@ public class BasicCalculator extends Activity
                 break;
             case R.id.parentheses:
                 mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
-                break;
-            case R.id.matrix:
-                mFormulaEditText.insert(MatrixComponent.getPattern());
                 break;
             case R.id.fun_cos:
             case R.id.fun_acos:

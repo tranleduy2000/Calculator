@@ -7,6 +7,7 @@ import org.ejml.simple.SimpleMatrix;
 import org.ejml.simple.SimpleSVD;
 import org.javia.arity.SyntaxException;
 
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -630,7 +631,7 @@ public class MatrixModule extends Module {
     private SimpleMatrix parseMatrix(String text) throws SyntaxException {
         // Count rows & cols
         String interior = text.substring(2, text.length() - 2);
-        String[] rows = interior.split("\\]\\[");
+        String[] rows = split(interior, "][");
 
         SimpleMatrix temp = new SimpleMatrix(rows.length, rows[0].split(",").length);
 
@@ -654,6 +655,33 @@ public class MatrixModule extends Module {
         }
 
         return temp;
+    }
+
+    /**
+     * Apparently String.split isn't happy if the breakpoints are side by side.
+     * eg. 111, split on 1, returns an empty array. See: http://stackoverflow.com/a/28035974/1342672
+     * This function returns the correct array of size 4.
+     * */
+    private String[] split(String text, String breakpoint) {
+        LinkedList<StringBuilder> pieces = new LinkedList<>();
+        pieces.add(new StringBuilder());
+
+        while (!text.isEmpty()) {
+            if (text.startsWith(breakpoint)) {
+                pieces.add(new StringBuilder());
+                text = text.substring(breakpoint.length());
+            } else {
+                pieces.getLast().append(text.charAt(0));
+                text = text.substring(1);
+            }
+        }
+
+        String[] array = new String[pieces.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = pieces.get(i).toString();
+        }
+
+        return array;
     }
 
     boolean isMatrix(String text) {
