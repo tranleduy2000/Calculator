@@ -44,7 +44,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:contentDescription="@string/panel_matrix"
-        android:visibility="gone"/>
+        android:contentDescription="@string/panel_matrix"/>
 
 </LinearLayout>

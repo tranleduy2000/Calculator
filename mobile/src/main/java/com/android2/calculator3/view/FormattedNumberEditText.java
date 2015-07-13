@@ -56,20 +56,7 @@ public class FormattedNumberEditText extends NumberEditText {
         public void afterTextChanged(Editable s) {
             if (!mTextWatchersEnabled || mSolver == null || getSelectionStart() == -1) return;
             mTextWatchersEnabled = false;
-
-            String text = removeFormatting(s.toString());
-
-            // Get the selection handle, since we're setting text and that'll overwrite it
-            mSelectionHandle = getSelectionStart();
-
-            // Adjust the handle by removing any comas or spacing to the left
-            String cs = s.subSequence(0, mSelectionHandle).toString();
-            mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
-
-            // Update the text with formatted (comas, etc) text
-            setText(formatText(text));
-            setSelection(mSelectionHandle);
-
+            onFormat(s);
             mTextWatchersEnabled = true;
         }
     };
@@ -118,6 +105,21 @@ public class FormattedNumberEditText extends NumberEditText {
                 context.getString(R.string.dx),
                 context.getString(R.string.dy),
                 context.getString(R.string.cbrt) + "(");
+    }
+
+    protected void onFormat(Editable s) {
+        String text = removeFormatting(s.toString());
+
+        // Get the selection handle, since we're setting text and that'll overwrite it
+        mSelectionHandle = getSelectionStart();
+
+        // Adjust the handle by removing any comas or spacing to the left
+        String cs = s.subSequence(0, mSelectionHandle).toString();
+        mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
+
+        // Update the text with formatted (comas, etc) text
+        setText(formatText(text));
+        setSelection(mSelectionHandle);
     }
 
     @Override

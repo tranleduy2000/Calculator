@@ -28,6 +28,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -65,6 +68,40 @@ public class CalculatorEditText extends FormattedNumberEditText {
             }
         });
         addSpanComponent(new MatrixComponent(getContext()));
+    }
+
+    protected void onFormat(final Editable s) {
+        // We don't want to format anything that's controlled by MathSpannables (like matrices).
+        // So grab all the spans in our EditText
+        MathSpannable[] spans = s.getSpans(0, s.length(), MathSpannable.class);
+        Arrays.sort(spans, new Comparator<MathSpannable>() {
+            @Override
+            public int compare(MathSpannable a, MathSpannable b) {
+                return s.getSpanStart(a) - s.getSpanStart(b);
+            }
+        });
+
+        // Ah, no spans. Nothing to think about, so easy.
+        if (spans.length == 0) {
+            super.onFormat(s);
+            return;
+        }
+
+//        // Start formatting, but skip the parts that involve spans
+//        int start = s.getSpanStart(spans[0]);
+//
+//        String text = removeFormatting(s.toString());
+//
+//        // Get the selection handle, since we're setting text and that'll overwrite it
+//        mSelectionHandle = getSelectionStart();
+//
+//        // Adjust the handle by removing any comas or spacing to the left
+//        String cs = s.subSequence(0, mSelectionHandle).toString();
+//        mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
+//
+//        // Update the text with formatted (comas, etc) text
+//        setText(formatText(text));
+//        setSelection(mSelectionHandle);
     }
 
     @Override

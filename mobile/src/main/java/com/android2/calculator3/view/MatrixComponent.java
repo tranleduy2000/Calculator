@@ -3,13 +3,17 @@ package com.android2.calculator3.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.util.Log;
 
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.CalculatorEditText.SpanComponent;
 import com.android2.calculator3.view.CalculatorEditText.MathSpannable;
 
 import com.xlythe.math.Constants;
+import com.xlythe.math.Solver;
 
 import java.util.regex.Pattern;
 
@@ -65,32 +69,93 @@ public class MatrixComponent extends SpanComponent {
 
     private static class MatrixSpannable extends MathSpannable {
         private final Context mContext;
+        private final String[][] mData;
+
+        private final NinePatchDrawable mBackground;
+        private final Rect mBackgroundPadding = new Rect();
+
+        // Cached copy of the span's width
+        private int mSize;
 
         public MatrixSpannable(Context context, String equation) {
             super(equation);
             mContext = context;
+
+            final int rows = countOccurrences(equation, '[') - 1;
+            final int columns = countOccurrences(equation, Constants.MATRIX_SEPARATOR) / rows + 1;
+
+            mData = new String[rows][columns];
+
+            String[] data = equation.split(Pattern.quote(Character.toString(Constants.MATRIX_SEPARATOR)) + "|\\]\\[");
+            for(int order = 0, row = 0; row < rows; row++) {
+                for(int column = 0; column < columns; column++) {
+                    mData[row][column] = data[order].replaceAll("[\\[\\]]", "");
+                    order++;
+                }
+            }
+
+            if (android.os.Build.VERSION.SDK_INT >= 21) {
+                mBackground = (NinePatchDrawable) mContext.getResources().getDrawable(R.drawable.matrix_background, null);
+            } else {
+                mBackground = (NinePatchDrawable) mContext.getResources().getDrawable(R.drawable.matrix_background);
+            }
+            mBackground.getPadding(mBackgroundPadding);
+        }
+
+        private int getColumnSize(Paint paint, int column) {
+            float largestTextWidth = 0;
+            for (int i = 0; i < mData.length; i++) {
+                largestTextWidth = Math.max(paint.measureText(mData[i][column]), largestTextWidth);
+            }
+            return (int) largestTextWidth;
         }
 
         @Override
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
-            return 500;
+            if (mSize != 0) {
+                return mSize;
+            }
+
+            int padding = mBackgroundPadding.left + mBackgroundPadding.right;
+            int columnSize = 0;
+            for (int i = 0; i < mData[0].length; i++) {
+                columnSize += getColumnSize(paint, i);
+            }
+            mSize = Math.max(padding + columnSize, mBackground.getIntrinsicWidth());
+            return mSize;
         }
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
-            Drawable background;
-            if (android.os.Build.VERSION.SDK_INT >= 21) {
-                background = mContext.getResources().getDrawable(R.drawable.matrix_background, null);
-            } else {
-                background = mContext.getResources().getDrawable(R.drawable.matrix_background);
+            // Draw the background
+            mBackground.setBounds((int) x, top, (int) x + mSize, bottom);
+            mBackground.draw(canvas);
+
+            // Draw the text
+            float xOffset = x + mBackgroundPadding.left;
+            for (int i = 0; i < mData.length; i++) {
+                for (int j = 0; j < mData[i].length; j++) {
+                    String pos = mData[i][j];
+                    Log.d("TEST", "Drawing " + pos + " from pos "+i+","+j);
+                    canvas.drawText(pos, 0, pos.length(), xOffset, 10, paint);
+                }
             }
-            background.setBounds((int) x, top, (int) x + 500, bottom);
-            background.draw(canvas);
         }
 
         @Override
         public boolean removeOnBackspace() {
             return true;
         }
+
+        private static int countOccurrences(String haystack, char needle) {
+            int count = 0;
+            for(int i = 0; i < haystack.length(); i++) {
+                if(haystack.charAt(i) == needle) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
     }
 }
