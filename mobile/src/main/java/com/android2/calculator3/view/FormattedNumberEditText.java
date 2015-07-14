@@ -43,6 +43,7 @@ import java.util.Set;
  * no longer return the correct value. getCleanText() has been added instead.
  * */
 public class FormattedNumberEditText extends NumberEditText {
+    private boolean mDebug = false;
     private final Set<TextWatcher> mTextWatchers = new HashSet<>();
     private boolean mTextWatchersEnabled = true;
     private final TextWatcher mTextWatcher = new TextWatcher() {
@@ -61,7 +62,6 @@ public class FormattedNumberEditText extends NumberEditText {
         }
     };
     private EquationFormatter mEquationFormatter;
-    private int mSelectionHandle = 0;
     private Solver mSolver;
     private List<String> mKeywords;
     private boolean mIsInserting;
@@ -111,15 +111,15 @@ public class FormattedNumberEditText extends NumberEditText {
         String text = removeFormatting(s.toString());
 
         // Get the selection handle, since we're setting text and that'll overwrite it
-        mSelectionHandle = getSelectionStart();
+        MutableInteger selectionHandle = new MutableInteger(getSelectionStart());
 
         // Adjust the handle by removing any comas or spacing to the left
-        String cs = s.subSequence(0, mSelectionHandle).toString();
-        mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
+        String cs = s.subSequence(0, selectionHandle.intValue()).toString();
+        selectionHandle.subtract(TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator()));
 
         // Update the text with formatted (comas, etc) text
-        setText(formatText(text));
-        setSelection(mSelectionHandle);
+        setText(Html.fromHtml(formatText(text, selectionHandle)));
+        setSelection(selectionHandle.intValue());
     }
 
     @Override
@@ -152,7 +152,7 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     public String getCleanText() {
-        return toString();
+        return removeFormatting(getText().toString());
     }
 
     public void insert(String delta) {
@@ -238,34 +238,71 @@ public class FormattedNumberEditText extends NumberEditText {
         return input;
     }
 
-    protected Spanned formatText(String input) {
-        if(mSolver != null) {
+    protected String formatText(String input, MutableInteger selectionHandle) {
+        if (mSolver != null) {
             // Add grouping, and then split on the selection handle
             // which is saved as a unique char
             int customHandle = input.indexOf(BaseModule.SELECTION_HANDLE);
             if (customHandle >= 0) {
-                mSelectionHandle = customHandle;
+                selectionHandle.set(customHandle);
                 input = input.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
             }
-            String grouped = mEquationFormatter.addComas(mSolver, input, mSelectionHandle);
+            String grouped = mEquationFormatter.addComas(mSolver, input, selectionHandle.intValue());
             if (grouped.contains(String.valueOf(BaseModule.SELECTION_HANDLE))) {
                 String[] temp = grouped.split(String.valueOf(BaseModule.SELECTION_HANDLE));
-                mSelectionHandle = temp[0].length();
+                selectionHandle.set(temp[0].length());
                 input = "";
                 for (String s : temp) {
                     input += s;
                 }
             } else {
                 input = grouped;
-                mSelectionHandle = input.length();
+                selectionHandle.set(input.length());
             }
         }
 
-        return Html.fromHtml(mEquationFormatter.insertSupScripts(input));
+        return mEquationFormatter.insertSupScripts(input);
     }
 
-    @Override
-    public String toString() {
-        return removeFormatting(getText().toString());
+    protected Solver getSolver() {
+        return mSolver;
+    }
+
+    public void setDebugEnabled(boolean enabled) {
+        mDebug = enabled;
+    }
+
+    public boolean isDebuggingEnabled() {
+        return mDebug;
+    }
+
+    public class MutableInteger {
+
+        private int value;
+
+        public MutableInteger(int value) {
+            this.value = value;
+        }
+
+        public void set(int value) {
+            this.value = value;
+        }
+
+        public void add(int value) {
+            this.value += value;
+        }
+
+        public void subtract(int value) {
+            this.value -= value;
+        }
+
+        public int intValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return Integer.toString(value);
+        }
     }
 }

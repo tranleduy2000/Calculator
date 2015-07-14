@@ -18,6 +18,7 @@ package com.android2.calculator3.view;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.TextWatcher;
@@ -25,8 +26,11 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
+
+import com.xlythe.math.BaseModule;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,33 +55,35 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     private void setUp(Context context, AttributeSet attrs) {
         setMovementMethod(new MathMovementMethod());
-        addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                invalidateSpannables();
-            }
-        });
         addSpanComponent(new MatrixComponent(getContext()));
     }
 
-    protected void onFormat(final Editable s) {
+    protected void onFormat(Editable s) {
+        // Grab the text, as well as the selection handle
+        String editable = s.toString();
+        MutableInteger selectionHandle = new MutableInteger(getSelectionStart());
+
+        // Make adjustments (insert will append a SELECTION_HANDLE marker)
+        int customHandle = editable.indexOf(BaseModule.SELECTION_HANDLE);
+        if (customHandle >= 0) {
+            selectionHandle.set(customHandle);
+            editable = editable.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
+        }
+
+        // Update the text with the correct (no SELECTION_HANDLE) copy
+        setText(editable);
+        setSelection(selectionHandle.intValue());
+        invalidateSpannables();
+        s = getText();
+
         // We don't want to format anything that's controlled by MathSpannables (like matrices).
         // So grab all the spans in our EditText
         MathSpannable[] spans = s.getSpans(0, s.length(), MathSpannable.class);
+        final Editable s2 = s;
         Arrays.sort(spans, new Comparator<MathSpannable>() {
             @Override
             public int compare(MathSpannable a, MathSpannable b) {
-                return s.getSpanStart(a) - s.getSpanStart(b);
+                return s2.getSpanStart(a) - s2.getSpanStart(b);
             }
         });
 
@@ -87,21 +93,30 @@ public class CalculatorEditText extends FormattedNumberEditText {
             return;
         }
 
-//        // Start formatting, but skip the parts that involve spans
-//        int start = s.getSpanStart(spans[0]);
-//
-//        String text = removeFormatting(s.toString());
-//
-//        // Get the selection handle, since we're setting text and that'll overwrite it
-//        mSelectionHandle = getSelectionStart();
-//
-//        // Adjust the handle by removing any comas or spacing to the left
-//        String cs = s.subSequence(0, mSelectionHandle).toString();
-//        mSelectionHandle -= TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator());
-//
-//        // Update the text with formatted (comas, etc) text
-//        setText(formatText(text));
-//        setSelection(mSelectionHandle);
+        // Start formatting, but skip the parts that involve spans
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < spans.length + 1; i++) {
+            int start = i == 0 ? 0 : s.getSpanEnd(spans[i - 1]);
+            int end = i == spans.length ? s.length() : s.getSpanStart(spans[i]);
+
+            String text = editable.substring(start, end);
+            if (selectionHandle.intValue() >= start && selectionHandle.intValue() < end) {
+                // Special case -- keep track of the selection handle
+                String cs = text.substring(0, selectionHandle.intValue() - start);
+                selectionHandle.subtract(TextUtil.countOccurrences(cs, getSolver().getBaseModule().getSeparator()));
+            }
+            text = formatText(removeFormatting(text), selectionHandle);
+            builder.append(text);
+            if (i < spans.length) {
+                builder.append(spans[i].getEquation());
+            }
+        }
+
+        // Update the text with formatted (comas, etc) text
+        setText(Html.fromHtml(builder.toString()));
+        setSelection(selectionHandle.intValue());
+        invalidateSpannables();
     }
 
     @Override
@@ -162,7 +177,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
     @Override
     public void backspace() {
         if (getSelectionStart() > 0) {
-            MathSpannable[] spans = getText().getSpans(getSelectionStart() - 1, getSelectionStart() - 1, MathSpannable.class);
+            MathSpannable[] spans = getText().getSpans(getSelectionStart(), getSelectionStart(), MathSpannable.class);
             if (spans.length != 0) {
                 if (spans[0].removeOnBackspace()) {
                     String text = getText().toString();

@@ -73,6 +73,7 @@ public class MatrixComponent extends SpanComponent {
 
         private final NinePatchDrawable mBackground;
         private final Rect mBackgroundPadding = new Rect();
+        private final float mMinColumnWidth;
 
         // Cached copy of the span's width
         private int mSize;
@@ -100,6 +101,8 @@ public class MatrixComponent extends SpanComponent {
                 mBackground = (NinePatchDrawable) mContext.getResources().getDrawable(R.drawable.matrix_background);
             }
             mBackground.getPadding(mBackgroundPadding);
+
+            mMinColumnWidth = mContext.getResources().getDisplayMetrics().density * 10;
         }
 
         private int getColumnSize(Paint paint, int column) {
@@ -107,7 +110,7 @@ public class MatrixComponent extends SpanComponent {
             for (int i = 0; i < mData.length; i++) {
                 largestTextWidth = Math.max(paint.measureText(mData[i][column]), largestTextWidth);
             }
-            return (int) largestTextWidth;
+            return (int) Math.max(mMinColumnWidth, largestTextWidth);
         }
 
         @Override
@@ -136,7 +139,6 @@ public class MatrixComponent extends SpanComponent {
             for (int i = 0; i < mData.length; i++) {
                 for (int j = 0; j < mData[i].length; j++) {
                     String pos = mData[i][j];
-                    Log.d("TEST", "Drawing " + pos + " from pos "+i+","+j);
                     canvas.drawText(pos, 0, pos.length(), xOffset, 10, paint);
                 }
             }

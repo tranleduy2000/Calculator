@@ -61,7 +61,7 @@ public class FloatingCalculator extends FloatingView {
         mDisplay.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                copyContent(mDisplay.toString());
+                copyContent(mDisplay.getCleanText());
                 return true;
             }
         });

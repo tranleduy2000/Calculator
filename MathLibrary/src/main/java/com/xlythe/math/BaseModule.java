@@ -221,7 +221,7 @@ public class BaseModule extends Module {
     public String groupSentence(String originalText, int selectionHandle) {
         if(originalText.isEmpty() || originalText.matches(REGEX_NOT_NUMBER)) return originalText;
 
-        if(selectionHandle >= 0) {
+        if(selectionHandle >= 0 && selectionHandle <= originalText.length()) {
             originalText = originalText.substring(0, selectionHandle) +
                     SELECTION_HANDLE +
                     originalText.substring(selectionHandle);
