@@ -58,6 +58,22 @@ public class CalculatorEditText extends FormattedNumberEditText {
         addSpanComponent(new MatrixComponent(getContext()));
     }
 
+    @Override
+    protected void onSelectionChanged(int handle, int selEnd) {
+        super.onSelectionChanged(handle, selEnd);
+        Editable text = getText();
+        MathSpannable[] spans = text.getSpans(0, text.length(), MathSpannable.class);
+        for (MathSpannable span : spans) {
+            int start = text.getSpanStart(span);
+            int end = text.getSpanEnd(span);
+            if (handle > start && handle < end) {
+                span.setCursor(handle - start);
+            } else {
+                span.setCursor(-1);
+            }
+        }
+    }
+
     protected void onFormat(Editable s) {
         // Grab the text, as well as the selection handle
         String editable = s.toString();
@@ -221,6 +237,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
      * */
     public static abstract class MathSpannable extends ReplacementSpan {
         private String mEquation;
+        private int mCursor = -1;
 
         public MathSpannable(String equation) {
             mEquation = equation;
@@ -236,6 +253,14 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
         public boolean removeOnBackspace() {
             return false;
+        }
+
+        public void setCursor(int cursor) {
+            mCursor = cursor;
+        }
+
+        public int getCursor() {
+            return mCursor;
         }
     }
 

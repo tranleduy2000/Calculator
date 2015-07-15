@@ -17,10 +17,8 @@ package com.android2.calculator3;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import com.android2.calculator3.view.CalculatorEditText;
-import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.MatrixComponent;
 
 /**

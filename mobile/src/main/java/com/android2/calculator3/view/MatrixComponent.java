@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
+import android.os.SystemClock;
 import android.util.Log;
 
 import com.android2.calculator3.R;
@@ -74,6 +75,11 @@ public class MatrixComponent extends SpanComponent {
         private final NinePatchDrawable mBackground;
         private final Rect mBackgroundPadding = new Rect();
         private final float mMinColumnWidth;
+        private final float mSpacing;
+
+        private static final int BLINK = 500;
+        private final long mShowCursor = SystemClock.uptimeMillis();
+        private final Paint mHighlightPaint = new Paint();
 
         // Cached copy of the span's width
         private int mSize;
@@ -103,6 +109,7 @@ public class MatrixComponent extends SpanComponent {
             mBackground.getPadding(mBackgroundPadding);
 
             mMinColumnWidth = mContext.getResources().getDisplayMetrics().density * 50;
+            mSpacing = mContext.getResources().getDisplayMetrics().density * 5;
         }
 
         private int getColumnSize(Paint paint, int column) {
@@ -113,11 +120,21 @@ public class MatrixComponent extends SpanComponent {
             return (int) Math.max(mMinColumnWidth, largestTextWidth);
         }
 
+        private void modifyPaint(Paint paint) {
+            paint.setTextSize(paint.getTextSize() / mData.length);
+        }
+
+        private void restorePaint(Paint paint) {
+            paint.setTextSize(paint.getTextSize() * mData.length);
+        }
+
         @Override
         public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
             if (mSize != 0) {
                 return mSize;
             }
+
+            modifyPaint(paint);
 
             int padding = mBackgroundPadding.left + mBackgroundPadding.right;
             int columnSize = 0;
@@ -125,21 +142,39 @@ public class MatrixComponent extends SpanComponent {
                 columnSize += getColumnSize(paint, i);
             }
             mSize = Math.max(padding + columnSize, mBackground.getIntrinsicWidth());
+
+            restorePaint(paint);
+
             return mSize;
         }
 
         @Override
         public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
             // Draw the background
-            mBackground.setBounds((int) x, top, (int) x + mSize, bottom);
+            mBackground.setBounds((int) x, top - mBackgroundPadding.top, (int) x + mSize, bottom + mBackgroundPadding.bottom);
             mBackground.draw(canvas);
 
             // Draw the text
+            modifyPaint(paint);
             float xOffset = x + mBackgroundPadding.left;
             for (int i = 0; i < mData.length; i++) {
+                float yOffset = paint.getTextSize();
                 for (int j = 0; j < mData[i].length; j++) {
                     String pos = mData[i][j];
-                    canvas.drawText(pos, 0, pos.length(), xOffset, 10, paint);
+                    canvas.drawText(pos, 0, pos.length(), xOffset, yOffset, paint);
+                    yOffset += paint.getTextSize();
+                }
+                xOffset += getColumnSize(paint, i);
+            }
+            restorePaint(paint);
+
+            // Draw the cursor
+            // TODO cursor should be set when drawing text, to properly set x/y position
+            if(getCursor() >= 0) {
+                if((SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
+                    mHighlightPaint.setColor(paint.getColor());
+                    mHighlightPaint.setStyle(Paint.Style.STROKE);
+                    canvas.drawLine(mBackgroundPadding.left, top, mBackgroundPadding.left, bottom, mHighlightPaint);
                 }
             }
         }
