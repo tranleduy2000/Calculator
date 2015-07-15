@@ -102,7 +102,7 @@ public class MatrixComponent extends SpanComponent {
             }
             mBackground.getPadding(mBackgroundPadding);
 
-            mMinColumnWidth = mContext.getResources().getDisplayMetrics().density * 10;
+            mMinColumnWidth = mContext.getResources().getDisplayMetrics().density * 50;
         }
 
         private int getColumnSize(Paint paint, int column) {

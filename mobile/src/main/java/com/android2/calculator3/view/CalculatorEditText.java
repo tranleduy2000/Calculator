@@ -96,22 +96,34 @@ public class CalculatorEditText extends FormattedNumberEditText {
         // Start formatting, but skip the parts that involve spans
         StringBuilder builder = new StringBuilder();
 
+        Log.d("TEST", "Parsing " + editable);
         for (int i = 0; i < spans.length + 1; i++) {
             int start = i == 0 ? 0 : s.getSpanEnd(spans[i - 1]);
             int end = i == spans.length ? s.length() : s.getSpanStart(spans[i]);
+            Log.d("TEST", "I'm looking at the range " + start + " to " + end);
 
             String text = editable.substring(start, end);
-            if (selectionHandle.intValue() >= start && selectionHandle.intValue() < end) {
+            Log.d("TEST", "I grabbed " + text);
+            Log.d("TEST", "My selection handle is " + selectionHandle);
+            boolean chunkBeforeSelectionHandle = end <= selectionHandle.intValue();
+            boolean selectionHandleInChunk = selectionHandle.intValue() >= start && selectionHandle.intValue() < end;
+            if (chunkBeforeSelectionHandle || selectionHandleInChunk) {
+                int length = Math.min(text.length(), selectionHandle.intValue() - start);
                 // Special case -- keep track of the selection handle
-                String cs = text.substring(0, selectionHandle.intValue() - start);
+                String cs = text.substring(0, length);
                 selectionHandle.subtract(TextUtil.countOccurrences(cs, getSolver().getBaseModule().getSeparator()));
+                text = formatText(removeFormatting(text), selectionHandle);
+            } else {
+                text = formatText(removeFormatting(text), selectionHandle);
             }
-            text = formatText(removeFormatting(text), selectionHandle);
+            Log.d("TEST", "I formatted it to look like " + text);
             builder.append(text);
             if (i < spans.length) {
                 builder.append(spans[i].getEquation());
+                Log.d("TEST", "Adding my span too: " + spans[i].getEquation());
             }
         }
+        Log.d("TEST", "My end result is: " + builder.toString());
 
         // Update the text with formatted (comas, etc) text
         setText(Html.fromHtml(builder.toString()));

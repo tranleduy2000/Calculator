@@ -239,14 +239,15 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     protected String formatText(String input, MutableInteger selectionHandle) {
+        int customHandle = input.indexOf(BaseModule.SELECTION_HANDLE);
+        if (customHandle >= 0) {
+            selectionHandle.set(customHandle);
+            input = input.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
+        }
+
         if (mSolver != null) {
             // Add grouping, and then split on the selection handle
             // which is saved as a unique char
-            int customHandle = input.indexOf(BaseModule.SELECTION_HANDLE);
-            if (customHandle >= 0) {
-                selectionHandle.set(customHandle);
-                input = input.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
-            }
             String grouped = mEquationFormatter.addComas(mSolver, input, selectionHandle.intValue());
             if (grouped.contains(String.valueOf(BaseModule.SELECTION_HANDLE))) {
                 String[] temp = grouped.split(String.valueOf(BaseModule.SELECTION_HANDLE));
@@ -257,7 +258,6 @@ public class FormattedNumberEditText extends NumberEditText {
                 }
             } else {
                 input = grouped;
-                selectionHandle.set(input.length());
             }
         }
 
@@ -282,6 +282,10 @@ public class FormattedNumberEditText extends NumberEditText {
 
         public MutableInteger(int value) {
             this.value = value;
+        }
+
+        public MutableInteger(MutableInteger value) {
+            this.value = value.intValue();
         }
 
         public void set(int value) {
