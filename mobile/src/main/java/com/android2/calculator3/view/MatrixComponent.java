@@ -194,5 +194,35 @@ public class MatrixComponent extends SpanComponent {
             return count;
         }
 
+        @Override
+        public int next() {
+            String equation = getEquation();
+            int cursor = Math.max(0, getCursor());
+            int delta = 0;
+            Log.d("TEST", String.format("Moving next. Equation is %s, cursor is at %s, moving forward at least %s", equation, cursor, delta));
+            if (extraCharacter(equation.charAt(cursor))) {
+                while (cursor + delta < equation.length() && extraCharacter(equation.charAt(cursor + delta))) {
+                    Log.d("TEST", "We found " + equation.charAt(cursor + delta) + " at position " + (cursor + delta));
+                    delta++;
+                }
+                return delta;
+            } else {
+                return super.next();
+            }
+        }
+
+        @Override
+        public int backspace() {
+            String equation = getEquation();
+            int cursor = getCursor();
+            if (extraCharacter(equation.charAt(cursor)) || equation.charAt(cursor) == Constants.MATRIX_SEPARATOR) {
+                return 0;
+            }
+            return 1;
+        }
+
+        private boolean extraCharacter(char character) {
+            return character == '[' || character == ']';
+        }
     }
 }

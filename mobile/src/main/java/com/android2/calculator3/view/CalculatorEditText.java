@@ -64,17 +64,22 @@ public class CalculatorEditText extends FormattedNumberEditText {
         Editable text = getText();
         MathSpannable[] spans = text.getSpans(0, text.length(), MathSpannable.class);
         for (MathSpannable span : spans) {
+            log("onSelectionChanged " + handle + " " + selEnd);
             int start = text.getSpanStart(span);
             int end = text.getSpanEnd(span);
             if (handle > start && handle < end) {
+                log("notifying span(" + span.getEquation() + ") that its cursor is " + (handle - start));
                 span.setCursor(handle - start);
             } else {
+                log("removing span(" + span.getEquation() + ")'s cursor");
                 span.setCursor(-1);
             }
         }
     }
 
     protected void onFormat(Editable s) {
+        log("onFormat");
+
         // Grab the text, as well as the selection handle
         String editable = s.toString();
         MutableInteger selectionHandle = new MutableInteger(getSelectionStart());
@@ -88,8 +93,9 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
         // Update the text with the correct (no SELECTION_HANDLE) copy
         setText(editable);
-        setSelection(selectionHandle.intValue());
+        log("invalidateSpannables a");
         invalidateSpannables();
+        setSelection(selectionHandle.intValue());
         s = getText();
 
         // We don't want to format anything that's controlled by MathSpannables (like matrices).
@@ -112,15 +118,15 @@ public class CalculatorEditText extends FormattedNumberEditText {
         // Start formatting, but skip the parts that involve spans
         StringBuilder builder = new StringBuilder();
 
-        Log.d("TEST", "Parsing " + editable);
+        log("Parsing " + editable);
         for (int i = 0; i < spans.length + 1; i++) {
             int start = i == 0 ? 0 : s.getSpanEnd(spans[i - 1]);
             int end = i == spans.length ? s.length() : s.getSpanStart(spans[i]);
-            Log.d("TEST", "I'm looking at the range " + start + " to " + end);
+            log("I'm looking at the range " + start + " to " + end);
 
             String text = editable.substring(start, end);
-            Log.d("TEST", "I grabbed " + text);
-            Log.d("TEST", "My selection handle is " + selectionHandle);
+            log("I grabbed " + text);
+            log("My selection handle is " + selectionHandle);
             boolean chunkBeforeSelectionHandle = end <= selectionHandle.intValue();
             boolean selectionHandleInChunk = selectionHandle.intValue() >= start && selectionHandle.intValue() < end;
             if (chunkBeforeSelectionHandle || selectionHandleInChunk) {
@@ -132,19 +138,20 @@ public class CalculatorEditText extends FormattedNumberEditText {
             } else {
                 text = formatText(removeFormatting(text), selectionHandle);
             }
-            Log.d("TEST", "I formatted it to look like " + text);
+            log("I formatted it to look like " + text);
             builder.append(text);
             if (i < spans.length) {
                 builder.append(spans[i].getEquation());
-                Log.d("TEST", "Adding my span too: " + spans[i].getEquation());
+                log("Adding my span too: " + spans[i].getEquation());
             }
         }
-        Log.d("TEST", "My end result is: " + builder.toString());
+        log("My end result is: " + builder.toString());
 
         // Update the text with formatted (comas, etc) text
         setText(Html.fromHtml(builder.toString()));
-        setSelection(selectionHandle.intValue());
+        log("invalidateSpannables b");
         invalidateSpannables();
+        setSelection(selectionHandle.intValue());
     }
 
     @Override
@@ -176,10 +183,12 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     public void addSpanComponent(SpanComponent component) {
         mComponents.add(component);
+        log("invalidateSpannables c");
         invalidateSpannables();
     }
 
     public void invalidateSpannables() {
+        log("invalidating all spannables -- consider everything nullified");
         final Spannable spans = getText();
         final String text = spans.toString();
 
@@ -200,20 +209,51 @@ public class CalculatorEditText extends FormattedNumberEditText {
                 }
             }
         }
+
+        setSelection(getSelectionStart());
+    }
+
+    @Override
+    public void next() {
+        log("Told to go next");
+        final int selectionHandle = getSelectionStart();
+        final Editable editable = getText();
+        if (selectionHandle > 0) {
+            log("Handle is " + selectionHandle);
+            MathSpannable[] spans = editable.getSpans(selectionHandle, selectionHandle, MathSpannable.class);
+            if (spans.length != 0) {
+                // There's a spannable at our cursor position, but we don't know if it's before or after the position.
+                if (selectionHandle != editable.getSpanEnd(spans[0])) {
+                    int next = getSelectionStart() + spans[0].next();
+                    log("setSelection " + next);
+                    setSelection(next);
+                    return;
+                }
+            }
+        }
+
+        super.next();
     }
 
     @Override
     public void backspace() {
-        if (getSelectionStart() > 0) {
-            MathSpannable[] spans = getText().getSpans(getSelectionStart(), getSelectionStart(), MathSpannable.class);
+        final int selectionHandle = getSelectionStart();
+        final Editable editable = getText();
+        if (selectionHandle > 0) {
+            MathSpannable[] spans = editable.getSpans(selectionHandle, selectionHandle, MathSpannable.class);
             if (spans.length != 0) {
-                if (spans[0].removeOnBackspace()) {
-                    String text = getText().toString();
-                    int selectionHandle = getSelectionStart();
-                    String textBeforeInsertionHandle = text.substring(0, selectionHandle);
-                    String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
+                String text = editable.toString();
+                String textBeforeInsertionHandle = text.substring(0, selectionHandle);
+                String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
 
-                    int deletionLength = spans[0].getEquation().length();
+                int deletionLength = -1;
+                if (selectionHandle == editable.getSpanEnd(spans[0]) && spans[0].removeOnBackspace()) {
+                    deletionLength = spans[0].getEquation().length();
+                } else if (selectionHandle != editable.getSpanStart(spans[0])) {
+                    deletionLength = spans[0].backspace();
+                }
+
+                if (deletionLength != -1) {
                     String newText = textBeforeInsertionHandle.substring(0, textBeforeInsertionHandle.length() - deletionLength) + textAfterInsertionHandle;
                     setText(newText);
                     setSelection(selectionHandle - deletionLength);
@@ -255,12 +295,20 @@ public class CalculatorEditText extends FormattedNumberEditText {
             return false;
         }
 
+        public int backspace() {
+            return 1;
+        }
+
         public void setCursor(int cursor) {
             mCursor = cursor;
         }
 
         public int getCursor() {
             return mCursor;
+        }
+
+        public int next() {
+            return 1;
         }
     }
 
@@ -290,6 +338,12 @@ public class CalculatorEditText extends FormattedNumberEditText {
             }
 
             return super.onTouchEvent(widget, buffer, event);
+        }
+    }
+
+    private void log(String msg) {
+        if (isEnabled()) {
+            Log.d("TEST", msg);
         }
     }
 }

@@ -38,6 +38,7 @@ public class MatrixCalculator extends GraphingCalculator {
         switch (view.getId()) {
             case R.id.matrix:
                 mFormulaEditText.insert(MatrixComponent.getPattern());
+                mFormulaEditText.setSelection(mFormulaEditText.getSelectionStart() - MatrixComponent.getPattern().length() + 2);
                 return;
             case R.id.plus_col:
             case R.id.plus_row:
