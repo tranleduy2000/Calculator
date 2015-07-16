@@ -49,10 +49,6 @@
                 layout="@layout/pad_advanced" />
 
             <include
-                android:id="@+id/pad_trig"
-                layout="@layout/pad_trig" />
-
-            <include
                 android:id="@+id/pad_hex"
                 layout="@layout/pad_hex" />
 

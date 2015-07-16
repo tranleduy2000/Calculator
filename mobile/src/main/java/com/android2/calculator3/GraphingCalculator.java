@@ -128,17 +128,8 @@ public class GraphingCalculator extends BasicCalculator {
     public void onButtonClick(View view) {
         switch (view.getId()) {
             case R.id.fun_cos:
-            case R.id.fun_acos:
             case R.id.fun_sin:
-            case R.id.fun_asin:
             case R.id.fun_tan:
-            case R.id.fun_atan:
-            case R.id.fun_csc:
-            case R.id.fun_sec:
-            case R.id.fun_cot:
-            case R.id.fun_acsc:
-            case R.id.fun_asec:
-            case R.id.fun_acot:
                 mShowTrigDetails = true;
                 updateDetails();
                 break;
@@ -153,6 +144,19 @@ public class GraphingCalculator extends BasicCalculator {
                 return;
         }
         super.onButtonClick(view);
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        switch (view.getId()) {
+            case R.id.fun_cos:
+            case R.id.fun_sin:
+            case R.id.fun_tan:
+                mShowTrigDetails = true;
+                updateDetails();
+                break;
+        }
+        return super.onLongClick(view);
     }
 
     @Override

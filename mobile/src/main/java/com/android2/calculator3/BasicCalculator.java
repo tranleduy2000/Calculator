@@ -174,6 +174,11 @@ public class BasicCalculator extends Activity
         mFormulaEditText.setOnTextSizeChangeListener(this);
         mDeleteButton.setOnLongClickListener(this);
         mResultEditText.setEnabled(false);
+        findViewById(R.id.lparen).setOnLongClickListener(this);
+        findViewById(R.id.rparen).setOnLongClickListener(this);
+        findViewById(R.id.fun_sin).setOnLongClickListener(this);
+        findViewById(R.id.fun_cos).setOnLongClickListener(this);
+        findViewById(R.id.fun_tan).setOnLongClickListener(this);
 
         // Disable IME for this application
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
@@ -326,17 +331,8 @@ public class BasicCalculator extends Activity
                 mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
                 break;
             case R.id.fun_cos:
-            case R.id.fun_acos:
             case R.id.fun_sin:
-            case R.id.fun_asin:
             case R.id.fun_tan:
-            case R.id.fun_atan:
-            case R.id.fun_csc:
-            case R.id.fun_sec:
-            case R.id.fun_cot:
-            case R.id.fun_acsc:
-            case R.id.fun_asec:
-            case R.id.fun_acot:
             case R.id.fun_ln:
             case R.id.fun_log:
             case R.id.fun_det:
@@ -346,15 +342,7 @@ public class BasicCalculator extends Activity
             case R.id.fun_norm:
             case R.id.fun_polar:
                 // Add left parenthesis after functions.
-                if(mCurrentState.equals(CalculatorState.INPUT) ||
-                        mCurrentState.equals(CalculatorState.GRAPHING) ||
-                        mFormulaEditText.isCursorModified()) {
-                    mFormulaEditText.insert(((Button) view).getText() + "(");
-                }
-                else {
-                    mFormulaEditText.setText(((Button) view).getText() + "(");
-                    incrementGroupId();
-                }
+                insert(((Button) view).getText() + "(");
                 break;
             case R.id.op_add:
             case R.id.op_sub:
@@ -365,15 +353,7 @@ public class BasicCalculator extends Activity
                 mFormulaEditText.insert(((Button) view).getText().toString());
                 break;
             default:
-                if(mCurrentState.equals(CalculatorState.INPUT) ||
-                        mCurrentState.equals(CalculatorState.GRAPHING) ||
-                        mFormulaEditText.isCursorModified()) {
-                    mFormulaEditText.insert(((Button) view).getText().toString());
-                }
-                else {
-                    mFormulaEditText.setText(((Button) view).getText());
-                    incrementGroupId();
-                }
+                insert(((Button) view).getText().toString());
                 break;
         }
     }
@@ -381,12 +361,36 @@ public class BasicCalculator extends Activity
     @Override
     public boolean onLongClick(View view) {
         mCurrentButton = view;
-        if (view.getId() == R.id.del) {
-            saveHistory(mFormulaEditText.getCleanText(), mResultEditText.getCleanText(), true);
-            onClear();
-            return true;
+        switch (view.getId()) {
+            case R.id.del:
+                saveHistory(mFormulaEditText.getCleanText(), mResultEditText.getCleanText(), true);
+                onClear();
+                return true;
+            case R.id.lparen:
+            case R.id.rparen:
+                mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
+                return true;
+            case R.id.fun_cos:
+            case R.id.fun_sin:
+            case R.id.fun_tan:
+                // Add left parenthesis after functions.
+                insert(((Button) view).getText() + "(");
+                return true;
         }
         return false;
+    }
+
+    private void insert(String text) {
+        // Add left parenthesis after functions.
+        if(mCurrentState.equals(CalculatorState.INPUT) ||
+                mCurrentState.equals(CalculatorState.GRAPHING) ||
+                mFormulaEditText.isCursorModified()) {
+            mFormulaEditText.insert(text);
+        }
+        else {
+            mFormulaEditText.setText(text);
+            incrementGroupId();
+        }
     }
 
     @Override

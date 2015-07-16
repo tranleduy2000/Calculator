@@ -17,16 +17,6 @@
         android:contentDescription="@string/panel_advanced"/>
 
     <com.android2.calculator3.view.ImageButton
-        android:id="@+id/btn_trig"
-        android:src="@drawable/tray_btn_trig"
-        android:background="@color/pad_button_ripple_color"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:contentDescription="@string/panel_trig" />
-
-    <com.android2.calculator3.view.ImageButton
         android:id="@+id/btn_hex"
         android:src="@drawable/tray_btn_hex"
         android:background="@color/pad_button_ripple_color"
@@ -44,6 +34,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
-        android:contentDescription="@string/panel_matrix"/>
+        android:contentDescription="@string/panel_matrix"
+        android:visibility="gone"/>
 
 </LinearLayout>

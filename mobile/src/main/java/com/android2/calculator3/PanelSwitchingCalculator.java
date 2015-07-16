@@ -49,7 +49,7 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
     private static final String KEY_PANEL = NAME + "_panel";
 
     private enum Panel {
-        Advanced, Trig, Hex, Matrix;
+        Advanced, Hex, Matrix;
     }
 
     private ViewGroup mOverlay;
@@ -93,15 +93,12 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
         super.onSaveInstanceState(outState);
 
         final View advancedPad = findViewById(R.id.pad_advanced);
-        final View trigPad = findViewById(R.id.pad_trig);
         final View hexPad = findViewById(R.id.pad_hex);
         final View matrixPad = findViewById(R.id.pad_matrix);
 
         Panel panel = null;
         if (advancedPad.getVisibility() == View.VISIBLE) {
             panel = Panel.Advanced;
-        } else if (trigPad.getVisibility() == View.VISIBLE) {
-            panel = Panel.Trig;
         } else if (hexPad.getVisibility() == View.VISIBLE) {
             panel = Panel.Hex;
         } else if (matrixPad.getVisibility() == View.VISIBLE) {
@@ -217,7 +214,6 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
 
     private void setupTray(Bundle savedInstanceState) {
         final View advancedPad = findViewById(R.id.pad_advanced);
-        final View trigPad = findViewById(R.id.pad_trig);
         final View hexPad = findViewById(R.id.pad_hex);
         final View matrixPad = findViewById(R.id.pad_matrix);
         View.OnClickListener listener = new View.OnClickListener() {
@@ -227,9 +223,6 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
                 switch (v.getId()) {
                     case R.id.btn_advanced:
                         layout = advancedPad;
-                        break;
-                    case R.id.btn_trig:
-                        layout = trigPad;
                         break;
                     case R.id.btn_hex:
                         layout = hexPad;
@@ -279,7 +272,7 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
             }
         };
 
-        int[] buttons = {R.id.btn_advanced, R.id.btn_trig, R.id.btn_hex, R.id.btn_matrix};
+        int[] buttons = {R.id.btn_advanced, R.id.btn_hex, R.id.btn_matrix};
         for (int resId : buttons) {
             View button = mTray.findViewById(resId);
             button.setOnClickListener(listener);
@@ -290,9 +283,6 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
             switch (panel) {
                 case Advanced:
                     showPage(advancedPad);
-                    break;
-                case Trig:
-                    showPage(trigPad);
                     break;
                 case Hex:
                     showPage(hexPad);
