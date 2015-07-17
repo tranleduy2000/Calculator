@@ -18,7 +18,7 @@ import java.util.Locale;
  */
 public class Solver {
     // Used for solving basic math
-    private static final Symbols mSymbols = new Symbols();
+    private static final Symbols sSymbols = new Symbols();
     private BaseModule mBaseModule;
     private MatrixModule mMatrixModule;
     private GraphModule mGraphModule;
@@ -57,7 +57,7 @@ public class Solver {
         // Convert to decimal
         String decimalInput = convertToDecimal(input);
 
-        Complex value = mSymbols.evalComplex(decimalInput);
+        Complex value = sSymbols.evalComplex(decimalInput);
 
         String real = "";
         for(int precision = mLineLength; precision > 6; precision--) {
@@ -95,19 +95,19 @@ public class Solver {
     }
 
     public double eval(String input) throws SyntaxException{
-        return mSymbols.eval(input);
+        return sSymbols.eval(input);
     }
 
     public void pushFrame() {
-        mSymbols.pushFrame();
+        sSymbols.pushFrame();
     }
 
     public void popFrame() {
-        mSymbols.popFrame();
+        sSymbols.popFrame();
     }
 
     public void define(String var, double val) {
-        mSymbols.define(var, val);
+        sSymbols.define(var, val);
     }
 
     public static boolean equal(String a, String b) {
@@ -220,5 +220,9 @@ public class Solver {
 
     public GraphModule getGraphModule() {
         return mGraphModule;
+    }
+
+    public Symbols getSymbols() {
+        return sSymbols;
     }
 }

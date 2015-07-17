@@ -380,7 +380,11 @@ public class BasicCalculator extends Activity
         return false;
     }
 
-    private void insert(String text) {
+    /**
+     * Inserts text into the formula EditText. If an equation was recently solved, it will
+     * replace the formula's text instead of appending.
+     * */
+    protected void insert(String text) {
         // Add left parenthesis after functions.
         if(mCurrentState.equals(CalculatorState.INPUT) ||
                 mCurrentState.equals(CalculatorState.GRAPHING) ||

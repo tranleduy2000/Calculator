@@ -230,6 +230,11 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
                     case R.id.btn_matrix:
                         layout = matrixPad;
                         break;
+                    case R.id.btn_close:
+                        // Special case. This button just closes the tray.
+                        showFab();
+                        hideTray();
+                        return;
                 }
                 showPage(layout);
                 showFab();
@@ -272,7 +277,7 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
             }
         };
 
-        int[] buttons = {R.id.btn_advanced, R.id.btn_hex, R.id.btn_matrix};
+        int[] buttons = {R.id.btn_advanced, R.id.btn_hex, R.id.btn_matrix, R.id.btn_close};
         for (int resId : buttons) {
             View button = mTray.findViewById(resId);
             button.setOnClickListener(listener);
