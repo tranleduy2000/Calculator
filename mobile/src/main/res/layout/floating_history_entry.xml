@@ -15,7 +15,8 @@
         android:background="@android:color/transparent"
         android:gravity="left"
         android:textColor="@android:color/white"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        android:singleLine="true" />
 
     <TextView
         android:id="@+id/historyResult"
@@ -25,6 +26,7 @@
         android:background="@android:color/transparent"
         android:gravity="right"
         android:textColor="@android:color/white"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:singleLine="true" />
 
 </com.android2.calculator3.view.HistoryLine>

@@ -16,14 +16,11 @@
 
 package com.xlythe.math;
 
-import android.support.v7.widget.RecyclerView;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Vector;
 
 public class History {
     private static final int VERSION_1 = 1;
@@ -32,7 +29,7 @@ public class History {
     private List<HistoryEntry> mEntries = new LinkedList<HistoryEntry>();
     private int mPos;
     private int mGroupId;
-    private RecyclerView.Adapter mObserver;
+    private Observer mObserver;
 
     History() {
         clear();
@@ -64,7 +61,7 @@ public class History {
         }
     }
 
-    public void setObserver(RecyclerView.Adapter observer) {
+    public void setObserver(Observer observer) {
         mObserver = observer;
     }
 
@@ -112,5 +109,9 @@ public class History {
 
     public List<HistoryEntry> getEntries() {
         return mEntries;
+    }
+
+    public interface Observer {
+        void notifyDataSetChanged();
     }
 }

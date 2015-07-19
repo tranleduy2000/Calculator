@@ -224,7 +224,12 @@ public class BasicCalculator extends Activity
         }
 
         // Observe! Set! Typical adapter stuff.
-        mHistory.setObserver(mHistoryAdapter);
+        mHistory.setObserver(new History.Observer() {
+            @Override
+            public void notifyDataSetChanged() {
+                mHistoryAdapter.notifyDataSetChanged();
+            }
+        });
         mDisplayView.setAdapter(mHistoryAdapter);
         mDisplayView.scrollToMostRecent();
     }
@@ -370,11 +375,14 @@ public class BasicCalculator extends Activity
             case R.id.rparen:
                 mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
                 return true;
-            case R.id.fun_cos:
             case R.id.fun_sin:
+                insert(getString(R.string.fun_arcsin) + "(");
+                return true;
+            case R.id.fun_cos:
+                insert(getString(R.string.fun_arccos) + "(");
+                return true;
             case R.id.fun_tan:
-                // Add left parenthesis after functions.
-                insert(((Button) view).getText() + "(");
+                insert(getString(R.string.fun_arctan) + "(");
                 return true;
         }
         return false;

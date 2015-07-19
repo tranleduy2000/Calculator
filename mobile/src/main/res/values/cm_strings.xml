@@ -84,7 +84,8 @@
     <!-- (Hidden) Displayed on buttons on screen for the modulo function. -->
     <string name="mod">mod</string>
     <!-- Displayed on button on screen for the cube root function. -->
-    <string name="cbrt">\u00b3\u221a</string>
+    <string name="op_cbrt">\u00b3\u221a</string>
+    <string name="desc_op_cbrt">cube root</string>
 
     <!-- Displayed on buttons on screen for parentheses. -->
     <string name="parentheses" translatable="false">( )</string>
@@ -92,6 +93,7 @@
 
     <string name="text_copied_toast">Text copied.</string>
     <string name="copy">Copy \'%s\'</string>
+    <string name="remove_from_history">Remove from history.</string>
 
     <!-- Matrix page text -->
     <string name="eigenvalue">Eigen</string>
@@ -123,7 +125,11 @@
     <string name="panel_trig">Trigonometry</string>
     <string name="panel_hex">Hexadecimal</string>
     <string name="panel_matrix">Matrix</string>
+    <string name="panel_function">Function</string>
     <string name="panel_close_btn">Close</string>
+
+    <string name="function_rename">Rename</string>
+    <string name="function_clear">Clear</string>
 
     <string name="radians">RAD</string>
     <string name="degrees">DEG</string>

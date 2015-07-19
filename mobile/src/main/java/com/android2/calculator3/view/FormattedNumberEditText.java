@@ -19,10 +19,8 @@ package com.android2.calculator3.view;
 import android.content.Context;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.android2.calculator3.R;
 import com.xlythe.math.BaseModule;
@@ -80,6 +78,10 @@ public class FormattedNumberEditText extends NumberEditText {
         // Display ^ , and other visual cues
         mEquationFormatter = new EquationFormatter();
         addTextChangedListener(mTextWatcher);
+        invalidateKeywords(context);
+    }
+
+    public void invalidateKeywords(Context context) {
         mKeywords = Arrays.asList(
                 context.getString(R.string.fun_arcsin) + "(",
                 context.getString(R.string.fun_arccos) + "(",
@@ -104,7 +106,7 @@ public class FormattedNumberEditText extends NumberEditText {
                 context.getString(R.string.fun_polar) + "(",
                 context.getString(R.string.dx),
                 context.getString(R.string.dy),
-                context.getString(R.string.cbrt) + "(");
+                context.getString(R.string.op_cbrt) + "(");
     }
 
     protected void onFormat(Editable s) {

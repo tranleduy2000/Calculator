@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/floating_calc_background">
 
-    <android.support.v4.view.ViewPager
+    <com.android2.calculator3.view.CalculatorPadViewPager
         android:id="@+id/panelswitch"
         android:layout_width="@dimen/floating_width"
         android:layout_height="@dimen/floating_height"
@@ -13,20 +13,40 @@
     <LinearLayout
         android:layout_width="@dimen/floating_width"
         android:layout_height="@dimen/floating_display_height_with_shadow"
-        android:padding="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:orientation="horizontal"
         android:background="@drawable/white_card">
 
-        <com.android2.calculator3.view.CalculatorEditText
+        <ViewSwitcher
             android:id="@+id/display"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textSize="23sp"
-            android:textColor="@color/display_formula_text_color"
-            android:background="@android:color/transparent"
-            android:textCursorDrawable="@drawable/cursor"
-            android:inputType="text|textNoSuggestions"/>
+            android:inAnimation="@anim/floating_slide_in"
+            android:outAnimation="@anim/floating_slide_out">
+
+            <com.android2.calculator3.view.CalculatorEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="23sp"
+                android:textColor="@color/display_formula_text_color"
+                android:background="@android:color/transparent"
+                android:textCursorDrawable="@drawable/cursor"
+                android:inputType="text|textNoSuggestions"
+                android:enabled="false"/>
+
+            <com.android2.calculator3.view.CalculatorEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="23sp"
+                android:textColor="@color/display_formula_text_color"
+                android:background="@android:color/transparent"
+                android:textCursorDrawable="@drawable/cursor"
+                android:inputType="text|textNoSuggestions"
+                android:enabled="false"/>
+
+        </ViewSwitcher>
 
         <ImageButton
             android:id="@+id/delete"

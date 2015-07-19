@@ -121,11 +121,19 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
         };
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        layoutManager.scrollToPosition(0);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         historyView.setLayoutManager(layoutManager);
 
-        FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mSolver, mHistory, listener);
-        mHistory.setObserver(historyAdapter);
+        final FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mSolver, mHistory, listener);
+        mHistory.setObserver(new History.Observer() {
+            @Override
+            public void notifyDataSetChanged() {
+                historyAdapter.notifyDataSetChanged();
+            }
+        });
         historyView.setAdapter(historyAdapter);
+
+        layoutManager.scrollToPosition(historyAdapter.getItemCount() - 1);
     }
 }

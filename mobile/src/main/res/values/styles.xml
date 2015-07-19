@@ -117,15 +117,6 @@
         <item name="android:background">@drawable/circle_bg</item>
     </style>
 
-    <style name="Theme.Calculator.ButtonStyle.FloatingCalc">
-        <item name="android:background">@drawable/circle_bg</item>
-        <item name="android:textSize">20sp</item>
-    </style>
-
-    <style name="Theme.Calculator.ButtonStyle.FloatingCalc.Advanced">
-        <item name="android:textColor">@color/pad_button_advanced_text_color</item>
-    </style>
-
     <style name="PadButtonStyle" parent="@android:style/Widget.Button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -149,6 +140,17 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
+    </style>
+
+    <style name="PadButtonStyle.FloatingCalc">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="PadButtonStyle.FloatingCalc.Advanced">
+        <item name="android:background">@color/pad_button_advanced_ripple_color</item>
+        <item name="android:textColor">@color/pad_button_advanced_text_color</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_margin">7dp</item>
     </style>
 
     <style name="PadButtonStyle.Advanced">

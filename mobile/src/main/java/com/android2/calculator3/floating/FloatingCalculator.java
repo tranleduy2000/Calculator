@@ -1,10 +1,13 @@
 package com.android2.calculator3.floating;
 
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ViewSwitcher;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.CalculatorExpressionEvaluator;
@@ -14,14 +17,16 @@ import com.android2.calculator3.R;
 import com.android2.calculator3.view.CalculatorEditText;
 import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.Constants;
+import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
 import com.xlythe.math.Persist;
+import com.xlythe.math.Solver;
 
 
 public class FloatingCalculator extends FloatingView {
     // Calc logic
     private View.OnClickListener mListener;
-    private CalculatorEditText mDisplay;
+    private ViewSwitcher mDisplay;
     private ImageButton mDelete;
     private ImageButton mClear;
     private ViewPager mPager;
@@ -44,7 +49,7 @@ public class FloatingCalculator extends FloatingView {
         // but it might change a decimal point from . to ,
         Constants.rebuildConstants();
 
-        View child = View.inflate(getContext(), R.layout.floating_calculator, null);
+        final View child = View.inflate(getContext(), R.layout.floating_calculator, null);
 
         mTokenizer = new CalculatorExpressionTokenizer(this);
         mEvaluator = new CalculatorExpressionEvaluator(mTokenizer);
@@ -56,46 +61,58 @@ public class FloatingCalculator extends FloatingView {
 
         mHistory = mPersist.getHistory();
 
-        mDisplay = (CalculatorEditText) child.findViewById(R.id.display);
-        mDisplay.setSolver(mEvaluator.getSolver());
-        mDisplay.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                copyContent(mDisplay.getCleanText());
-                return true;
-            }
-        });
+        mDisplay = (ViewSwitcher) child.findViewById(R.id.display);
+        for (int i = 0; i < mDisplay.getChildCount(); i++) {
+            final CalculatorEditText displayChild = (CalculatorEditText) mDisplay.getChildAt(i);
+            displayChild.setSolver(mEvaluator.getSolver());
+            displayChild.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    copyContent(displayChild.getCleanText());
+                    return true;
+                }
+            });
+        }
 
         mDelete = (ImageButton) child.findViewById(R.id.delete);
         mClear = (ImageButton) child.findViewById(R.id.clear);
         mListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v.getId() == R.id.delete) {
-                    onDelete();
-                }
-                else if(v.getId() == R.id.clear) {
-                    onClear();
-                }
-                else if(v instanceof Button) {
-                    if(((Button) v).getText().toString().equals("=")) {
-                        mEvaluator.evaluate(mDisplay.getText(), new CalculatorExpressionEvaluator.EvaluateCallback() {
+                switch (v.getId()) {
+                    case R.id.delete:
+                        onDelete();
+                        break;
+                    case R.id.clear:
+                        mDisplay.showNext();
+                        onClear();
+                        break;
+                    case R.id.eq:
+                        mEvaluator.evaluate(getActiveEditText().getCleanText(), new CalculatorExpressionEvaluator.EvaluateCallback() {
                             @Override
                             public void onEvaluate(String expr, String result, int errorResourceId) {
+                                mDisplay.showNext();
                                 if (errorResourceId != Calculator.INVALID_RES_ID) {
                                     onError(errorResourceId);
                                 } else {
                                     setText(result);
+                                }if (saveHistory(expr, result)) {
+                                    RecyclerView history = (RecyclerView) child.findViewById(R.id.history);
+                                    history.getLayoutManager().scrollToPosition(history.getAdapter().getItemCount() - 1);
                                 }
                             }
                         });
-                    } else if(v.getId() == R.id.parentheses) {
-                        setText("(" + mDisplay.getText() + ")");
-                    } else if(((Button) v).getText().toString().length() >= 2) {
-                        onInsert(((Button) v).getText().toString() + "(");
-                    } else {
-                        onInsert(((Button) v).getText().toString());
-                    }
+                        break;
+                    case R.id.parentheses:
+                        setText("(" + getActiveEditText().getText() + ")");
+                        break;
+                    default:
+                        if(((Button) v).getText().toString().length() >= 2) {
+                            onInsert(((Button) v).getText().toString() + "(");
+                        } else {
+                            onInsert(((Button) v).getText().toString());
+                        }
+                        break;
                 }
             }
         };
@@ -103,6 +120,7 @@ public class FloatingCalculator extends FloatingView {
         mDelete.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                mDisplay.showNext();
                 onClear();
                 return true;
             }
@@ -126,27 +144,34 @@ public class FloatingCalculator extends FloatingView {
         return child;
     }
 
+    @Override
+    public void closeView(boolean returnToOrigin) {
+        super.closeView(returnToOrigin);
+        if (mPersist != null) {
+            mPersist.save();
+        }
+    }
+
     private void onDelete() {
         setState(State.DELETE);
-        mDisplay.backspace();
+        getActiveEditText().backspace();
     }
 
     private void onClear() {
         setState(State.DELETE);
-        mDisplay.clear();
+        getActiveEditText().clear();
     }
 
     private void setText(String text) {
         setState(State.CLEAR);
-        mDisplay.setText(text);
+        getActiveEditText().setText(text);
     }
 
     private void onInsert(String text) {
-        if(mState != State.DELETE) {
+        if (mState == State.ERROR || (mState == State.CLEAR && !Solver.isOperator(text))) {
             setText(text);
-        }
-        else {
-            mDisplay.insert(text);
+        } else {
+            getActiveEditText().insert(text);
         }
 
         setState(State.DELETE);
@@ -154,7 +179,7 @@ public class FloatingCalculator extends FloatingView {
 
     private void onError(int resId) {
         setState(State.ERROR);
-        mDisplay.setText(resId);
+        getActiveEditText().setText(resId);
     }
 
     private void setState(State state) {
@@ -163,12 +188,13 @@ public class FloatingCalculator extends FloatingView {
         if(mState != state) {
             switch (state) {
                 case CLEAR:
+                    getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
                     break;
                 case DELETE:
-                    mDisplay.setTextColor(getResources().getColor(R.color.display_formula_text_color));
+                    getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
                     break;
                 case ERROR:
-                    mDisplay.setTextColor(getResources().getColor(R.color.calculator_error_color));
+                    getActiveEditText().setTextColor(getResources().getColor(R.color.calculator_error_color));
                     break;
             }
             mState = state;
@@ -177,5 +203,26 @@ public class FloatingCalculator extends FloatingView {
 
     private void copyContent(String text) {
         Clipboard.copy(getContext(), text);
+    }
+
+    private CalculatorEditText getActiveEditText() {
+        return (CalculatorEditText) mDisplay.getCurrentView();
+    }
+
+    protected boolean saveHistory(String expr, String result) {
+        if (mHistory == null) {
+            return false;
+        }
+
+        if (!TextUtils.isEmpty(expr)
+                && !TextUtils.isEmpty(result)
+                && !Solver.equal(expr, result)
+                && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr))) {
+            expr = EquationFormatter.appendParenthesis(expr);
+            expr = Solver.clean(expr);
+            mHistory.enter(expr, result);
+            return true;
+        }
+        return false;
     }
 }

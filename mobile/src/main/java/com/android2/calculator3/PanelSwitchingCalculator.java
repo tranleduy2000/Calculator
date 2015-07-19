@@ -113,7 +113,7 @@ public class PanelSwitchingCalculator extends MatrixCalculator {
      * Returns true if it requires a relayout
      * */
     protected void initializeLayout() {
-        CalculatorPadLayout layout = (CalculatorPadLayout) findViewById(R.id.pad_advanced_grid);
+        CalculatorPadLayout layout = (CalculatorPadLayout) findViewById(R.id.pad_advanced);
         int rows = layout.getRows();
         int columns = layout.getColumns();
 
