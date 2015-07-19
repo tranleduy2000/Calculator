@@ -155,11 +155,6 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     @Override
-    public void requestDisallowInterceptTouchEvent(boolean b) {
-        // Nope.
-    }
-
-    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int action = MotionEventCompat.getActionMasked(ev);
         float y = ev.getRawY();
@@ -565,6 +560,12 @@ public class DisplayOverlay extends RelativeLayout {
             int height = historyLine.getHeight();
             int displayWidth = mDisplayBackground.getWidth();
             int displayHeight = mDisplayBackground.getHeight();
+
+            // We're going to pretend the shadow doesn't exist (because, really, we want to scale the cards)
+            // Scaling the shadow causes us to jump because we shrink too much
+            int shadowSize = getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow);
+            height -= shadowSize;
+            displayHeight -= shadowSize;
 
             // When we're fully expanded, turn the display into another row on the history adapter
             if (percent == 1f) {
