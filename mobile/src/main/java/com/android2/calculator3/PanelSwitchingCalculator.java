@@ -29,13 +29,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.android2.calculator3.drawable.AnimatingDrawable;
-import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.CalculatorPadLayout;
-import com.android2.calculator3.view.DisplayOverlay;
-import com.android2.calculator3.view.GraphView;
-import com.rey.material.widget.TextView;
 import com.xlythe.floatingview.AnimationFinishedListener;
-import com.xlythe.math.Base;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;

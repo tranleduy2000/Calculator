@@ -26,7 +26,6 @@ import android.text.style.ClickableSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -34,7 +33,6 @@ import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.GraphView;
-import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.GraphModule;

@@ -16,6 +16,7 @@
 package com.android2.calculator3.floating;
 
 import android.content.Context;
+
 import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.xlythe.math.History;

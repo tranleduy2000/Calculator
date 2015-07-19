@@ -21,7 +21,6 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.Layout;
 import android.text.Spannable;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ReplacementSpan;
@@ -33,7 +32,6 @@ import android.widget.TextView;
 import com.xlythe.math.BaseModule;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;

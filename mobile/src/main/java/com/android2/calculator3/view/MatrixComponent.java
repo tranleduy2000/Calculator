@@ -4,17 +4,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.SystemClock;
 import android.util.Log;
 
 import com.android2.calculator3.R;
-import com.android2.calculator3.view.CalculatorEditText.SpanComponent;
 import com.android2.calculator3.view.CalculatorEditText.MathSpannable;
-
+import com.android2.calculator3.view.CalculatorEditText.SpanComponent;
 import com.xlythe.math.Constants;
-import com.xlythe.math.Solver;
 
 import java.util.regex.Pattern;
 

@@ -12,12 +12,11 @@ import android.widget.RemoteViews;
 
 import com.android2.calculator3.R;
 import com.xlythe.math.Base;
-import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
-import com.xlythe.math.Solver;
 import com.xlythe.math.History;
 import com.xlythe.math.Persist;
+import com.xlythe.math.Solver;
 
 import org.javia.arity.SyntaxException;
 

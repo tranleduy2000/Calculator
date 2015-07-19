@@ -19,27 +19,20 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Animatable;
-import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.R;
-import com.android2.calculator3.drawable.AnimatingDrawable;
 import com.xlythe.floatingview.AnimationFinishedListener;
 
-import io.codetail.animation.SupportAnimator;
-import io.codetail.animation.ViewAnimationUtils;
 import io.codetail.widget.RevealFrameLayout;
 
 public class CalculatorPadView extends RevealFrameLayout {
