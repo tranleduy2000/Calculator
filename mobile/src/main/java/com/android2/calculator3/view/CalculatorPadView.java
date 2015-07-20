@@ -26,6 +26,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
@@ -143,6 +144,7 @@ public class CalculatorPadView extends RevealFrameLayout {
             mOverlay.setLayoutParams(mOverlay.getLayoutParams());
             invalidate = true;
         }
+        setEnabled(mOverlay, false);
 
         mFab.setTranslationX((mFab.getWidth() - getWidth() / 4) / 2);
         mFab.setTranslationY((mFab.getHeight() - getHeight() / 4) / 2);
@@ -243,6 +245,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         mLastDelta = mLastMotion - event.getRawX();
         mLastMotion = event.getRawX();
         setState(TranslateState.PARTIAL);
+        setEnabled(mOverlay, true);
     }
 
     protected void handleUp(MotionEvent event) {
@@ -296,6 +299,7 @@ public class CalculatorPadView extends RevealFrameLayout {
             @Override
             public void onAnimationFinished() {
                 hideFab();
+                setEnabled(mOverlay, false);
             }
         });
         animator.start();
@@ -333,6 +337,18 @@ public class CalculatorPadView extends RevealFrameLayout {
                 hideFab();
                 hideTray();
             }
+        }
+    }
+
+    private void setEnabled(View view, boolean enabled) {
+        if(view instanceof ViewGroup) {
+            for(int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                setEnabled(((ViewGroup) view).getChildAt(i), enabled);
+            }
+        } else if(view instanceof Button) {
+            view.setEnabled(enabled);
+        } else if(view instanceof ImageButton) {
+            view.setEnabled(enabled);
         }
     }
 

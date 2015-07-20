@@ -120,11 +120,13 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             if (holder.graphView != null) {
                 // TODO Floating calculator has no graph. Using that as a differentiator for now.
                 view.setBackgroundResource(R.drawable.white_card_subitem);
+                view.setPadding(dp(16), dp(8), dp(16), dp(8));
             }
         } else {
             if (holder.graphView != null) {
                 // TODO Floating calculator has no graph. Using that as a differentiator for now.
                 view.setBackgroundResource(R.drawable.white_card);
+                view.setPadding(dp(16), dp(8), dp(16), dp(8) + getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow));
             }
 
             // If this is a graph formula, start drawing the graph
@@ -142,8 +144,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 }
             }
         }
-        // Due to a bug, setBackgroundResource resets padding
-        view.setPadding(dp(16), dp(8), dp(16), dp(8));
     }
 
     public View parseView(ViewGroup parent, String formula, String result) {

@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -104,6 +105,12 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
                 break;
         }
         applyListener(mViews[position]);
+        mViews[position].setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return true;
+            }
+        });
         return mViews[position];
     }
 

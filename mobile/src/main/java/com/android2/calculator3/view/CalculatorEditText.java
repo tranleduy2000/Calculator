@@ -37,6 +37,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CalculatorEditText extends FormattedNumberEditText {
+    private static final boolean DEBUG = false;
+
     // Look for special text (like matrices) that we want to format differently
     private final Set<SpanComponent> mComponents = new HashSet<>();
     private final Set<CharacterStyle> mSpans = new HashSet<>();
@@ -340,7 +342,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
     }
 
     private void log(String msg) {
-        if (isEnabled()) {
+        if (DEBUG) {
             Log.d("TEST", msg);
         }
     }
