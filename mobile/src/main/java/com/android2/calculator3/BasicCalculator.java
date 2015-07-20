@@ -429,7 +429,7 @@ public class BasicCalculator extends Activity
         mHistory.incrementGroupId();
     }
 
-    private void invalidateEqualsButton() {
+    protected void invalidateEqualsButton() {
         // Do nothing. Extensions of Basic Calculator may want to set the equals button to
         // Next mode during certain conditions.
     }
