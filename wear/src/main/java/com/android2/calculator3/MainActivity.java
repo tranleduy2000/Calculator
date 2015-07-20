@@ -225,6 +225,7 @@ public class MainActivity extends Activity {
                 && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr))) {
             expr = EquationFormatter.appendParenthesis(expr);
             expr = Solver.clean(expr);
+            expr = mTokenizer.getLocalizedExpression(expr);
             mHistory.enter(expr, result);
             return true;
         }
