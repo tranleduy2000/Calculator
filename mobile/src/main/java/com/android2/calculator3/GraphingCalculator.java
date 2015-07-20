@@ -37,7 +37,10 @@ import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.GraphModule;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Adds graphing and base switching to the basic calculator.
@@ -90,7 +93,7 @@ public class GraphingCalculator extends BasicCalculator {
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
 
-        updateDetails();
+        invalidateDetails();
     }
 
     private void transitionToGraph() {
@@ -129,7 +132,7 @@ public class GraphingCalculator extends BasicCalculator {
             case R.id.fun_sin:
             case R.id.fun_tan:
                 mShowTrigDetails = true;
-                updateDetails();
+                invalidateDetails();
                 break;
             case R.id.hex:
                 setBase(Base.HEXADECIMAL);
@@ -151,7 +154,7 @@ public class GraphingCalculator extends BasicCalculator {
             case R.id.fun_sin:
             case R.id.fun_tan:
                 mShowTrigDetails = true;
-                updateDetails();
+                invalidateDetails();
                 break;
         }
         return super.onLongClick(view);
@@ -210,7 +213,7 @@ public class GraphingCalculator extends BasicCalculator {
             }
         }
 
-        updateDetails();
+        invalidateDetails();
     }
 
     private void setSelectedBaseButton(Base base) {
@@ -219,99 +222,121 @@ public class GraphingCalculator extends BasicCalculator {
         findViewById(R.id.dec).setSelected(base.equals(Base.DECIMAL));
     }
 
-    private void updateDetails() {
-        if(mInfoView != null) {
-            String text = "";
-            String units = CalculatorSettings.useRadians(getBaseContext()) ?
-                    getString(R.string.radians) : getString(R.string.degrees);
-            String base = "";
-            switch(mBaseManager.getNumberBase()) {
-                case HEXADECIMAL:
-                    base = getString(R.string.hex).toUpperCase(Locale.getDefault());
-                    break;
-                case BINARY:
-                    base = getString(R.string.bin).toUpperCase(Locale.getDefault());
-                    break;
-                case DECIMAL:
-                    base = getString(R.string.dec).toUpperCase(Locale.getDefault());
-                    break;
-            }
-            if(mShowBaseDetails) text += base;
-            if(mShowTrigDetails) {
-                if(!text.isEmpty()) text += " | ";
-                text += units;
-            }
+    protected void invalidateDetails() {
+        List<Detail> details = getDetails();
 
+        String text = "";
+        for (Detail detail : details) {
+            if (!text.isEmpty()) {
+                text += " | ";
+            }
+            text += detail.word;
+        }
+
+        if(mInfoView != null) {
             mInfoView.setMovementMethod(LinkMovementMethod.getInstance());
             mInfoView.setText(text, TextView.BufferType.SPANNABLE);
-
-            if(mShowBaseDetails) {
-                setClickableSpan(mInfoView, base, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final int DEC = 0;
-                        final int HEX = 1;
-                        final int BIN = 2;
-                        final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
-                        final Menu menu = popupMenu.getMenu();
-                        menu.add(0, DEC, menu.size(), R.string.desc_dec);
-                        menu.add(0, HEX, menu.size(), R.string.desc_hex);
-                        menu.add(0, BIN, menu.size(), R.string.desc_bin);
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case DEC:
-                                        setBase(Base.DECIMAL);
-                                        break;
-                                    case HEX:
-                                        setBase(Base.HEXADECIMAL);
-                                        break;
-                                    case BIN:
-                                        setBase(Base.BINARY);
-                                        break;
-                                }
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
-                    }
-                });
-            }
-            if(mShowTrigDetails) {
-                setClickableSpan(mInfoView, units, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final int RAD = 0;
-                        final int DEG = 1;
-                        final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
-                        final Menu menu = popupMenu.getMenu();
-                        menu.add(0, RAD, menu.size(), R.string.radians);
-                        menu.add(0, DEG, menu.size(), R.string.degrees);
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case RAD:
-                                        CalculatorSettings.setRadiansEnabled(getBaseContext(), true);
-                                        break;
-                                    case DEG:
-                                        CalculatorSettings.setRadiansEnabled(getBaseContext(), false);
-                                        break;
-                                }
-                                updateDetails();
-                                if (getState() != CalculatorState.GRAPHING) {
-                                    setState(CalculatorState.INPUT);
-                                }
-                                getEvaluator().evaluate(mFormulaEditText.getCleanText(), GraphingCalculator.this);
-                                return true;
-                            }
-                        });
-                        popupMenu.show();
-                    }
-                });
+            for (Detail detail : details) {
+                setClickableSpan(mInfoView, detail.word, detail.listener);
             }
         }
+    }
+
+    protected List<Detail> getDetails() {
+        List<Detail> details = new LinkedList<>();
+        if (mShowBaseDetails) {
+            details.add(getBaseDetail());
+        }
+        if (mShowTrigDetails) {
+            details.add(getUnitDetail());
+        }
+        return details;
+    }
+
+    private Detail getBaseDetail() {
+        String text = "";
+        switch(mBaseManager.getNumberBase()) {
+            case HEXADECIMAL:
+                text = getString(R.string.hex).toUpperCase(Locale.getDefault());
+                break;
+            case BINARY:
+                text = getString(R.string.bin).toUpperCase(Locale.getDefault());
+                break;
+            case DECIMAL:
+                text = getString(R.string.dec).toUpperCase(Locale.getDefault());
+                break;
+        }
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int DEC = 0;
+                final int HEX = 1;
+                final int BIN = 2;
+                final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                final Menu menu = popupMenu.getMenu();
+                menu.add(0, DEC, menu.size(), R.string.desc_dec);
+                menu.add(0, HEX, menu.size(), R.string.desc_hex);
+                menu.add(0, BIN, menu.size(), R.string.desc_bin);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case DEC:
+                                setBase(Base.DECIMAL);
+                                break;
+                            case HEX:
+                                setBase(Base.HEXADECIMAL);
+                                break;
+                            case BIN:
+                                setBase(Base.BINARY);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        };
+        return new Detail(text, listener);
+    }
+
+    private Detail getUnitDetail() {
+        String text = CalculatorSettings.useRadians(getBaseContext()) ?
+                getString(R.string.radians) : getString(R.string.degrees);
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int RAD = 0;
+                final int DEG = 1;
+                final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                final Menu menu = popupMenu.getMenu();
+                menu.add(0, RAD, menu.size(), R.string.radians);
+                menu.add(0, DEG, menu.size(), R.string.degrees);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case RAD:
+                                CalculatorSettings.setRadiansEnabled(getBaseContext(), true);
+                                break;
+                            case DEG:
+                                CalculatorSettings.setRadiansEnabled(getBaseContext(), false);
+                                break;
+                        }
+                        invalidateDetails();
+                        if (getState() != CalculatorState.GRAPHING) {
+                            setState(CalculatorState.INPUT);
+                        }
+                        getEvaluator().evaluate(mFormulaEditText.getCleanText(), GraphingCalculator.this);
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        };
+        return new Detail(text, listener);
     }
 
     private void setClickableSpan(TextView textView, final String word, final View.OnClickListener listener) {
@@ -327,5 +352,15 @@ public class GraphingCalculator extends BasicCalculator {
             public void updateDrawState(TextPaint ds) {}
         };
         spans.setSpan(span, text.indexOf(word), text.indexOf(word) + word.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+    }
+
+    public static class Detail {
+        public final String word;
+        public final View.OnClickListener listener;
+
+        public Detail(String word, View.OnClickListener listener) {
+            this.word = word;
+            this.listener = listener;
+        }
     }
 }

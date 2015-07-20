@@ -78,6 +78,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         final HistoryEntry entry = getEntry(position);
         holder.historyExpr.setText(formatText(entry.getFormula()));
         holder.historyResult.setText(formatText(entry.getResult()));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallback.onHistoryItemSelected(entry);
+            }
+        });
     }
 
     private HistoryEntry getEntry(int position) {

@@ -27,6 +27,11 @@
         <attr name="state_next" format="boolean" />
     </declare-styleable>
 
+    <declare-styleable name="BackspaceImageButton">
+        <attr name="state_delete" format="boolean" />
+        <attr name="state_clear" format="boolean" />
+    </declare-styleable>
+
     <declare-styleable name="GraphView">
         <attr name="showGrid" format="boolean" />
         <attr name="showInlineNumbers" format="boolean" />

@@ -20,14 +20,22 @@ public class CalculatorPageAdapter extends PagerAdapter {
     private final Context mContext;
     private final boolean mRound;
     private final View.OnClickListener mListener;
+    private final HistoryAdapter.HistoryItemCallback mHistoryCallback;
     private final Solver mSolver;
     private final History mHistory;
     private final View[] mViews = new View[3];
 
-    public CalculatorPageAdapter(Context context, WindowInsets insets, View.OnClickListener listener, Solver solver, History history) {
+    public CalculatorPageAdapter(
+            Context context,
+            WindowInsets insets,
+            View.OnClickListener listener,
+            HistoryAdapter.HistoryItemCallback historyCallback,
+            Solver solver,
+            History history) {
         mContext = context;
         mRound = insets.isRound();
         mListener = listener;
+        mHistoryCallback = historyCallback;
         mSolver = solver;
         mHistory = history;
     }
@@ -126,19 +134,13 @@ public class CalculatorPageAdapter extends PagerAdapter {
     }
 
     private void setUpHistory(RecyclerView historyView) {
-        HistoryAdapter.HistoryItemCallback listener = new HistoryAdapter.HistoryItemCallback() {
-            @Override
-            public void onHistoryItemSelected(HistoryEntry entry) {
-                // TODO: implement
-            }
-        };
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         historyView.setLayoutManager(layoutManager);
 
-        final HistoryAdapter historyAdapter = new HistoryAdapter(mContext, mSolver, mHistory, listener);
+        final HistoryAdapter historyAdapter = new HistoryAdapter(mContext, mSolver, mHistory, mHistoryCallback);
         mHistory.setObserver(new History.Observer() {
             @Override
             public void notifyDataSetChanged() {

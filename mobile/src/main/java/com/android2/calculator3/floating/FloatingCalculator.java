@@ -13,12 +13,15 @@ import com.android2.calculator3.Calculator;
 import com.android2.calculator3.CalculatorExpressionEvaluator;
 import com.android2.calculator3.CalculatorExpressionTokenizer;
 import com.android2.calculator3.Clipboard;
+import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
+import com.android2.calculator3.view.BackspaceImageButton;
 import com.android2.calculator3.view.CalculatorEditText;
 import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
+import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
 
@@ -27,8 +30,7 @@ public class FloatingCalculator extends FloatingView {
     // Calc logic
     private View.OnClickListener mListener;
     private ViewSwitcher mDisplay;
-    private ImageButton mDelete;
-    private ImageButton mClear;
+    private BackspaceImageButton mDelete;
     private ViewPager mPager;
     private Persist mPersist;
     private History mHistory;
@@ -74,18 +76,18 @@ public class FloatingCalculator extends FloatingView {
             });
         }
 
-        mDelete = (ImageButton) child.findViewById(R.id.delete);
-        mClear = (ImageButton) child.findViewById(R.id.clear);
+        mDelete = (BackspaceImageButton) child.findViewById(R.id.delete);
         mListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
                     case R.id.delete:
-                        onDelete();
-                        break;
-                    case R.id.clear:
-                        mDisplay.showNext();
-                        onClear();
+                        if (mDelete.getState() == BackspaceImageButton.State.CLEAR) {
+                            mDisplay.showNext();
+                            onClear();
+                        } else {
+                            onDelete();
+                        }
                         break;
                     case R.id.eq:
                         mEvaluator.evaluate(getActiveEditText().getCleanText(), new CalculatorExpressionEvaluator.EvaluateCallback() {
@@ -120,15 +122,25 @@ public class FloatingCalculator extends FloatingView {
         mDelete.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                mDisplay.showNext();
-                onClear();
-                return true;
+                if (mDelete.getState() == BackspaceImageButton.State.DELETE) {
+                    mDisplay.showNext();
+                    onClear();
+                    return true;
+                }
+
+                return false;
             }
         });
-        mClear.setOnClickListener(mListener);
 
+        HistoryAdapter.HistoryItemCallback historyItemCallback = new HistoryAdapter.HistoryItemCallback() {
+            @Override
+            public void onHistoryItemSelected(HistoryEntry entry) {
+                setState(State.DELETE);
+                getActiveEditText().insert(entry.getResult());
+            }
+        };
         FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(
-                getContext(), mListener, mEvaluator.getSolver(), mHistory);
+                getContext(), mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
 
@@ -183,8 +195,7 @@ public class FloatingCalculator extends FloatingView {
     }
 
     private void setState(State state) {
-        mDelete.setVisibility(state == State.DELETE ? View.VISIBLE : View.GONE);
-        mClear.setVisibility(state != State.DELETE ? View.VISIBLE : View.GONE);
+        mDelete.setState(state == State.DELETE ? BackspaceImageButton.State.DELETE : BackspaceImageButton.State.CLEAR);
         if(mState != state) {
             switch (state) {
                 case CLEAR:

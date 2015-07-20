@@ -20,13 +20,20 @@ import com.xlythe.math.Solver;
 public class FloatingCalculatorPageAdapter extends PagerAdapter {
     private final Context mContext;
     private final View.OnClickListener mListener;
+    private final HistoryAdapter.HistoryItemCallback mHistoryCallback;
     private final Solver mSolver;
     private final History mHistory;
     private final View[] mViews = new View[3];
 
-    public FloatingCalculatorPageAdapter(Context context, View.OnClickListener listener, Solver solver, History history) {
+    public FloatingCalculatorPageAdapter(
+            Context context,
+            View.OnClickListener listener,
+            HistoryAdapter.HistoryItemCallback historyCallback,
+            Solver solver,
+            History history) {
         mContext = context;
         mListener = listener;
+        mHistoryCallback = historyCallback;
         mSolver = solver;
         mHistory = history;
     }
@@ -113,19 +120,13 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
     }
 
     private void setUpHistory(RecyclerView historyView) {
-        HistoryAdapter.HistoryItemCallback listener = new HistoryAdapter.HistoryItemCallback() {
-            @Override
-            public void onHistoryItemSelected(HistoryEntry entry) {
-                // TODO: implement
-            }
-        };
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.setReverseLayout(true);
         layoutManager.setStackFromEnd(true);
         historyView.setLayoutManager(layoutManager);
 
-        final FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mSolver, mHistory, listener);
+        final FloatingHistoryAdapter historyAdapter = new FloatingHistoryAdapter(mContext, mSolver, mHistory, mHistoryCallback);
         mHistory.setObserver(new History.Observer() {
             @Override
             public void notifyDataSetChanged() {

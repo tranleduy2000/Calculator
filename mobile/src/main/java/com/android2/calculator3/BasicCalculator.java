@@ -430,15 +430,8 @@ public class BasicCalculator extends Activity
     }
 
     private void invalidateEqualsButton() {
-        String formula = mFormulaEditText.getCleanText();
-        String result = mResultEditText.getCleanText();
-        if (!TextUtils.isEmpty(formula)
-                && TextUtils.isEmpty(result)
-                && mCurrentState == CalculatorState.INPUT) {
-            mEqualButton.setState(State.NEXT);
-        } else {
-            mEqualButton.setState(State.EQUALS);
-        }
+        // Do nothing. Extensions of Basic Calculator may want to set the equals button to
+        // Next mode during certain conditions.
     }
 
     @Override

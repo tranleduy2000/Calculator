@@ -21,4 +21,9 @@
         <attr name="maxTextSize" format="dimension" />
         <attr name="stepTextSize" format="dimension" />
     </declare-styleable>
+
+    <declare-styleable name="BackspaceImageButton">
+        <attr name="state_delete" format="boolean" />
+        <attr name="state_clear" format="boolean" />
+    </declare-styleable>
 </resources>
