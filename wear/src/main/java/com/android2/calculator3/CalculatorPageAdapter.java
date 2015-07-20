@@ -116,6 +116,9 @@ public class CalculatorPageAdapter extends PagerAdapter {
                 } else {
                     mViews[position] = View.inflate(mContext, R.layout.calculator_advanced, null);
                 }
+
+                // This is the first time loading the advanced panel -- disable it until the user moves to it
+                setEnabled(mViews[position], false);
                 break;
         }
         applyListener(mViews[position]);
@@ -137,6 +140,18 @@ public class CalculatorPageAdapter extends PagerAdapter {
             view.setOnClickListener(mListener);
         } else if(view instanceof ImageButton) {
             view.setOnClickListener(mListener);
+        }
+    }
+
+    private void setEnabled(View view, boolean enabled) {
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                setEnabled(((ViewGroup) view).getChildAt(i), enabled);
+            }
+        } else if (view instanceof Button) {
+            view.setEnabled(enabled);
+        } else if (view instanceof ImageButton) {
+            view.setEnabled(enabled);
         }
     }
 

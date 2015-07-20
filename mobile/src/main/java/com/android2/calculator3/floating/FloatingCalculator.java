@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ViewSwitcher;
@@ -139,10 +140,56 @@ public class FloatingCalculator extends FloatingView {
                 getActiveEditText().insert(entry.getResult());
             }
         };
-        FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(
+        final FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(
                 getContext(), mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            private int mActivePage = -1;
+
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+                // We're scrolling, so enable everything
+                if (mActivePage != -1) {
+                    mActivePage = -1;
+                    setActivePage(mActivePage);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                // We've landed on a page, so disable all pages but this one
+                mActivePage = i;
+                setActivePage(mActivePage);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+                // We've landed on a page (possibly the current page) so disable all pages but this one
+                if (mActivePage == -1) {
+                    mActivePage = mPager.getCurrentItem();
+                    setActivePage(mActivePage);
+                }
+            }
+
+            private void setActivePage(int page) {
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    setEnabled(adapter.getViewAt(i), page == -1 || i == page);
+                }
+            }
+
+            private void setEnabled(View view, boolean enabled) {
+                if (view instanceof ViewGroup) {
+                    for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                        setEnabled(((ViewGroup) view).getChildAt(i), enabled);
+                    }
+                } else if (view instanceof Button) {
+                    view.setEnabled(enabled);
+                } else if (view instanceof ImageButton) {
+                    view.setEnabled(enabled);
+                }
+            }
+        });
 
         child.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -154,6 +201,14 @@ public class FloatingCalculator extends FloatingView {
         setState(State.DELETE);
 
         return child;
+    }
+
+    @Override
+    public void openView() {
+        super.openView();
+        if (mPager != null) {
+            mPager.setCurrentItem(1);
+        }
     }
 
     @Override

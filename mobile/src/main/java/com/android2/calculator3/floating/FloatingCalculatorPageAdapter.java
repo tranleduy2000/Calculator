@@ -15,7 +15,6 @@ import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.xlythe.math.Constants;
 import com.xlythe.math.History;
-import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Solver;
 
 public class FloatingCalculatorPageAdapter extends PagerAdapter {
@@ -102,6 +101,9 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
                 break;
             case 2:
                 mViews[position] = View.inflate(mContext, R.layout.floating_calculator_advanced, null);
+
+                // This is the first time loading the advanced panel -- disable it until the user moves to it
+                setEnabled(mViews[position], false);
                 break;
         }
         applyListener(mViews[position]);
@@ -123,6 +125,18 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
             view.setOnClickListener(mListener);
         } else if(view instanceof ImageButton) {
             view.setOnClickListener(mListener);
+        }
+    }
+
+    private void setEnabled(View view, boolean enabled) {
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                setEnabled(((ViewGroup) view).getChildAt(i), enabled);
+            }
+        } else if (view instanceof Button) {
+            view.setEnabled(enabled);
+        } else if (view instanceof ImageButton) {
+            view.setEnabled(enabled);
         }
     }
 
