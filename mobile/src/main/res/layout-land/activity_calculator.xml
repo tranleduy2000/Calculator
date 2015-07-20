@@ -30,7 +30,7 @@
         <include layout="@layout/pad_numeric" />
         <include layout="@layout/pad_operator_two_col" />
 
-        <FrameLayout
+        <io.codetail.widget.RevealFrameLayout
             style="@style/PadLayoutStyle.Card">
 
             <FrameLayout
@@ -65,7 +65,7 @@
                 support:borderWidth="0dp"
                 android:layout_gravity="bottom|right" />
 
-        </FrameLayout>
+        </io.codetail.widget.RevealFrameLayout>
 
     </LinearLayout>
 

@@ -3,12 +3,12 @@
     package="com.android2.calculator3"
     android:installLocation="auto">
 
+    <!-- For floating calculator -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-sdk android:minSdkVersion="14"
-        android:targetSdkVersion="22"
-        android:maxSdkVersion="22" />
+        android:targetSdkVersion="22" />
 
     <application
         android:allowBackup="true"
