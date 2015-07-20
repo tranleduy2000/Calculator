@@ -22,37 +22,37 @@
 
     <transition android:fromId="@id/equal" android:toId="@id/next" android:reversible="true">
         <animation-list>
-            <item android:drawable="@drawable/equal0" android:duration="10" />
-            <item android:drawable="@drawable/equal1" android:duration="10" />
-            <item android:drawable="@drawable/equal2" android:duration="10" />
-            <item android:drawable="@drawable/equal3" android:duration="10" />
-            <item android:drawable="@drawable/equal4" android:duration="10" />
-            <item android:drawable="@drawable/equal5" android:duration="10" />
-            <item android:drawable="@drawable/equal6" android:duration="10" />
-            <item android:drawable="@drawable/equal7" android:duration="10" />
-            <item android:drawable="@drawable/equal8" android:duration="10" />
-            <item android:drawable="@drawable/equal9" android:duration="10" />
-            <item android:drawable="@drawable/equal10" android:duration="10" />
-            <item android:drawable="@drawable/equal11" android:duration="10" />
-            <item android:drawable="@drawable/equal12" android:duration="10" />
-            <item android:drawable="@drawable/equal13" android:duration="10" />
-            <item android:drawable="@drawable/equal14" android:duration="10" />
-            <item android:drawable="@drawable/equal15" android:duration="10" />
-            <item android:drawable="@drawable/equal16" android:duration="10" />
-            <item android:drawable="@drawable/equal17" android:duration="10" />
-            <item android:drawable="@drawable/equal18" android:duration="10" />
-            <item android:drawable="@drawable/equal19" android:duration="10" />
-            <item android:drawable="@drawable/equal20" android:duration="10" />
-            <item android:drawable="@drawable/equal21" android:duration="10" />
-            <item android:drawable="@drawable/equal22" android:duration="10" />
-            <item android:drawable="@drawable/equal23" android:duration="10" />
-            <item android:drawable="@drawable/equal24" android:duration="10" />
-            <item android:drawable="@drawable/equal25" android:duration="10" />
-            <item android:drawable="@drawable/equal26" android:duration="10" />
-            <item android:drawable="@drawable/equal27" android:duration="10" />
-            <item android:drawable="@drawable/equal28" android:duration="10" />
-            <item android:drawable="@drawable/equal29" android:duration="10" />
-            <item android:drawable="@drawable/equal30" android:duration="10" />
+            <item android:drawable="@drawable/equal_0" android:duration="10" />
+            <item android:drawable="@drawable/equal_1" android:duration="10" />
+            <item android:drawable="@drawable/equal_2" android:duration="10" />
+            <item android:drawable="@drawable/equal_3" android:duration="10" />
+            <item android:drawable="@drawable/equal_4" android:duration="10" />
+            <item android:drawable="@drawable/equal_5" android:duration="10" />
+            <item android:drawable="@drawable/equal_6" android:duration="10" />
+            <item android:drawable="@drawable/equal_7" android:duration="10" />
+            <item android:drawable="@drawable/equal_8" android:duration="10" />
+            <item android:drawable="@drawable/equal_9" android:duration="10" />
+            <item android:drawable="@drawable/equal_10" android:duration="10" />
+            <item android:drawable="@drawable/equal_11" android:duration="10" />
+            <item android:drawable="@drawable/equal_12" android:duration="10" />
+            <item android:drawable="@drawable/equal_13" android:duration="10" />
+            <item android:drawable="@drawable/equal_14" android:duration="10" />
+            <item android:drawable="@drawable/equal_15" android:duration="10" />
+            <item android:drawable="@drawable/equal_16" android:duration="10" />
+            <item android:drawable="@drawable/equal_17" android:duration="10" />
+            <item android:drawable="@drawable/equal_18" android:duration="10" />
+            <item android:drawable="@drawable/equal_19" android:duration="10" />
+            <item android:drawable="@drawable/equal_20" android:duration="10" />
+            <item android:drawable="@drawable/equal_21" android:duration="10" />
+            <item android:drawable="@drawable/equal_22" android:duration="10" />
+            <item android:drawable="@drawable/equal_23" android:duration="10" />
+            <item android:drawable="@drawable/equal_24" android:duration="10" />
+            <item android:drawable="@drawable/equal_25" android:duration="10" />
+            <item android:drawable="@drawable/equal_26" android:duration="10" />
+            <item android:drawable="@drawable/equal_27" android:duration="10" />
+            <item android:drawable="@drawable/equal_28" android:duration="10" />
+            <item android:drawable="@drawable/equal_29" android:duration="10" />
+            <item android:drawable="@drawable/equal_30" android:duration="10" />
         </animation-list>
     </transition>
 </animated-selector>
