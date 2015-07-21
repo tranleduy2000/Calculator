@@ -2,6 +2,7 @@ package com.android2.calculator3.floating;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -75,6 +76,7 @@ public class FloatingCalculator extends FloatingView {
                     return true;
                 }
             });
+            displayChild.setInputType(InputType.TYPE_NULL);
         }
 
         mDelete = (BackspaceImageButton) child.findViewById(R.id.delete);
@@ -208,6 +210,13 @@ public class FloatingCalculator extends FloatingView {
         super.openView();
         if (mPager != null) {
             mPager.setCurrentItem(1);
+        }
+
+        if (mDisplay != null) {
+            for (int i = 0; i < mDisplay.getChildCount(); i++) {
+                final CalculatorEditText displayChild = (CalculatorEditText) mDisplay.getChildAt(i);
+                displayChild.setSelection(displayChild.length());
+            }
         }
     }
 

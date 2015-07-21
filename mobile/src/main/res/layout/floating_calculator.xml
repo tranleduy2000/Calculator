@@ -32,8 +32,7 @@
                 android:textSize="23sp"
                 android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:textCursorDrawable="@drawable/cursor"
-                android:inputType="none"/>
+                android:textCursorDrawable="@drawable/cursor"/>
 
             <com.android2.calculator3.view.CalculatorEditText
                 android:layout_width="match_parent"
@@ -41,8 +40,7 @@
                 android:textSize="23sp"
                 android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:textCursorDrawable="@drawable/cursor"
-                android:inputType="none"/>
+                android:textCursorDrawable="@drawable/cursor"/>
 
         </ViewSwitcher>
 
