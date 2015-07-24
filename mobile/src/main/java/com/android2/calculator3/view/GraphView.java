@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
@@ -22,15 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphView extends View {
+    private static final int LINES = 1;
+    private static final int DOTS = 2;
+    private static final int CURVES = 3;
+
     private static final int GRID_WIDTH = 2;
     private static final int AXIS_WIDTH = 4;
     private static final int GRAPH_WIDTH = 6;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
-    private static final int LINES = 1;
-    private int mDrawingAlgorithm = LINES;
-    private static final int DOTS = 2;
     private static final int BOX_STROKE = 6;
+
+    private int mDrawingAlgorithm = CURVES;
     private DecimalFormat mFormat = new DecimalFormat("#.#####");
     private PanListener mPanListener;
     private ZoomListener mZoomListener;
@@ -272,6 +276,8 @@ public class GraphView extends View {
                 drawWithStraightLines(mData, canvas);
             } else if (mDrawingAlgorithm == DOTS) {
                 drawDots(mData, canvas);
+            } else if (mDrawingAlgorithm == CURVES) {
+                drawWithCurves(mData, canvas);
             }
         }
     }
@@ -291,7 +297,7 @@ public class GraphView extends View {
 
             previousPoint = currentPoint;
 
-            if(aX == -1 || aY == -1 || bX == -1 || bY == -1 || tooFar(aX, aY, bX, bY)) continue;
+            if(tooFar(aX, aY, bX, bY)) continue;
 
             canvas.drawLine(aX, aY, bX, bY, mGraphPaint);
         }
@@ -301,6 +307,65 @@ public class GraphView extends View {
         for(Point p : data) {
             canvas.drawPoint(getRawX(p), getRawY(p), mGraphPaint);
         }
+    }
+
+    private List<Point> curveCachedData;
+    private List<Point> curveCachedMutatedData;
+
+    private void drawWithCurves(List<Point> data, Canvas canvas) {
+        if (curveCachedData == data) {
+            drawWithStraightLines(curveCachedMutatedData, canvas);
+            return;
+        }
+
+        float tension = 0.5f;
+        int numOfSegments = 16;
+        List<Point> mutatedData = new ArrayList<>(data);
+        List<Point> newData = new ArrayList<>(data.size());
+
+        // The algorithm require a previous and next point to the actual point array.
+        // Duplicate first points to beginning, end points to end
+        mutatedData.add(0, mutatedData.get(0));
+        mutatedData.add(mutatedData.get(mutatedData.size() - 1));
+
+
+        // ok, lets start..
+
+        // 1. loop goes through point array
+        // 2. loop goes through each segment between the 2 pts + 1e point before and after
+        for (int i = 1; i < data.size() - 2; i ++) {
+            for (int t=0; t <= numOfSegments; t++) {
+
+                // calc tension vectors
+                float t1x = (data.get(i+1).getX() - data.get(i-1).getX()) * tension;
+                float t2x = (data.get(i+2).getX() - data.get(i).getX()) * tension;
+
+                float t1y = (data.get(i+1).getY() - data.get(i-1).getY()) * tension;
+                float t2y = (data.get(i+2).getY() - data.get(i).getY()) * tension;
+
+                // calc step
+                float st = t / numOfSegments;
+
+                // calc cardinals
+                double c1 =   2 * Math.pow(st, 3)  - 3 * Math.pow(st, 2) + 1;
+                double c2 = -(2 * Math.pow(st, 3)) + 3 * Math.pow(st, 2);
+                double c3 =       Math.pow(st, 3)  - 2 * Math.pow(st, 2) + st;
+                double c4 =       Math.pow(st, 3)  -     Math.pow(st, 2);
+
+                // calc x and y cords with common control vectors
+                float x = (float) (c1 * data.get(i).getX() + c2 * data.get(i+1).getX() + c3 * t1x + c4 * t2x);
+                float y = (float) (c1 * data.get(i).getY() + c2 * data.get(i+1).getY() + c3 * t1y + c4 * t2y);
+
+                //store points in array
+                newData.add(new Point(x, y));
+
+            }
+        }
+
+        curveCachedData = data;
+        curveCachedMutatedData = newData;
+
+        drawWithStraightLines(newData, canvas);
     }
 
     private int getRawX(Point p) {
@@ -349,6 +414,7 @@ public class GraphView extends View {
     public float getXAxisMax() {
         int num = mOffsetX;
         for(int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
+        num++;
         return num * mZoomLevel;
     }
 
@@ -416,6 +482,10 @@ public class GraphView extends View {
     }
 
     public void setData(List<Point> data) {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new RuntimeException("setData called from a thread other than the ui thread");
+        }
+
         mData = data;
         mDrawingAlgorithm = LINES;
         invalidate();

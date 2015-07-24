@@ -81,7 +81,7 @@ public class GraphModule extends Module {
         public List<Point> graph(String equation) {
             final LinkedList<Point> series = new LinkedList<Point>();
             mSolver.pushFrame();
-            for(double x = mMinX; x <= mMaxX; x += 0.01 * mZoomLevel) {
+            for(double x = mMinX; x <= mMaxX; x += 0.1 * mZoomLevel) {
                 if(isCancelled()) {
                     return null;
                 }
@@ -89,7 +89,7 @@ public class GraphModule extends Module {
                 try {
                     mSolver.define("X", x);
                     double y = mSolver.eval(equation);
-                    series.add(new Point(x, y));
+                    series.add(new Point((float) x, (float) y));
                 } catch(SyntaxException e) {}
             }
             mSolver.popFrame();

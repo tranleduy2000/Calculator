@@ -1,22 +1,22 @@
 package com.xlythe.math;
 
 /**
- * Created by Will on 11/2/2014.
+ * Represents a point on a graph
  */
 public class Point {
-    private final double x;
-    private final double y;
+    private final float x;
+    private final float y;
 
-    public Point(double x, double y) {
+    public Point(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 }

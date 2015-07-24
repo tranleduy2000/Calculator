@@ -67,7 +67,7 @@ public class GraphController implements
         }
 
         mEquation = equation;
-        if (mMainGraphView.getXAxisMin() == mMainGraphView.getXAxisMax()) {
+        if (mMainGraphView.getWidth() == 0) {
             Log.d(TAG, "This view hasn't been laid out yet. Will delay graphing " + equation);
             mHandler.post(new Runnable() {
                 @Override
