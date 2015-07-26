@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/display_result_height"
         android:layout_gravity="bottom"
-        android:layout_marginTop="59dp"
+        android:layout_marginTop="@dimen/history_graph_margin"
         android:layout_marginBottom="@dimen/display_shadow"
         graph:showGrid="false"
         graph:showInlineNumbers="true"

@@ -609,8 +609,6 @@ public class DisplayOverlay extends RelativeLayout {
 
             // Update the display
             final HistoryAdapter adapter = getAdapter();
-            final String formula = mFormulaEditText.getText().toString();
-            final String result = mResultEditText.getText().toString();
             float adjustedTranslation = 0;
 
             // Get both our current width/height and the width/height we want to be
@@ -623,8 +621,6 @@ public class DisplayOverlay extends RelativeLayout {
             // We're going to pretend the shadow doesn't exist (because, really, we want to scale the cards)
             // Scaling the shadow causes us to jump because we shrink too much
             int shadowSize = getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow);
-            height -= shadowSize;
-            displayHeight -= shadowSize;
 
             // When we're fully expanded, turn the display into another row on the history adapter
             if (percent == 1f) {
@@ -646,11 +642,15 @@ public class DisplayOverlay extends RelativeLayout {
             }
 
             float scaledWidth = scale(percent, (float) width / displayWidth);
-            float scaledHeight = Math.min(scale(percent, (float) height / displayHeight), mMaxDisplayScale);
+            float scaledHeight = Math.min(scale(percent, (float) (height - shadowSize) / (displayHeight - shadowSize)), mMaxDisplayScale);
 
             // Scale the card behind everything
             mDisplayBackground.setScaleX(scaledWidth);
             mDisplayBackground.setScaleY(scaledHeight);
+
+            // We have pivotY set to height, so we need to bump it up a little bit (because we ignored the shadow)
+            // 3/4 is about the delta from the real shadow and the scaled shadow
+            mDisplayBackground.setTranslationY(percent * -shadowSize * 3 / 4);
 
             // Move the formula over to the far left
             TextView exprView = ((TemplateHolder) mTemplateDisplay.getTag()).formula;
