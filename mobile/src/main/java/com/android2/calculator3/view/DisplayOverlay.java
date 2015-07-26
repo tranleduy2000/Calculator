@@ -235,6 +235,7 @@ public class DisplayOverlay extends RelativeLayout {
             mResultInitColor = mResultEditText.getCurrentTextColor();
 
             mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
+            mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
 
             mFormulaEditText.setPivotX(0);
             mFormulaEditText.setPivotY(0);
