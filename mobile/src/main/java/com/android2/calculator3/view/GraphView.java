@@ -11,9 +11,11 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 
 import com.android2.calculator3.R;
 import com.xlythe.math.Point;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphView extends View {
+    private static final boolean DEBUG = false;
+
     private static final int LINES = 1;
     private static final int DOTS = 2;
     private static final int CURVES = 3;
@@ -42,6 +46,7 @@ public class GraphView extends View {
     private Paint mTextPaint;
     private Paint mAxisPaint;
     private Paint mGraphPaint;
+    private Paint mDebugPaint;
     private int mOffsetX;
     private int mOffsetY;
     private int mLineMargin;
@@ -49,12 +54,17 @@ public class GraphView extends View {
     private int mTextPaintSize;
     private float mZoomLevel = 1;
     private List<Point> mData;
+
     private float mStartX;
     private float mStartY;
     private int mDragOffsetX;
     private int mDragOffsetY;
     private int mDragRemainderX;
     private int mDragRemainderY;
+    private int mTouchSlop;
+
+    private int mRemainderX;
+    private int mRemainderY;
     private double mZoomInitDistance;
     private float mZoomInitLevel;
     private int mMode;
@@ -107,6 +117,16 @@ public class GraphView extends View {
         mGraphPaint.setStyle(Style.STROKE);
         mGraphPaint.setStrokeWidth(GRAPH_WIDTH);
 
+        mDebugPaint = new Paint();
+        mDebugPaint.setColor(Color.MAGENTA);
+        mDebugPaint.setStyle(Style.STROKE);
+        mDebugPaint.setStrokeWidth(GRAPH_WIDTH);
+
+        ViewConfiguration vc = ViewConfiguration.get(getContext());
+        mTouchSlop = vc.getScaledTouchSlop();
+
+        mLineMargin = mMinLineMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics());
+
         zoomReset();
 
         mData = new ArrayList<Point>();
@@ -128,17 +148,26 @@ public class GraphView extends View {
 
     public void zoomReset() {
         setZoomLevel(1);
-        mDragRemainderX = mDragRemainderY = mOffsetX = mOffsetY = 0;
+
+        // Zero everything out
+        mRemainderX = mRemainderY = mOffsetX = mOffsetY = 0;
+
+        // Make adjustments so that the axis are centered
+        int extraWidth = getWidth() % mLineMargin;
+        int extraHeight = getHeight() % mLineMargin;
+        mRemainderX += extraWidth / 2;
+        mRemainderY += extraHeight / 2;
+
         onSizeChanged(getWidth(), getHeight(), 0, 0);
         invalidate();
-        if(mPanListener != null) mPanListener.panApplied();
-        if(mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
+        if (mPanListener != null) mPanListener.panApplied();
+        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
     }
 
     private Point average(Point... args) {
         float x = 0;
         float y = 0;
-        for(Point p : args) {
+        for (Point p : args) {
             x += p.getX();
             y += p.getY();
         }
@@ -148,11 +177,11 @@ public class GraphView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mPanEnabled != true && mZoomEnabled != true) {
-            return false;
+            return super.onTouchEvent(event);
         }
 
         // Update mode if pointer count changes
-        if(mPointers != event.getPointerCount()) {
+        if (mPointers != event.getPointerCount()) {
             setMode(event);
         }
 
@@ -163,17 +192,31 @@ public class GraphView extends View {
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(mMode == DRAG && mPanEnabled) {
+                if (mMode == DRAG && mPanEnabled) {
+                    float deltaX = event.getX() - mStartX;
+                    float deltaY = event.getY() - mStartY;
+
+                    // Cancel out the previous drag
                     mOffsetX += mDragOffsetX;
                     mOffsetY += mDragOffsetY;
-                    mDragOffsetX = (int) (event.getX() - mStartX) / mLineMargin;
-                    mDragOffsetY = (int) (event.getY() - mStartY) / mLineMargin;
-                    mDragRemainderX = (int) (event.getX() - mStartX) % mLineMargin;
-                    mDragRemainderY = (int) (event.getY() - mStartY) % mLineMargin;
+                    mRemainderX -= mDragRemainderX;
+                    mRemainderY -= mDragRemainderY;
+
+                    // Calculate new drag
+                    mDragOffsetX = (int) (deltaX / mLineMargin);
+                    mDragOffsetY = (int) (deltaY / mLineMargin);
+                    mDragRemainderX = (int) (deltaX) % mLineMargin;
+                    mDragRemainderY = (int) (deltaY) % mLineMargin;
+
+                    // Apply new drag
                     mOffsetX -= mDragOffsetX;
                     mOffsetY -= mDragOffsetY;
-                    if(mPanListener != null) mPanListener.panApplied();
-                } else if(mMode == ZOOM && mZoomEnabled) {
+                    mRemainderX += mDragRemainderX;
+                    mRemainderY += mDragRemainderY;
+
+                    // Notify listeners
+                    if (mPanListener != null) mPanListener.panApplied();
+                } else if (mMode == ZOOM && mZoomEnabled) {
                     double distance = getDistance(new Point(event.getX(0), event.getY(0)), new Point(event.getX(1), event.getY(1)));
                     double delta = mZoomInitDistance - distance;
                     float zoom = (float) (delta / mZoomInitDistance);
@@ -189,7 +232,6 @@ public class GraphView extends View {
     protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
         super.onSizeChanged(xNew, yNew, xOld, yOld);
 
-        mLineMargin = mMinLineMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics());
         // Center the offsets
         mOffsetX += (xOld / mLineMargin) / 2;
         mOffsetY += (yOld / mLineMargin) / 2;
@@ -213,16 +255,16 @@ public class GraphView extends View {
         // Draw the grid lines
         Rect bounds = new Rect();
         int previousLine = 0;
-        for(int i = mInlineNumbers ? 0 : 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
+        for (int i = mInlineNumbers ? 0 : 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
             // Draw vertical lines
-            int x = i * mLineMargin + mDragRemainderX;
-            if(x < mLineMargin || x - previousLine < mMinLineMargin) continue;
+            int x = i * mLineMargin + mRemainderX;
+            if (!mInlineNumbers && (x < mLineMargin || x - previousLine < mMinLineMargin)) continue;
             previousLine = x;
 
-            if(j == 0 && mShowAxis) {
+            if (j == 0 && mShowAxis) {
                 mAxisPaint.setStrokeWidth(AXIS_WIDTH);
                 canvas.drawLine(x, mInlineNumbers ? 0 : mLineMargin, x, getHeight(), mAxisPaint);
-            } else if(mShowGrid) {
+            } else if (mShowGrid) {
                 mAxisPaint.setStrokeWidth(GRID_WIDTH);
                 canvas.drawLine(x, mInlineNumbers ? 0 : mLineMargin, x, getHeight(), mAxisPaint);
             }
@@ -238,16 +280,16 @@ public class GraphView extends View {
             }
         }
         previousLine = 0;
-        for(int i = mInlineNumbers ? 0 : 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
+        for (int i = mInlineNumbers ? 0 : 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
             // Draw horizontal lines
-            int y = i * mLineMargin + mDragRemainderY;
-            if(y < mLineMargin || y - previousLine < mMinLineMargin) continue;
+            int y = i * mLineMargin + mRemainderY;
+            if (!mInlineNumbers && (y < mLineMargin || y - previousLine < mMinLineMargin)) continue;
             previousLine = y;
 
-            if(j == 0 && mShowAxis) {
+            if (j == 0 && mShowAxis) {
                 mAxisPaint.setStrokeWidth(AXIS_WIDTH);
                 canvas.drawLine(mInlineNumbers ? 0 : mLineMargin, y, getWidth(), y, mAxisPaint);
-            } else if(mShowGrid) {
+            } else if (mShowGrid) {
                 mAxisPaint.setStrokeWidth(GRID_WIDTH);
                 canvas.drawLine(mInlineNumbers ? 0 : mLineMargin, y, getWidth(), y, mAxisPaint);
             }
@@ -271,7 +313,7 @@ public class GraphView extends View {
         }
 
         // Create a path to draw smooth arcs
-        if(mData.size() != 0) {
+        if (mData.size() != 0) {
             if (mDrawingAlgorithm == LINES) {
                 drawWithStraightLines(mData, canvas);
             } else if (mDrawingAlgorithm == DOTS) {
@@ -280,11 +322,16 @@ public class GraphView extends View {
                 drawWithCurves(mData, canvas);
             }
         }
+
+        if (DEBUG) {
+            canvas.drawLine(0, getHeight() / 2, getWidth(), getHeight() / 2, mDebugPaint);
+            canvas.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight(), mDebugPaint);
+        }
     }
 
     private void drawWithStraightLines(List<Point> data, Canvas canvas) {
         Point previousPoint = null;
-        for(Point currentPoint : data) {
+        for (Point currentPoint : data) {
             if (previousPoint == null) {
                 previousPoint = currentPoint;
                 continue;
@@ -297,14 +344,14 @@ public class GraphView extends View {
 
             previousPoint = currentPoint;
 
-            if(tooFar(aX, aY, bX, bY)) continue;
+            if (tooFar(aX, aY, bX, bY)) continue;
 
             canvas.drawLine(aX, aY, bX, bY, mGraphPaint);
         }
     }
 
     private void drawDots(List<Point> data, Canvas canvas) {
-        for(Point p : data) {
+        for (Point p : data) {
             canvas.drawPoint(getRawX(p), getRawY(p), mGraphPaint);
         }
     }
@@ -369,10 +416,10 @@ public class GraphView extends View {
     }
 
     private int getRawX(Point p) {
-        if(p == null || Double.isNaN(p.getX()) || Double.isInfinite(p.getX())) return -1;
+        if (p == null || Double.isNaN(p.getX()) || Double.isInfinite(p.getX())) return -1;
 
         // The left line is at pos
-        float leftLine = (mInlineNumbers ? 0 : mLineMargin) + mDragRemainderX;
+        float leftLine = (mInlineNumbers ? 0 : mLineMargin) + mRemainderX;
         // And equals
         float val = mOffsetX * mZoomLevel;
         // And changes at a rate of
@@ -384,10 +431,10 @@ public class GraphView extends View {
     }
 
     private int getRawY(Point p) {
-        if(p == null || Double.isNaN(p.getY()) || Double.isInfinite(p.getY())) return -1;
+        if (p == null || Double.isNaN(p.getY()) || Double.isInfinite(p.getY())) return -1;
 
         // The top line is at pos
-        float topLine = (mInlineNumbers ? 0 : mLineMargin) + mDragRemainderY;
+        float topLine = (mInlineNumbers ? 0 : mLineMargin) + mRemainderY;
         // And equals
         float val = -mOffsetY * mZoomLevel;
         // And changes at a rate of
@@ -400,7 +447,7 @@ public class GraphView extends View {
 
     private boolean tooFar(float aX, float aY, float bX, float bY) {
         boolean outOfBounds = aX == -1 || aY == -1 || bX == -1 || bY == -1;
-        if(outOfBounds) return true;
+        if (outOfBounds) return true;
 
         boolean horzAsymptote = (aX > getXAxisMax() && bX < getXAxisMin()) || (aX < getXAxisMin() && bX > getXAxisMax());
         boolean vertAsymptote = (aY > getYAxisMax() && bY < getYAxisMin()) || (aY < getYAxisMin() && bY > getYAxisMax());
@@ -408,12 +455,12 @@ public class GraphView extends View {
     }
 
     public float getXAxisMin() {
-        return mOffsetX * mZoomLevel;
+        return (mOffsetX - 1) * mZoomLevel;
     }
 
     public float getXAxisMax() {
         int num = mOffsetX;
-        for(int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
+        for (int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
         num++;
         return num * mZoomLevel;
     }
@@ -424,7 +471,7 @@ public class GraphView extends View {
 
     public float getYAxisMax() {
         int num = mOffsetY;
-        for(int i = 1; i * mLineMargin < getHeight(); i++, num++) ;
+        for (int i = 1; i * mLineMargin < getHeight(); i++, num++) ;
         return num * mZoomLevel;
     }
 
@@ -455,6 +502,8 @@ public class GraphView extends View {
                 mStartY = e.getY();
                 mDragOffsetX = 0;
                 mDragOffsetY = 0;
+                mDragRemainderX = 0;
+                mDragRemainderY = 0;
                 break;
             case ZOOM:
                 mZoomInitDistance = getDistance(new Point(e.getX(0), e.getY(0)), new Point(e.getX(1), e.getY(1)));
@@ -470,7 +519,7 @@ public class GraphView extends View {
     public void setZoomLevel(float level) {
         mZoomLevel = level;
         invalidate();
-        if(mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
+        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
     }
 
     public void zoomIn() {
@@ -573,6 +622,14 @@ public class GraphView extends View {
 
     public void setShowInlineNumbers(boolean show) {
         mInlineNumbers = show;
+    }
+
+    public void panBy(float x, float y) {
+        mOffsetX -= (int) x / mLineMargin;
+        mOffsetY -= (int) y / mLineMargin;
+        mRemainderX += (int) x % mLineMargin;
+        mRemainderY += (int) y % mLineMargin;
+        invalidate();
     }
 
     public static interface PanListener {

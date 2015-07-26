@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- -->
+    <color name="display_color">#ffffff</color>
+
     <!-- History -->
-    <color name="history_input">#1e1e1e</color>
-    <color name="history_result">#999999</color>
+    <color name="history_input">#202020</color>
+    <color name="history_result">#737373</color>
     <color name="history_fade">#000000</color>
 
     <!-- Keyboard -->

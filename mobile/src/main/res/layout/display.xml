@@ -23,18 +23,14 @@
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/main_display"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/display_shadow">
 
         <com.android2.calculator3.view.GraphView
             android:id="@+id/mini_graph"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_result_height"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="@dimen/display_shadow"
-            android:visibility="gone"
+            android:layout_height="match_parent"
             graph:showGrid="false"
             graph:showInlineNumbers="true"
             graph:showOutline="false"
@@ -44,6 +40,14 @@
             graph:gridColor="@color/graph_axis"
             graph:graphColor="@color/graph_line"
             graph:numberTextColor="@color/graph_text"/>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/main_display"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
         <View
             android:id="@+id/the_card"

@@ -80,4 +80,8 @@
         android:id="@+id/display"
         layout="@layout/display" />
 
+    <include
+        android:id="@+id/graph_buttons"
+        layout="@layout/graph_tray" />
+
 </FrameLayout>

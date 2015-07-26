@@ -86,7 +86,7 @@ public class ResizingButton extends com.rey.material.widget.Button {
     // Default constructor override
     public ResizingButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mTextSize = getTextSize();
+        mMaxTextSize = mTextSize = getTextSize();
     }
 
     /**
@@ -115,24 +115,6 @@ public class ResizingButton extends com.rey.material.widget.Button {
      */
     public void setOnResizeListener(OnTextResizeListener listener) {
         mTextResizeListener = listener;
-    }
-
-    /**
-     * Override the set text size to update our internal reference values
-     */
-    @Override
-    public void setTextSize(float size) {
-        super.setTextSize(size);
-        mTextSize = getTextSize();
-    }
-
-    /**
-     * Override the set text size to update our internal reference values
-     */
-    @Override
-    public void setTextSize(int unit, float size) {
-        super.setTextSize(unit, size);
-        mTextSize = getTextSize();
     }
 
     /**
@@ -250,6 +232,7 @@ public class ResizingButton extends com.rey.material.widget.Button {
 
         // Store the current text size
         float oldTextSize = textPaint.getTextSize();
+
         // If there is a max text size set, use the lesser of that and the default text size
         float targetTextSize = mMaxTextSize > 0 ? Math.min(mTextSize, mMaxTextSize) : mTextSize;
 

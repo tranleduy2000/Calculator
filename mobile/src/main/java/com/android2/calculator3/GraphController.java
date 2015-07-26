@@ -27,6 +27,7 @@ public class GraphController implements
 
     private String mEquation;
     private List<Point> mPendingResults;
+    private AsyncTask mPanTask;
 
     private boolean mLocked;
     private OnUnlockedListener mOnUnlockedListener;
@@ -55,6 +56,32 @@ public class GraphController implements
                 if (mEquation != null) {
                     Log.d(TAG, "View was laid out. Attempting to graph " + mEquation);
                     startGraph(mEquation);
+                }
+            }
+        });
+
+        mMainGraphView.setPanListener(new PanListener() {
+            @Override
+            public void panApplied() {
+                if (mPanTask != null) {
+                    mPanTask.cancel(true);
+                    mPanTask = null;
+                }
+                if (mEquation != null) {
+                    mPanTask = startGraph(mEquation);
+                }
+            }
+        });
+
+        mMainGraphView.setZoomListener(new ZoomListener() {
+            @Override
+            public void zoomApplied(float level) {
+                if (mPanTask != null) {
+                    mPanTask.cancel(true);
+                    mPanTask = null;
+                }
+                if (mEquation != null) {
+                    mPanTask = startGraph(mEquation);
                 }
             }
         });

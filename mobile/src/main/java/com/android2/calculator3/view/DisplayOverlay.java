@@ -50,7 +50,7 @@ public class DisplayOverlay extends RelativeLayout {
     private View mMainDisplay;
     private View mDisplayBackground;
     private View mDisplayForeground;
-    private View mDisplayGraph;
+    private GraphView mDisplayGraph;
     private CalculatorEditText mFormulaEditText;
     private CalculatorEditText mResultEditText;
     private View mCalculationsDisplay;
@@ -116,6 +116,7 @@ public class DisplayOverlay extends RelativeLayout {
                 evaluateHeight();
                 setTranslationY(mMinTranslation);
                 mRecyclerView.setTranslationY(-mDisplayHeight);
+                mDisplayGraph.setTranslationY(-mMinTranslation);
                 if (DEBUG) {
                     Log.v(TAG, String.format("mMinTranslation=%s, mMaxTranslation=%s", mMinTranslation, mMaxTranslation));
                 }
@@ -125,7 +126,11 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public enum TranslateState {
-        EXPANDED, COLLAPSED, PARTIAL
+        EXPANDED, COLLAPSED, PARTIAL, GRAPH_EXPANDED, MINI_GRAPH
+    }
+
+    private TranslateState getTranslateState() {
+        return mState;
     }
 
     private void setState(TranslateState state) {
@@ -147,7 +152,7 @@ public class DisplayOverlay extends RelativeLayout {
         mMainDisplay = findViewById(R.id.main_display);
         mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
-        mDisplayGraph = findViewById(R.id.mini_graph);
+        mDisplayGraph = (GraphView) findViewById(R.id.mini_graph);
         mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
         mResultEditText = (CalculatorEditText) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
@@ -156,6 +161,12 @@ public class DisplayOverlay extends RelativeLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (getTranslateState() == TranslateState.GRAPH_EXPANDED
+                || getTranslateState() == TranslateState.MINI_GRAPH) {
+            // Disable history when showing graph
+            return super.onInterceptTouchEvent(ev);
+        }
+
         int action = MotionEventCompat.getActionMasked(ev);
         float y = ev.getRawY();
         boolean intercepted = false;
@@ -224,11 +235,6 @@ public class DisplayOverlay extends RelativeLayout {
             mResultInitColor = mResultEditText.getCurrentTextColor();
 
             mDisplayBackground.setPivotX(mDisplayBackground.getWidth() / 2);
-            if (mDisplayGraph.getVisibility() != View.VISIBLE) {
-                mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
-            } else {
-                mDisplayBackground.setPivotY(0);
-            }
 
             mFormulaEditText.setPivotX(0);
             mFormulaEditText.setPivotY(0);
@@ -372,6 +378,10 @@ public class DisplayOverlay extends RelativeLayout {
         setState(TranslateState.COLLAPSED);
     }
 
+    public boolean isGraphExpanded() {
+        return getTranslateState() == TranslateState.GRAPH_EXPANDED;
+    }
+
     public boolean isExpanded() {
         return getTranslateState() == TranslateState.EXPANDED;
     }
@@ -381,86 +391,103 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void transitionToGraph(Animator.AnimatorListener listener) {
-        mDisplayGraph.setVisibility(View.VISIBLE);
+        if (mState == TranslateState.COLLAPSED) {
+            setState(TranslateState.MINI_GRAPH);
 
-        // We don't want the display resizing, so hardcode its width for now.
-        mMainDisplay.measure(
-                View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-        mMainDisplay.getLayoutParams().height = mMainDisplay.getMeasuredHeight();
+            mDisplayGraph.setVisibility(View.VISIBLE);
 
-        // Now we need to shrink the calculations display
-        int oldHeight = mCalculationsDisplay.getMeasuredHeight();
+            // We don't want the display resizing, so hardcode its width for now.
+            mMainDisplay.measure(
+                    View.MeasureSpec.makeMeasureSpec(mMainDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+            mMainDisplay.getLayoutParams().height = mMainDisplay.getMeasuredHeight();
 
-        // Hide the result and then measure to grab new coordinates
-        mResultEditText.setVisibility(View.GONE);
-        mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        mCalculationsDisplay.measure(
-                View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        );
-        int newHeight = mCalculationsDisplay.getMeasuredHeight();
+            // Now we need to shrink the calculations display
+            int oldHeight = mCalculationsDisplay.getMeasuredHeight();
 
-        // Now animate between the old and new heights
-        float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
-        long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
+            // Hide the result and then measure to grab new coordinates
+            mResultEditText.setVisibility(View.GONE);
+            mCalculationsDisplay.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            mCalculationsDisplay.measure(
+                    View.MeasureSpec.makeMeasureSpec(mCalculationsDisplay.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            );
+            int newHeight = mCalculationsDisplay.getMeasuredHeight();
 
-        // Due to a bug (?) setPivotY(0) does not work unless it's been set to a different pivotY
-        // So we set it to the view's height first before setting it to 0 (where we want it).
-        // Bug seen on Amazon's Fire Phone (4.2)
-        mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
+            // Now animate between the old and new heights
+            float scale = mMaxDisplayScale = (float) newHeight / oldHeight;
+            long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
 
-        mDisplayBackground.setPivotY(0);
-        mDisplayBackground.animate()
-                .scaleY(scale)
-                .setDuration(duration)
-                .setListener(null)
-                .start();
+            // Due to a bug (?) setPivotY(0) does not work unless it's been set to a different pivotY
+            // So we set it to the view's height first before setting it to 0 (where we want it).
+            // Bug seen on Amazon's Fire Phone (4.2)
+            mDisplayBackground.setPivotY(mDisplayBackground.getHeight());
 
-        // Update the foreground too (even though it's invisible)
-        mDisplayForeground.setPivotY(0f);
-        mDisplayForeground.animate()
-                .scaleY(scale)
-                .setDuration(duration)
-                .setListener(listener)
-                .start();
+            mDisplayBackground.setPivotY(0);
+            mDisplayBackground.animate()
+                    .scaleY(scale)
+                    .setDuration(duration)
+                    .setListener(null)
+                    .start();
+
+            // Update the foreground too (even though it's invisible)
+            mDisplayForeground.setPivotY(0f);
+            mDisplayForeground.animate()
+                    .scaleY(scale)
+                    .setDuration(duration)
+                    .setListener(listener)
+                    .start();
+        } else {
+            listener.onAnimationEnd(null);
+        }
     }
 
     public void transitionToDisplay(Animator.AnimatorListener listener) {
-        // Show the result again
-        mResultEditText.setVisibility(View.VISIBLE);
+        if (mState == TranslateState.MINI_GRAPH) {
+            setState(TranslateState.COLLAPSED);
 
-        // Now animate between the old and new heights
-        float scale = mMaxDisplayScale = 1f;
-        long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
-        mDisplayBackground.animate()
-                .scaleY(scale)
-                .setListener(new AnimationFinishedListener() {
-                    @Override
-                    public void onAnimationFinished() {
-                        mDisplayGraph.setVisibility(View.GONE);
-                    }
-                })
-                .setDuration(duration)
-                .start();
+            // Show the result again
+            mResultEditText.setVisibility(View.VISIBLE);
 
-        // Update the foreground too (even though it's invisible)
-        mDisplayForeground.animate()
-                .scaleY(scale)
-                .setListener(listener)
-                .setDuration(duration)
-                .start();
+            // Now animate between the old and new heights
+            float scale = mMaxDisplayScale = 1f;
+            long duration = getResources().getInteger(android.R.integer.config_longAnimTime);
+            mDisplayBackground.animate()
+                    .scaleY(scale)
+                    .setListener(new AnimationFinishedListener() {
+                        @Override
+                        public void onAnimationFinished() {
+                            mDisplayGraph.setVisibility(View.GONE);
+                        }
+                    })
+                    .setDuration(duration)
+                    .start();
+
+            // Update the foreground too (even though it's invisible)
+            mDisplayForeground.animate()
+                    .scaleY(scale)
+                    .setListener(listener)
+                    .setDuration(duration)
+                    .start();
+        }
     }
 
-    private TranslateState getTranslateState() {
-        float txY = getTranslationY();
-        if (txY <= mMinTranslation) {
-            return TranslateState.COLLAPSED;
-        } else if (txY >= mMaxTranslation) {
-            return TranslateState.EXPANDED;
-        } else {
-            return TranslateState.PARTIAL;
+    public void expandGraph() {
+        if (mState == TranslateState.MINI_GRAPH) {
+            setState(TranslateState.GRAPH_EXPANDED);
+            new GraphExpansionAnimator(0f, 1f).start();
+            mDisplayGraph.setPanEnabled(true);
+            mDisplayGraph.setZoomEnabled(true);
+        }
+    }
+
+    public void collapseGraph() {
+        if (mState == TranslateState.GRAPH_EXPANDED) {
+            setState(TranslateState.MINI_GRAPH);
+            new GraphExpansionAnimator(1f, 0f).start();
+            mDisplayGraph.setPanEnabled(false);
+            mDisplayGraph.setZoomEnabled(false);
         }
     }
 
@@ -521,6 +548,37 @@ public class DisplayOverlay extends RelativeLayout {
     /**
      * An animator that goes from 0 to 100%
      **/
+    private class GraphExpansionAnimator extends ValueAnimator {
+        public GraphExpansionAnimator(float start, float end) {
+            super();
+            setFloatValues(start, end);
+            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float percent = (float) animation.getAnimatedValue();
+                    onUpdate(percent);
+                }
+            });
+        }
+
+        public void onUpdate(float percent) {
+            setTranslationY((1 - percent) * mMinTranslation);
+            mDisplayGraph.setTranslationY((1 - percent) * -mMinTranslation);
+            mMainDisplay.setTranslationY(percent * (mMainDisplay.getHeight() - getHeight()));
+            mFormulaEditText.setAlpha(1 - percent * 4);
+            mFormulaEditText.setEnabled(mFormulaEditText.getAlpha() > 0);
+            mRecyclerView.setTranslationY((percent * (-getHeight() + mMainDisplay.getHeight())) - mMainDisplay.getHeight());
+            mInfoText.setAlpha(1 - percent);
+
+            int newHeight = getContext().getResources().getDimensionPixelSize(R.dimen.display_height_graph_expanded);
+            int currentHeight = (int) (mDisplayBackground.getScaleY() * mDisplayBackground.getHeight());
+            mDisplayBackground.setTranslationY(percent * (newHeight - currentHeight));
+        }
+    }
+
+    /**
+     * An animator that goes from 0 to 100%
+     **/
     private class DisplayAnimator extends ValueAnimator {
         public DisplayAnimator(float start, float end) {
             super();
@@ -574,7 +632,6 @@ public class DisplayOverlay extends RelativeLayout {
                     adapter.setDisplayEntry(mFormulaEditText.getCleanText(), mResultEditText.getCleanText());
                     mDisplayBackground.setVisibility(View.GONE);
                     mCalculationsDisplay.setVisibility(View.GONE);
-                    mDisplayGraph.setVisibility(View.GONE);
                     scrollToMostRecent();
                 }
 
@@ -585,9 +642,6 @@ public class DisplayOverlay extends RelativeLayout {
                 adapter.clearDisplayEntry();
                 mDisplayBackground.setVisibility(View.VISIBLE);
                 mCalculationsDisplay.setVisibility(View.VISIBLE);
-                if (adapter.hasGraph(formula)) {
-                    mDisplayGraph.setVisibility(View.VISIBLE);
-                }
             }
 
             float scaledWidth = scale(percent, (float) width / displayWidth);
@@ -596,10 +650,6 @@ public class DisplayOverlay extends RelativeLayout {
             // Scale the card behind everything
             mDisplayBackground.setScaleX(scaledWidth);
             mDisplayBackground.setScaleY(scaledHeight);
-
-            // Scale the graph behind the card (may be invisible, but oh well) TODO -- proper translations
-            mDisplayGraph.setTranslationY(percent * -height);
-            mDisplayGraph.setScaleX(scaledWidth);
 
             // Move the formula over to the far left
             TextView exprView = ((TemplateHolder) mTemplateDisplay.getTag()).formula;
@@ -649,25 +699,14 @@ public class DisplayOverlay extends RelativeLayout {
             // Fade away HEX/RAD info text
             mInfoText.setAlpha(scale(percent, 0));
 
-            if (mDisplayBackground.getPivotY() == 0) {
-                // Graph is visible, so pivot y is set to 0
-                View graph = ((TemplateHolder) mTemplateDisplay.getTag()).graph;
+            // Handle readjustment of everything so it follows the finger
+            adjustedTranslation += percent * (
+                    + mDisplayBackground.getPivotY()
+                    - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
 
-                mDisplayGraph.setTranslationY(percent * (graph.getTop() - mDisplayGraph.getTop()));
-                adjustedTranslation += percent * (mDisplayGraph.getTop() - graph.getTop());
-
-                mMainDisplay.setTranslationY(adjustedTranslation);
-                mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
-            } else {
-                // Handle readjustment of everything so it follows the finger
-                adjustedTranslation += percent * (
-                        + mDisplayBackground.getPivotY()
-                        - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
-
-                mCalculationsDisplay.setTranslationY(adjustedTranslation);
-                mInfoText.setTranslationY(adjustedTranslation);
-                mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
-            }
+            mCalculationsDisplay.setTranslationY(adjustedTranslation);
+            mInfoText.setTranslationY(adjustedTranslation);
+            mRecyclerView.setTranslationY(-mDisplayHeight + adjustedTranslation);
 
             // Enable/disable the edit text.
             if (percent == 0) {

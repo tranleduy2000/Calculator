@@ -246,18 +246,23 @@ public class BasicCalculator extends Activity
             return false;
         }
 
+        expr = cleanExpression(expr);
         if (!ensureResult ||
                 (!TextUtils.isEmpty(expr)
                         && !TextUtils.isEmpty(result)
                         && !Solver.equal(expr, result)
                         && (mHistory.current() == null || !mHistory.current().getFormula().equals(expr)))) {
-            expr = EquationFormatter.appendParenthesis(expr);
-            expr = Solver.clean(expr);
-            expr = mTokenizer.getLocalizedExpression(expr);
             mHistory.enter(expr, result);
             return true;
         }
         return false;
+    }
+
+    protected String cleanExpression(String expr) {
+        expr = EquationFormatter.appendParenthesis(expr);
+        expr = Solver.clean(expr);
+        expr = mTokenizer.getLocalizedExpression(expr);
+        return expr;
     }
 
     @Override

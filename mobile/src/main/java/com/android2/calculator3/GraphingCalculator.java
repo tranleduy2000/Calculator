@@ -17,15 +17,22 @@ package com.android2.calculator3;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.Selection;
 import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
@@ -37,6 +44,7 @@ import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Base;
 import com.xlythe.math.GraphModule;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -62,7 +70,10 @@ public class GraphingCalculator extends BasicCalculator {
     private String mX;
     private GraphController mGraphController;
     private GraphView mMiniGraph;
+    private View mGraphButtons;
     private AsyncTask mGraphTask;
+    private BaseAdapter mCurrentGraphsAdapter;
+    private final List<String> mCurrentGraphs = new ArrayList();
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -93,14 +104,66 @@ public class GraphingCalculator extends BasicCalculator {
         mShowBaseDetails = !mBaseManager.getNumberBase().equals(Base.DECIMAL);
         mShowTrigDetails = false;
 
+        mGraphButtons = findViewById(R.id.graph_buttons);
+        mGraphButtons.findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shrinkGraph();
+            }
+        });
+
+        mMiniGraph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDisplayView.isGraphExpanded()) {
+                    shrinkGraph();
+                } else {
+                    enlargeGraph();
+                }
+            }
+        });
+
+        mGraphButtons.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (android.os.Build.VERSION.SDK_INT < 16) {
+                    mGraphButtons.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mGraphButtons.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                mGraphButtons.setTranslationY(mGraphButtons.getHeight());
+
+                if (getState() != CalculatorState.GRAPHING) {
+                    mMiniGraph.setVisibility(View.GONE);
+                }
+                resetGraph();
+            }
+        });
+
+        ListView currentGraphsView = (ListView) findViewById(R.id.current_graphs);
+        mCurrentGraphsAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.graph_entry, mCurrentGraphs) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    LayoutInflater inflater = getLayoutInflater();
+                    convertView = inflater.inflate(R.layout.graph_entry, parent, false);
+                }
+
+                String formula = getItem(position);
+                formula = formula.replace(mX, mX.toLowerCase(Locale.getDefault()));
+
+                TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
+                textView.setText(String.format("f%s(%s)=%s", (position + 1), mX.toLowerCase(Locale.getDefault()), formula));
+
+                return convertView;
+            }
+        };
+        currentGraphsView.setAdapter(mCurrentGraphsAdapter);
+
         invalidateDetails();
     }
 
     private void transitionToGraph() {
-        if (mResultEditText.getVisibility() == View.GONE) {
-            return;
-        }
-
         mGraphController.lock();
 
         setState(CalculatorState.GRAPHING);
@@ -113,10 +176,6 @@ public class GraphingCalculator extends BasicCalculator {
     }
 
     private void transitionToDisplay() {
-        if (mResultEditText.getVisibility() == View.VISIBLE) {
-            return;
-        }
-
         mDisplayView.transitionToDisplay(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
@@ -125,9 +184,43 @@ public class GraphingCalculator extends BasicCalculator {
         });
     }
 
+    private void enlargeGraph() {
+        mDisplayView.expandGraph();
+        mGraphButtons.animate().translationY(0);
+    }
+
+    private void shrinkGraph() {
+        mDisplayView.collapseGraph();
+        mGraphButtons.animate().translationY(mGraphButtons.getHeight());
+    }
+
+    private void resetGraph() {
+        mMiniGraph.zoomReset();
+
+        int displayHeight = getResources().getDimensionPixelSize(R.dimen.display_height_with_shadow);
+
+        // Move the X axis so it lines up to the top of the device (so we have a good starting point)
+        float initialY = -mMiniGraph.getHeight() / 2;
+        // Move the X axis down so it matches the bottom of the display
+        initialY += displayHeight;
+        // Move it up 50% between the formula and the end of the display
+        initialY -= (displayHeight - mFormulaEditText.getHeight()) / 2;
+
+        mMiniGraph.panBy(0, initialY);
+    }
+
     @Override
     public void onButtonClick(View view) {
         switch (view.getId()) {
+            case R.id.btn_zoom_in:
+                mMiniGraph.zoomIn();
+                return;
+            case R.id.btn_zoom_out:
+                mMiniGraph.zoomOut();
+                return;
+            case R.id.btn_zoom_reset:
+                resetGraph();
+                return;
             case R.id.fun_cos:
             case R.id.fun_sin:
             case R.id.fun_tan:
@@ -161,6 +254,15 @@ public class GraphingCalculator extends BasicCalculator {
     }
 
     @Override
+    public void onBackPressed() {
+        if (mDisplayView.isGraphExpanded()) {
+            shrinkGraph();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
         if (getState() == CalculatorState.EVALUATE && expr.contains(mX)) {
             saveHistory(expr, result, false);
@@ -176,7 +278,28 @@ public class GraphingCalculator extends BasicCalculator {
             if (mGraphTask != null) {
                 mGraphTask.cancel(true);
             }
-            mGraphTask = mGraphController.startGraph(mFormulaEditText.getCleanText());
+            String formula = mFormulaEditText.getCleanText();
+            mGraphTask = mGraphController.startGraph(formula);
+
+            int oldSize = mCurrentGraphs.size();
+            if (oldSize > 0) {
+                mCurrentGraphs.remove(mCurrentGraphs.size() - 1);
+            }
+            mCurrentGraphs.add(cleanExpression(formula));
+            mCurrentGraphsAdapter.notifyDataSetChanged();
+            if (mCurrentGraphs.size() > oldSize) {
+                mGraphButtons.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (android.os.Build.VERSION.SDK_INT < 16) {
+                            mGraphButtons.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                        } else {
+                            mGraphButtons.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                        mGraphButtons.setTranslationY(mGraphButtons.getHeight());
+                    }
+                });
+            }
         } else {
             transitionToDisplay();
         }
