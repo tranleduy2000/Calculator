@@ -262,6 +262,7 @@ public class GraphView extends View {
         // Draw the grid lines
         Rect bounds = mTempRect;
         int previousLine = 0;
+        boolean inlineNumbersDrawn = !mInlineNumbers;
         for (int i = mInlineNumbers ? 0 : 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
             // Draw vertical lines
             int x = i * mLineMargin + mRemainderX;
@@ -284,9 +285,47 @@ public class GraphView extends View {
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 int textWidth = bounds.right - bounds.left;
                 canvas.drawText(text, x - textWidth / 2, mLineMargin / 2 + mTextPaint.getTextSize() / 2, mTextPaint);
+            } else if (j + 1 == 0 && i > 1) {
+                // Draw the y min
+                String text = mFormat.format(getYAxisMin());
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                int textWidth = bounds.right - bounds.left;
+                canvas.drawText(text, x - textWidth, getHeight() / 4, mTextPaint);
+
+                // Draw the y max
+                text = mFormat.format(getYAxisMax());
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                textWidth = bounds.right - bounds.left;
+                canvas.drawText(text, x - textWidth, getHeight() * 3 / 4, mTextPaint);
+
+                inlineNumbersDrawn = true;
+            }
+        }
+        if (!inlineNumbersDrawn) {
+            boolean drawOnRightSide = getXAxisMax() < 0;
+
+            // Draw the y min
+            String text = mFormat.format(getYAxisMin());
+            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+            int textWidth = bounds.right - bounds.left;
+            if (drawOnRightSide) {
+                canvas.drawText(text, getWidth() - textWidth, getHeight() / 4, mTextPaint);
+            } else {
+                canvas.drawText(text, mLineMargin - textWidth, getHeight() / 4, mTextPaint);
+            }
+
+            // Draw the y max
+            text = mFormat.format(getYAxisMax());
+            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+            textWidth = bounds.right - bounds.left;
+            if (drawOnRightSide) {
+                canvas.drawText(text, getWidth() - textWidth, getHeight() * 3 / 4, mTextPaint);
+            } else {
+                canvas.drawText(text, mLineMargin - textWidth, getHeight() * 3 / 4, mTextPaint);
             }
         }
         previousLine = 0;
+        inlineNumbersDrawn = !mInlineNumbers;
         for (int i = mInlineNumbers ? 0 : 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
             // Draw horizontal lines
             int y = i * mLineMargin + mRemainderY;
@@ -310,7 +349,32 @@ public class GraphView extends View {
                 int textHeight = bounds.bottom - bounds.top;
                 int textWidth = bounds.right - bounds.left;
                 canvas.drawText(text, mLineMargin / 2 - textWidth / 2, y + textHeight / 2, mTextPaint);
+            } else if (j - 1 == 0 && i > 1) {
+                // Draw the min
+                String text = mFormat.format(getXAxisMin());
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                int textWidth = bounds.right - bounds.left;
+                canvas.drawText(text, mLineMargin - textWidth, y, mTextPaint);
+
+                // Draw the max
+                text = mFormat.format(getXAxisMax());
+                canvas.drawText(text, getWidth() - mLineMargin, y, mTextPaint);
+
+                inlineNumbersDrawn = true;
             }
+        }
+        if (!inlineNumbersDrawn) {
+            // Draw the min
+            String text = mFormat.format(getXAxisMin());
+            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+            int textWidth = bounds.right - bounds.left;
+            canvas.drawText(text, mLineMargin - textWidth, mLineMargin, mTextPaint);
+
+            // Draw the max
+            text = mFormat.format(getXAxisMax());
+            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+            textWidth = bounds.right - bounds.left;
+            canvas.drawText(text, mLineMargin - textWidth, getHeight() * 3 / 4, mTextPaint);
         }
 
         // Restrict drawing the graph to the grid
