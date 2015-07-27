@@ -47,6 +47,7 @@ public class GraphView extends View {
     private Paint mAxisPaint;
     private Paint mGraphPaint;
     private Paint mDebugPaint;
+    private final Rect mTempRect = new Rect();
     private int mOffsetX;
     private int mOffsetY;
     private int mLineMargin;
@@ -214,6 +215,12 @@ public class GraphView extends View {
                     mRemainderX += mDragRemainderX;
                     mRemainderY += mDragRemainderY;
 
+                    // Because we're summing the remainders, we can go above % line margin
+                    mOffsetX -= mRemainderX / mLineMargin;
+                    mRemainderX %= mLineMargin;
+                    mOffsetY -= mRemainderY / mLineMargin;
+                    mRemainderY %= mLineMargin;
+
                     // Notify listeners
                     if (mPanListener != null) mPanListener.panApplied();
                 } else if (mMode == ZOOM && mZoomEnabled) {
@@ -253,7 +260,7 @@ public class GraphView extends View {
         }
 
         // Draw the grid lines
-        Rect bounds = new Rect();
+        Rect bounds = mTempRect;
         int previousLine = 0;
         for (int i = mInlineNumbers ? 0 : 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
             // Draw vertical lines
@@ -459,20 +466,17 @@ public class GraphView extends View {
     }
 
     public float getXAxisMax() {
-        int num = mOffsetX;
-        for (int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
-        num++;
-        return num * mZoomLevel;
+        int numOfHorizontalGridLines = getWidth() / mLineMargin + 1;
+        return (numOfHorizontalGridLines + mOffsetX) * mZoomLevel;
     }
 
     public float getYAxisMin() {
-        return mOffsetY * mZoomLevel;
+        return (mOffsetY - 1) * mZoomLevel;
     }
 
     public float getYAxisMax() {
-        int num = mOffsetY;
-        for (int i = 1; i * mLineMargin < getHeight(); i++, num++) ;
-        return num * mZoomLevel;
+        int numOfVerticalGridLines = getHeight() / mLineMargin + 1;
+        return (numOfVerticalGridLines + mOffsetY) * mZoomLevel;
     }
 
     @Override
