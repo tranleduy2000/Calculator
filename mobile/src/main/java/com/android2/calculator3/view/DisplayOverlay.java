@@ -547,19 +547,11 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     /**
-     * An animator that goes from 0 to 100%
+     * Controls the graph expanding to full screen (as well as the reverse)
      **/
-    private class GraphExpansionAnimator extends ValueAnimator {
+    private class GraphExpansionAnimator extends ComplexAnimator {
         public GraphExpansionAnimator(float start, float end) {
-            super();
-            setFloatValues(start, end);
-            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float percent = (float) animation.getAnimatedValue();
-                    onUpdate(percent);
-                }
-            });
+            super(start, end);
         }
 
         public void onUpdate(float percent) {
@@ -574,23 +566,17 @@ public class DisplayOverlay extends RelativeLayout {
             int newHeight = getContext().getResources().getDimensionPixelSize(R.dimen.display_height_graph_expanded);
             int currentHeight = (int) (mDisplayBackground.getScaleY() * mDisplayBackground.getHeight());
             mDisplayBackground.setTranslationY(percent * (newHeight - currentHeight));
+
+            mDisplayGraph.setTextColor(mixColors(percent, getResources().getColor(R.color.mini_graph_text), getResources().getColor(R.color.graph_text)));
         }
     }
 
     /**
-     * An animator that goes from 0 to 100%
+     * Controls history being opened (and the reverse)
      **/
-    private class DisplayAnimator extends ValueAnimator {
+    private class DisplayAnimator extends ComplexAnimator {
         public DisplayAnimator(float start, float end) {
-            super();
-            setFloatValues(start, end);
-            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float percent = (float) animation.getAnimatedValue();
-                    onUpdate(percent);
-                }
-            });
+            super(start, end);
         }
 
         public void onUpdate(float percent) {
@@ -722,6 +708,25 @@ public class DisplayOverlay extends RelativeLayout {
                         percent, txY, mFade.getAlpha(), width, height, scaledWidth, scaledHeight));
             }
         }
+    }
+
+    /**
+     * An animator that goes from 0 to 100%
+     **/
+    public abstract class ComplexAnimator extends ValueAnimator {
+        public ComplexAnimator(float start, float end) {
+            super();
+            setFloatValues(start, end);
+            addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    float percent = (float) animation.getAnimatedValue();
+                    onUpdate(percent);
+                }
+            });
+        }
+
+        public abstract void onUpdate(float percent);
 
         float scale(float percent, float goal) {
             return 1f - percent * (1f - goal);

@@ -21,4 +21,5 @@
     <color name="graph_axis">#cecece</color>
     <color name="graph_line">@color/calculator_accent_color</color>
     <color name="graph_text">#cecece</color>
+    <color name="mini_graph_text">#00cecece</color>
 </resources>

@@ -39,7 +39,7 @@
             graph:backgroundColor="@color/graph_background"
             graph:gridColor="@color/graph_axis"
             graph:graphColor="@color/graph_line"
-            graph:numberTextColor="@color/graph_text"/>
+            graph:numberTextColor="@color/mini_graph_text"/>
 
     </FrameLayout>
 
