@@ -15,6 +15,7 @@
 */
 package com.android2.calculator3;
 
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import android.text.Spannable;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -123,6 +125,7 @@ public class GraphingCalculator extends BasicCalculator {
             }
         });
 
+        invalidateInlineBounds();
         mGraphButtons.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
@@ -197,16 +200,44 @@ public class GraphingCalculator extends BasicCalculator {
     private void resetGraph() {
         mMiniGraph.zoomReset();
 
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mMiniGraph.getLayoutParams();
         int displayHeight = getResources().getDimensionPixelSize(R.dimen.display_height_with_shadow);
+        int marginAdjustment = getResources().getDimensionPixelSize(R.dimen.display_graph_margin);
 
-        // Move the X axis so it lines up to the top of the device (so we have a good starting point)
+        Log.d("TEST", "graph height: " + mMiniGraph.getHeight());
+        // Move the X axis so it lines up to the top of the view (so we have a good starting point)
         float initialY = -mMiniGraph.getHeight() / 2;
+        // Now move it up to the top of the phone
+        initialY -= params.topMargin;
         // Move the X axis down so it matches the bottom of the display
         initialY += displayHeight;
         // Move it up 50% between the formula and the end of the display
         initialY -= (displayHeight - mFormulaEditText.getHeight()) / 2;
+        // And add the margin adjustment to nudge it down a little (so it doesn't look off centered compared to the display)
+        initialY += marginAdjustment;
 
         mMiniGraph.panBy(0, initialY);
+    }
+
+    private void invalidateInlineBounds() {
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mMiniGraph.getLayoutParams();
+        params.topMargin = getResources().getDimensionPixelSize(R.dimen.display_height_graph_expanded);
+        params.topMargin -= getResources().getDimensionPixelSize(R.dimen.display_shadow);
+        params.bottomMargin = mGraphButtons.getHeight();
+        params.bottomMargin -= getResources().getDimensionPixelSize(R.dimen.display_shadow);
+
+        mMiniGraph.setLayoutParams(params);
+        mMiniGraph.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (android.os.Build.VERSION.SDK_INT < 16) {
+                    mMiniGraph.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                } else {
+                    mMiniGraph.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+                resetGraph();
+            }
+        });
     }
 
     @Override
@@ -297,6 +328,7 @@ public class GraphingCalculator extends BasicCalculator {
                             mGraphButtons.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
                         mGraphButtons.setTranslationY(mGraphButtons.getHeight());
+                        invalidateInlineBounds();
                     }
                 });
             }
