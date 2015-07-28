@@ -285,19 +285,23 @@ public class GraphView extends View {
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 int textWidth = bounds.right - bounds.left;
                 canvas.drawText(text, x - textWidth / 2, mLineMargin / 2 + mTextPaint.getTextSize() / 2, mTextPaint);
-            } else if (j + 1 == 0 && i > (mRemainderX >= 0 ? 0 : 1) && x < getWidth()) {
+            } else if (j + 1 == 0) {
                 // Draw the y min
                 String text = mFormat.format(getYAxisMin());
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 int textWidth = bounds.right - bounds.left;
-                int xCord = Math.min(getWidth() - mLineMargin, x - textWidth);
+                int xCord = x - textWidth;
+                xCord = Math.min(getWidth() - 2 * mLineMargin, xCord);
+                xCord = Math.max(2 * mLineMargin - textWidth, xCord);
                 canvas.drawText(text, xCord, getHeight() - mLineMargin + mTextPaintSize, mTextPaint);
 
                 // Draw the y max
                 text = mFormat.format(getYAxisMax());
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 textWidth = bounds.right - bounds.left;
-                xCord = Math.min(getWidth() - mLineMargin, x - textWidth);
+                xCord = x - textWidth;
+                xCord = Math.min(getWidth() - 2 * mLineMargin, xCord);
+                xCord = Math.max(2 * mLineMargin - textWidth, xCord);
                 canvas.drawText(text, xCord, mLineMargin, mTextPaint);
 
                 inlineNumbersDrawn = true;
@@ -312,9 +316,9 @@ public class GraphView extends View {
             int textWidth = bounds.right - bounds.left;
             int xCord;
             if (drawOnRightSide) {
-                xCord = getWidth() - mLineMargin;
+                xCord = getWidth() - 2 * mLineMargin;
             } else {
-                xCord = mLineMargin - textWidth;
+                xCord = 2 * mLineMargin - textWidth;
             }
             int yCord = getHeight() - mLineMargin + mTextPaintSize;
             canvas.drawText(text, xCord, yCord, mTextPaint);
@@ -324,9 +328,9 @@ public class GraphView extends View {
             mTextPaint.getTextBounds(text, 0, text.length(), bounds);
             textWidth = bounds.right - bounds.left;
             if (drawOnRightSide) {
-                xCord = getWidth() - mLineMargin;
+                xCord = getWidth() - 2 * mLineMargin;
             } else {
-                xCord = mLineMargin - textWidth;
+                xCord = 2 * mLineMargin - textWidth;
             }
             yCord = mLineMargin;
             canvas.drawText(text, xCord, yCord, mTextPaint);
@@ -356,16 +360,19 @@ public class GraphView extends View {
                 int textHeight = bounds.bottom - bounds.top;
                 int textWidth = bounds.right - bounds.left;
                 canvas.drawText(text, mLineMargin / 2 - textWidth / 2, y + textHeight / 2, mTextPaint);
-            } else if (j - 1 == 0 && i > (mRemainderY >= 0 ? 0 : 1) && y + mLineMargin - mTextPaintSize < getHeight()) {
+            } else if (j - 1 == 0) {
                 // Draw the x min
                 String text = mFormat.format(getXAxisMin());
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 int textWidth = bounds.right - bounds.left;
-                canvas.drawText(text, mLineMargin - textWidth, y, mTextPaint);
+                int yCord = y;
+                yCord = Math.min(getHeight() - 2 * mLineMargin + mTextPaintSize, yCord);
+                yCord = Math.max(2 * mLineMargin, yCord);
+                canvas.drawText(text, mLineMargin - textWidth, yCord, mTextPaint);
 
                 // Draw the x max
                 text = mFormat.format(getXAxisMax());
-                canvas.drawText(text, getWidth() - mLineMargin, y, mTextPaint);
+                canvas.drawText(text, getWidth() - mLineMargin, yCord, mTextPaint);
 
                 inlineNumbersDrawn = true;
             }
@@ -380,9 +387,9 @@ public class GraphView extends View {
             int xCord = mLineMargin - textWidth;
             int yCord;
             if (drawOnBottom) {
-                yCord = getHeight() - mLineMargin + mTextPaintSize;
+                yCord = getHeight() - 2 * mLineMargin + mTextPaintSize;
             } else {
-                yCord = mLineMargin;
+                yCord = 2 * mLineMargin;
             }
             canvas.drawText(text, xCord, yCord, mTextPaint);
 
@@ -390,9 +397,9 @@ public class GraphView extends View {
             text = mFormat.format(getXAxisMax());
             xCord = getWidth() - mLineMargin;
             if (drawOnBottom) {
-                yCord = getHeight() - mLineMargin + mTextPaintSize;
+                yCord = getHeight() - 2 * mLineMargin + mTextPaintSize;
             } else {
-                yCord = mLineMargin;
+                yCord = 2 * mLineMargin;
             }
             canvas.drawText(text, xCord, yCord, mTextPaint);
         }
