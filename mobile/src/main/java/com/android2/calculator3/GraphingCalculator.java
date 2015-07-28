@@ -167,13 +167,10 @@ public class GraphingCalculator extends BasicCalculator {
     }
 
     private void transitionToGraph() {
-        mGraphController.lock();
-
-        setState(CalculatorState.GRAPHING);
         mDisplayView.transitionToGraph(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
-                mGraphController.unlock();
+                setState(CalculatorState.GRAPHING);
             }
         });
     }
