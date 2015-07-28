@@ -13,18 +13,19 @@
         android:background="@drawable/white_card_subitem"
         android:focusable="false"/>
 
-    <LinearLayout
+    <com.android2.calculator3.view.CalculatorPadLayout
         android:layout_width="match_parent"
         android:layout_height="65dp"
-        android:background="@color/display_color">
+        android:background="@color/display_color"
+        android:columnCount="4"
+        android:rowCount="1">
 
         <com.android2.calculator3.view.ImageButton
             android:id="@+id/btn_zoom_in"
             android:src="@drawable/btn_zoomin"
             android:onClick="onButtonClick"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="14dp"
             android:background="@color/pad_button_advanced_ripple_color"/>
@@ -33,9 +34,8 @@
             android:id="@+id/btn_zoom_out"
             android:src="@drawable/btn_zoomout"
             android:onClick="onButtonClick"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="14dp"
             android:background="@color/pad_button_advanced_ripple_color"/>
@@ -44,9 +44,8 @@
             android:id="@+id/btn_zoom_reset"
             android:src="@drawable/btn_reset"
             android:onClick="onButtonClick"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="14dp"
             android:background="@color/pad_button_advanced_ripple_color"/>
@@ -54,13 +53,12 @@
         <com.android2.calculator3.view.ImageButton
             android:id="@+id/btn_close"
             android:src="@drawable/btn_close"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_gravity="center_vertical"
             android:padding="14dp"
             android:background="@color/pad_button_advanced_ripple_color"/>
 
-    </LinearLayout>
+    </com.android2.calculator3.view.CalculatorPadLayout>
 
 </LinearLayout>
