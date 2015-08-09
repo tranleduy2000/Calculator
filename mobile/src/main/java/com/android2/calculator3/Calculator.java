@@ -15,5 +15,5 @@
 */
 package com.android2.calculator3;
 
-public class Calculator extends PanelSwitchingCalculator {
+public class Calculator extends MatrixCalculator {
 }

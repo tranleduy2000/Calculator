@@ -41,7 +41,7 @@ public class FloatingCalculator extends FloatingView {
     private State mState;
 
     private enum State {
-        DELETE, CLEAR, ERROR;
+        DELETE, CLEAR, ERROR
     }
 
     public View inflateButton() {
@@ -135,7 +135,7 @@ public class FloatingCalculator extends FloatingView {
             }
         });
 
-        HistoryAdapter.HistoryItemCallback historyItemCallback = new HistoryAdapter.HistoryItemCallback() {
+        FloatingHistoryAdapter.HistoryItemCallback historyItemCallback = new FloatingHistoryAdapter.HistoryItemCallback() {
             @Override
             public void onHistoryItemSelected(HistoryEntry entry) {
                 setState(State.DELETE);

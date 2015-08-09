@@ -17,7 +17,6 @@
 package com.android2.calculator3;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -64,7 +63,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         public TextView historyExpr;
         public TextView historyResult;
         public GraphView graphView;
-        public AsyncTask pendingGraphTask;
 
         public ViewHolder(View v) {
             super(v);
@@ -77,22 +75,18 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(getContext()).inflate(getLayoutResourceId(), parent, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.history_entry, parent, false);
         return new ViewHolder(view);
-    }
-
-    protected int getLayoutResourceId() {
-        return R.layout.history_entry;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final HistoryEntry entry = getEntry(position);
-        final HistoryEntry nextEntry = getNextEntry(position);
-        invalidate(holder, entry, nextEntry);
+        invalidate(holder, entry, position);
     }
 
-    private void invalidate(final ViewHolder holder, final HistoryEntry entry, final HistoryEntry nextEntry) {
+    private void invalidate(final ViewHolder holder, final HistoryEntry entry, int position) {
+        final HistoryEntry nextEntry = getNextEntry(position);
         final HistoryLine view = holder.historyLine;
 
         view.setAdapter(this);
@@ -107,27 +101,24 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         holder.historyResult.setText(formatText(entry.getResult()));
 
         // Disable any and all graphs (the default state)
+        GraphController controller = null;
         if (holder.graphView != null) {
             holder.graphView.setVisibility(View.GONE);
+            controller = (GraphController) holder.graphView.getTag();
         }
-        if (holder.pendingGraphTask != null) {
-            holder.pendingGraphTask.cancel(true);
-            holder.pendingGraphTask = null;
+
+        if (controller != null) {
+            controller.destroy();
+            controller.clear();
         }
 
         if (nextEntry != null && entry.getGroupId() == nextEntry.getGroupId()) {
             // Set a subitem background (so there's a divider instead of a shadow
-            if (holder.graphView != null) {
-                // TODO Floating calculator has no graph. Using that as a differentiator for now.
-                view.setBackgroundResource(R.drawable.white_card_subitem);
-                view.setPadding(dp(16), dp(8), dp(16), dp(8));
-            }
+            view.setBackgroundResource(R.drawable.white_card_subitem);
+            view.setPadding(dp(16), dp(8), dp(16), dp(8));
         } else {
-            if (holder.graphView != null) {
-                // TODO Floating calculator has no graph. Using that as a differentiator for now.
-                view.setBackgroundResource(R.drawable.white_card);
-                view.setPadding(dp(16), dp(8), dp(16), dp(8) + getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow));
-            }
+            view.setBackgroundResource(R.drawable.white_card);
+            view.setPadding(dp(16), dp(8), dp(16), dp(8) + getContext().getResources().getDimensionPixelSize(R.dimen.display_shadow));
 
             // If this is a graph formula, start drawing the graph
             if (hasGraph(entry.getFormula())) {
@@ -135,12 +126,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 if (holder.graphView != null) {
                     holder.graphView.setVisibility(View.VISIBLE);
 
-                    if (holder.graphView.getTag() == null) {
-                        GraphController controller = new GraphController(new GraphModule(mSolver), holder.graphView);
+                    if (controller == null) {
+                        controller = new GraphController(new GraphModule(mSolver), holder.graphView);
                         holder.graphView.setTag(controller);
                     }
-                    GraphController controller = (GraphController) holder.graphView.getTag();
-                    holder.pendingGraphTask = controller.startGraph(entry.getFormula());
+                    controller.addNewGraph(entry.getFormula());
+
+                    int pos = position - 1;
+                    HistoryEntry previousEntry = getEntry(pos);
+                    while (previousEntry != null && previousEntry.getGroupId() == entry.getGroupId()) {
+                        // We'll iterate over all the entries with the same group id as us and check for graphs
+                        if (hasGraph(previousEntry.getFormula())) {
+                            controller.addNewGraph(previousEntry.getFormula());
+                        }
+                        previousEntry = getEntry(--pos);
+                    }
                 }
             }
         }
@@ -148,7 +148,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     public View parseView(ViewGroup parent, String formula, String result) {
         ViewHolder holder = onCreateViewHolder(parent, 0);
-        invalidate(holder, new HistoryEntry(formula, result, -1), null);
+        invalidate(holder, new HistoryEntry(formula, result, -1), -1);
         return holder.itemView;
     }
 
@@ -174,6 +174,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     }
 
     private HistoryEntry getNextEntry(int position) {
+        if (position == -1) return null;
         return getEntry(++position);
     }
 
@@ -215,7 +216,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         }
         return Html.fromHtml(
                 mEquationFormatter.insertSupScripts(
-                mEquationFormatter.addComas(mSolver, text)));
+                        mEquationFormatter.addComas(mSolver, text)));
     }
 
     public Context getContext() {

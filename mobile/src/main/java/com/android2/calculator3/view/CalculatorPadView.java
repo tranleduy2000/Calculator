@@ -26,9 +26,7 @@ import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.R;
@@ -51,9 +49,11 @@ public class CalculatorPadView extends RevealFrameLayout {
     private TranslateState mState = TranslateState.COLLAPSED;
 
     private View mBase;
-    private View mOverlay;
+    private SolidLayout mOverlay;
     private FloatingActionButton mFab;
     private View mTray;
+
+    private Animator mActiveAnimator;
 
     public CalculatorPadView(Context context) {
         super(context);
@@ -122,8 +122,8 @@ public class CalculatorPadView extends RevealFrameLayout {
         return mBase;
     }
 
-    protected FrameLayout getBaseOverlay() {
-        return (FrameLayout) mOverlay;
+    protected View getBaseOverlay() {
+        return mOverlay;
     }
 
     protected View getTray() {
@@ -166,7 +166,7 @@ public class CalculatorPadView extends RevealFrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         mBase = findViewById(R.id.base);
-        mOverlay = findViewById(R.id.overlay);
+        mOverlay = (SolidLayout) findViewById(R.id.overlay);
         mTray = findViewById(R.id.tray);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -245,6 +245,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         mLastDelta = mLastMotion - event.getRawX();
         mLastMotion = event.getRawX();
         setState(TranslateState.PARTIAL);
+        resetAnimator();
         setEnabled(mOverlay, true);
     }
 
@@ -267,22 +268,33 @@ public class CalculatorPadView extends RevealFrameLayout {
         mVelocityTracker.recycle();
         mVelocityTracker = null;
     }
+
+    private void resetAnimator() {
+        if (mActiveAnimator != null) {
+            mActiveAnimator.cancel();
+            mActiveAnimator = null;
+        }
+    }
+
     public void expand() {
         expand(null);
     }
 
     public void expand(Animator.AnimatorListener listener) {
-        DisplayAnimator animator = new DisplayAnimator(getCurrentPercent(), 1f);
+        resetAnimator();
+
+        mActiveAnimator = new DisplayAnimator(getCurrentPercent(), 1f);
         if (listener != null) {
-            animator.addListener(listener);
+            mActiveAnimator.addListener(listener);
         }
-        animator.addListener(new AnimationFinishedListener() {
+        mActiveAnimator.addListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 showFab();
+                setEnabled(mOverlay, true);
             }
         });
-        animator.start();
+        mActiveAnimator.start();
         setState(TranslateState.EXPANDED);
     }
 
@@ -291,18 +303,20 @@ public class CalculatorPadView extends RevealFrameLayout {
     }
 
     public void collapse(Animator.AnimatorListener listener) {
-        DisplayAnimator animator = new DisplayAnimator(getCurrentPercent(), 0f);
+        resetAnimator();
+
+        mActiveAnimator = new DisplayAnimator(getCurrentPercent(), 0f);
         if (listener != null) {
-            animator.addListener(listener);
+            mActiveAnimator.addListener(listener);
         }
-        animator.addListener(new AnimationFinishedListener() {
+        mActiveAnimator.addListener(new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 hideFab();
                 setEnabled(mOverlay, false);
             }
         });
-        animator.start();
+        mActiveAnimator.start();
         setState(TranslateState.COLLAPSED);
     }
 
@@ -340,16 +354,9 @@ public class CalculatorPadView extends RevealFrameLayout {
         }
     }
 
-    private void setEnabled(View view, boolean enabled) {
-        if(view instanceof ViewGroup) {
-            for(int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                setEnabled(((ViewGroup) view).getChildAt(i), enabled);
-            }
-        } else if(view instanceof Button) {
-            view.setEnabled(enabled);
-        } else if(view instanceof ImageButton) {
-            view.setEnabled(enabled);
-        }
+    private void setEnabled(SolidLayout view, boolean enabled) {
+        view.setPreventChildTouchEvents(!enabled);
+        view.setPreventParentTouchEvents(!enabled);
     }
 
     protected float getCurrentPercent() {

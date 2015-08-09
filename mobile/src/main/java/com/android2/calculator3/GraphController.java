@@ -13,24 +13,23 @@ import com.xlythe.math.GraphModule.OnGraphUpdatedListener;
 import com.xlythe.math.Point;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GraphController implements
-        OnGraphUpdatedListener, PanListener, ZoomListener {
+public class GraphController implements PanListener, ZoomListener {
     private static final String TAG = GraphController.class.getSimpleName();
     private static final int MAX_CACHE_SIZE = 10;
+    private static final int GRAPH_COLOR = 0xff00bcd4; // Cyan
 
     private final GraphModule mGraphModule;
     private final GraphView mMainGraphView;
 
-    private String mEquation;
-    private List<Point> mPendingResults;
-    private AsyncTask mPanTask;
+    private final List<AsyncTask> mGraphTasks = new ArrayList<>();
 
-    private boolean mLocked;
-    private OnUnlockedListener mOnUnlockedListener;
+    private GraphView.Graph mMostRecentGraph;
+    private AsyncTask mMostRecentGraphTask;
 
     private final Handler mHandler = new Handler();
 
@@ -53,91 +52,86 @@ public class GraphController implements
                 } else {
                     mMainGraphView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 }
-                if (mEquation != null) {
-                    Log.d(TAG, "View was laid out. Attempting to graph " + mEquation);
-                    startGraph(mEquation);
-                }
+                invalidateGraph();
             }
         });
-
-        mMainGraphView.setPanListener(new PanListener() {
-            @Override
-            public void panApplied() {
-                if (mPanTask != null) {
-                    mPanTask.cancel(true);
-                    mPanTask = null;
-                }
-                if (mEquation != null) {
-                    mPanTask = startGraph(mEquation);
-                }
-            }
-        });
-
-        mMainGraphView.setZoomListener(new ZoomListener() {
-            @Override
-            public void zoomApplied(float level) {
-                if (mPanTask != null) {
-                    mPanTask.cancel(true);
-                    mPanTask = null;
-                }
-                if (mEquation != null) {
-                    mPanTask = startGraph(mEquation);
-                }
-            }
-        });
+        mMainGraphView.addPanListener(this);
+        mMainGraphView.addZoomListener(this);
     }
 
-    public AsyncTask startGraph(final String equation) {
-        // If we've already asked this before, quick quick show the result again
-        if (mCachedEquations.containsKey(equation)) {
-            onGraphUpdated(mCachedEquations.get(equation));
-        }
+    public void addNewGraph(String equation) {
+        mMostRecentGraph = new GraphView.Graph(equation, GRAPH_COLOR, Collections.EMPTY_LIST);
+        mMainGraphView.addGraph(mMostRecentGraph);
+        layoutBeforeGraphing(mMostRecentGraph);
+    }
 
-        mEquation = equation;
+    public void changeLatestGraph(String equation) {
+        if (mMostRecentGraphTask != null) {
+            mMostRecentGraphTask.cancel(true);
+        }
+        mMostRecentGraph.setFormula(equation);
+        layoutBeforeGraphing(mMostRecentGraph);
+    }
+
+    private void layoutBeforeGraphing(final GraphView.Graph graph) {
         if (mMainGraphView.getWidth() == 0) {
-            Log.d(TAG, "This view hasn't been laid out yet. Will delay graphing " + equation);
+            Log.d(TAG, "This view hasn't been laid out yet. Will delay graphing " + graph.getFormula());
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    if (mMainGraphView.getXAxisMin() != mMainGraphView.getXAxisMax()) {
-                        startGraph(equation);
+                    AsyncTask task = mMostRecentGraphTask = drawGraph(graph);
+                    if (task != null) {
+                        mGraphTasks.add(task);
                     }
                 }
             });
-            return null;
+        } else {
+            AsyncTask task = mMostRecentGraphTask = drawGraph(graph);
+            if (task != null) {
+                mGraphTasks.add(task);
+            }
+        }
+    }
+
+    public List<GraphView.Graph> getGraphs() {
+        return mMainGraphView.getGraphs();
+    }
+
+    public void remove(GraphView.Graph graph) {
+        getGraphs().remove(graph);
+        mMainGraphView.postInvalidate();
+    }
+
+    public AsyncTask drawGraph(final GraphView.Graph graph) {
+        // If we've already asked this before, quick quick show the result again
+        if (mCachedEquations.containsKey(graph.getFormula())) {
+            graph.setData(mCachedEquations.get(graph.getFormula()));
+            mMainGraphView.postInvalidate();
         }
 
         invalidateModule();
-        return mGraphModule.updateGraph(equation, new OnGraphUpdatedListener() {
+        return mGraphModule.updateGraph(graph.getFormula(), new OnGraphUpdatedListener() {
             @Override
             public void onGraphUpdated(List<Point> result) {
-                mCachedEquations.put(equation, result);
-                GraphController.this.onGraphUpdated(result);
+                mCachedEquations.put(graph.getFormula(), result);
+                graph.setData(mCachedEquations.get(graph.getFormula()));
+                mMainGraphView.postInvalidate();
             }
         });
     }
 
-    public void clearGraph() {
-        mMainGraphView.setData(new ArrayList<Point>());
+    public void clear() {
+        mMainGraphView.getGraphs().clear();
     }
 
     private void invalidateModule() {
         mGraphModule.setDomain(mMainGraphView.getXAxisMin(), mMainGraphView.getXAxisMax());
         mGraphModule.setRange(mMainGraphView.getYAxisMin(), mMainGraphView.getYAxisMax());
         mGraphModule.setZoomLevel(mMainGraphView.getZoomLevel());
-    }
-
-    @Override
-    public void onGraphUpdated(List<Point> result) {
-        if (isLocked()) {
-            mPendingResults = result;
-        } else {
-            mMainGraphView.setData(result);
         }
-    }
 
-    @Override
-    public void panApplied() {
+@Override
+public void panApplied() {
         invalidateGraph();
     }
 
@@ -148,35 +142,22 @@ public class GraphController implements
 
     private void invalidateGraph() {
         invalidateModule();
-        if (mEquation != null) {
-            mGraphModule.updateGraph(mEquation, this);
+        for (AsyncTask task : mGraphTasks) {
+            task.cancel(true);
+        }
+        mGraphTasks.clear();
+        for (GraphView.Graph graph : getGraphs()) {
+            AsyncTask task = drawGraph(graph);
+            if (task != null) {
+                mGraphTasks.add(task);
+            }
         }
     }
 
-    public void lock() {
-        mLocked = true;
-    }
-
-    public void unlock() {
-        mLocked = false;
-        if (mOnUnlockedListener != null) {
-            mOnUnlockedListener.onUnlocked();
+    public void destroy() {
+        for (AsyncTask task : mGraphTasks) {
+            task.cancel(true);
         }
-        if (mPendingResults != null) {
-            onGraphUpdated(mPendingResults);
-            mPendingResults = null;
-        }
-    }
-
-    public boolean isLocked() {
-        return mLocked;
-    }
-
-    public void setOnUnlockedListener(OnUnlockedListener listener) {
-        mOnUnlockedListener = listener;
-    }
-
-    public interface OnUnlockedListener {
-        void onUnlocked();
+        mGraphTasks.clear();
     }
 }

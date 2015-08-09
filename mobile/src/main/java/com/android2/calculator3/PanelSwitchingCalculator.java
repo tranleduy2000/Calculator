@@ -38,13 +38,13 @@ import io.codetail.animation.ViewAnimationUtils;
 /**
  * Controls the fab and what pages are shown / hidden.
  * */
-public class PanelSwitchingCalculator extends MatrixCalculator {
+public abstract class PanelSwitchingCalculator extends BasicCalculator {
 
     // instance state keys
     private static final String KEY_PANEL = NAME + "_panel";
 
     private enum Panel {
-        Advanced, Hex, Matrix;
+        Advanced, Hex, Matrix
     }
 
     private ViewGroup mOverlay;

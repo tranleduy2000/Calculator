@@ -11,7 +11,6 @@ import android.graphics.Rect;
 import android.os.Build;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,10 +37,10 @@ public class GraphView extends View {
     private static final int ZOOM = 2;
     private static final int BOX_STROKE = 6;
 
-    private int mDrawingAlgorithm = CURVES;
-    private DecimalFormat mFormat = new DecimalFormat("#.#####");
-    private PanListener mPanListener;
-    private ZoomListener mZoomListener;
+    private int mDrawingAlgorithm = LINES;
+    private DecimalFormat mFormat = new DecimalFormat("#.#");
+    private final List<PanListener> mPanListeners = new ArrayList<>();
+    private final List<ZoomListener> mZoomListeners = new ArrayList<>();
     private Paint mBackgroundPaint;
     private Paint mTextPaint;
     private Paint mAxisPaint;
@@ -53,8 +52,9 @@ public class GraphView extends View {
     private int mLineMargin;
     private int mMinLineMargin;
     private int mTextPaintSize;
+    private int mTextMargin;
     private float mZoomLevel = 1;
-    private List<Point> mData;
+    private List<Graph> mData;
 
     private float mStartX;
     private float mStartY;
@@ -76,6 +76,9 @@ public class GraphView extends View {
     private boolean mPanEnabled = true;
     private boolean mZoomEnabled = true;
     private boolean mInlineNumbers = false;
+
+    private boolean mGraphIsCentered = true;
+    private OnCenterListener mOnCenterListener;
 
     public GraphView(Context context) {
         super(context);
@@ -103,6 +106,7 @@ public class GraphView extends View {
         mBackgroundPaint.setColor(Color.WHITE);
         mBackgroundPaint.setStyle(Style.FILL);
 
+        mTextMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, getResources().getDisplayMetrics());
         mTextPaintSize = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, getResources().getDisplayMetrics());
         mTextPaint = new Paint();
         mTextPaint.setColor(Color.BLACK);
@@ -130,7 +134,7 @@ public class GraphView extends View {
 
         zoomReset();
 
-        mData = new ArrayList<Point>();
+        mData = new ArrayList();
 
         if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.GraphView, 0, 0);
@@ -153,16 +157,17 @@ public class GraphView extends View {
         // Zero everything out
         mRemainderX = mRemainderY = mOffsetX = mOffsetY = 0;
 
-        // Make adjustments so that the axis are centered
-        int extraWidth = getWidth() % mLineMargin;
-        int extraHeight = getHeight() % mLineMargin;
-        mRemainderX += extraWidth / 2;
-        mRemainderY += extraHeight / 2;
+        mGraphIsCentered = true;
 
         onSizeChanged(getWidth(), getHeight(), 0, 0);
-        invalidate();
-        if (mPanListener != null) mPanListener.panApplied();
-        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
+        postInvalidate();
+
+        for (PanListener listener : mPanListeners) {
+            listener.panApplied();
+        }
+        for (ZoomListener listener : mZoomListeners) {
+            listener.zoomApplied(mZoomLevel);
+        }
     }
 
     private Point average(Point... args) {
@@ -222,7 +227,10 @@ public class GraphView extends View {
                     mRemainderY %= mLineMargin;
 
                     // Notify listeners
-                    if (mPanListener != null) mPanListener.panApplied();
+                    for (PanListener listener : mPanListeners) {
+                        listener.panApplied();
+                    }
+                    mGraphIsCentered = false;
                 } else if (mMode == ZOOM && mZoomEnabled) {
                     double distance = getDistance(new Point(event.getX(0), event.getY(0)), new Point(event.getX(1), event.getY(1)));
                     double delta = mZoomInitDistance - distance;
@@ -239,11 +247,30 @@ public class GraphView extends View {
     protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
         super.onSizeChanged(xNew, yNew, xOld, yOld);
 
-        // Center the offsets
-        mOffsetX += (xOld / mLineMargin) / 2;
-        mOffsetY += (yOld / mLineMargin) / 2;
-        mOffsetX -= (xNew / mLineMargin) / 2;
-        mOffsetY -= (yNew / mLineMargin) / 2;
+        // If the graph was centered, recenter it. If it was panned, leave it alone.
+        if (mGraphIsCentered) {
+            // Lets calculate the min x and y values
+            mOffsetX = (-xNew / mLineMargin) / 2;
+            mOffsetY = (-yNew / mLineMargin) / 2;
+
+            // But! The view will probably not perfectly match up to line margins.
+            // So put half the remainder on top and half on bottom
+            mRemainderX = (xNew % mLineMargin) / 2;
+            mRemainderY = (yNew % mLineMargin) / 2;
+
+            // Unfortunately, there's one gotcha left. An even number of line margins won't center
+            // the axis! So push everything down by half a line margin, to center on the axis.
+            if ((xNew / mLineMargin) % 2 == 1) {
+                mRemainderX += mLineMargin / 2;
+            }
+            if ((yNew / mLineMargin) % 2 == 1) {
+                mRemainderY += mLineMargin / 2;
+            }
+
+            if (mOnCenterListener != null) {
+                mOnCenterListener.onCentered();
+            }
+        }
     }
 
     @Override
@@ -293,6 +320,8 @@ public class GraphView extends View {
                 int xCord = x - textWidth;
                 xCord = Math.min(getWidth() - 2 * mLineMargin, xCord);
                 xCord = Math.max(2 * mLineMargin - textWidth, xCord);
+                xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+                xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
                 canvas.drawText(text, xCord, getHeight() - mLineMargin + mTextPaintSize, mTextPaint);
 
                 // Draw the y max
@@ -302,6 +331,8 @@ public class GraphView extends View {
                 xCord = x - textWidth;
                 xCord = Math.min(getWidth() - 2 * mLineMargin, xCord);
                 xCord = Math.max(2 * mLineMargin - textWidth, xCord);
+                xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextPaintSize
+                xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
                 canvas.drawText(text, xCord, mLineMargin, mTextPaint);
 
                 inlineNumbersDrawn = true;
@@ -320,6 +351,8 @@ public class GraphView extends View {
             } else {
                 xCord = 2 * mLineMargin - textWidth;
             }
+            xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+            xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
             int yCord = getHeight() - mLineMargin + mTextPaintSize;
             canvas.drawText(text, xCord, yCord, mTextPaint);
 
@@ -332,6 +365,8 @@ public class GraphView extends View {
             } else {
                 xCord = 2 * mLineMargin - textWidth;
             }
+            xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+            xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
             yCord = mLineMargin;
             canvas.drawText(text, xCord, yCord, mTextPaint);
         }
@@ -365,26 +400,36 @@ public class GraphView extends View {
                 String text = mFormat.format(getXAxisMin());
                 mTextPaint.getTextBounds(text, 0, text.length(), bounds);
                 int textWidth = bounds.right - bounds.left;
+                int xCord = mLineMargin - textWidth;
+                xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+                xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
                 int yCord = y;
                 yCord = Math.min(getHeight() - 2 * mLineMargin + mTextPaintSize, yCord);
                 yCord = Math.max(2 * mLineMargin, yCord);
-                canvas.drawText(text, mLineMargin - textWidth, yCord, mTextPaint);
+                canvas.drawText(text, xCord, yCord, mTextPaint);
 
                 // Draw the x max
                 text = mFormat.format(getXAxisMax());
-                canvas.drawText(text, getWidth() - mLineMargin, yCord, mTextPaint);
+                mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+                textWidth = bounds.right - bounds.left;
+                xCord = getWidth() - mLineMargin;
+                xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+                xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
+                canvas.drawText(text, xCord, yCord, mTextPaint);
 
                 inlineNumbersDrawn = true;
             }
         }
         if (!inlineNumbersDrawn) {
-            boolean drawOnBottom = getYAxisMin() + (getYAxisMax() - getYAxisMin()) / 2 < 0;
+            boolean drawOnBottom = getYAxisMin() + (getYAxisMax() - getYAxisMin()) / 2 > 0;
 
             // Draw the x min
             String text = mFormat.format(getXAxisMin());
             mTextPaint.getTextBounds(text, 0, text.length(), bounds);
             int textWidth = bounds.right - bounds.left;
             int xCord = mLineMargin - textWidth;
+            xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+            xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
             int yCord;
             if (drawOnBottom) {
                 yCord = getHeight() - 2 * mLineMargin + mTextPaintSize;
@@ -395,7 +440,11 @@ public class GraphView extends View {
 
             // Draw the x max
             text = mFormat.format(getXAxisMax());
+            mTextPaint.getTextBounds(text, 0, text.length(), bounds);
+            textWidth = bounds.right - bounds.left;
             xCord = getWidth() - mLineMargin;
+            xCord = Math.max(mTextMargin, xCord); // Don't let the text go off the screen. Margin of mTextMargin
+            xCord = Math.min(getWidth() - textWidth - mTextMargin, xCord); // Don't let the text go off the screen.
             if (drawOnBottom) {
                 yCord = getHeight() - 2 * mLineMargin + mTextPaintSize;
             } else {
@@ -411,13 +460,16 @@ public class GraphView extends View {
         }
 
         // Create a path to draw smooth arcs
-        if (mData.size() != 0) {
-            if (mDrawingAlgorithm == LINES) {
-                drawWithStraightLines(mData, canvas);
-            } else if (mDrawingAlgorithm == DOTS) {
-                drawDots(mData, canvas);
-            } else if (mDrawingAlgorithm == CURVES) {
-                drawWithCurves(mData, canvas);
+        for (Graph graph : mData) {
+            if (graph.visible && graph.data.size() != 0) {
+                mGraphPaint.setColor(graph.color);
+                if (mDrawingAlgorithm == LINES) {
+                    drawWithStraightLines(graph.data, canvas, mGraphPaint);
+                } else if (mDrawingAlgorithm == DOTS) {
+                    drawDots(graph.data, canvas, mGraphPaint);
+                } else if (mDrawingAlgorithm == CURVES) {
+                    drawWithCurves(graph.data, canvas, mGraphPaint);
+                }
             }
         }
 
@@ -427,7 +479,7 @@ public class GraphView extends View {
         }
     }
 
-    private void drawWithStraightLines(List<Point> data, Canvas canvas) {
+    private void drawWithStraightLines(List<Point> data, Canvas canvas, Paint paint) {
         Point previousPoint = null;
         for (Point currentPoint : data) {
             if (previousPoint == null) {
@@ -444,22 +496,22 @@ public class GraphView extends View {
 
             if (tooFar(aX, aY, bX, bY)) continue;
 
-            canvas.drawLine(aX, aY, bX, bY, mGraphPaint);
+            canvas.drawLine(aX, aY, bX, bY, paint);
         }
     }
 
-    private void drawDots(List<Point> data, Canvas canvas) {
+    private void drawDots(List<Point> data, Canvas canvas, Paint paint) {
         for (Point p : data) {
-            canvas.drawPoint(getRawX(p), getRawY(p), mGraphPaint);
+            canvas.drawPoint(getRawX(p), getRawY(p), paint);
         }
     }
 
     private List<Point> curveCachedData;
     private List<Point> curveCachedMutatedData;
 
-    private void drawWithCurves(List<Point> data, Canvas canvas) {
+    private void drawWithCurves(List<Point> data, Canvas canvas, Paint paint) {
         if (curveCachedData == data) {
-            drawWithStraightLines(curveCachedMutatedData, canvas);
+            drawWithStraightLines(curveCachedMutatedData, canvas, paint);
             return;
         }
 
@@ -510,7 +562,7 @@ public class GraphView extends View {
         curveCachedData = data;
         curveCachedMutatedData = newData;
 
-        drawWithStraightLines(newData, canvas);
+        drawWithStraightLines(newData, canvas, paint);
     }
 
     private int getRawX(Point p) {
@@ -562,12 +614,12 @@ public class GraphView extends View {
     }
 
     public float getYAxisMin() {
-        return (mOffsetY - 1) * mZoomLevel;
+        int numOfVerticalGridLines = getHeight() / mLineMargin + 1;
+        return -1 * (numOfVerticalGridLines + mOffsetY) * mZoomLevel;
     }
 
     public float getYAxisMax() {
-        int numOfVerticalGridLines = getHeight() / mLineMargin + 1;
-        return (numOfVerticalGridLines + mOffsetY) * mZoomLevel;
+        return -1 * (mOffsetY - 1) * mZoomLevel;
     }
 
     @Override
@@ -614,7 +666,9 @@ public class GraphView extends View {
     public void setZoomLevel(float level) {
         mZoomLevel = level;
         invalidate();
-        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
+        for (ZoomListener listener : mZoomListeners) {
+            listener.zoomApplied(mZoomLevel);
+        }
     }
 
     public void zoomIn() {
@@ -625,14 +679,30 @@ public class GraphView extends View {
         setZoomLevel(mZoomLevel * 2);
     }
 
-    public void setData(List<Point> data) {
+    public void addGraph(Graph graph) {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new RuntimeException("setData called from a thread other than the ui thread");
+            throw new RuntimeException("addGraph called from a thread other than the ui thread");
         }
 
-        mData = data;
-        mDrawingAlgorithm = LINES;
+        mData.add(graph);
         postInvalidate();
+    }
+
+    public void clearGraphs() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new RuntimeException("clearGraphs called from a thread other than the ui thread");
+        }
+
+        mData.clear();
+        postInvalidate();
+    }
+
+    public void setOnCenterListener(OnCenterListener l) {
+        mOnCenterListener = l;
+    }
+
+    public List<Graph> getGraphs() {
+        return mData;
     }
 
     private double getDistance(Point a, Point b) {
@@ -656,20 +726,20 @@ public class GraphView extends View {
         mGraphPaint.setColor(color);
     }
 
-    public PanListener getPanListener() {
-        return mPanListener;
+    public void addPanListener(PanListener l) {
+        mPanListeners.add(l);
     }
 
-    public void setPanListener(PanListener l) {
-        mPanListener = l;
+    public void removePanListener(PanListener l) {
+        mPanListeners.remove(l);
     }
 
-    public ZoomListener getZoomListener() {
-        return mZoomListener;
+    public void addZoomListener(ZoomListener l) {
+        mZoomListeners.add(l);
     }
 
-    public void setZoomListener(ZoomListener l) {
-        mZoomListener = l;
+    public void removeZoomListener(ZoomListener l) {
+        mZoomListeners.remove(l);
     }
 
     public boolean isGridShown() {
@@ -734,5 +804,54 @@ public class GraphView extends View {
 
     public interface ZoomListener {
         void zoomApplied(float level);
+    }
+
+    public interface OnCenterListener {
+        void onCentered();
+    }
+
+    public static class Graph {
+        private String formula;
+        private int color;
+        private List<Point> data;
+        private boolean visible = true;
+
+        public Graph(String formula, int color, List<Point> data) {
+            this.formula = formula;
+            this.color = color;
+            this.data = data;
+        }
+
+        public void setFormula(String formula) {
+            this.formula = formula;
+        }
+
+        public String getFormula() {
+            return formula;
+        }
+
+        public void setColor(int color) {
+            this.color = color;
+        }
+
+        public int getColor() {
+            return color;
+        }
+
+        public void setData(List<Point> data) {
+            this.data = data;
+        }
+
+        public List<Point> getData() {
+            return data;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        public boolean isVisible() {
+            return visible;
+        }
     }
 }

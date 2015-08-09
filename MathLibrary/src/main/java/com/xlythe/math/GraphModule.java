@@ -1,7 +1,6 @@
 package com.xlythe.math;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.javia.arity.SyntaxException;
 
@@ -10,10 +9,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GraphModule extends Module {
-    private double mMinY;
-    private double mMaxY;
-    private double mMinX;
-    private double mMaxX;
+    private float mMinY;
+    private float mMaxY;
+    private float mMinX;
+    private float mMaxX;
     private float mZoomLevel;
 
     public GraphModule(Solver solver) {
@@ -34,6 +33,9 @@ public class GraphModule extends Module {
         mZoomLevel = level;
     }
 
+    /**
+     * Given a function, updateGraph will attempt to build a list of points that can be graphed.
+     * */
     public AsyncTask updateGraph(String text, OnGraphUpdatedListener l) {
         boolean endsWithOperator = text.length() != 0 &&
                 (Solver.isOperator(text.charAt(text.length() - 1)) || text.endsWith("("));
@@ -50,13 +52,13 @@ public class GraphModule extends Module {
     class GraphTask extends AsyncTask<String, String, List<Point>> {
         private final Solver mSolver;
         private final OnGraphUpdatedListener mListener;
-        private final double mMinY;
-        private final double mMaxY;
-        private final double mMinX;
-        private final double mMaxX;
+        private final float mMinY;
+        private final float mMaxY;
+        private final float mMinX;
+        private final float mMaxX;
         private final float mZoomLevel;
 
-        public GraphTask(Solver solver, double minY, double maxY, double minX, double maxX,
+        public GraphTask(Solver solver, float minY, float maxY, float minX, float maxX,
                          float zoomLevel, OnGraphUpdatedListener l) {
             mSolver = solver;
             mListener = l;
@@ -81,15 +83,18 @@ public class GraphModule extends Module {
         public List<Point> graph(String equation) {
             final LinkedList<Point> series = new LinkedList<Point>();
             mSolver.pushFrame();
-            for(double x = mMinX; x <= mMaxX; x += 0.1 * mZoomLevel) {
+
+            final float delta = 0.1f * mZoomLevel;
+            float previousPoint;
+            for(float x = mMinX; x <= mMaxX; x += delta) {
                 if(isCancelled()) {
                     return null;
                 }
 
                 try {
                     mSolver.define("X", x);
-                    double y = mSolver.eval(equation);
-                    series.add(new Point((float) x, (float) y));
+                    float y = (float) mSolver.eval(equation);
+                    series.add(new Point(x, y));
                 } catch(SyntaxException e) {}
             }
             mSolver.popFrame();

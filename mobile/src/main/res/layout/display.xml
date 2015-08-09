@@ -31,6 +31,8 @@
             android:id="@+id/mini_graph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:onClick="onButtonClick"
+            android:visibility="gone"
             graph:showGrid="false"
             graph:showInlineNumbers="true"
             graph:showOutline="false"

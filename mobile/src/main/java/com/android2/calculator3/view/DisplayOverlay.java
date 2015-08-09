@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -200,7 +201,7 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
         int action = MotionEventCompat.getActionMasked(event);
 
         if (mVelocityTracker == null) {
@@ -646,17 +647,14 @@ public class DisplayOverlay extends RelativeLayout {
             float formulaWidth = exprView.getPaint().measureText(mFormulaEditText.getText().toString());
             mFormulaEditText.setTranslationX(percent * (
                     + formulaWidth
-                    - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
-                    + getLeft(exprView, null)
+                            - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
+                            + getLeft(exprView, null)
             ));
-            mFormulaEditText.setTranslationY(percent * (
-                    + getTop(exprView, null)
-                    - exprScale * mFormulaEditText.getPaddingTop()
-                    + exprScale * mFormulaEditText.getPaddingBottom()
-            ));
+            // TODO figure out why translation y = 0 works for formula edit text.
+            mFormulaEditText.setTranslationY(0);
             mFormulaEditText.setTextColor(mixColors(percent, mFormulaInitColor, exprView.getCurrentTextColor()));
 
-            // Move the result to keep in place with the display TODO 'graph' text for graphs
+            // Move the result to keep in place with the display
             TextView resultView = ((TemplateHolder) mTemplateDisplay.getTag()).result;
             float resultScale = resultView.getTextSize() / mResultEditText.getTextSize();
             mResultEditText.setScaleX(scale(percent, resultScale));
@@ -689,7 +687,7 @@ public class DisplayOverlay extends RelativeLayout {
             // Handle readjustment of everything so it follows the finger
             adjustedTranslation += percent * (
                     + mDisplayBackground.getPivotY()
-                    - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
+                            - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
 
             mCalculationsDisplay.setTranslationY(adjustedTranslation);
             mInfoText.setTranslationY(adjustedTranslation);

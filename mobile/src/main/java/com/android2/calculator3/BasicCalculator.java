@@ -43,7 +43,6 @@ import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.EqualsImageButton;
-import com.android2.calculator3.view.EqualsImageButton.State;
 import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Constants;
@@ -60,7 +59,7 @@ import io.codetail.widget.RevealView;
 /**
  * A very basic calculator. Maps button clicks to the display, and solves on each key press.
  * */
-public class BasicCalculator extends Activity
+public abstract class BasicCalculator extends Activity
         implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
 
     protected static final String NAME = "Calculator";
@@ -127,8 +126,8 @@ public class BasicCalculator extends Activity
     private HistoryAdapter mHistoryAdapter;
     private Persist mPersist;
     private final ViewGroup.LayoutParams mLayoutParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT);
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT);
     private ViewGroup mDisplayForeground;
 
     @Override
@@ -195,6 +194,7 @@ public class BasicCalculator extends Activity
         mPersist = new Persist(this);
         mPersist.load();
         mHistory = mPersist.getHistory();
+        incrementGroupId();
 
         // When history is open, the display is saved as a Display Entry. Cache it if it exists.
         HistoryEntry displayEntry = null;
@@ -206,17 +206,17 @@ public class BasicCalculator extends Activity
         mHistoryAdapter = new HistoryAdapter(this,
                 mEvaluator.getSolver(),
                 mHistory,
-        new HistoryAdapter.HistoryItemCallback() {
-            @Override
-            public void onHistoryItemSelected(final HistoryEntry entry) {
-                mDisplayView.collapse(new AnimationFinishedListener() {
+                new HistoryAdapter.HistoryItemCallback() {
                     @Override
-                    public void onAnimationFinished() {
-                        mFormulaEditText.setText(entry.getFormula());
+                    public void onHistoryItemSelected(final HistoryEntry entry) {
+                        mDisplayView.collapse(new AnimationFinishedListener() {
+                            @Override
+                            public void onAnimationFinished() {
+                                mFormulaEditText.setText(entry.getFormula());
+                            }
+                        });
                     }
                 });
-            }
-        });
 
         // Restore the Display Entry (if it existed)
         if (displayEntry != null) {
@@ -611,11 +611,11 @@ public class BasicCalculator extends Activity
         final float resultTranslationY =
                 // Move the result up (so both formula + result heights match)
                 - mFormulaEditText.getHeight()
-                // Now switch the result's padding top with the formula's padding top
-                - resultScale * mResultEditText.getPaddingTop()
-                + mFormulaEditText.getPaddingTop()
-                // But the result centers its text! And it's taller now! So adjust for that centered text
-                + (formulaRealHeight - resultRealHeight) / 2;
+                        // Now switch the result's padding top with the formula's padding top
+                        - resultScale * mResultEditText.getPaddingTop()
+                        + mFormulaEditText.getPaddingTop()
+                        // But the result centers its text! And it's taller now! So adjust for that centered text
+                        + (formulaRealHeight - resultRealHeight) / 2;
 
         // Move the formula all the way to the top of the screen
         final float formulaTranslationY = -mFormulaEditText.getBottom();

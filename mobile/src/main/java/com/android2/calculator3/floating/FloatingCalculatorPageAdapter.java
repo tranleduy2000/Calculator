@@ -20,7 +20,7 @@ import com.xlythe.math.Solver;
 public class FloatingCalculatorPageAdapter extends PagerAdapter {
     private final Context mContext;
     private final View.OnClickListener mListener;
-    private final HistoryAdapter.HistoryItemCallback mHistoryCallback;
+    private final FloatingHistoryAdapter.HistoryItemCallback mHistoryCallback;
     private final Solver mSolver;
     private final History mHistory;
     private final View[] mViews = new View[3];
@@ -28,7 +28,7 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
     public FloatingCalculatorPageAdapter(
             Context context,
             View.OnClickListener listener,
-            HistoryAdapter.HistoryItemCallback historyCallback,
+            FloatingHistoryAdapter.HistoryItemCallback historyCallback,
             Solver solver,
             History history) {
         mContext = context;
@@ -48,25 +48,25 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
     }
 
     @Override
-    public void startUpdate(View container) {
+    public void startUpdate(ViewGroup container) {
     }
 
     @Override
-    public Object instantiateItem(View container, int position) {
+    public Object instantiateItem(ViewGroup container, int position) {
         View v = getViewAt(position);
-        ((ViewGroup) container).addView(v);
+        container.addView(v);
 
         return v;
     }
 
     @Override
-    public void destroyItem(View container, int position, Object object) {
+    public void destroyItem(ViewGroup container, int position, Object object) {
         if(mViews[position] != null) mViews[position] = null;
-        ((ViewGroup) container).removeView((View) object);
+        container.removeView((View) object);
     }
 
     @Override
-    public void finishUpdate(View container) {
+    public void finishUpdate(ViewGroup container) {
     }
 
     @Override
