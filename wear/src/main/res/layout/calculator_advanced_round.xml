@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<com.android2.calculator3.view.CalculatorPadLayout
+<com.android2.calculator3.view.SolidPadLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_advanced"
     style="@style/PadLayoutStyle.Advanced"
@@ -86,4 +86,4 @@
         android:onClick="onButtonClick"
         android:text="@string/parentheses" />
 
-</com.android2.calculator3.view.CalculatorPadLayout>
+</com.android2.calculator3.view.SolidPadLayout>

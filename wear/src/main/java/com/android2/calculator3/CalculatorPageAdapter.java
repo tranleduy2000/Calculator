@@ -5,16 +5,16 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.android2.calculator3.view.SolidLayout;
+import com.android2.calculator3.view.SolidPadLayout;
 import com.xlythe.math.Constants;
 import com.xlythe.math.History;
-import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Solver;
 
 public class CalculatorPageAdapter extends PagerAdapter {
@@ -98,6 +98,9 @@ public class CalculatorPageAdapter extends PagerAdapter {
                 RecyclerView historyView =
                         (RecyclerView) mViews[position].findViewById(R.id.history);
                 setUpHistory(historyView);
+
+                // This is the first time loading the history panel -- disable it until the user moves to it
+                setEnabled(mViews[position], false);
                 break;
             case 1:
                 if (mRound) {
@@ -122,12 +125,6 @@ public class CalculatorPageAdapter extends PagerAdapter {
                 break;
         }
         applyListener(mViews[position]);
-        mViews[position].setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                return true;
-            }
-        });
         return mViews[position];
     }
 
@@ -143,15 +140,15 @@ public class CalculatorPageAdapter extends PagerAdapter {
         }
     }
 
-    private void setEnabled(View view, boolean enabled) {
-        if (view instanceof ViewGroup) {
+    protected void setEnabled(View view, boolean enabled) {
+        if (view instanceof SolidLayout) {
+            ((SolidLayout) view).setPreventChildTouchEvents(!enabled);
+        } else if (view instanceof SolidPadLayout) {
+            ((SolidPadLayout) view).setPreventChildTouchEvents(!enabled);
+        } else if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 setEnabled(((ViewGroup) view).getChildAt(i), enabled);
             }
-        } else if (view instanceof Button) {
-            view.setEnabled(enabled);
-        } else if (view instanceof ImageButton) {
-            view.setEnabled(enabled);
         }
     }
 
