@@ -51,25 +51,25 @@ public class CalculatorPageAdapter extends PagerAdapter {
     }
 
     @Override
-    public void startUpdate(View container) {
+    public void startUpdate(ViewGroup container) {
     }
 
     @Override
-    public Object instantiateItem(View container, int position) {
+    public Object instantiateItem(ViewGroup container, int position) {
         View v = getViewAt(position);
-        ((ViewGroup) container).addView(v);
+        container.addView(v);
 
         return v;
     }
 
     @Override
-    public void destroyItem(View container, int position, Object object) {
+    public void destroyItem(ViewGroup container, int position, Object object) {
         if(mViews[position] != null) mViews[position] = null;
-        ((ViewGroup) container).removeView((View) object);
+        container.removeView((View) object);
     }
 
     @Override
-    public void finishUpdate(View container) {
+    public void finishUpdate(ViewGroup container) {
     }
 
     @Override
