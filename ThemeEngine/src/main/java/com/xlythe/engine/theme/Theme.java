@@ -41,6 +41,7 @@ public class Theme {
 	private static final LruCache<String, ColorStateList> COLOR_STATE_LIST_MAP = new LruCache<String, ColorStateList>(1 * 1024 * 1024);
 	private static String PACKAGE_NAME;
 	private static SparseArray<Theme.Res> RES_MAP;
+	private static String PACKAGE_OVERRIDE;
 
 	@SuppressWarnings("rawtypes")
 	public static void buildResourceMap(Class r) {
@@ -74,6 +75,10 @@ public class Theme {
 		} catch (ClassNotFoundException e) {
 			// Do nothing
 		}
+	}
+
+	public static void setPackageOverride(String packageOverride) {
+		PACKAGE_OVERRIDE = packageOverride;
 	}
 
 	public static Context getThemeContext(Context context) {
@@ -414,7 +419,12 @@ public class Theme {
 		LinkedList<App> apps = new LinkedList<App>();
 		PackageManager manager = context.getPackageManager();
 
-		Intent mainIntent = new Intent(context.getPackageName() + ".THEME", null);
+		Intent mainIntent;
+		if (PACKAGE_OVERRIDE != null) {
+			mainIntent = new Intent(PACKAGE_OVERRIDE + ".THEME", null);
+		} else {
+			mainIntent = new Intent(context.getPackageName() + ".THEME", null);
+		}
 
 		final List<ResolveInfo> infos;
 		try {

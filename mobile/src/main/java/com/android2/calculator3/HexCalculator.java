@@ -169,7 +169,9 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
             mInfoView.setMovementMethod(LinkMovementMethod.getInstance());
             mInfoView.setText(text, TextView.BufferType.SPANNABLE);
             for (Detail detail : details) {
-                setClickableSpan(mInfoView, detail.word, detail.listener);
+                if (detail.listener != null) {
+                    setClickableSpan(mInfoView, detail.word, detail.listener);
+                }
             }
         }
     }

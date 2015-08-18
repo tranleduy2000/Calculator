@@ -11,3 +11,4 @@ gradlew
 /build
 *.iml
 local.properties
+*.apk

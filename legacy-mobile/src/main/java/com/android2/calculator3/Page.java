@@ -1,6 +1,7 @@
 package com.android2.calculator3;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.ViewGroup.LayoutParams;
@@ -363,6 +364,13 @@ public class Page {
                     graphView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
+                            if (android.os.Build.VERSION.SDK_INT < 16) {
+                                graphView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            } else {
+                                graphView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            }
+                            logic.setDomain(graphView.getXAxisMin(), graphView.getXAxisMax());
+                            logic.setRange(graphView.getYAxisMin(), graphView.getYAxisMax());
                             logic.graph();
                         }
                     });

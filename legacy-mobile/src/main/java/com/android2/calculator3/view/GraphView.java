@@ -438,6 +438,7 @@ public class GraphView extends View {
             mData = new LinkedList<Point>(data);
             mDrawingAlgorithm = LINES;
         }
+        postInvalidate();
     }
 
     private LinkedList<Point> sort(List<Point> data) {

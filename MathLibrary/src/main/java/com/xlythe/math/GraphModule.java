@@ -9,11 +9,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class GraphModule extends Module {
+    private static final String X = "X";
+    private static final String Y = "Y";
     private float mMinY;
     private float mMaxY;
     private float mMinX;
     private float mMaxX;
-    private float mZoomLevel;
+    private float mZoomLevel = 1f;
 
     public GraphModule(Solver solver) {
         super(solver);
@@ -40,7 +42,8 @@ public class GraphModule extends Module {
         boolean endsWithOperator = text.length() != 0 &&
                 (Solver.isOperator(text.charAt(text.length() - 1)) || text.endsWith("("));
         boolean containsMatrices = getSolver().displayContainsMatrices(text);
-        if(endsWithOperator || containsMatrices) {
+        boolean domainNotSet = mMinX == mMaxX;
+        if(endsWithOperator || containsMatrices || domainNotSet) {
             return null;
         }
 
@@ -71,9 +74,19 @@ public class GraphModule extends Module {
 
         @Override
         protected List<Point> doInBackground(String... eq) {
+            String[] equations = eq[0].split("=");
             try {
-                return graph(mSolver.getBaseModule().changeBase(eq[0],
-                        mSolver.getBaseModule().getBase(), Base.DECIMAL));
+                if (equations.length >= 2) {
+                    String leftEquation = mSolver.getBaseModule().changeBase(equations[0],
+                            mSolver.getBaseModule().getBase(), Base.DECIMAL);
+                    String rightEquation = mSolver.getBaseModule().changeBase(equations[1],
+                            mSolver.getBaseModule().getBase(), Base.DECIMAL);
+                    return graph(leftEquation, rightEquation);
+                } else {
+                    String equation = mSolver.getBaseModule().changeBase(eq[0],
+                            mSolver.getBaseModule().getBase(), Base.DECIMAL);
+                    return graph(equation);
+                }
             } catch(SyntaxException e) {
                 cancel(true);
                 return null;
@@ -85,18 +98,103 @@ public class GraphModule extends Module {
             mSolver.pushFrame();
 
             final float delta = 0.1f * mZoomLevel;
-            float previousPoint;
             for(float x = mMinX; x <= mMaxX; x += delta) {
                 if(isCancelled()) {
                     return null;
                 }
 
                 try {
-                    mSolver.define("X", x);
+                    mSolver.define(X, x);
                     float y = (float) mSolver.eval(equation);
                     series.add(new Point(x, y));
                 } catch(SyntaxException e) {}
             }
+            mSolver.popFrame();
+
+            return Collections.unmodifiableList(series);
+        }
+
+        public List<Point> graph(String leftEquation, String rightEquation) {
+            final LinkedList<Point> series = new LinkedList<Point>();
+            mSolver.pushFrame();
+
+            final float delta = 0.1f * mZoomLevel;
+            if(leftEquation.equals(Y) && !rightEquation.contains(Y)) {
+                for(float x = mMinX; x <= mMaxX; x += delta) {
+                    if(isCancelled()) {
+                        return null;
+                    }
+
+                    try {
+                        mSolver.define(X, x);
+                        float y = (float) mSolver.eval(rightEquation);
+                        series.add(new Point(x, y));
+                    } catch(SyntaxException e) {}
+                }
+            } else if(leftEquation.equals(X) && !rightEquation.contains(X)) {
+                for(float y = mMinY; y <= mMaxY; y += delta) {
+                    if(isCancelled()) {
+                        return null;
+                    }
+
+                    try {
+                        mSolver.define(Y, y);
+                        float x = (float) mSolver.eval(rightEquation);
+                        series.add(new Point(x, y));
+                    } catch(SyntaxException e) {}
+                }
+            } else if(rightEquation.equals(Y) && !leftEquation.contains(Y)) {
+                for(float x = mMinX; x <= mMaxX; x += delta) {
+                    if(isCancelled()) {
+                        return null;
+                    }
+
+                    try {
+                        mSolver.define(X, x);
+                        float y = (float) mSolver.eval(leftEquation);
+                        series.add(new Point(x, y));
+                    } catch(SyntaxException e) {}
+                }
+            } else if(rightEquation.equals(X) && !leftEquation.contains(X)) {
+                for(float y = mMinY; y <= mMaxY; y += delta) {
+                    if(isCancelled()) {
+                        return null;
+                    }
+
+                    try {
+                        mSolver.define(Y, y);
+                        float x = (float) mSolver.eval(leftEquation);
+                        series.add(new Point(x, y));
+                    } catch(SyntaxException e) {}
+                }
+            } else {
+                for(float x = mMinX; x <= mMaxX; x += 0.2f * mZoomLevel) {
+                    for(float y = mMaxY; y >= mMinY; y -= 0.2f * mZoomLevel) {
+                        if(isCancelled()) {
+                            return null;
+                        }
+
+                        try {
+                            mSolver.define(X, x);
+                            mSolver.define(Y, y);
+                            float leftSide = (float) mSolver.eval(leftEquation);
+                            float rightSide = (float) mSolver.eval(rightEquation);
+                            if(leftSide < 0 && rightSide < 0) {
+                                if(leftSide * 0.98f >= rightSide && leftSide * 1.02f <= rightSide) {
+                                    series.add(new Point(x, y));
+                                }
+                            } else {
+                                if(leftSide * 0.98 <= rightSide && leftSide * 1.02 >= rightSide) {
+                                    series.add(new Point(x, y));
+                                }
+                            }
+                        } catch(SyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
             mSolver.popFrame();
 
             return Collections.unmodifiableList(series);

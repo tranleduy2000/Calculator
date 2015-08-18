@@ -104,6 +104,7 @@ public class Calculator extends BaseActivity implements Logic.Listener, OnClickL
 
         Theme.buildResourceMap(com.android2.calculator3.R.class);
         Theme.setPackageName(CalculatorSettings.getTheme(getContext()));
+        Theme.setPackageOverride("com.android2.calculator3");
         int customTheme = Theme.getTheme(getContext());
         if(customTheme != 0) {
             super.setTheme(customTheme);

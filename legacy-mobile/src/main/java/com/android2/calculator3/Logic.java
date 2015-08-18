@@ -305,6 +305,10 @@ public class Logic {
         mSolver.getGraphModule().setDomain(min, max);
     }
 
+    public void setRange(float min, float max) {
+        mSolver.getGraphModule().setRange(min, max);
+    }
+
     public void setZoomLevel(float level) {
         mSolver.getGraphModule().setZoomLevel(level);
     }

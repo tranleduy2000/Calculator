@@ -16,6 +16,8 @@
 package com.android2.calculator3;
 
 import android.content.Context;
+import android.util.Log;
+import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.view.GraphView;
 import com.xlythe.engine.theme.Theme;
@@ -41,6 +43,7 @@ public class Graph {
             @Override
             public void panApplied() {
                 mLogic.setDomain(mGraphView.getXAxisMin(), mGraphView.getXAxisMax());
+                mLogic.setRange(mGraphView.getYAxisMin(), mGraphView.getYAxisMax());
                 mLogic.graph();
             }
         });
@@ -52,6 +55,13 @@ public class Graph {
             }
         });
 
+        mGraphView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mLogic.setDomain(mGraphView.getXAxisMin(), mGraphView.getXAxisMax());
+                mLogic.setRange(mGraphView.getYAxisMin(), mGraphView.getYAxisMax());
+            }
+        });
         mGraphView.setBackgroundColor(Theme.getColor(context, R.color.graph_background));
         mGraphView.setTextColor(Theme.getColor(context, R.color.graph_labels_color));
         mGraphView.setGridColor(Theme.getColor(context, R.color.graph_grid_color));
