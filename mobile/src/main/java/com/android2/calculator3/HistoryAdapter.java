@@ -42,19 +42,23 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     private final List<HistoryEntry> mEntries;
     private final EquationFormatter mEquationFormatter;
     private final String mX;
-    protected HistoryItemCallback mCallback;
+    private OnItemClickListener mOnItemClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
     private HistoryEntry mDisplayEntry;
 
-    public interface HistoryItemCallback {
-        void onHistoryItemSelected(HistoryEntry entry);
+    public interface OnItemClickListener {
+        void onItemClick(HistoryEntry entry);
     }
 
-    public HistoryAdapter(Context context, Solver solver, History history, HistoryItemCallback callback) {
+    public interface OnItemLongClickListener {
+        void onItemLongClick(HistoryEntry entry);
+    }
+
+    public HistoryAdapter(Context context, Solver solver, History history) {
         mContext = context;
         mSolver = solver;
         mEntries = history.getEntries();
         mEquationFormatter = new EquationFormatter();
-        mCallback = callback;
         mX = context.getString(R.string.var_x);
     }
 
@@ -71,6 +75,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             historyResult = (TextView) v.findViewById(R.id.historyResult);
             graphView = (GraphView) v.findViewById(R.id.graph);
         }
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongclickListener(OnItemLongClickListener onItemLongClickListener) {
+        mOnItemLongClickListener = onItemLongClickListener;
     }
 
     @Override
@@ -93,7 +105,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCallback.onHistoryItemSelected(entry);
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.onItemClick(entry);
+                }
+            }
+        });
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (mOnItemLongClickListener != null) {
+                    mOnItemLongClickListener.onItemLongClick(entry);
+                    return true;
+                }
+                return false;
             }
         });
 

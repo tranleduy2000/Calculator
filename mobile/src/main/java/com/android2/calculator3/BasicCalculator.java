@@ -25,6 +25,8 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -203,20 +205,24 @@ public abstract class BasicCalculator extends Activity
         }
 
         // Create a new History Adapter (with the up-to-date history)
-        mHistoryAdapter = new HistoryAdapter(this,
-                mEvaluator.getSolver(),
-                mHistory,
-                new HistoryAdapter.HistoryItemCallback() {
+        mHistoryAdapter = new HistoryAdapter(this, mEvaluator.getSolver(), mHistory);
+        mHistoryAdapter.setOnItemClickListener(new HistoryAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(final HistoryEntry entry) {
+                mDisplayView.collapse(new AnimationFinishedListener() {
                     @Override
-                    public void onHistoryItemSelected(final HistoryEntry entry) {
-                        mDisplayView.collapse(new AnimationFinishedListener() {
-                            @Override
-                            public void onAnimationFinished() {
-                                mFormulaEditText.setText(entry.getFormula());
-                            }
-                        });
+                    public void onAnimationFinished() {
+                        mFormulaEditText.setText(entry.getFormula());
                     }
                 });
+            }
+        });
+        mHistoryAdapter.setOnItemLongclickListener(new HistoryAdapter.OnItemLongClickListener() {
+            @Override
+            public void onItemLongClick(HistoryEntry entry) {
+                Clipboard.copy(getBaseContext(), entry.getResult());
+            }
+        });
 
         // Restore the Display Entry (if it existed)
         if (displayEntry != null) {
@@ -231,6 +237,22 @@ public abstract class BasicCalculator extends Activity
             }
         });
         mDisplayView.setAdapter(mHistoryAdapter);
+        mDisplayView.attachToRecyclerView(new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if (viewHolder.getAdapterPosition() < mHistory.getEntries().size()) {
+                    HistoryEntry item = mHistory.getEntries().get(viewHolder.getAdapterPosition());
+                    mHistory.remove(item);
+                    mHistoryAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                }
+            }
+        }));
         mDisplayView.scrollToMostRecent();
     }
 

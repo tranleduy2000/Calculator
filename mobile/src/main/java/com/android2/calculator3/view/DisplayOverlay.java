@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -493,8 +494,12 @@ public class DisplayOverlay extends RelativeLayout {
         }
     }
 
-    public void setAdapter(RecyclerView.Adapter adapter) {
+    public void setAdapter(final RecyclerView.Adapter adapter) {
         mRecyclerView.setAdapter(adapter);
+    }
+
+    public void attachToRecyclerView(ItemTouchHelper itemTouchHelper) {
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     public HistoryAdapter getAdapter() {
