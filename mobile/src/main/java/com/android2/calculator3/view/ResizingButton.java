@@ -68,7 +68,7 @@ public class ResizingButton extends com.rey.material.widget.Button {
     private float mSpacingAdd = 0.0f;
 
     // Add ellipsis to text that overflows at the smallest text size
-    private boolean mAddEllipsis = true;
+    private boolean mAddEllipsis = false;
 
     // Used for measuring width
     private final Rect mTempRect = new Rect();
