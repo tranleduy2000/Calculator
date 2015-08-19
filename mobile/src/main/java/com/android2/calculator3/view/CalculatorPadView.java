@@ -44,6 +44,7 @@ public class CalculatorPadView extends RevealFrameLayout {
     private float mLastDelta;
     private float mOffset;
     private float mOverlayMargin;
+    private boolean mInterceptingTouchEvents = false;
     private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private TranslateState mLastState = TranslateState.COLLAPSED;
     private TranslateState mState = TranslateState.COLLAPSED;
@@ -182,7 +183,7 @@ public class CalculatorPadView extends RevealFrameLayout {
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         int action = MotionEventCompat.getActionMasked(ev);
         float pos = ev.getRawX();
-        boolean intercepted = false;
+        mInterceptingTouchEvents = false;
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
@@ -200,20 +201,25 @@ public class CalculatorPadView extends RevealFrameLayout {
                 if (delta > mTouchSlop) {
                     float dx = pos - mInitialMotion;
                     if (dx < 0) {
-                        intercepted = getState() == TranslateState.COLLAPSED;
+                        mInterceptingTouchEvents = getState() == TranslateState.COLLAPSED;
                     } else if (dx > 0) {
-                        intercepted = getState() == TranslateState.EXPANDED;
+                        mInterceptingTouchEvents = getState() == TranslateState.EXPANDED;
                     }
                 }
                 mLastMotion = pos;
                 break;
         }
 
-        return intercepted;
+        return mInterceptingTouchEvents;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!mInterceptingTouchEvents) {
+            onInterceptTouchEvent(event);
+            return true;
+        }
+
         int action = MotionEventCompat.getActionMasked(event);
 
         if (mVelocityTracker == null) {

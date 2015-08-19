@@ -17,8 +17,8 @@
 
 <animated-selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:backspace="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/clear" backspace:state_clear="true" android:drawable="@drawable/btn_clear" />
-    <item android:id="@+id/delete" android:drawable="@drawable/btn_delete" />
+    <item android:id="@+id/clear" backspace:state_clear="true" android:drawable="@drawable/backspace_30" />
+    <item android:id="@+id/delete" android:drawable="@drawable/backspace_0" />
 
     <transition android:fromId="@id/delete" android:toId="@id/clear" android:reversible="true">
         <animation-list>
