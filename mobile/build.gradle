@@ -12,7 +12,7 @@ android {
         applicationId "com.android2.calculator3"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 79
+        versionCode 80
         versionName "5.0.1"
     }
     buildTypes {

@@ -112,7 +112,9 @@ public class MatrixComponent extends SpanComponent {
         private int getColumnSize(Paint paint, int column) {
             float largestTextWidth = 0;
             for (int i = 0; i < mData.length; i++) {
-                largestTextWidth = Math.max(paint.measureText(mData[i][column]), largestTextWidth);
+                if (column < mData[i].length) {
+                    largestTextWidth = Math.max(paint.measureText(mData[i][column]), largestTextWidth);
+                }
             }
             return (int) Math.max(mMinColumnWidth, largestTextWidth);
         }
