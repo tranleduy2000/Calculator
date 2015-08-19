@@ -235,7 +235,7 @@ public abstract class GraphingCalculator extends HexCalculator {
         if (expr.contains(mX)) {
             transitionToGraph();
 
-            String formula = cleanExpression(mFormulaEditText.getCleanText());
+            String formula = getNormalizedExpression(cleanExpression(mFormulaEditText.getCleanText()));
 
             if (mGraphController.getGraphs().size() == 0) {
                 mGraphController.addNewGraph(formula);

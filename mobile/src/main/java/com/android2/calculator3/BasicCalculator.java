@@ -287,6 +287,14 @@ public abstract class BasicCalculator extends Activity
         return expr;
     }
 
+    protected String getLocalizedExpression(String expr) {
+        return mTokenizer.getLocalizedExpression(expr);
+    }
+
+    protected String getNormalizedExpression(String expr) {
+        return mTokenizer.getNormalizedExpression(expr);
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         // If there's an animation in progress, cancel it first to ensure our state is up-to-date.
