@@ -41,23 +41,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class Logic {
-    public static final String INFINITY_UNICODE = "\u221e";
-    // Double.toString() for Infinity
-    public static final String INFINITY = "Infinity";
     // Double.toString() for NaN
     public static final String NAN = "NaN";
     public static final char MINUS = '\u2212';
-    public static final String NUMBER = "[" + Logic.MINUS + "-]?[A-F0-9]+(\\.[A-F0-9]*)?";
     public static final String MARKER_EVALUATE_ON_RESUME = "?";
     public static final int DELETE_MODE_BACKSPACE = 0;
     int mDeleteMode = DELETE_MODE_BACKSPACE;
     public static final int DELETE_MODE_CLEAR = 1;
-    public static final int ROUND_DIGITS = 1;
-    public static final Symbols mSymbols = new Symbols();
-    static final char MUL = '\u00d7';
-    static final char PLUS = '+';
-    static final char DIV = '\u00f7';
-    static final char POW = '^';
     final String mErrorString;
     private final Context mContext;
     CalculatorDisplay mDisplay;
@@ -70,6 +60,7 @@ public class Logic {
     private Graph mGraph;
     private Listener mListener;
     private final Solver mSolver = new Solver();
+    private final CalculatorExpressionTokenizer mTokenizer;
     private OnGraphUpdatedListener mOnGraphUpdateListener = new OnGraphUpdatedListener() {
         @Override
         public void onGraphUpdated(List<Point> result) {
@@ -88,6 +79,7 @@ public class Logic {
         mErrorString = r.getString(R.string.error);
 
         mEquationFormatter = new EquationFormatter();
+        mTokenizer = new CalculatorExpressionTokenizer(context);
         mDisplay = display;
         if(mDisplay != null) mDisplay.setLogic(this);
     }
@@ -203,7 +195,7 @@ public class Logic {
 
     public String evaluate(String text) {
         try {
-            return mSolver.solve(text);
+            return mTokenizer.getLocalizedExpression(mSolver.solve(mTokenizer.getNormalizedExpression(text)));
         } catch(SyntaxException e) {
             return mErrorString;
         }
@@ -211,7 +203,7 @@ public class Logic {
 
     public void evaluateAndShowResult(String text, Scroll scroll) {
         try {
-            String result = mSolver.solve(text);
+            String result = mTokenizer.getLocalizedExpression(mSolver.solve(mTokenizer.getNormalizedExpression(text)));
             if(!text.equals(result)) {
                 mHistory.enter(mEquationFormatter.appendParenthesis(text), result);
                 mResult = result;
@@ -226,18 +218,7 @@ public class Logic {
         }
     }
 
-    boolean displayContainsMatrices() {
-        boolean containsMatrices = false;
-        for(int i = 0; i < mDisplay.getAdvancedDisplay().getChildCount(); i++) {
-            if(mDisplay.getAdvancedDisplay().getChildAt(i) instanceof MatrixView)
-                containsMatrices = true;
-            if(mDisplay.getAdvancedDisplay().getChildAt(i) instanceof MatrixInverseView)
-                containsMatrices = true;
-            if(mDisplay.getAdvancedDisplay().getChildAt(i) instanceof MatrixTransposeView)
-                containsMatrices = true;
-        }
-        return containsMatrices;
-    }    private void clear(boolean scroll) {
+    private void clear(boolean scroll) {
         mHistory.enter("", "");
         mDisplay.setText("", scroll ? CalculatorDisplay.Scroll.UP : CalculatorDisplay.Scroll.NONE);
         cleared();
