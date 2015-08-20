@@ -158,10 +158,54 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     public void insert(String delta) {
-        String text = getText().toString();
+        String currentText = getText().toString();
         int selectionHandle = getSelectionStart();
-        String textBeforeInsertionHandle = text.substring(0, selectionHandle);
-        String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
+        String textBeforeInsertionHandle = currentText.substring(0, selectionHandle);
+        String textAfterInsertionHandle = currentText.substring(selectionHandle, currentText.length());
+
+        // Add extra rules for decimal points and operators
+        if (delta.length() == 1) {
+            char text = delta.charAt(0);
+
+            // don't allow two dots in the same number
+            if (text == Constants.DECIMAL_POINT) {
+                int p = selectionHandle - 1;
+                while (p >= 0 && Solver.isDigit(getText().charAt(p))) {
+                    if (getText().charAt(p) == Constants.DECIMAL_POINT) {
+                        return;
+                    }
+                    --p;
+                }
+                p = selectionHandle;
+                while (p < getText().length() && Solver.isDigit(getText().charAt(p))) {
+                    if (getText().charAt(p) == Constants.DECIMAL_POINT) {
+                        return;
+                    }
+                    ++p;
+                }
+            }
+
+            char prevChar = selectionHandle > 0 ? getText().charAt(selectionHandle - 1) : '\0';
+
+            // don't allow 2 successive minuses
+            if(text == Constants.MINUS && prevChar == Constants.MINUS) {
+                return;
+            }
+
+            // don't allow multiple successive operators
+            if(Solver.isOperator(text) && text != Constants.MINUS) {
+                while(Solver.isOperator(prevChar)) {
+                    if(selectionHandle == 1) {
+                        return;
+                    }
+
+                    --selectionHandle;
+                    prevChar = selectionHandle > 0 ? getText().charAt(selectionHandle - 1) : '\0';
+                    textBeforeInsertionHandle = textBeforeInsertionHandle.substring(0, selectionHandle);
+                }
+            }
+        }
+
         mIsInserting = true;
         setText(textBeforeInsertionHandle + delta + BaseModule.SELECTION_HANDLE + textAfterInsertionHandle);
         mIsInserting = false;
