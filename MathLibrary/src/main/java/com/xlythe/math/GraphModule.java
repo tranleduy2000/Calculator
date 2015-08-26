@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import org.javia.arity.SyntaxException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class GraphModule extends Module {
         }
 
         public List<Point> graph(String leftEquation, String rightEquation) {
-            final LinkedList<Point> series = new LinkedList<Point>();
+            List<Point> series = new LinkedList<>();
             mSolver.pushFrame();
 
             final float delta = 0.1f * mZoomLevel;
@@ -168,8 +169,8 @@ public class GraphModule extends Module {
                     } catch(SyntaxException e) {}
                 }
             } else {
-                for(float x = mMinX; x <= mMaxX; x += 0.2f * mZoomLevel) {
-                    for(float y = mMaxY; y >= mMinY; y -= 0.2f * mZoomLevel) {
+                for(float x = mMinX; x <= mMaxX; x += 0.1f * mZoomLevel) {
+                    for(float y = mMaxY; y >= mMinY; y -= 0.1f * mZoomLevel) {
                         if(isCancelled()) {
                             return null;
                         }
@@ -179,25 +180,55 @@ public class GraphModule extends Module {
                             mSolver.define(Y, y);
                             float leftSide = (float) mSolver.eval(leftEquation);
                             float rightSide = (float) mSolver.eval(rightEquation);
-                            if(leftSide < 0 && rightSide < 0) {
-                                if(leftSide * 0.98f >= rightSide && leftSide * 1.02f <= rightSide) {
-                                    series.add(new Point(x, y));
-                                }
-                            } else {
-                                if(leftSide * 0.98 <= rightSide && leftSide * 1.02 >= rightSide) {
-                                    series.add(new Point(x, y));
-                                }
+
+                            // Should be close to 0 if they're similar
+                            float condensedResult = Math.abs(leftSide - rightSide);
+                            if (condensedResult < 0.02f) {
+                                series.add(new Point(x, y));
                             }
-                        } catch(SyntaxException e) {
-                            e.printStackTrace();
-                        }
+                        } catch(SyntaxException e) {}
                     }
                 }
+
+                series = sort(series);
             }
 
             mSolver.popFrame();
 
             return Collections.unmodifiableList(series);
+        }
+
+        private List<Point> sort(List<Point> data) {
+            List<Point> sorted = new ArrayList<>(data.size());
+            Point key = null;
+            while(!data.isEmpty()) {
+                if(key == null) {
+                    key = data.get(0);
+                    data.remove(0);
+                    sorted.add(key);
+                }
+                key = findClosestPoint(key, data);
+                data.remove(key);
+                sorted.add(key);
+            }
+            return sorted;
+        }
+
+        private Point findClosestPoint(Point key, List<Point> data) {
+            Point closestPoint = null;
+            for(Point p : data) {
+                if(closestPoint == null) closestPoint = p;
+                if(getDistance(key, p) < getDistance(key, closestPoint)) closestPoint = p;
+            }
+            return closestPoint;
+        }
+
+        private double getDistance(Point a, Point b) {
+            return Math.sqrt(square(a.getX() - b.getX()) + square(a.getY() - b.getY()));
+        }
+
+        private double square(double val) {
+            return val * val;
         }
 
         @Override

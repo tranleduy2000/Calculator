@@ -427,43 +427,9 @@ public class GraphView extends View {
     }
 
     public void setData(List<Point> data) {
-        setData(data, true);
-    }
-
-    public void setData(List<Point> data, boolean sort) {
-        if(sort) {
-            mData = sort(new ArrayList<Point>(data));
-            mDrawingAlgorithm = LINES;
-        } else {
-            mData = new LinkedList<Point>(data);
-            mDrawingAlgorithm = LINES;
-        }
+        mData = new LinkedList<Point>(data);
+        mDrawingAlgorithm = LINES;
         postInvalidate();
-    }
-
-    private LinkedList<Point> sort(List<Point> data) {
-        LinkedList<Point> sorted = new LinkedList<Point>();
-        Point key = null;
-        while(!data.isEmpty()) {
-            if(key == null) {
-                key = data.get(0);
-                data.remove(0);
-                sorted.add(key);
-            }
-            key = findClosestPoint(key, data);
-            data.remove(key);
-            sorted.add(key);
-        }
-        return sorted;
-    }
-
-    private Point findClosestPoint(Point key, List<Point> data) {
-        Point closestPoint = null;
-        for(Point p : data) {
-            if(closestPoint == null) closestPoint = p;
-            if(getDistance(key, p) < getDistance(key, closestPoint)) closestPoint = p;
-        }
-        return closestPoint;
     }
 
     private double getDistance(Point a, Point b) {

@@ -47,7 +47,7 @@ public class Solver {
 
         if(mLocalizer != null) input = mLocalizer.localize(input);
 
-        // Drop final infix operators (they can only result in error)
+        // Drop final operators (they can only result in error)
         int size = input.length();
         while(size > 0 && isOperator(input.charAt(size - 1))) {
             input = input.substring(0, size - 1);
@@ -152,12 +152,13 @@ public class Solver {
     }
 
     String tryFormattingWithPrecision(double value, int precision) throws SyntaxException {
+        if (Double.isNaN(value)) {
+            throw new SyntaxException();
+        }
+
         // The standard scientific formatter is basically what we need. We will
         // start with what it produces and then massage it a bit.
         String result = String.format(Locale.US, "%" + mLineLength + "." + precision + "g", value);
-        if(result.equals(Constants.NAN)) {
-            throw new SyntaxException();
-        }
         String mantissa = result;
         String exponent = null;
         int e = result.indexOf('e');

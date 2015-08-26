@@ -69,24 +69,12 @@ public class Graph {
         return mGraphView;
     }
 
-    public void addData(float[] xValues, float[] yValues) {
-        int seriesLength = xValues.length;
-        for(int k = 0; k < seriesLength; k++) {
-            mData.add(new Point(xValues[k], yValues[k]));
-        }
-        mGraphView.setData(mData);
-    }
-
     public List<Point> getData() {
         return mData;
     }
 
     public void setData(List<Point> data) {
-        setData(data, true);
-    }
-
-    public void setData(List<Point> data, boolean sort) {
         mData = data;
-        mGraphView.setData(mData, sort);
+        mGraphView.setData(mData);
     }
 }

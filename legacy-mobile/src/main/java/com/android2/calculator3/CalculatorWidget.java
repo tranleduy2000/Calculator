@@ -51,6 +51,7 @@ public class CalculatorWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
         int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, 0);
         String value = getValue(context, appWidgetId);
+        CalculatorExpressionTokenizer tokenizer = new CalculatorExpressionTokenizer(context);
         if(value.equals(context.getResources().getString(R.string.error))) value = "";
         mClearText = intent.getBooleanExtra(SHOW_CLEAR, false);
 
@@ -142,7 +143,7 @@ public class CalculatorWidget extends AppWidgetProvider {
             logic.setLineLength(7);
 
             try {
-                value = logic.solve(input);
+                value = tokenizer.getLocalizedExpression(logic.solve(tokenizer.getNormalizedExpression(input)));
             } catch(SyntaxException e) {
                 value = context.getResources().getString(R.string.error);
             }
