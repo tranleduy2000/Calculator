@@ -126,7 +126,9 @@ public class FormattedNumberEditText extends NumberEditText {
 
     @Override
     public void addTextChangedListener(TextWatcher watcher) {
-        if (watcher.equals(mTextWatcher)) {
+        // Some flavors of Android call addTextChangedListener in the constructor, so add a
+        // null check to mTextWatchers
+        if (watcher.equals(mTextWatcher) || mTextWatchers == null) {
             super.addTextChangedListener(watcher);
         } else {
             mTextWatchers.add(watcher);

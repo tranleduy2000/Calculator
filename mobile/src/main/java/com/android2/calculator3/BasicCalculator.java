@@ -534,9 +534,14 @@ public abstract class BasicCalculator extends Activity
 
         final SupportAnimator revealAnimator;
         final int[] clearLocation = new int[2];
-        sourceView.getLocationInWindow(clearLocation);
-        clearLocation[0] += sourceView.getWidth() / 2;
-        clearLocation[1] += sourceView.getHeight() / 2;
+        if (sourceView != null) {
+            sourceView.getLocationInWindow(clearLocation);
+            clearLocation[0] += sourceView.getWidth() / 2;
+            clearLocation[1] += sourceView.getHeight() / 2;
+        } else {
+            clearLocation[0] = mDisplayForeground.getWidth() / 2;
+            clearLocation[1] = mDisplayForeground.getHeight() / 2;
+        }
         final int revealCenterX = clearLocation[0] - revealView.getLeft();
         final int revealCenterY = clearLocation[1] - revealView.getTop();
         final double x1_2 = Math.pow(revealView.getLeft() - revealCenterX, 2);

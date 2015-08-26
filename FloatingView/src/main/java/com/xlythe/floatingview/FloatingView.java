@@ -329,6 +329,12 @@ public abstract class FloatingView extends Service implements OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        // I was seeing this crash in the logs. It shouldn't be possible though,
+        // because mRootView is created in onCreate and only destroyed in onDestroy
+        if (mRootView == null) {
+            return false;
+        }
+
         mRootView.setVisibility(View.VISIBLE);
         mInactiveButton.postDelayed(new Runnable() {
             @Override
