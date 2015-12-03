@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CalculatorEditText extends FormattedNumberEditText {
+    private static final String TAG = CalculatorEditText.class.getSimpleName();
     private static final boolean DEBUG = false;
 
     // Look for special text (like matrices) that we want to format differently
@@ -56,6 +57,12 @@ public class CalculatorEditText extends FormattedNumberEditText {
     private void setUp(Context context, AttributeSet attrs) {
         setMovementMethod(new MathMovementMethod());
         addSpanComponent(new MatrixComponent(getContext()));
+    }
+
+    @Override
+    public boolean performLongClick() {
+        // setMovementMethod causes long click to crash. For now, just disable long clicks.
+        return false;
     }
 
     @Override
@@ -337,13 +344,13 @@ public class CalculatorEditText extends FormattedNumberEditText {
                 return spans[0].onTouchEvent(event);
             }
 
-            return super.onTouchEvent(widget, buffer, event);
+            return false;
         }
     }
 
     private void log(String msg) {
         if (DEBUG) {
-            Log.d("TEST", msg);
+            Log.d(TAG, msg);
         }
     }
 }

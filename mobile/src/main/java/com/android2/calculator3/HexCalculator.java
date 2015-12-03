@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.view.CalculatorEditText;
+import com.android2.calculator3.view.FormattedNumberEditText;
 import com.xlythe.math.Base;
 
 import java.util.LinkedList;
@@ -44,8 +45,8 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
     // instance state keys
     private static final String KEY_BASE = NAME + "_base";
 
-    private CalculatorEditText mFormulaEditText;
-    private CalculatorEditText mResultEditText;
+    private FormattedNumberEditText mFormulaEditText;
+    private FormattedNumberEditText mResultEditText;
 
     private TextView mInfoView;
     private boolean mShowBaseDetails;
@@ -62,8 +63,8 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
     protected void initialize(Bundle savedInstanceState) {
         super.initialize(savedInstanceState);
         mInfoView = (TextView) findViewById(R.id.info);
-        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
-        mResultEditText = (CalculatorEditText) findViewById(R.id.result);
+        mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
+        mResultEditText = (FormattedNumberEditText) findViewById(R.id.result);
 
         Base base = Base.DECIMAL;
         int baseOrdinal = savedInstanceState.getInt(KEY_BASE, -1);

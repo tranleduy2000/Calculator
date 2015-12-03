@@ -53,8 +53,8 @@ public class DisplayOverlay extends RelativeLayout {
     private View mDisplayBackground;
     private View mDisplayForeground;
     private GraphView mDisplayGraph;
-    private CalculatorEditText mFormulaEditText;
-    private CalculatorEditText mResultEditText;
+    private FormattedNumberEditText mFormulaEditText;
+    private FormattedNumberEditText mResultEditText;
     private View mCalculationsDisplay;
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
@@ -155,8 +155,8 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
         mDisplayGraph = (GraphView) findViewById(R.id.mini_graph);
-        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
-        mResultEditText = (CalculatorEditText) findViewById(R.id.result);
+        mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
+        mResultEditText = (FormattedNumberEditText) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
         mInfoText = findViewById(R.id.info);
     }

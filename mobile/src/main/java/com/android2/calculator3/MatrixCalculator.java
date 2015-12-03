@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.android2.calculator3.view.CalculatorEditText;
+import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.MatrixComponent;
 
 /**
@@ -26,11 +27,11 @@ import com.android2.calculator3.view.MatrixComponent;
  * */
 public abstract class MatrixCalculator extends GraphingCalculator {
 
-    private CalculatorEditText mFormulaEditText;
+    private FormattedNumberEditText mFormulaEditText;
 
     protected void initialize(Bundle savedInstanceState) {
         super.initialize(savedInstanceState);
-        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
+        mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
     }
 
     @Override

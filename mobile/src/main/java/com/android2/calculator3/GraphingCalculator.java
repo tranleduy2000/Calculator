@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.DisplayOverlay;
+import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.GraphView;
 import com.rey.material.drawable.CheckBoxDrawable;
 import com.rey.material.widget.CheckBox;
@@ -43,7 +44,7 @@ import java.util.Locale;
 public abstract class GraphingCalculator extends HexCalculator {
 
     private DisplayOverlay mDisplayView;
-    private CalculatorEditText mFormulaEditText;
+    private FormattedNumberEditText mFormulaEditText;
 
     private String mX;
     private GraphView mMiniGraph;
@@ -62,7 +63,7 @@ public abstract class GraphingCalculator extends HexCalculator {
         // Load up all are variables (find views, find out what 'X' is called)
         mX = getString(R.string.var_x);
         mDisplayView = (DisplayOverlay) findViewById(R.id.display);
-        mFormulaEditText = (CalculatorEditText) findViewById(R.id.formula);
+        mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
         mMiniGraph = (GraphView) findViewById(R.id.mini_graph);
         mGraphButtons = findViewById(R.id.graph_buttons);
         mActiveEquationsListView = (ListView) findViewById(R.id.current_graphs);

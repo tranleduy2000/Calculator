@@ -75,6 +75,9 @@ public class History {
     }
 
     public HistoryEntry current() {
+        if (mPos >= mEntries.size()) {
+            mPos = mEntries.size() - 1;
+        }
         if (mPos == -1) {
             return null;
         }
