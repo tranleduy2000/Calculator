@@ -41,6 +41,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
+import com.android2.calculator3.util.TextUtil;
 import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.CalculatorPadView;
 import com.android2.calculator3.view.DisplayOverlay;
@@ -118,7 +119,7 @@ public abstract class BasicCalculator extends Activity
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
     private FormattedNumberEditText mFormulaEditText;
-    private FormattedNumberEditText mResultEditText;
+    private TextView mResultEditText;
     private CalculatorPadView mPadViewPager;
     private View mDeleteButton;
     private EqualsImageButton mEqualButton;
@@ -151,7 +152,7 @@ public abstract class BasicCalculator extends Activity
         mDisplayView.setFade(findViewById(R.id.history_fade));
         mDisplayForeground = (ViewGroup) findViewById(R.id.the_clear_animation);
         mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
-        mResultEditText = (FormattedNumberEditText) findViewById(R.id.result);
+        mResultEditText = (TextView) findViewById(R.id.result);
         mPadViewPager = (CalculatorPadView) findViewById(R.id.pad_pager);
         mDeleteButton = findViewById(R.id.del);
         mClearButton = findViewById(R.id.clr);
@@ -168,14 +169,12 @@ public abstract class BasicCalculator extends Activity
                 savedInstanceState.getInt(KEY_CURRENT_STATE, CalculatorState.INPUT.ordinal())]);
 
         mFormulaEditText.setSolver(mEvaluator.getSolver());
-        mResultEditText.setSolver(mEvaluator.getSolver());
         mFormulaEditText.setText(mTokenizer.getLocalizedExpression(
                 savedInstanceState.getString(KEY_CURRENT_EXPRESSION, "")));
         mFormulaEditText.addTextChangedListener(mFormulaTextWatcher);
         mFormulaEditText.setOnKeyListener(mFormulaOnKeyListener);
         mFormulaEditText.setOnTextSizeChangeListener(this);
         mDeleteButton.setOnLongClickListener(this);
-        mResultEditText.setEnabled(false);
         findViewById(R.id.lparen).setOnLongClickListener(this);
         findViewById(R.id.rparen).setOnLongClickListener(this);
         findViewById(R.id.fun_sin).setOnLongClickListener(this);
@@ -213,7 +212,11 @@ public abstract class BasicCalculator extends Activity
                 mDisplayView.collapse(new AnimationFinishedListener() {
                     @Override
                     public void onAnimationFinished() {
-                        mFormulaEditText.setText(entry.getFormula());
+                        if (mHistoryAdapter.hasGraph(entry.getFormula())) {
+                            mFormulaEditText.setText(entry.getFormula());
+                        } else {
+                            mFormulaEditText.insert(entry.getResult());
+                        }
                     }
                 });
             }
@@ -260,7 +263,7 @@ public abstract class BasicCalculator extends Activity
     @Override
     protected void onPause() {
         super.onPause();
-        saveHistory(mFormulaEditText.getCleanText(), mResultEditText.getCleanText(), true);
+        saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()), true);
         mPersist.save();
     }
 
@@ -405,7 +408,7 @@ public abstract class BasicCalculator extends Activity
         mCurrentButton = view;
         switch (view.getId()) {
             case R.id.del:
-                saveHistory(mFormulaEditText.getCleanText(), mResultEditText.getCleanText(), true);
+                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()), true);
                 onClear();
                 return true;
             case R.id.lparen:
@@ -448,7 +451,7 @@ public abstract class BasicCalculator extends Activity
             if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.setText(null);
             } else {
-                mResultEditText.setText(result);
+                mResultEditText.setText(TextUtil.formatText(result, mFormulaEditText.getEquationFormatter(), mFormulaEditText.getSolver()));
             }
         } else if (errorResourceId != INVALID_RES_ID) {
             onError(errorResourceId);
@@ -667,7 +670,7 @@ public abstract class BasicCalculator extends Activity
                 mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue());
             }
         });
-        mResultEditText.setText(result);
+        mResultEditText.setText(TextUtil.formatText(result, mFormulaEditText.getEquationFormatter(), mFormulaEditText.getSolver()));
         mResultEditText.setPivotX(mResultEditText.getWidth() / 2);
         mResultEditText.setPivotY(0f);
 

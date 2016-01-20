@@ -51,10 +51,6 @@ public class NumberEditText extends ResizingEditText {
     }
 
     private void setUp(Context context, AttributeSet attrs) {
-        setLongClickable(false);
-
-        // Disable highlighting text
-        setCustomSelectionActionModeCallback(new NoTextSelectionMode());
         setEditableFactory(mFactory);
         NumberKeyListener calculatorKeyListener = new NumberKeyListener() {
             @Override

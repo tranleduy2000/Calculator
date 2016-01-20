@@ -44,7 +44,6 @@
     <!-- The base features for the display -->
     <style name="Theme.Calculator.Display" parent="@android:style/Widget.Holo.EditText">
         <item name="android:textSize">@dimen/display_text_size</item>
-        <item name="android:inputType">text|textNoSuggestions</item>
         <item name="android:gravity">right|center_vertical</item>
         <item name="android:maxLines">1</item>
         <item name="android:scrollbars">none</item>
@@ -57,6 +56,7 @@
     <style name="Theme.Calculator.Display.Main" />
 
     <style name="Theme.Calculator.Display.Main.Formula" >
+        <item name="android:inputType">text|textNoSuggestions</item>
         <item name="android:paddingTop">34dip</item>
         <item name="android:paddingBottom">12dip</item>
         <item name="android:paddingLeft">16dip</item>

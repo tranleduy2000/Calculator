@@ -70,13 +70,13 @@
                 android:textCursorDrawable="@drawable/cursor"
                 android:layout_height="@dimen/display_formula_height" />
 
-            <com.android2.calculator3.view.CalculatorEditText
+            <TextView
                 android:id="@+id/result"
                 style="@style/Theme.Calculator.Display.Main.Result"
                 android:layout_below="@id/formula"
-                android:focusable="false"
                 android:textColor="@color/display_result_text_color"
-                android:layout_height="@dimen/display_result_height" />
+                android:layout_height="@dimen/display_result_height"
+                android:textIsSelectable="true"/>
 
         </RelativeLayout>
 

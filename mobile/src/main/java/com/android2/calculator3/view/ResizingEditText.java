@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.util.TextUtil;
 
 /**
  * ResizingEditText will attempt to resize the text to as large as possible (with optional

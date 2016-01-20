@@ -23,6 +23,7 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 
 import com.android2.calculator3.R;
+import com.android2.calculator3.util.TextUtil;
 import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
@@ -156,7 +157,7 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     public String getCleanText() {
-        return removeFormatting(getText().toString());
+        return TextUtil.getCleanText(this, getSolver());
     }
 
     public void insert(String delta) {
@@ -312,8 +313,12 @@ public class FormattedNumberEditText extends NumberEditText {
         return mEquationFormatter.insertSupScripts(input);
     }
 
-    protected Solver getSolver() {
+    public Solver getSolver() {
         return mSolver;
+    }
+
+    public EquationFormatter getEquationFormatter() {
+        return mEquationFormatter;
     }
 
     public void setDebugEnabled(boolean enabled) {

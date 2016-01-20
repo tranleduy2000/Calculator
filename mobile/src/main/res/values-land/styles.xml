@@ -16,6 +16,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.Calculator.Display.Main.Formula">
+        <item name="android:inputType">text|textNoSuggestions</item>
         <item name="android:paddingTop">16dip</item>
         <item name="android:paddingBottom">1dip</item>
         <item name="android:paddingLeft">16dip</item>

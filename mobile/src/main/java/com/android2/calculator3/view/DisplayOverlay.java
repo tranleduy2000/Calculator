@@ -19,12 +19,15 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
+import com.android2.calculator3.util.TextUtil;
 import com.xlythe.floatingview.AnimationFinishedListener;
+import com.xlythe.math.Solver;
 
 /**
  * The display overlay is a container that intercepts touch events on top of:
@@ -53,8 +56,8 @@ public class DisplayOverlay extends RelativeLayout {
     private View mDisplayBackground;
     private View mDisplayForeground;
     private GraphView mDisplayGraph;
-    private FormattedNumberEditText mFormulaEditText;
-    private FormattedNumberEditText mResultEditText;
+    private EditText mFormulaEditText;
+    private TextView mResultEditText;
     private View mCalculationsDisplay;
     private View mInfoText;
     private LinearLayoutManager mLayoutManager;
@@ -155,8 +158,8 @@ public class DisplayOverlay extends RelativeLayout {
         mDisplayBackground = findViewById(R.id.the_card);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
         mDisplayGraph = (GraphView) findViewById(R.id.mini_graph);
-        mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
-        mResultEditText = (FormattedNumberEditText) findViewById(R.id.result);
+        mFormulaEditText = (EditText) findViewById(R.id.formula);
+        mResultEditText = (TextView) findViewById(R.id.result);
         mCalculationsDisplay = findViewById(R.id.calculations);
         mInfoText = findViewById(R.id.info);
     }
@@ -618,7 +621,8 @@ public class DisplayOverlay extends RelativeLayout {
             if (percent == 1f) {
                 if (adapter.getDisplayEntry() == null) {
                     // We're at 100%, but haven't switched to the adapter yet. Time to do your thing.
-                    adapter.setDisplayEntry(mFormulaEditText.getCleanText(), mResultEditText.getCleanText());
+                    Solver solver = new Solver();
+                    adapter.setDisplayEntry(TextUtil.getCleanText(mFormulaEditText, solver), TextUtil.getCleanText(mResultEditText, solver));
                     mDisplayBackground.setVisibility(View.GONE);
                     mCalculationsDisplay.setVisibility(View.GONE);
                     scrollToMostRecent();

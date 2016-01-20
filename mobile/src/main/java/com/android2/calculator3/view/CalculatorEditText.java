@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import com.android2.calculator3.util.*;
 import com.xlythe.math.BaseModule;
 
 import java.util.Arrays;
@@ -55,14 +56,8 @@ public class CalculatorEditText extends FormattedNumberEditText {
     }
 
     private void setUp(Context context, AttributeSet attrs) {
-        setMovementMethod(new MathMovementMethod());
-        addSpanComponent(new MatrixComponent(getContext()));
-    }
-
-    @Override
-    public boolean performLongClick() {
-        // setMovementMethod causes long click to crash. For now, just disable long clicks.
-        return false;
+        //setMovementMethod(new MathMovementMethod());
+        //addSpanComponent(new MatrixComponent(getContext()));
     }
 
     @Override

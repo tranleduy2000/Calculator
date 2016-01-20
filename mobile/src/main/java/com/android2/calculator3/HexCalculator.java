@@ -29,6 +29,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
+import com.android2.calculator3.util.TextUtil;
 import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.xlythe.math.Base;
@@ -46,7 +47,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
     private static final String KEY_BASE = NAME + "_base";
 
     private FormattedNumberEditText mFormulaEditText;
-    private FormattedNumberEditText mResultEditText;
+    private TextView mResultEditText;
 
     private TextView mInfoView;
     private boolean mShowBaseDetails;
@@ -64,7 +65,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
         super.initialize(savedInstanceState);
         mInfoView = (TextView) findViewById(R.id.info);
         mFormulaEditText = (FormattedNumberEditText) findViewById(R.id.formula);
-        mResultEditText = (FormattedNumberEditText) findViewById(R.id.result);
+        mResultEditText = (TextView) findViewById(R.id.result);
 
         Base base = Base.DECIMAL;
         int baseOrdinal = savedInstanceState.getInt(KEY_BASE, -1);
@@ -127,7 +128,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
                 if (errorResourceId != INVALID_RES_ID) {
                     onError(errorResourceId);
                 } else {
-                    mResultEditText.setText(result);
+                    mResultEditText.setText(TextUtil.formatText(result, mFormulaEditText.getEquationFormatter(), mFormulaEditText.getSolver()));
                     onResult(result);
                 }
             }
