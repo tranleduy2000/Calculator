@@ -48,22 +48,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-            @Override
-            public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                if (insets.isRound()) {
-                    setContentView(R.layout.activity_main_round);
-                } else {
-                    setContentView(R.layout.activity_main);
-                }
-                initialize(insets);
-                return insets;
-            }
-        });
-        getWindow().getDecorView().requestApplyInsets();
-    }
+        setContentView(R.layout.activity_main);
 
-    protected void initialize(WindowInsets insets) {
         // Rebuild constants. If the user changed their locale, it won't kill the app
         // but it might change a decimal point from . to ,
         Constants.rebuildConstants();
@@ -150,7 +136,7 @@ public class MainActivity extends Activity {
             }
         };
         final CalculatorPageAdapter adapter = new CalculatorPageAdapter(
-                getBaseContext(), insets, mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
+                getBaseContext(), mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
         mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -19,7 +19,6 @@ import com.xlythe.math.Solver;
 
 public class CalculatorPageAdapter extends PagerAdapter {
     private final Context mContext;
-    private final boolean mRound;
     private final View.OnClickListener mListener;
     private final HistoryAdapter.HistoryItemCallback mHistoryCallback;
     private final Solver mSolver;
@@ -28,13 +27,11 @@ public class CalculatorPageAdapter extends PagerAdapter {
 
     public CalculatorPageAdapter(
             Context context,
-            WindowInsets insets,
             View.OnClickListener listener,
             HistoryAdapter.HistoryItemCallback historyCallback,
             Solver solver,
             History history) {
         mContext = context;
-        mRound = insets.isRound();
         mListener = listener;
         mHistoryCallback = historyCallback;
         mSolver = solver;
@@ -90,11 +87,7 @@ public class CalculatorPageAdapter extends PagerAdapter {
         if(mViews[position] != null) return mViews[position];
         switch(position) {
             case 0:
-                if (mRound) {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_history_round, null);
-                } else {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_history, null);
-                }
+                mViews[position] = View.inflate(mContext, R.layout.calculator_history, null);
                 RecyclerView historyView =
                         (RecyclerView) mViews[position].findViewById(R.id.history);
                 setUpHistory(historyView);
@@ -103,22 +96,14 @@ public class CalculatorPageAdapter extends PagerAdapter {
                 setEnabled(mViews[position], false);
                 break;
             case 1:
-                if (mRound) {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_basic_round, null);
-                } else {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_basic, null);
-                }
+                mViews[position] = View.inflate(mContext, R.layout.calculator_basic, null);
 
                 Button dot = (Button) mViews[position].findViewById(R.id.dec_point);
                 dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
                 break;
             case 2:
-                if (mRound) {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_advanced_round, null);
-                } else {
-                    mViews[position] = View.inflate(mContext, R.layout.calculator_advanced, null);
-                }
+                mViews[position] = View.inflate(mContext, R.layout.calculator_advanced, null);
 
                 // This is the first time loading the advanced panel -- disable it until the user moves to it
                 setEnabled(mViews[position], false);
