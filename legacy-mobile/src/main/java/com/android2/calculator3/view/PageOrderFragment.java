@@ -53,7 +53,7 @@ public class PageOrderFragment extends ListFragment {
         return mListView;
     }
 
-    private Context getContext() {
+    public Context getContext() {
         return getActivity();
     }
 

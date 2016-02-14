@@ -16,25 +16,25 @@ public class ImageButton extends com.rey.material.widget.ImageButton {
 
     public ImageButton(Context context) {
         super(context);
-        init(context, null, 0, 0);
+        determineColor(context, null, 0, 0);
     }
 
     public ImageButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0, 0);
+        determineColor(context, attrs, 0, 0);
     }
 
     public ImageButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr, 0);
+        determineColor(context, attrs, defStyleAttr, 0);
     }
 
     public ImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr, defStyleRes);
+        determineColor(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
+    private void determineColor(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes){
         ColorDrawable oldDrawable = (ColorDrawable) getBackground();
         mColor = oldDrawable.getColor();
 //        invalidateBackground();

@@ -117,9 +117,11 @@ public class PreferencesFragment extends PreferenceFragment {
         }
     }
 
-    protected Context getContext() {
+    public Context getContext() {
         return getActivity();
-    }    @Override
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 

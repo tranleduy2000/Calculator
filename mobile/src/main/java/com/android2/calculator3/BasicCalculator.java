@@ -506,7 +506,7 @@ public abstract class BasicCalculator extends Activity
         animatorSet.start();
     }
 
-    private void onEquals() {
+    protected void onEquals() {
         String text = mFormulaEditText.getCleanText();
         if (mCurrentState == CalculatorState.INPUT) {
             switch(mEqualButton.getState()) {
