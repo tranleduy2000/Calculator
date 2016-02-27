@@ -92,6 +92,7 @@
 
     <style name="Theme.Calculator.Display.Widget" >
         <item name="android:textColor">@color/widget_text_color</item>
+        <item name="android:inputType">text|textNoSuggestions</item>
     </style>
 
     <style name="Theme.Calculator.Display.FloatingCalc">

@@ -200,7 +200,6 @@ public class CalculatorWidget extends AppWidgetProvider {
         remoteViews.setViewVisibility(R.id.background, CalculatorSettings.showWidgetBackground(context) ? View.VISIBLE : View.GONE);
         remoteViews.setViewVisibility(displayId, View.VISIBLE);
         remoteViews.setTextViewText(displayId, value);
-        remoteViews.setTextViewText(R.id.display, value);
         remoteViews.setViewVisibility(R.id.delete, mClearText ? View.GONE : View.VISIBLE);
         remoteViews.setViewVisibility(R.id.clear, mClearText ? View.VISIBLE : View.GONE);
         setOnClickListeners(context, appWidgetId, remoteViews);
