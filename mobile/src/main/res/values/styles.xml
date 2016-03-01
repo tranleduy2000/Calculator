@@ -99,7 +99,7 @@
         <item name="android:padding">0dp</item>
     </style>
 
-    <style name="Theme.Calculator.ButtonStyle">
+    <style name="Theme.Calculator.ButtonStyle" parent="">
         <item name="android:textSize">40sp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
