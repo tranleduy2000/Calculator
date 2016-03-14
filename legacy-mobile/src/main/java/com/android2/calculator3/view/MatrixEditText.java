@@ -77,7 +77,7 @@ public class MatrixEditText extends ThemedEditText implements OnFocusChangeListe
     public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus) {
             mDisplay.mActiveEditText = MatrixEditText.this;
-            if(getText().toString().equals(Logic.NAN)) {
+            if(toString().equals(Logic.NAN)) {
                 setText("");
             }
         }
@@ -85,7 +85,15 @@ public class MatrixEditText extends ThemedEditText implements OnFocusChangeListe
 
     @Override
     public String toString() {
-        return getText().toString();
+        // On some versions of Android, getText() defaults to a String until you call setText().
+        // When we call getText().toString() on those versions, EditText attempts to cast it as an
+        // Editable and crashes.
+        try {
+            return getText().toString();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 
     @Override
