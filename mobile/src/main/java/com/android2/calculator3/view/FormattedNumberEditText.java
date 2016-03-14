@@ -195,6 +195,11 @@ public class FormattedNumberEditText extends NumberEditText {
                 return;
             }
 
+            // don't allow the first character to be an operator
+            if(selectionHandle == 0 && Solver.isOperator(text) && text != Constants.MINUS) {
+                return;
+            }
+
             // don't allow multiple successive operators
             if(Solver.isOperator(text) && text != Constants.MINUS) {
                 while(Solver.isOperator(prevChar)) {
