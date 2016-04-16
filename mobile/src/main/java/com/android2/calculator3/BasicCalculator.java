@@ -254,6 +254,11 @@ public abstract class BasicCalculator extends Activity
                     HistoryEntry item = mHistory.getEntries().get(viewHolder.getAdapterPosition());
                     mHistory.remove(item);
                     mHistoryAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                } else {
+                    mFormulaEditText.setText(null);
+                }
+                if (mHistory.getEntries().isEmpty()) {
+                    mDisplayView.collapse();
                 }
             }
         }));

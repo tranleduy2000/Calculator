@@ -575,6 +575,7 @@ public class DisplayOverlay extends RelativeLayout {
             int newHeight = getContext().getResources().getDimensionPixelSize(R.dimen.display_height_graph_expanded);
             int currentHeight = (int) (mDisplayBackground.getScaleY() * mDisplayBackground.getHeight());
             mDisplayBackground.setTranslationY(percent * (newHeight - currentHeight));
+            mCalculationsDisplay.setTranslationY(percent * (newHeight - currentHeight));
 
             mDisplayGraph.setTextColor(mixColors(percent, getResources().getColor(R.color.mini_graph_text), getResources().getColor(R.color.graph_text)));
         }

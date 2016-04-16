@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.os.IBinder;
@@ -644,6 +645,12 @@ public abstract class FloatingView extends Service implements OnTouchListener {
 
     private int getScreenHeight() {
         return getResources().getDisplayMetrics().heightPixels - getStatusBarHeight();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        closeView();
     }
 
     private int getStatusBarHeight() {
