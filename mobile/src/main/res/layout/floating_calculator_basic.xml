@@ -13,73 +13,73 @@
         android:columnCount="3"
         android:rowCount="4">
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_7"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit7" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_8"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit8" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_9"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit9" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_4"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit4" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_5"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit5" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_6"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit6" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_1"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit1" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_2"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit2" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_3"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit3" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/dec_point"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/dec_point" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/digit_0"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit0" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/eq"
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_eq"
@@ -97,28 +97,28 @@
         android:rowCount="4"
         android:paddingRight="20dip">
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/op_div"
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_op_div"
             android:onClick="onButtonClick"
             android:text="@string/op_div" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/op_mul"
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_op_mul"
             android:onClick="onButtonClick"
             android:text="@string/op_mul" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/op_sub"
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_op_sub"
             android:onClick="onButtonClick"
             android:text="@string/op_sub" />
 
-        <com.android2.calculator3.view.Button
+        <Button
             android:id="@+id/op_add"
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_op_add"

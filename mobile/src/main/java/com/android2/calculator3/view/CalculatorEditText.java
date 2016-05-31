@@ -29,7 +29,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
-import com.android2.calculator3.util.*;
+import com.android2.calculator3.util.TextUtil;
 import com.xlythe.math.BaseModule;
 
 import java.util.Arrays;

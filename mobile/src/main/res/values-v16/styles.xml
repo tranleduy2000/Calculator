@@ -45,7 +45,7 @@
     <style name="PadButtonStyle" parent="@android:style/Widget.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/pad_button_ripple_color</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:gravity">center</item>
         <item name="android:includeFontPadding">false</item>

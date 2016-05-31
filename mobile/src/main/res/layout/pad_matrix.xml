@@ -21,85 +21,85 @@
     style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/matrix"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:src="@drawable/matrix" />
+        android:src="@drawable/matrix"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/identity_matrix"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:src="@drawable/matrix" />
+        android:src="@drawable/matrix"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_dot_product"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="\u2219" />
+        android:text="\u2219"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_cross_product"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="\u2715" />
+        android:text="\u2715"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/plus_row"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/plus_row" />
+        android:text="@string/plus_row"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/minus_row"
-        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/minus_row" />
+        android:text="@string/minus_row"
+        style="@style/PadButtonStyle.Advanced" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/plus_col"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/plus_col" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/minus_col"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/minus_col" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_transpose"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/fun_transpose" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_inverse"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/fun_inverse" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_trace"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/fun_trace" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_det"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/fun_det" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_norm"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/fun_norm" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_polar"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"

@@ -23,14 +23,14 @@
     android:columnCount="1"
     android:rowCount="5">
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/del"
         style="@style/PadButtonStyle.Operator.Text"
         android:contentDescription="@string/desc_del"
         android:onClick="onButtonClick"
         android:text="@string/del" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/clr"
         style="@style/PadButtonStyle.Operator.Text"
         android:contentDescription="@string/desc_clr"
@@ -38,28 +38,28 @@
         android:text="@string/clr"
         android:visibility="gone" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_div"
         style="@style/PadButtonStyle.Operator"
         android:contentDescription="@string/desc_op_div"
         android:onClick="onButtonClick"
         android:text="@string/op_div" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_mul"
         style="@style/PadButtonStyle.Operator"
         android:contentDescription="@string/desc_op_mul"
         android:onClick="onButtonClick"
         android:text="@string/op_mul" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_sub"
         style="@style/PadButtonStyle.Operator"
         android:contentDescription="@string/desc_op_sub"
         android:onClick="onButtonClick"
         android:text="@string/op_sub" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_add"
         style="@style/PadButtonStyle.Operator"
         android:contentDescription="@string/desc_op_add"

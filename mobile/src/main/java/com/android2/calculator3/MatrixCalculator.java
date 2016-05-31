@@ -18,7 +18,6 @@ package com.android2.calculator3;
 import android.os.Bundle;
 import android.view.View;
 
-import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.MatrixComponent;
 

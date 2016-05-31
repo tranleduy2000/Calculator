@@ -2,7 +2,6 @@ package com.android2.calculator3.util;
 
 import android.widget.TextView;
 
-import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;

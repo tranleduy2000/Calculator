@@ -23,16 +23,12 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.GraphView;
-import com.rey.material.drawable.CheckBoxDrawable;
-import com.rey.material.widget.CheckBox;
 import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.GraphModule;
 

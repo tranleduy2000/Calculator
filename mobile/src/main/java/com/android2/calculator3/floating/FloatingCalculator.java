@@ -6,16 +6,13 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ViewSwitcher;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.CalculatorExpressionEvaluator;
 import com.android2.calculator3.CalculatorExpressionTokenizer;
 import com.android2.calculator3.Clipboard;
-import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.BackspaceImageButton;
 import com.android2.calculator3.view.CalculatorEditText;

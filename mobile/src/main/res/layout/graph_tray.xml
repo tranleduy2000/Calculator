@@ -22,45 +22,25 @@
         android:rowCount="1"
         custom:preventParentTouchEvents="true">
 
-        <com.android2.calculator3.view.ImageButton
+        <ImageButton
             android:id="@+id/btn_zoom_in"
             android:src="@drawable/btn_zoomin"
-            android:onClick="onButtonClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="14dp"
-            android:background="@color/pad_button_advanced_ripple_color"/>
+            style="@style/GraphTray"/>
 
-        <com.android2.calculator3.view.ImageButton
+        <ImageButton
             android:id="@+id/btn_zoom_out"
             android:src="@drawable/btn_zoomout"
-            android:onClick="onButtonClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="14dp"
-            android:background="@color/pad_button_advanced_ripple_color"/>
+            style="@style/GraphTray"/>
 
-        <com.android2.calculator3.view.ImageButton
+        <ImageButton
             android:id="@+id/btn_zoom_reset"
             android:src="@drawable/btn_reset"
-            android:onClick="onButtonClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="14dp"
-            android:background="@color/pad_button_advanced_ripple_color"/>
+            style="@style/GraphTray"/>
 
-        <com.android2.calculator3.view.ImageButton
+        <ImageButton
             android:id="@+id/btn_close_graph"
             android:src="@drawable/btn_close"
-            android:onClick="onButtonClick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="14dp"
-            android:background="@color/pad_button_advanced_ripple_color"/>
+            style="@style/GraphTray"/>
 
     </com.android2.calculator3.view.SolidPadLayout>
 

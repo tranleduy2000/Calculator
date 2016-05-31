@@ -30,7 +30,6 @@ import android.widget.TextView;
 
 import com.android2.calculator3.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.android2.calculator3.util.TextUtil;
-import com.android2.calculator3.view.CalculatorEditText;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.xlythe.math.Base;
 

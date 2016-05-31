@@ -23,7 +23,7 @@
     android:rowCount="4"
     android:padding="7dp">
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_sin"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_fun_sin"
@@ -31,7 +31,7 @@
         android:text="@string/fun_sin"
         android:tag="@string/fun_arcsin"/>
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_cos"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_fun_cos"
@@ -39,7 +39,7 @@
         android:text="@string/fun_cos"
         android:tag="@string/fun_arccos" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_tan"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_fun_tan"
@@ -47,90 +47,90 @@
         android:text="@string/fun_tan"
         android:tag="@string/fun_arctan" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/const_i"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:onClick="onButtonClick"
         android:text="@string/const_imaginary" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_ln"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_fun_ln"
         android:onClick="onButtonClick"
         android:text="@string/fun_ln" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_log"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_fun_log"
         android:onClick="onButtonClick"
         android:text="@string/fun_log" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/const_pi"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_const_pi"
         android:onClick="onButtonClick"
         android:text="@string/const_pi" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/const_e"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_const_e"
         android:onClick="onButtonClick"
         android:text="@string/const_e" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/fun_percent"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/fun_percentage"
         android:onClick="onButtonClick"
         android:text="@string/fun_percentage" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_fact"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_op_fact"
         android:onClick="onButtonClick"
         android:text="@string/op_fact" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_sqrt"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_op_sqrt"
         android:onClick="onButtonClick"
         android:text="@string/op_sqrt" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_cbrt"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_op_cbrt"
         android:onClick="onButtonClick"
         android:text="@string/op_cbrt" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/op_pow"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_op_pow"
         android:onClick="onButtonClick"
         android:text="@string/op_pow" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/lparen"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_lparen"
         android:onClick="onButtonClick"
         android:text="@string/leftParen" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/rparen"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_rparen"
         android:onClick="onButtonClick"
         android:text="@string/rightParen" />
 
-    <com.android2.calculator3.view.Button
+    <Button
         android:id="@+id/parentheses"
         style="@style/PadButtonStyle.FloatingCalc.Advanced"
         android:contentDescription="@string/desc_parentheses"

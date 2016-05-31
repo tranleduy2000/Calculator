@@ -10,45 +10,29 @@
     android:rowCount="1"
     custom:preventParentTouchEvents="true">
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/btn_advanced"
         android:src="@drawable/tray_btn_advanced"
-        android:background="@color/pad_button_ripple_color"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:contentDescription="@string/panel_advanced"/>
+        android:contentDescription="@string/panel_advanced"
+        style="@style/FabTray"/>
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/btn_hex"
         android:src="@drawable/tray_btn_hex"
-        android:background="@color/pad_button_ripple_color"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:contentDescription="@string/panel_hex" />
+        android:contentDescription="@string/panel_hex"
+        style="@style/FabTray" />
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/btn_matrix"
         android:src="@drawable/tray_btn_matrix"
-        android:background="@color/pad_button_ripple_color"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
         android:contentDescription="@string/panel_matrix"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        style="@style/FabTray"/>
 
-    <com.android2.calculator3.view.ImageButton
+    <ImageButton
         android:id="@+id/btn_close"
         android:src="@drawable/tray_btn_close"
-        android:background="@color/pad_button_ripple_color"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:contentDescription="@string/panel_close_btn" />
+        android:contentDescription="@string/panel_close_btn"
+        style="@style/FabTray" />
 
 </com.android2.calculator3.view.SolidPadLayout>

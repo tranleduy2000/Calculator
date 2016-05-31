@@ -39,7 +39,6 @@
     </style>
 
     <style name="PadButtonStyle.Advanced">
-        <item name="android:background">@color/pad_button_advanced_ripple_color</item>
         <item name="android:textColor">@color/pad_button_advanced_text_color</item>
         <item name="android:textSize">27sp</item>
     </style>
