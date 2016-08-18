@@ -10,6 +10,7 @@
         android:layout_marginTop="80dp"/>
 
     <LinearLayout
+        android:id="@+id/display_background"
         android:layout_width="match_parent"
         android:layout_height="86dp"
         android:paddingStart="35dp"

@@ -19,6 +19,7 @@ package com.android2.calculator3.view;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.android2.calculator3.R;
@@ -47,9 +48,18 @@ public class CalculatorPadViewPager extends ViewPager {
     public CalculatorPadViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        setBackgroundColor(getResources().getColor(android.R.color.black));
         setPageMargin(getResources().getDimensionPixelSize(R.dimen.pad_page_margin));
         setPageTransformer(false, mPageTransformer);
         setOffscreenPageLimit(3);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return isEnabled() && super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        return isEnabled() && super.onInterceptTouchEvent(event);
     }
 }

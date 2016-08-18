@@ -5,6 +5,7 @@
 
     <com.android2.calculator3.view.SolidPadLayout
         style="@style/PadLayoutStyle.Numeric"
+        android:id="@+id/pad_numeric"
         android:background="@color/pad_numeric_background_color"
         android:columnCount="3"
         android:rowCount="4">

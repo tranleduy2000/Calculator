@@ -6,7 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.wearable.activity.WearableActivity;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
 import com.android2.calculator3.view.BackspaceImageButton;
@@ -61,9 +64,8 @@ public class MainActivity extends WearableActivity {
         mHistory = mPersist.getHistory();
 
         mDisplay = (ViewSwitcher) findViewById(R.id.display);
-        for (int i = 0; i < mDisplay.getChildCount(); i++) {
-            final FormattedNumberEditText displayChild = (FormattedNumberEditText) mDisplay.getChildAt(i);
-            displayChild.setSolver(mEvaluator.getSolver());
+        for (FormattedNumberEditText editText : getEditTexts()) {
+            editText.setSolver(mEvaluator.getSolver());
         }
 
         mDelete = (BackspaceImageButton) findViewById(R.id.delete);
@@ -252,14 +254,51 @@ public class MainActivity extends WearableActivity {
     @Override
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
-
-        // TODO Disable all buttons, make the text white and the background black
+        setEnabled(findViewById(android.R.id.content), false);
+        findViewById(R.id.display_background).setBackgroundResource(android.R.color.transparent);
+        findViewById(R.id.pad_advanced).setBackgroundResource(android.R.color.transparent);
+        findViewById(R.id.pad_numeric).setBackgroundResource(android.R.color.transparent);
+        findViewById(R.id.pad_operator).setBackgroundResource(android.R.color.transparent);
+        findViewById(R.id.pad_history).setBackgroundResource(android.R.color.transparent);
+        for (FormattedNumberEditText editText : getEditTexts()) {
+            editText.setTextColor(getResources().getColor(R.color.white));
+        }
     }
 
     @Override
     public void onExitAmbient() {
         super.onExitAmbient();
+        setEnabled(findViewById(android.R.id.content), true);
+        findViewById(R.id.display_background).setBackgroundResource(R.drawable.white_card);
+        findViewById(R.id.pad_advanced).setBackgroundResource(R.color.pad_advanced_background_color);
+        findViewById(R.id.pad_numeric).setBackgroundResource(R.color.pad_numeric_background_color);
+        findViewById(R.id.pad_operator).setBackgroundResource(R.color.pad_operator_background_color);
+        findViewById(R.id.pad_history).setBackgroundResource(R.color.pad_history_background_color);
+        for (FormattedNumberEditText editText : getEditTexts()) {
+            editText.setTextColor(getResources().getColor(R.color.display_formula_text_color));
+        }
+    }
 
-        // TODO Re-enable all buttons, make the text normal and the background normal
+    private void setEnabled(View root, boolean enabled) {
+        if (root instanceof TextView
+                || root instanceof ImageButton
+                || root instanceof ViewPager
+                || root instanceof RecyclerView) {
+            root.setEnabled(enabled);
+        }
+        if (root instanceof ViewGroup) {
+            ViewGroup viewGroup = (ViewGroup) root;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                setEnabled(viewGroup.getChildAt(i), enabled);
+            }
+        }
+    }
+
+    private FormattedNumberEditText[] getEditTexts() {
+        FormattedNumberEditText[] editTexts = new FormattedNumberEditText[mDisplay.getChildCount()];
+        for (int i = 0; i < mDisplay.getChildCount(); i++) {
+            editTexts[i] = (FormattedNumberEditText) mDisplay.getChildAt(i);
+        }
+        return editTexts;
     }
 }
