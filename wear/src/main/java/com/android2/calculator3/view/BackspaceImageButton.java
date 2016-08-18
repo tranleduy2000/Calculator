@@ -27,7 +27,7 @@ public class BackspaceImageButton extends ImageButton {
     private static final int[] STATE_CLEAR = { R.attr.state_clear };
 
     public enum State {
-        DELETE, CLEAR;
+        DELETE, CLEAR
     }
 
     private State mState = State.DELETE;

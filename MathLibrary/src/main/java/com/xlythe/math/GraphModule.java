@@ -237,7 +237,7 @@ public class GraphModule extends Module {
         }
     }
 
-    public static interface OnGraphUpdatedListener {
-        public void onGraphUpdated(List<Point> result);
+    public interface OnGraphUpdatedListener {
+        void onGraphUpdated(List<Point> result);
     }
 }

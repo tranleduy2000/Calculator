@@ -107,10 +107,7 @@ public class Cling extends FrameLayout {
     public boolean onTouchEvent(android.view.MotionEvent event) {
         int[] pos = getPunchThroughPosition();
         double diff = Math.sqrt(Math.pow(event.getX() - pos[0], 2) + Math.pow(event.getY() - pos[1], 2));
-        if(diff < mRevealRadius) {
-            return false;
-        }
-        return true;
+        return diff >= mRevealRadius;
     }
 
     private int[] getPunchThroughPosition() {
@@ -119,8 +116,6 @@ public class Cling extends FrameLayout {
         }
         return new int[]{-1, -1, -1};
     }
-
-    ;
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
@@ -184,5 +179,4 @@ public class Cling extends FrameLayout {
         super.dispatchDraw(canvas);
     }
 
-    ;
 }

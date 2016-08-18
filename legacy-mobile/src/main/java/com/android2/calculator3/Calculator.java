@@ -552,8 +552,7 @@ public class Calculator extends BaseActivity implements Logic.Listener, OnClickL
     /* Cling related */
     private boolean isClingsEnabled() {
         // disable clings when running in a test harness
-        if(ActivityManager.isRunningInTestHarness()) return false;
-        return true;
+        return !ActivityManager.isRunningInTestHarness();
     }
 
     private Cling initCling(int clingId, int[] positionData, float revealRadius, boolean showHand, boolean animate) {
@@ -638,7 +637,6 @@ public class Calculator extends BaseActivity implements Logic.Listener, OnClickL
                     CalculatorSettings.saveKey(getContext(), flag, true);
                 }
 
-                ;
             });
             anim.start();
         }

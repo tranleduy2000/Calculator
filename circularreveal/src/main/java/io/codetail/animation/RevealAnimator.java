@@ -16,19 +16,19 @@ import static io.codetail.animation.ViewAnimationUtils.SimpleAnimationListener;
  */
 public interface RevealAnimator{
 
-    public void setClipOutlines(boolean clip);
+    void setClipOutlines(boolean clip);
 
-    public void setCenter(float cx, float cy);
+    void setCenter(float cx, float cy);
 
-    public void setTarget(View target);
+    void setTarget(View target);
 
-    public void setRevealRadius(float value);
+    void setRevealRadius(float value);
 
-    public float getRevealRadius();
+    float getRevealRadius();
 
-    public void invalidate(Rect bounds);
+    void invalidate(Rect bounds);
 
-    static class RevealFinishedGingerbread extends SimpleAnimationListener {
+    class RevealFinishedGingerbread extends SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 
@@ -54,7 +54,7 @@ public interface RevealAnimator{
         }
     }
 
-    static class RevealFinishedIceCreamSandwich extends SimpleAnimationListener {
+    class RevealFinishedIceCreamSandwich extends SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 
@@ -94,7 +94,7 @@ public interface RevealAnimator{
         }
     }
 
-    static class RevealFinishedJellyBeanMr2 extends SimpleAnimationListener {
+    class RevealFinishedJellyBeanMr2 extends SimpleAnimationListener {
         WeakReference<RevealAnimator> mReference;
         volatile Rect mInvalidateBounds;
 

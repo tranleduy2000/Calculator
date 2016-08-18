@@ -337,7 +337,7 @@ public class BaseModule extends Module {
         mBaseChangeListener = l;
     }
 
-    public static interface OnBaseChangeListener {
-        public void onBaseChange(Base newBase);
+    public interface OnBaseChangeListener {
+        void onBaseChange(Base newBase);
     }
 }

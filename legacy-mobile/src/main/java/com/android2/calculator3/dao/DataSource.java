@@ -4,13 +4,13 @@ import android.database.Cursor;
 import android.database.SQLException;
 
 public interface DataSource {
-    public void open() throws SQLException;
+    void open() throws SQLException;
 
-    public void close();
+    void close();
 
-    public String[] getColumns();
+    String[] getColumns();
 
-    public Cursor getRows();
+    Cursor getRows();
 
-    public String getTableName();
+    String getTableName();
 }
