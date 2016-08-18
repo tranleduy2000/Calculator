@@ -648,19 +648,19 @@ public class Page {
     }
 
     public interface Panel {
-        public String name();
+        String name();
 
-        public int getName();
+        int getName();
 
-        public int getDefaultValue();
+        int getDefaultValue();
 
-        public boolean hasTutorial();
+        boolean hasTutorial();
 
-        public View getView(Context context);
+        View getView(Context context);
 
-        public void showTutorial(Calculator calc, boolean animate);
+        void showTutorial(Calculator calc, boolean animate);
 
-        public void refresh(Context context, View view, EventListener listener, Graph graph, Logic logic);
+        void refresh(Context context, View view, EventListener listener, Graph graph, Logic logic);
     }
 
     private static class PageSort implements Comparator<Page> {

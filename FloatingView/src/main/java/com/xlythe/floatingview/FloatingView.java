@@ -529,7 +529,7 @@ public abstract class FloatingView extends Service implements OnTouchListener {
     }
 
     private int getOpenX() {
-        return (int) (getScreenWidth() - mDraggableIcon.getWidth() - MARGIN_VIEW);
+        return getScreenWidth() - mDraggableIcon.getWidth() - MARGIN_VIEW;
     }
 
     private int getOpenY() {

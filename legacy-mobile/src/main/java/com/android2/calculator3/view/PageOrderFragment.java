@@ -104,8 +104,8 @@ public class PageOrderFragment extends ListFragment {
         mChangeListener = listener;
     }
 
-    public static interface ChangeListener {
-        public void change(List<Page> sources);
+    public interface ChangeListener {
+        void change(List<Page> sources);
     }
 
     static public class PageAdapter extends ArrayAdapter<Page> {

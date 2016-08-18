@@ -68,6 +68,6 @@ public class CalculatorExpressionEvaluator {
     }
 
     public interface EvaluateCallback {
-        public void onEvaluate(String expr, String result, int errorResourceId);
+        void onEvaluate(String expr, String result, int errorResourceId);
     }
 }

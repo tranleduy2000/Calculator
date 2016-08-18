@@ -185,7 +185,6 @@ public class GraphView extends View {
         if(mPointers != event.getPointerCount()) {
             setMode(event);
         }
-        ;
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 setMode(event);
@@ -467,11 +466,11 @@ public class GraphView extends View {
         mZoomListener = l;
     }
 
-    public static interface PanListener {
-        public void panApplied();
+    public interface PanListener {
+        void panApplied();
     }
 
-    public static interface ZoomListener {
-        public void zoomApplied(float level);
+    public interface ZoomListener {
+        void zoomApplied(float level);
     }
 }

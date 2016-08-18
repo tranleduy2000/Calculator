@@ -66,7 +66,7 @@ class FloatingHistoryAdapter extends HistoryAdapter {
         mListener = l;
     }
 
-    public static interface OnHistoryItemClickListener {
-        public void onHistoryItemClick(HistoryEntry entry);
+    public interface OnHistoryItemClickListener {
+        void onHistoryItemClick(HistoryEntry entry);
     }
 }

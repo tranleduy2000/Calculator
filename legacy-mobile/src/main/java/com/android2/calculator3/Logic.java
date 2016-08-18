@@ -200,7 +200,7 @@ public class Logic {
         try {
             String result = mTokenizer.getLocalizedExpression(mSolver.solve(mTokenizer.getNormalizedExpression(text)));
             if(!text.equals(result)) {
-                mHistory.enter(mEquationFormatter.appendParenthesis(text), result);
+                mHistory.enter(EquationFormatter.appendParenthesis(text), result);
                 mResult = result;
                 mDisplay.setText(mResult, scroll);
                 setDeleteMode(DELETE_MODE_CLEAR);

@@ -27,7 +27,7 @@ public class EqualsImageButton extends ImageButton {
     private static final int[] STATE_NEXT = { R.attr.state_next };
 
     public enum State {
-        EQUALS, NEXT;
+        EQUALS, NEXT
     }
 
     private State mState = State.EQUALS;

@@ -38,7 +38,7 @@ public class Voice {
             text = text.replace(" ", "");
             text = SpellContext.replaceAllWithNumbers(text);
             text = removeChars(text, exceptions);
-            text = formatter.appendParenthesis(text);
+            text = EquationFormatter.appendParenthesis(text);
             return text;
         }
         else {

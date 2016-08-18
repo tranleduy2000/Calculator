@@ -37,7 +37,7 @@ public class MainActivity extends WearableActivity {
     private State mState;
 
     private enum State {
-        DELETE, CLEAR, ERROR;
+        DELETE, CLEAR, ERROR
     }
 
     @Override
