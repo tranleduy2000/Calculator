@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.support.wearable.activity.WearableActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,7 @@ import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
 
-public class MainActivity extends Activity {
+public class MainActivity extends WearableActivity {
 
     /**
      * Constant for an invalid resource id.
@@ -49,6 +50,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setAmbientEnabled();
 
         // Rebuild constants. If the user changed their locale, it won't kill the app
         // but it might change a decimal point from . to ,
@@ -251,5 +253,19 @@ public class MainActivity extends Activity {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onEnterAmbient(Bundle ambientDetails) {
+        super.onEnterAmbient(ambientDetails);
+
+        // TODO Disable all buttons, make the text white and the background black
+    }
+
+    @Override
+    public void onExitAmbient() {
+        super.onExitAmbient();
+
+        // TODO Re-enable all buttons, make the text normal and the background normal
     }
 }
