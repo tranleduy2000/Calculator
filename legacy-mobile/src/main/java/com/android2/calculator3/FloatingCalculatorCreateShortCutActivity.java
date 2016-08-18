@@ -6,8 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 
-import com.android2.calculator3.R;
-
 /**
  * Creates the shortcut icon
  */

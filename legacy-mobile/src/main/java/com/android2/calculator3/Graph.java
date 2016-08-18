@@ -16,7 +16,6 @@
 package com.android2.calculator3;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.view.GraphView;

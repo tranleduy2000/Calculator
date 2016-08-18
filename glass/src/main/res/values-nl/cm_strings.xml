@@ -15,7 +15,7 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources>
   <string name="application_copyright">Copyright \u00A9 2014 The CyanogenMod Project</string>
   <string name="X">x</string>
   <string name="Y">y</string>

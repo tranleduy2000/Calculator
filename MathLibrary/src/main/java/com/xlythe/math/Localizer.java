@@ -2,12 +2,9 @@ package com.xlythe.math;
 
 import android.content.Context;
 import android.util.Log;
-import android.util.SparseArray;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 /**

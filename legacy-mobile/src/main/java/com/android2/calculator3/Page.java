@@ -1,7 +1,6 @@
 package com.android2.calculator3;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.ViewGroup.LayoutParams;

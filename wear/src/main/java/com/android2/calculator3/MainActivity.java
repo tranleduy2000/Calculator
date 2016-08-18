@@ -1,18 +1,12 @@
 package com.android2.calculator3;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.wearable.activity.WearableActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.android2.calculator3.view.BackspaceImageButton;

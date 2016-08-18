@@ -18,7 +18,6 @@ package com.android2.calculator3;
 
 import android.content.Context;
 import android.os.Vibrator;
-import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -34,11 +33,8 @@ import com.android2.calculator3.view.MatrixInverseView;
 import com.android2.calculator3.view.MatrixTransposeView;
 import com.android2.calculator3.view.MatrixView;
 import com.xlythe.math.Base;
-import com.xlythe.math.BaseModule;
 
 import org.javia.arity.SyntaxException;
-
-import java.util.List;
 
 public class EventListener implements View.OnKeyListener, View.OnClickListener, View.OnLongClickListener {
     Context mContext;

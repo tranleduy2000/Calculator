@@ -15,7 +15,6 @@ import android.view.View;
 import com.xlythe.math.Point;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

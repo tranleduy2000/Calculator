@@ -24,21 +24,16 @@ import android.widget.EditText;
 import com.android2.calculator3.view.CalculatorDisplay;
 import com.android2.calculator3.view.CalculatorDisplay.Scroll;
 import com.android2.calculator3.view.GraphView;
-import com.android2.calculator3.view.MatrixInverseView;
-import com.android2.calculator3.view.MatrixTransposeView;
-import com.android2.calculator3.view.MatrixView;
 import com.xlythe.math.BaseModule;
 import com.xlythe.math.EquationFormatter;
+import com.xlythe.math.GraphModule.OnGraphUpdatedListener;
 import com.xlythe.math.Point;
 import com.xlythe.math.Solver;
-import com.xlythe.math.GraphModule.OnGraphUpdatedListener;
 
-import org.javia.arity.Symbols;
 import org.javia.arity.SyntaxException;
 
 import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 
 public class Logic {
     // Double.toString() for NaN

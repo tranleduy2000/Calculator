@@ -12,17 +12,12 @@ import android.view.View;
 import com.google.android.glass.media.Sounds;
 import com.google.android.glass.touchpad.Gesture;
 import com.google.android.glass.touchpad.GestureDetector;
-import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 import com.xlythe.math.Voice;
 
 import org.javia.arity.SyntaxException;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GlassHomeActivity extends Activity {
     private static final int SPEECH_REQUEST = 1000;
