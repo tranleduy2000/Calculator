@@ -20,8 +20,8 @@
     style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color"
     android:paddingBottom="25dp"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp">
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
 
     <Button
         android:id="@+id/const_pi"

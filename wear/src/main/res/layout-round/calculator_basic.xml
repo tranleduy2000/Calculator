@@ -9,8 +9,8 @@
         android:columnCount="3"
         android:rowCount="4"
         android:paddingBottom="25dp"
-        android:paddingLeft="25dp"
-        android:paddingRight="5dp">
+        android:paddingStart="25dp"
+        android:paddingEnd="5dp">
 
         <Button
             android:id="@+id/digit_7"
@@ -95,7 +95,7 @@
         android:columnCount="1"
         android:rowCount="4"
         android:paddingBottom="25dp"
-        android:paddingRight="20dp">
+        android:paddingEnd="20dp">
 
         <Button
             android:id="@+id/op_div"
