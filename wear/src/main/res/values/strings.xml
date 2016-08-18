@@ -21,7 +21,6 @@
     <string name="app_name">Calculator</string>
 
     <!-- Error displayed when expression evaluates to NaN. [CHAR_LIMIT=14] -->
-    <string name="error_nan">Not a number</string>
     <!-- Error displayed when expression contains a syntax error. [CHAR_LIMIT=14] -->
     <string name="error">Error</string>
 
@@ -61,7 +60,6 @@
     <string name="fun_tan">tan</string>
 
     <!-- Clear operation to clear the currently entered expression. [CHAR_LIMIT=3] -->
-    <string name="clr">clr</string>
     <!-- Delete operation to remove last entered token. [CHAR_LIMIT=3] -->
     <string name="del">del</string>
 
@@ -69,12 +67,10 @@
     <eat-comment />
 
     <!-- Content description for 'e' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_const_e">Euler\'s number</string>
     <!-- Content description for 'π' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_const_pi">pi</string>
 
     <!-- Content description for '.' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_dec_point">point</string>
 
     <!-- Content description for '(' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_lparen">left parenthesis</string>
@@ -82,15 +78,10 @@
     <string name="desc_rparen">right parenthesis</string>
 
     <!-- Content description for 'cos' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_fun_cos">cosine</string>
     <!-- Content description for 'ln' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_fun_ln">natural logarithm</string>
     <!-- Content description for 'log' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_fun_log">logarithm</string>
     <!-- Content description for 'sin' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_fun_sin">sine</string>
     <!-- Content description for 'tan' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_fun_tan">tangent</string>
 
     <!-- Content description for '+' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_op_add">plus</string>
@@ -108,9 +99,7 @@
     <string name="desc_op_sub">minus</string>
 
     <!-- Content description for "clr" button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_clr">clear</string>
     <!-- Content description for "del" button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_del">delete</string>
     <!-- Content description for '=' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_eq">equals</string>
 

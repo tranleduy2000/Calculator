@@ -18,7 +18,6 @@
 <resources>
 
     <!-- Constant for Euler's number (i.e. "2.7182…"). [CHAR_LIMIT=1] -->
-    <string name="const_e">e</string>
     <!-- Constant for pi (i.e. "3.1415…"). [CHAR_LIMIT=1] -->
     <string name="const_pi">π</string>
 

@@ -28,27 +28,9 @@
   <string name="digit8">8</string>
   <string name="digit9">9</string>
   <string name="del">DESANICIAR</string>
-  <string name="clear">LLIMPIAR</string>
-  <string name="div">\u00f7</string>
-  <string name="mul">\u00d7</string>
-  <string name="plus">+</string>
-  <string name="minus">\u2212</string>
-  <string name="equal">=</string>
-  <string name="enter">\u2193</string>
   <string name="fun_sin">sen</string>
   <string name="fun_cos">cos</string>
   <string name="fun_tan">tan</string>
-  <string name="pi">\u03c0</string>
-  <string name="const_e">e</string>
-  <string name="ln">ln</string>
-  <string name="lg">log</string>
   <string name="leftParen">(</string>
   <string name="rightParen">)</string>
-  <string name="sqrt">\u221a</string>
-  <string name="power">^</string>
-  <string name="factorial">!</string>
-  <string name="panel_basic">Funciones básiques</string>
-  <string name="panel_advanced">Funciones avanzaes</string>
-  <string name="clear_history">Llimpiar l\'historial</string>
-  <string name="text_copied_toast">Testu copiáu</string>
 </resources>
