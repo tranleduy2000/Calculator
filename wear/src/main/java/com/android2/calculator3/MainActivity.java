@@ -1,5 +1,6 @@
 package com.android2.calculator3;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
@@ -255,11 +256,12 @@ public class MainActivity extends WearableActivity {
     public void onEnterAmbient(Bundle ambientDetails) {
         super.onEnterAmbient(ambientDetails);
         setEnabled(findViewById(android.R.id.content), false);
-        findViewById(R.id.display_background).setBackgroundResource(android.R.color.transparent);
-        findViewById(R.id.pad_advanced).setBackgroundResource(android.R.color.transparent);
-        findViewById(R.id.pad_numeric).setBackgroundResource(android.R.color.transparent);
-        findViewById(R.id.pad_operator).setBackgroundResource(android.R.color.transparent);
-        findViewById(R.id.pad_history).setBackgroundResource(android.R.color.transparent);
+        Drawable background = findViewById(android.R.id.content).getRootView().getBackground();
+        findViewById(R.id.display_background).setBackground(background);
+        findViewById(R.id.pad_advanced).setBackground(background);
+        findViewById(R.id.pad_numeric).setBackground(background);
+        findViewById(R.id.pad_operator).setBackground(background);
+        findViewById(R.id.pad_history).setBackground(background);
         for (FormattedNumberEditText editText : getEditTexts()) {
             editText.setTextColor(getResources().getColor(R.color.white));
         }
