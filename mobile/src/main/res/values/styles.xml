@@ -55,23 +55,21 @@
 
     <style name="Theme.Calculator.Display.Main" />
 
-    <style name="Theme.Calculator.Display.Main.Formula" >
+    <style name="Theme.Calculator.Display.Main.Formula">
         <item name="android:inputType">text|textNoSuggestions</item>
-        <item name="android:paddingTop">34dip</item>
-        <item name="android:paddingBottom">12dip</item>
+        <item name="android:paddingTop">16dip</item>
+        <item name="android:paddingBottom">1dip</item>
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
-        <item name="minTextSize">36sp</item>
-        <item name="maxTextSize">64sp</item>
-        <item name="stepTextSize">8sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
-    <style name="Theme.Calculator.Display.Main.Result" >
-        <item name="android:paddingTop">12dip</item>
-        <item name="android:paddingBottom">34dip</item>
+    <style name="Theme.Calculator.Display.Main.Result">
+        <item name="android:paddingTop">1dip</item>
+        <item name="android:paddingBottom">16dip</item>
         <item name="android:paddingLeft">16dip</item>
         <item name="android:paddingRight">16dip</item>
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">30sp</item>
     </style>
 
     <style name="HistoryText">
