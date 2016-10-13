@@ -31,6 +31,8 @@
 
     <style name="popupMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu" />
 
+    <!-- BUG FIX: On APIs < 24, the Light PopupMenu does not show the correct text color -->
+
     <style name="popupMenuTextAppearanceSmall" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
         <item name="android:textColor">#ffffff</item>
     </style>
@@ -38,6 +40,8 @@
     <style name="popupMenuTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
         <item name="android:textColor">#ffffff</item>
     </style>
+
+    <!-- END BUG FIX -->
 
     <style name="Theme.Calculator"/>
 
