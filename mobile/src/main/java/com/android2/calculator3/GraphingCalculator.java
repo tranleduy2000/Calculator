@@ -220,6 +220,11 @@ public abstract class GraphingCalculator extends HexCalculator {
 
     @Override
     public void onEvaluate(String expr, String result, int errorResourceId) {
+        // Race condition where onDestroy gets called before onEvaluate. Rare, but can happen.
+        if (mGraphController == null) {
+            return;
+        }
+
         if (getState() == CalculatorState.EVALUATE && expr.contains(mX)) {
             saveHistory(expr, "", false);
             incrementGroupId();
