@@ -21,27 +21,7 @@
         <item name="colorPrimary">@color/calculator_accent_color</item>
         <item name="colorAccent">@color/pad_numeric_background_color</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="textAppearanceLargePopupMenu">@style/popupMenuTextAppearanceLarge</item>
-        <item name="android:textAppearanceLargePopupMenu">@style/popupMenuTextAppearanceLarge</item>
-        <item name="textAppearanceSmallPopupMenu">@style/popupMenuTextAppearanceSmall</item>
-        <item name="android:textAppearanceSmallPopupMenu">@style/popupMenuTextAppearanceSmall</item>
-        <item name="popupMenuStyle">@style/popupMenuStyle</item>
-        <item name="android:popupMenuStyle">@style/popupMenuStyle</item>
     </style>
-
-    <style name="popupMenuStyle" parent="@style/Widget.AppCompat.Light.PopupMenu" />
-
-    <!-- BUG FIX: On APIs < 24, the Light PopupMenu does not show the correct text color -->
-
-    <style name="popupMenuTextAppearanceSmall" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small">
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
-    <style name="popupMenuTextAppearanceLarge" parent="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Large">
-        <item name="android:textColor">#ffffff</item>
-    </style>
-
-    <!-- END BUG FIX -->
 
     <style name="Theme.Calculator"/>
 

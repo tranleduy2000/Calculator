@@ -98,7 +98,7 @@ public abstract class GraphingCalculator extends HexCalculator {
             }
         });
 
-        mCurrentGraphsAdapter = new ArrayAdapter<GraphView.Graph>(getBaseContext(), R.layout.graph_entry, mGraphController.getGraphs()) {
+        mCurrentGraphsAdapter = new ArrayAdapter<GraphView.Graph>(this, R.layout.graph_entry, mGraphController.getGraphs()) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null) {

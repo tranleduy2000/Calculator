@@ -135,10 +135,10 @@ public class MainActivity extends WearableActivity {
             }
         };
         final CalculatorPageAdapter adapter = new CalculatorPageAdapter(
-                getBaseContext(), mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
+                this, mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             private int mActivePage = -1;
 
             @Override

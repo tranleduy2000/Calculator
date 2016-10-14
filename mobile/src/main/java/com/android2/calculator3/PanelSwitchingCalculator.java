@@ -122,7 +122,7 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
         mFab.setScaleX(0.65f);
         mFab.setScaleY(0.65f);
         mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
-        mFab.setImageDrawable(new AnimatingDrawable.Builder(getBaseContext())
+        mFab.setImageDrawable(new AnimatingDrawable.Builder(this)
                         .frames(
                                 R.drawable.fab_open_1,
                                 R.drawable.fab_open_2,
@@ -142,7 +142,7 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
                     mFab.setVisibility(View.GONE);
                 }
             });
-            mFab.setImageDrawable(new AnimatingDrawable.Builder(getBaseContext())
+            mFab.setImageDrawable(new AnimatingDrawable.Builder(this)
                             .frames(
                                     R.drawable.fab_close_1,
                                     R.drawable.fab_close_2,

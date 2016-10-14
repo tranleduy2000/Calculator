@@ -208,7 +208,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
                 final int DEC = 0;
                 final int HEX = 1;
                 final int BIN = 2;
-                final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                final PopupMenu popupMenu = new PopupMenu(HexCalculator.this, mInfoView);
                 final Menu menu = popupMenu.getMenu();
                 menu.add(0, DEC, menu.size(), R.string.desc_dec);
                 menu.add(0, HEX, menu.size(), R.string.desc_hex);
@@ -245,7 +245,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
             public void onClick(View v) {
                 final int RAD = 0;
                 final int DEG = 1;
-                final PopupMenu popupMenu = new PopupMenu(getBaseContext(), mInfoView);
+                final PopupMenu popupMenu = new PopupMenu(HexCalculator.this, mInfoView);
                 final Menu menu = popupMenu.getMenu();
                 menu.add(0, RAD, menu.size(), R.string.radians);
                 menu.add(0, DEG, menu.size(), R.string.degrees);
