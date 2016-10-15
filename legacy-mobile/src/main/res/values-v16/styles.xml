@@ -17,14 +17,15 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="Theme.Calculator.ButtonStyle.Widget">
-        <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Theme.Calculator.ButtonStyle.FloatingCalc">
-        <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="Theme.Calculator.Display.Widget">

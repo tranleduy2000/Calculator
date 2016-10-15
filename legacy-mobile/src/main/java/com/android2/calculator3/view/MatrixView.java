@@ -36,7 +36,7 @@ public class MatrixView extends ThemedTableLayout {
 
     private void setup() {
         mSeparator = getSeparator();
-        setBackground(Theme.get(R.drawable.matrix_background));
+        setBackground(Theme.get(getContext(), R.drawable.matrix_background));
         setFocusable(true);
         mLogic = mParent.mLogic;
     }

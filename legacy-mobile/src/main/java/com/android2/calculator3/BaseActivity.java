@@ -18,7 +18,6 @@ public class BaseActivity extends FragmentActivity {
         super.onCreate(state);
 
         // Update theme (as needed)
-        Theme.buildResourceMap(R.class);
         Theme.setPackageName(CalculatorSettings.getTheme(this));
     }
 

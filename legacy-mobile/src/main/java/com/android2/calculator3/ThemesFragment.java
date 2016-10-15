@@ -13,24 +13,19 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.GridView;
 import android.widget.ListAdapter;
 
-import com.android2.calculator3.dao.ThemesDataSource;
-import com.xlythe.engine.theme.App;
+import com.android2.calculator3.dao.App;
+import com.xlythe.dao.RemoteModel;
 import com.xlythe.engine.theme.Theme;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * @author Will Harmon
- */
 public class ThemesFragment extends Fragment implements OnItemClickListener, OnItemLongClickListener {
     private static final String EXTRA_LIST_POSITION = "list_position";
     private static final String EXTRA_LIST_VIEW_OFFSET = "list_view_top";
 
     private GridView mGridView;
     private List<App> mThemes;
-    private ThemesStoreTask mTask;
-    private ThemesDataSource mDataSource;
 
     @Override
     public View inflateView(Bundle savedInstanceState) {
@@ -44,9 +39,7 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
         mGridView.setStretchMode(GridView.STRETCH_SPACING_UNIFORM);
 
         // Load the cache
-        mDataSource = new ThemesDataSource(getActivity());
-        mDataSource.open();
-        mThemes = mDataSource.getAllApps();
+        mThemes = new App.Query(getContext()).all();
 
         // Show ui
         setListAdapter(new StoreAdapter(getActivity(), mThemes));
@@ -58,35 +51,23 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if(mThemes.isEmpty()) setViewShown(false);
-
-        // Load from server (and update ui when finished)
-        mTask = new ThemesStoreTask(getActivity()) {
+        if (mThemes.isEmpty()) setViewShown(false);
+        new App.Query(getContext()).all(new RemoteModel.Callback<List<App>>() {
             @Override
-            protected void onPostExecute(List<App> result) {
-                super.onPostExecute(result);
-                if(result == null) return;
+            public void onSuccess(List<App> result) {
                 mThemes.clear();
-                for(App a : result) {
-                    mThemes.add(a);
-                }
-                if(!isDetached()) {
+                mThemes.addAll(result);
+                if (!isDetached()) {
                     ((StoreAdapter) getListAdapter()).notifyDataSetChanged();
                     setViewShown(true);
                 }
             }
 
             @Override
-            protected void onCancelled() {
-                super.onCancelled();
-                try {
-                    setViewShown(true);
-                } catch(IllegalStateException e) {
-                    e.printStackTrace();
-                }
+            public void onFailure(Throwable throwable) {
+
             }
-        };
-        mTask.executeAsync();
+        });
     }
 
     @Override
@@ -116,12 +97,6 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        ((StoreAdapter) getListAdapter()).notifyDataSetChanged();
-    }
-
     public ListAdapter getListAdapter() {
         return mGridView.getAdapter();
     }
@@ -131,19 +106,12 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mTask.cancel(true);
-        mDataSource.close();
-    }
-
-    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         onListItemClick(position);
     }
 
     public void onListItemClick(int position) {
-        if(App.doesPackageExists(getContext(), mThemes.get(position).getPackageName())) {
+        if (App.doesPackageExists(getContext(), mThemes.get(position).getPackageName())) {
             String appName = mThemes.get(position).getPackageName();
 
             // Update theme
@@ -180,7 +148,7 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
     }
 
     public boolean onListItemLongClick(int position) {
-        if(App.doesPackageExists(getContext(), mThemes.get(position).getPackageName())) {
+        if (App.doesPackageExists(getContext(), mThemes.get(position).getPackageName())) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("market://details?id=" + mThemes.get(position).getPackageName()));
             startActivity(intent);

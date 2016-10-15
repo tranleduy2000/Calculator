@@ -40,7 +40,7 @@ public class MatrixInverseView extends ThemedTextView {
         setText(Html.fromHtml("<sup><small>-1</small></sup>"));
         setTextAppearance(display.getContext(), R.style.Theme_Calculator_Display);
         setPadding(0, 0, 0, 0);
-        setTextColor(Theme.get(R.color.display_text_color));
+        setTextColor(Theme.get(getContext(), R.color.display_text_color));
         Typeface tf = Theme.getFont(getContext());
         if(tf != null) setTypeface(tf);
         setFont("display_font");

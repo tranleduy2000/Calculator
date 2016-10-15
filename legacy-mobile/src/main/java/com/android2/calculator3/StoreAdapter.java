@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.xlythe.engine.theme.App;
+import com.android2.calculator3.dao.App;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -39,7 +39,6 @@ public class StoreAdapter extends BitmapAdapter<App> {
         if(a.getPrice() == 0) {
             return getContext().getString(R.string.store_price_free);
         }
-        NumberFormat f = NumberFormat.getCurrencyInstance(Locale.US);
-        return f.format(a.getPrice());
+        return NumberFormat.getCurrencyInstance(Locale.US).format(a.getPrice());
     }
 }

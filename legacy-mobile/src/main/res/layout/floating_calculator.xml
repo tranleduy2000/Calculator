@@ -22,13 +22,14 @@
             <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
 
             <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
+
         </com.android2.calculator3.view.CalculatorDisplay>
 
         <ImageButton
             android:id="@+id/delete"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="match_parent"
-            android:background="@drawable/menu_bg"
+            android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/del"
             android:src="@drawable/widget_delete" />
 
@@ -36,13 +37,15 @@
             android:id="@+id/clear"
             android:layout_width="@dimen/floating_window_button_height"
             android:layout_height="match_parent"
-            android:background="@drawable/menu_bg"
+            android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/clear"
             android:src="@drawable/widget_clear" />
+
     </LinearLayout>
 
     <com.android2.calculator3.view.CalculatorViewPager
         android:id="@+id/panelswitch"
         android:layout_width="280dp"
         android:layout_height="280dp" />
+
 </LinearLayout>

@@ -19,4 +19,5 @@
         android:gravity="right"
         android:textSize="@dimen/display_text_size"
         theme:textColor="@color/history_result" />
+
 </com.android2.calculator3.view.HistoryLine>

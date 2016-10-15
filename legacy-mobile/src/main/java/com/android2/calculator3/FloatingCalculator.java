@@ -31,7 +31,6 @@ public class FloatingCalculator extends FloatingView {
         super.onCreate();
 
         // Set up theme engine (the display uses it, but most of it should be turned off. this is just in case)
-        Theme.buildResourceMap(com.android2.calculator3.R.class);
         Theme.setPackageName(CalculatorSettings.getTheme(getContext()));
     }
 

@@ -60,7 +60,7 @@ public class MatrixEditText extends ThemedEditText implements OnFocusChangeListe
         setKeyListener(new MatrixKeyListener());
         setOnFocusChangeListener(this);
         setGravity(Gravity.CENTER);
-        setTextColor(Theme.get(R.color.display_text_color));
+        setTextColor(Theme.get(getContext(), R.color.display_text_color));
         setFont("display_font");
 
         // Listen for the enter button on physical keyboards
