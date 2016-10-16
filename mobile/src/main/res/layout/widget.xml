@@ -21,7 +21,6 @@
                 style="@style/Theme.Calculator.Display.Widget"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="right|center_vertical"
                 android:longClickable="false"
                 android:visibility="gone" />
 
@@ -30,7 +29,6 @@
                 style="@style/Theme.Calculator.Display.Widget"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="right|center_vertical"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -40,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_bg"
+            android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/del"
             android:src="@drawable/widget_delete" />
 
@@ -49,7 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@drawable/menu_bg"
+            android:background="?android:attr/selectableItemBackground"
             android:contentDescription="@string/clear"
             android:src="@drawable/widget_clear"
             android:visibility="gone" />

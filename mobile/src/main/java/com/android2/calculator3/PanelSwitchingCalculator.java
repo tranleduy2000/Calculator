@@ -37,16 +37,11 @@ import io.codetail.animation.ViewAnimationUtils;
 
 /**
  * Controls the fab and what pages are shown / hidden.
- * */
+ */
 public abstract class PanelSwitchingCalculator extends BasicCalculator {
 
     // instance state keys
     private static final String KEY_PANEL = NAME + "_panel";
-
-    private enum Panel {
-        Advanced, Hex, Matrix
-    }
-
     private ViewGroup mOverlay;
     private FloatingActionButton mFab;
     private View mTray;
@@ -104,9 +99,9 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
 
     /**
      * Sets up the height / position of the fab and tray
-     *
+     * <p>
      * Returns true if it requires a relayout
-     * */
+     */
     protected void initializeLayout() {
         CalculatorPadLayout layout = (CalculatorPadLayout) findViewById(R.id.pad_advanced);
         int rows = layout.getRows();
@@ -123,13 +118,13 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
         mFab.setScaleY(0.65f);
         mFab.animate().scaleX(1f).scaleY(1f).setDuration(100).setListener(null);
         mFab.setImageDrawable(new AnimatingDrawable.Builder(this)
-                        .frames(
-                                R.drawable.fab_open_1,
-                                R.drawable.fab_open_2,
-                                R.drawable.fab_open_3,
-                                R.drawable.fab_open_4,
-                                R.drawable.fab_open_5)
-                        .build()
+                .frames(
+                        R.drawable.fab_open_1,
+                        R.drawable.fab_open_2,
+                        R.drawable.fab_open_3,
+                        R.drawable.fab_open_4,
+                        R.drawable.fab_open_5)
+                .build()
         );
         ((Animatable) mFab.getDrawable()).start();
     }
@@ -143,13 +138,13 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
                 }
             });
             mFab.setImageDrawable(new AnimatingDrawable.Builder(this)
-                            .frames(
-                                    R.drawable.fab_close_1,
-                                    R.drawable.fab_close_2,
-                                    R.drawable.fab_close_3,
-                                    R.drawable.fab_close_4,
-                                    R.drawable.fab_close_5)
-                            .build()
+                    .frames(
+                            R.drawable.fab_close_1,
+                            R.drawable.fab_close_2,
+                            R.drawable.fab_close_3,
+                            R.drawable.fab_close_4,
+                            R.drawable.fab_close_5)
+                    .build()
             );
             ((Animatable) mFab.getDrawable()).start();
         }
@@ -306,5 +301,9 @@ public abstract class PanelSwitchingCalculator extends BasicCalculator {
                 child.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private enum Panel {
+        Advanced, Hex, Matrix
     }
 }

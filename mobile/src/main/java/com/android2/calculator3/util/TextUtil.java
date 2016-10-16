@@ -26,7 +26,7 @@ public class TextUtil {
 
     protected static String removeFormatting(Solver solver, String input) {
         input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
-        if(solver != null) {
+        if (solver != null) {
             input = input.replace(String.valueOf(solver.getBaseModule().getSeparator()), "");
         }
         return input;
@@ -34,8 +34,8 @@ public class TextUtil {
 
     public static int countOccurrences(String haystack, char needle) {
         int count = 0;
-        for(int i = 0; i < haystack.length(); i++) {
-            if(haystack.charAt(i) == needle) {
+        for (int i = 0; i < haystack.length(); i++) {
+            if (haystack.charAt(i) == needle) {
                 count++;
             }
         }

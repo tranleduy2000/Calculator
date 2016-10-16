@@ -161,7 +161,8 @@ public class CalculatorEditText extends FormattedNumberEditText {
         StringBuilder cleanText = new StringBuilder();
         StringBuilder cache = new StringBuilder();
 
-        loop: for (int i = 0; i < input.length(); i++) {
+        loop:
+        for (int i = 0; i < input.length(); i++) {
             for (SpanComponent component : mComponents) {
                 String equation = component.parse(input.substring(i));
                 if (equation != null) {
@@ -268,15 +269,22 @@ public class CalculatorEditText extends FormattedNumberEditText {
         super.backspace();
     }
 
+    private void log(String msg) {
+        if (DEBUG) {
+            Log.d(TAG, msg);
+        }
+    }
+
     public static abstract class SpanComponent {
         public abstract String parse(String formula);
+
         public abstract MathSpannable getSpan(String equation);
     }
 
     /**
      * A span that represents a mathematical expression (eg. a matrix) that can't be easily
      * expressed as just text
-     * */
+     */
     public static abstract class MathSpannable extends ReplacementSpan {
         private String mEquation;
         private int mCursor = -1;
@@ -301,12 +309,12 @@ public class CalculatorEditText extends FormattedNumberEditText {
             return 1;
         }
 
-        public void setCursor(int cursor) {
-            mCursor = cursor;
-        }
-
         public int getCursor() {
             return mCursor;
+        }
+
+        public void setCursor(int cursor) {
+            mCursor = cursor;
         }
 
         public int next() {
@@ -316,7 +324,7 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     /**
      * Looks for MathSpannables and passes onTouch events to them
-     * */
+     */
     public static class MathMovementMethod extends LinkMovementMethod {
         @Override
         public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
@@ -340,12 +348,6 @@ public class CalculatorEditText extends FormattedNumberEditText {
             }
 
             return false;
-        }
-    }
-
-    private void log(String msg) {
-        if (DEBUG) {
-            Log.d(TAG, msg);
         }
     }
 }

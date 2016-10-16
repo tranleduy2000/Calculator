@@ -2,7 +2,7 @@
     android:id="@+id/history_line"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/menu_bg"
+    android:background="?android:attr/selectableItemBackground"
     android:focusable="false"
     android:orientation="vertical"
     android:padding="12dp">
@@ -14,9 +14,9 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="left"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
-        android:singleLine="true" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/historyResult"
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="right"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:singleLine="true" />
+        android:textSize="18sp" />
 
 </com.android2.calculator3.view.HistoryLine>

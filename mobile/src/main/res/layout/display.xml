@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<com.android2.calculator3.view.DisplayOverlay
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android2.calculator3.view.DisplayOverlay xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:graph="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
@@ -33,15 +31,15 @@
             android:layout_height="match_parent"
             android:onClick="onButtonClick"
             android:visibility="gone"
+            graph:backgroundColor="@color/graph_background"
+            graph:graphColor="@color/graph_line"
+            graph:gridColor="@color/graph_axis"
+            graph:numberTextColor="@color/mini_graph_text"
+            graph:panEnabled="false"
             graph:showGrid="false"
             graph:showInlineNumbers="true"
             graph:showOutline="false"
-            graph:panEnabled="false"
-            graph:zoomEnabled="false"
-            graph:backgroundColor="@color/graph_background"
-            graph:gridColor="@color/graph_axis"
-            graph:graphColor="@color/graph_line"
-            graph:numberTextColor="@color/mini_graph_text"/>
+            graph:zoomEnabled="false" />
 
     </FrameLayout>
 
@@ -55,7 +53,7 @@
             android:id="@+id/the_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height_with_shadow"
-            android:background="@drawable/white_card"/>
+            android:background="@drawable/white_card" />
 
         <RelativeLayout
             android:id="@+id/calculations"
@@ -65,18 +63,18 @@
             <com.android2.calculator3.view.CalculatorEditText
                 android:id="@+id/formula"
                 style="@style/Theme.Calculator.Display.Main.Formula"
+                android:layout_height="@dimen/display_formula_height"
                 android:inputType="text|textNoSuggestions"
                 android:textColor="@color/display_formula_text_color"
-                android:textCursorDrawable="@drawable/cursor"
-                android:layout_height="@dimen/display_formula_height" />
+                android:textCursorDrawable="@drawable/cursor" />
 
             <TextView
                 android:id="@+id/result"
                 style="@style/Theme.Calculator.Display.Main.Result"
+                android:layout_height="@dimen/display_result_height"
                 android:layout_below="@id/formula"
                 android:textColor="@color/display_result_text_color"
-                android:layout_height="@dimen/display_result_height"
-                android:textIsSelectable="true"/>
+                android:textIsSelectable="true" />
 
         </RelativeLayout>
 
@@ -85,18 +83,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:textColor="@color/display_formula_text_color"/>
+            android:textColor="@color/display_formula_text_color" />
 
         <FrameLayout
             android:id="@+id/the_clear_animation"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height"/>
+            android:layout_height="@dimen/display_height" />
 
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/historyRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </com.android2.calculator3.view.DisplayOverlay>

@@ -37,10 +37,6 @@ public class FloatingCalculator extends FloatingView {
     private CalculatorExpressionEvaluator mEvaluator;
     private State mState;
 
-    private enum State {
-        DELETE, CLEAR, ERROR
-    }
-
     public View inflateButton() {
         return View.inflate(getContext(), R.layout.floating_calculator_icon, null);
     }
@@ -98,7 +94,8 @@ public class FloatingCalculator extends FloatingView {
                                     onError(errorResourceId);
                                 } else {
                                     setText(result);
-                                }if (saveHistory(expr, result)) {
+                                }
+                                if (saveHistory(expr, result)) {
                                     RecyclerView history = (RecyclerView) child.findViewById(R.id.history);
                                     history.getLayoutManager().scrollToPosition(history.getAdapter().getItemCount() - 1);
                                 }
@@ -109,7 +106,7 @@ public class FloatingCalculator extends FloatingView {
                         setText("(" + getActiveEditText().getText() + ")");
                         break;
                     default:
-                        if(((Button) v).getText().toString().length() >= 2) {
+                        if (((Button) v).getText().toString().length() >= 2) {
                             onInsert(((Button) v).getText().toString() + "(");
                         } else {
                             onInsert(((Button) v).getText().toString());
@@ -245,7 +242,7 @@ public class FloatingCalculator extends FloatingView {
 
     private void setState(State state) {
         mDelete.setState(state == State.DELETE ? BackspaceImageButton.State.DELETE : BackspaceImageButton.State.CLEAR);
-        if(mState != state) {
+        if (mState != state) {
             switch (state) {
                 case CLEAR:
                     getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
@@ -285,5 +282,9 @@ public class FloatingCalculator extends FloatingView {
             return true;
         }
         return false;
+    }
+
+    private enum State {
+        DELETE, CLEAR, ERROR
     }
 }

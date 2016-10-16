@@ -2,7 +2,6 @@
 <resources>
     <!-- History -->
     <dimen name="history_text_size">30sp</dimen>
-    <dimen name="history_graph_height">100dp</dimen>
     <dimen name="history_graph_margin">90dp</dimen>
 
     <!-- Display -->

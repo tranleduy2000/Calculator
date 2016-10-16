@@ -6,11 +6,11 @@
     <com.android2.calculator3.view.SolidPadLayout
         style="@style/PadLayoutStyle.Numeric"
         android:background="@color/pad_numeric_background_color"
+        android:columnCount="3"
+        android:paddingBottom="@dimen/num_margin_vertical"
         android:paddingLeft="@dimen/num_margin_horizontal"
         android:paddingRight="@dimen/num_margin_horizontal"
         android:paddingTop="@dimen/num_margin_vertical"
-        android:paddingBottom="@dimen/num_margin_vertical"
-        android:columnCount="3"
         android:rowCount="4">
 
         <Button
@@ -50,7 +50,6 @@
             android:text="@string/digit6" />
 
         <Button
-            android:id="@+id/digit_1"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit1" />
@@ -74,7 +73,6 @@
             android:text="@string/dec_point" />
 
         <Button
-            android:id="@+id/digit_0"
             style="@style/PadButtonStyle.FloatingCalc"
             android:onClick="onButtonClick"
             android:text="@string/digit0" />
@@ -84,18 +82,17 @@
             style="@style/PadButtonStyle.FloatingCalc"
             android:contentDescription="@string/desc_eq"
             android:onClick="onButtonClick"
-            android:text="@string/eq"/>
+            android:text="@string/eq" />
 
     </com.android2.calculator3.view.SolidPadLayout>
 
-    <com.android2.calculator3.view.SolidPadLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.android2.calculator3.view.SolidPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pad_operator"
         style="@style/PadLayoutStyle.Operator"
         android:background="@color/pad_operator_background_color"
         android:columnCount="1"
-        android:rowCount="4"
-        android:paddingRight="20dip">
+        android:paddingRight="20dip"
+        android:rowCount="4">
 
         <Button
             android:id="@+id/op_div"

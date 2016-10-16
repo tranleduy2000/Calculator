@@ -2,7 +2,6 @@
 <resources>
     <!-- History -->
     <dimen name="history_text_size">20sp</dimen>
-    <dimen name="history_graph_height">100dp</dimen>
     <dimen name="history_graph_margin">60dp</dimen>
 
     <!-- Display -->
@@ -13,12 +12,10 @@
     <dimen name="display_shadow">6dp</dimen>
     <dimen name="history_margin">4dp</dimen>
     <dimen name="display_height_graph_expanded">50dp</dimen>
-    <dimen name="display_graph_margin">0dp</dimen>
 
     <!-- Floating Calc -->
     <dimen name="floating_display_height">59dp</dimen>
     <dimen name="floating_display_height_with_shadow">65dp</dimen>
-    <dimen name="floating_display_shadow">6dp</dimen>
     <dimen name="floating_height">280dp</dimen>
     <dimen name="floating_width">280dp</dimen>
 

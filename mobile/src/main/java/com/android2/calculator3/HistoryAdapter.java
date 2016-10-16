@@ -46,35 +46,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     private OnItemLongClickListener mOnItemLongClickListener;
     private HistoryEntry mDisplayEntry;
 
-    public interface OnItemClickListener {
-        void onItemClick(HistoryEntry entry);
-    }
-
-    public interface OnItemLongClickListener {
-        void onItemLongClick(HistoryEntry entry);
-    }
-
     public HistoryAdapter(Context context, Solver solver, History history) {
         mContext = context;
         mSolver = solver;
         mEntries = history.getEntries();
         mEquationFormatter = new EquationFormatter();
         mX = context.getString(R.string.var_x);
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public HistoryLine historyLine;
-        public TextView historyExpr;
-        public TextView historyResult;
-        public GraphView graphView;
-
-        public ViewHolder(View v) {
-            super(v);
-            historyLine = (HistoryLine) v.findViewById(R.id.history_line);
-            historyExpr = (TextView) v.findViewById(R.id.historyExpr);
-            historyResult = (TextView) v.findViewById(R.id.historyResult);
-            graphView = (GraphView) v.findViewById(R.id.graph);
-        }
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -245,5 +222,28 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     public Context getContext() {
         return mContext;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(HistoryEntry entry);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(HistoryEntry entry);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public HistoryLine historyLine;
+        public TextView historyExpr;
+        public TextView historyResult;
+        public GraphView graphView;
+
+        public ViewHolder(View v) {
+            super(v);
+            historyLine = (HistoryLine) v.findViewById(R.id.history_line);
+            historyExpr = (TextView) v.findViewById(R.id.historyExpr);
+            historyResult = (TextView) v.findViewById(R.id.historyResult);
+            graphView = (GraphView) v.findViewById(R.id.graph);
+        }
     }
 }

@@ -35,6 +35,7 @@ import com.xlythe.floatingview.AnimationFinishedListener;
 import io.codetail.widget.RevealFrameLayout;
 
 public class CalculatorPadView extends RevealFrameLayout {
+    private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private VelocityTracker mVelocityTracker;
     private int mTouchSlop;
     private int mMinimumFlingVelocity;
@@ -45,7 +46,6 @@ public class CalculatorPadView extends RevealFrameLayout {
     private float mOffset;
     private float mOverlayMargin;
     private boolean mInterceptingTouchEvents = false;
-    private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private TranslateState mLastState = TranslateState.COLLAPSED;
     private TranslateState mState = TranslateState.COLLAPSED;
 
@@ -96,15 +96,29 @@ public class CalculatorPadView extends RevealFrameLayout {
         });
     }
 
-    public enum TranslateState {
-        EXPANDED, COLLAPSED, PARTIAL
-    }
-
     protected void onPageSelected(int position) {
     }
 
     public TranslateState getState() {
         return mState;
+    }
+
+    private void setState(TranslateState state) {
+        if (mState != state) {
+            mLastState = mState;
+            mState = state;
+
+            if (mState == TranslateState.EXPANDED) {
+                onPageSelected(0);
+            } else if (mState == TranslateState.COLLAPSED) {
+                onPageSelected(1);
+            }
+
+            if (mState != TranslateState.EXPANDED) {
+                hideFab();
+                hideTray();
+            }
+        }
     }
 
     public boolean isExpanded() {
@@ -133,9 +147,9 @@ public class CalculatorPadView extends RevealFrameLayout {
 
     /**
      * Sets up the height / position of the fab and tray
-     *
+     * <p>
      * Returns true if it requires a relayout
-     * */
+     */
     protected boolean initializeLayout(TranslateState state) {
         boolean invalidate = false;
 
@@ -342,24 +356,6 @@ public class CalculatorPadView extends RevealFrameLayout {
         ((Calculator) getContext()).hideTray();
     }
 
-    private void setState(TranslateState state) {
-        if (mState != state) {
-            mLastState = mState;
-            mState = state;
-
-            if (mState == TranslateState.EXPANDED) {
-                onPageSelected(0);
-            } else if (mState == TranslateState.COLLAPSED) {
-                onPageSelected(1);
-            }
-
-            if (mState != TranslateState.EXPANDED) {
-                hideFab();
-                hideTray();
-            }
-        }
-    }
-
     private void setEnabled(SolidLayout view, boolean enabled) {
         view.setPreventChildTouchEvents(!enabled);
         view.setPreventParentTouchEvents(!enabled);
@@ -375,6 +371,10 @@ public class CalculatorPadView extends RevealFrameLayout {
         }
         percent = Math.min(Math.max(percent, 0f), 1f);
         return percent;
+    }
+
+    public enum TranslateState {
+        EXPANDED, COLLAPSED, PARTIAL
     }
 
     /**

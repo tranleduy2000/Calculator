@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +20,6 @@
     <string name="app_name">Calculator</string>
 
     <!-- Error displayed when expression evaluates to NaN. [CHAR_LIMIT=14] -->
-    <string name="error_nan">Not a number</string>
     <!-- Error displayed when expression contains a syntax error. [CHAR_LIMIT=14] -->
     <string name="error">Error</string>
 
@@ -74,7 +72,6 @@
     <string name="desc_const_pi">pi</string>
 
     <!-- Content description for '.' button. [CHAR_LIMIT=NONE] -->
-    <string name="desc_dec_point">point</string>
 
     <!-- Content description for '(' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_lparen">left parenthesis</string>

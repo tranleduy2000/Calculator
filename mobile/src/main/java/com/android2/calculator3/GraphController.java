@@ -22,23 +22,18 @@ public class GraphController implements PanListener, ZoomListener {
     private static final String TAG = GraphController.class.getSimpleName();
     private static final int MAX_CACHE_SIZE = 10;
     private static final int GRAPH_COLOR = 0xff00bcd4; // Cyan
-
-    private final GraphModule mGraphModule;
-    private final GraphView mMainGraphView;
-
-    private final List<AsyncTask> mGraphTasks = new ArrayList<>();
-
-    private GraphView.Graph mMostRecentGraph;
-    private AsyncTask mMostRecentGraphTask;
-
-    private final Handler mHandler = new Handler();
-
     private static final Map<String, List<Point>> mCachedEquations = new LinkedHashMap<String, List<Point>>(MAX_CACHE_SIZE, 1f, true) {
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, List<Point>> eldest) {
             return size() > MAX_CACHE_SIZE;
         }
     };
+    private final GraphModule mGraphModule;
+    private final GraphView mMainGraphView;
+    private final List<AsyncTask> mGraphTasks = new ArrayList<>();
+    private final Handler mHandler = new Handler();
+    private GraphView.Graph mMostRecentGraph;
+    private AsyncTask mMostRecentGraphTask;
 
     public GraphController(GraphModule module, GraphView view) {
         mGraphModule = module;
@@ -128,10 +123,10 @@ public class GraphController implements PanListener, ZoomListener {
         mGraphModule.setDomain(mMainGraphView.getXAxisMin(), mMainGraphView.getXAxisMax());
         mGraphModule.setRange(mMainGraphView.getYAxisMin(), mMainGraphView.getYAxisMax());
         mGraphModule.setZoomLevel(mMainGraphView.getZoomLevel());
-        }
+    }
 
-@Override
-public void panApplied() {
+    @Override
+    public void panApplied() {
         invalidateGraph();
     }
 

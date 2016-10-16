@@ -23,7 +23,7 @@ import com.android2.calculator3.view.MatrixComponent;
 
 /**
  * Adds graphing and base switching to the basic calculator.
- * */
+ */
 public abstract class MatrixCalculator extends GraphingCalculator {
 
     private FormattedNumberEditText mFormulaEditText;

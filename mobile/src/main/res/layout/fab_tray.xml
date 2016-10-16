@@ -3,36 +3,36 @@
     android:id="@+id/tray"
     android:layout_width="match_parent"
     android:layout_height="65dp"
-    android:background="@color/pad_numeric_background_color"
     android:layout_gravity="bottom"
-    android:visibility="invisible"
+    android:background="@color/pad_numeric_background_color"
     android:columnCount="3"
     android:rowCount="1"
+    android:visibility="invisible"
     custom:preventParentTouchEvents="true">
 
     <ImageButton
         android:id="@+id/btn_advanced"
-        android:src="@drawable/tray_btn_advanced"
+        style="@style/FabTray"
         android:contentDescription="@string/panel_advanced"
-        style="@style/FabTray"/>
+        android:src="@drawable/tray_btn_advanced" />
 
     <ImageButton
         android:id="@+id/btn_hex"
-        android:src="@drawable/tray_btn_hex"
+        style="@style/FabTray"
         android:contentDescription="@string/panel_hex"
-        style="@style/FabTray" />
+        android:src="@drawable/tray_btn_hex" />
 
     <ImageButton
         android:id="@+id/btn_matrix"
-        android:src="@drawable/tray_btn_matrix"
+        style="@style/FabTray"
         android:contentDescription="@string/panel_matrix"
-        android:visibility="gone"
-        style="@style/FabTray"/>
+        android:src="@drawable/tray_btn_matrix"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/btn_close"
-        android:src="@drawable/tray_btn_close"
+        style="@style/FabTray"
         android:contentDescription="@string/panel_close_btn"
-        style="@style/FabTray" />
+        android:src="@drawable/tray_btn_close" />
 
 </com.android2.calculator3.view.SolidPadLayout>

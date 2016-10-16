@@ -36,7 +36,7 @@ import java.util.Locale;
 
 /**
  * Adds graphing and base switching to the basic calculator.
- * */
+ */
 public abstract class GraphingCalculator extends HexCalculator {
 
     private DisplayOverlay mDisplayView;

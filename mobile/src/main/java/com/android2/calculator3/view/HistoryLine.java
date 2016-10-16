@@ -34,7 +34,7 @@ public class HistoryLine extends LinearLayout {
     @Override
     public void onCreateContextMenu(ContextMenu menu) {
         MenuHandler handler = new MenuHandler();
-        if(mMenuItemsStrings == null) {
+        if (mMenuItemsStrings == null) {
             Resources resources = getResources();
             mMenuItemsStrings = new String[4];
             mMenuItemsStrings[COPY] = String.format(resources.getString(R.string.copy), mHistoryEntry.getFormula() + "=" + mHistoryEntry.getResult());
@@ -42,23 +42,23 @@ public class HistoryLine extends LinearLayout {
             mMenuItemsStrings[COPY_EDITED] = String.format(resources.getString(R.string.copy), mHistoryEntry.getResult());
             mMenuItemsStrings[REMOVE] = resources.getString(R.string.remove_from_history);
         }
-        for(int i = 0; i < mMenuItemsStrings.length; i++) {
+        for (int i = 0; i < mMenuItemsStrings.length; i++) {
             menu.add(Menu.NONE, i, i, mMenuItemsStrings[i]).setOnMenuItemClickListener(handler);
         }
     }
 
     public boolean onTextContextMenuItem(CharSequence title) {
         boolean handled = false;
-        if(TextUtils.equals(title, mMenuItemsStrings[COPY])) {
+        if (TextUtils.equals(title, mMenuItemsStrings[COPY])) {
             copyContent(mHistoryEntry.getFormula() + "=" + mHistoryEntry.getResult());
             handled = true;
-        } else if(TextUtils.equals(title, mMenuItemsStrings[COPY_BASE])) {
+        } else if (TextUtils.equals(title, mMenuItemsStrings[COPY_BASE])) {
             copyContent(mHistoryEntry.getFormula());
             handled = true;
-        } else if(TextUtils.equals(title, mMenuItemsStrings[COPY_EDITED])) {
+        } else if (TextUtils.equals(title, mMenuItemsStrings[COPY_EDITED])) {
             copyContent(mHistoryEntry.getResult());
             handled = true;
-        } else if(TextUtils.equals(title, mMenuItemsStrings[REMOVE])) {
+        } else if (TextUtils.equals(title, mMenuItemsStrings[REMOVE])) {
             removeContent();
             handled = true;
         }

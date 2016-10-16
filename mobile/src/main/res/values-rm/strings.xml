@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--  Copyright (C) 2007 The Android Open Source Project
+<?xml version="1.0" encoding="UTF-8"?><!--  Copyright (C) 2007 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -34,11 +33,7 @@
     <string name="fun_cos" msgid="6901841853098114414">"cos"</string>
     <string name="fun_tan" msgid="7957459816738554960">"tan"</string>
     <string name="const_e" msgid="1377847800971731483">"e"</string>
-    <string name="ln" msgid="6888500680285403344">"ln"</string>
-    <string name="lg" msgid="873623857385418182">"log"</string>
     <string name="leftParen" msgid="4850643713953092099">"("</string>
     <string name="rightParen" msgid="3177971166159324016">")"</string>
-    <string name="panel_basic" msgid="7691469861698059753">"Funcziuns da basa"</string>
     <string name="panel_advanced" msgid="7122495413742976492">"Funcziuns avanzadas"</string>
-    <string name="clear_history" msgid="8458043980601165012">"Stizzar la cronologia"</string>
 </resources>

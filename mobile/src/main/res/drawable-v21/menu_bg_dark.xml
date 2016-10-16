@@ -14,7 +14,5 @@
 	 limitations under the License.
 -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/circle" android:state_pressed="true" />
-    <item android:drawable="@android:color/transparent" />
-</selector>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/pad_button_advanced_ripple_color" />

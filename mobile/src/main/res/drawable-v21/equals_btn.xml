@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2011 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2011 The Android Open Source Project
 	 Copyright (C) 2013 The CyanogenMod Project
 
 	 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,42 +16,112 @@
 
 <animated-selector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:equals="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/next" equals:state_next="true" android:drawable="@drawable/btn_next" />
-    <item android:id="@+id/equal" android:drawable="@drawable/btn_equals" />
+    <item
+        android:id="@+id/next"
+        android:drawable="@drawable/btn_next"
+        equals:state_next="true" />
+    <item
+        android:id="@+id/equal"
+        android:drawable="@drawable/btn_equals" />
 
-    <transition android:fromId="@id/equal" android:toId="@id/next" android:reversible="true">
+    <transition
+        android:fromId="@id/equal"
+        android:reversible="true"
+        android:toId="@id/next">
         <animation-list>
-            <item android:drawable="@drawable/equal_0" android:duration="10" />
-            <item android:drawable="@drawable/equal_1" android:duration="10" />
-            <item android:drawable="@drawable/equal_2" android:duration="10" />
-            <item android:drawable="@drawable/equal_3" android:duration="10" />
-            <item android:drawable="@drawable/equal_4" android:duration="10" />
-            <item android:drawable="@drawable/equal_5" android:duration="10" />
-            <item android:drawable="@drawable/equal_6" android:duration="10" />
-            <item android:drawable="@drawable/equal_7" android:duration="10" />
-            <item android:drawable="@drawable/equal_8" android:duration="10" />
-            <item android:drawable="@drawable/equal_9" android:duration="10" />
-            <item android:drawable="@drawable/equal_10" android:duration="10" />
-            <item android:drawable="@drawable/equal_11" android:duration="10" />
-            <item android:drawable="@drawable/equal_12" android:duration="10" />
-            <item android:drawable="@drawable/equal_13" android:duration="10" />
-            <item android:drawable="@drawable/equal_14" android:duration="10" />
-            <item android:drawable="@drawable/equal_15" android:duration="10" />
-            <item android:drawable="@drawable/equal_16" android:duration="10" />
-            <item android:drawable="@drawable/equal_17" android:duration="10" />
-            <item android:drawable="@drawable/equal_18" android:duration="10" />
-            <item android:drawable="@drawable/equal_19" android:duration="10" />
-            <item android:drawable="@drawable/equal_20" android:duration="10" />
-            <item android:drawable="@drawable/equal_21" android:duration="10" />
-            <item android:drawable="@drawable/equal_22" android:duration="10" />
-            <item android:drawable="@drawable/equal_23" android:duration="10" />
-            <item android:drawable="@drawable/equal_24" android:duration="10" />
-            <item android:drawable="@drawable/equal_25" android:duration="10" />
-            <item android:drawable="@drawable/equal_26" android:duration="10" />
-            <item android:drawable="@drawable/equal_27" android:duration="10" />
-            <item android:drawable="@drawable/equal_28" android:duration="10" />
-            <item android:drawable="@drawable/equal_29" android:duration="10" />
-            <item android:drawable="@drawable/equal_30" android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_0"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_1"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_2"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_3"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_4"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_5"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_6"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_7"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_8"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_9"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_10"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_11"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_12"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_13"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_14"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_15"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_16"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_17"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_18"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_19"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_20"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_21"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_22"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_23"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_24"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_25"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_26"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_27"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_28"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_29"
+                android:duration="10" />
+            <item
+                android:drawable="@drawable/equal_30"
+                android:duration="10" />
         </animation-list>
     </transition>
 </animated-selector>

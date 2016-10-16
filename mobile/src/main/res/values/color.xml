@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +23,6 @@
     <color name="calculator_error_color">#F40056</color>
 
     <!-- Background color of the calculator display. -->
-    <color name="display_background_color">#FFFFFF</color>
 
     <!-- Text color for the formula in the calculator display. -->
     <color name="display_formula_text_color">#8A000000</color>

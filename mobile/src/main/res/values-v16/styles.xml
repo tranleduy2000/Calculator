@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,14 +29,20 @@
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
+    <style name="Theme.Calculator.Display.Widget">
+        <item name="android:textColor">@color/widget_text_color</item>
+        <item name="android:inputType">text|textNoSuggestions</item>
+        <item name="android:gravity">end|center_vertical</item>
+    </style>
+
     <style name="Theme.Calculator.ButtonStyle.Widget">
         <item name="android:textColor">@color/widget_text_color</item>
-        <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="Theme.Calculator.ButtonStyle.FloatingCalc">
-        <item name="android:background">@drawable/circle_bg</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">20sp</item>
     </style>

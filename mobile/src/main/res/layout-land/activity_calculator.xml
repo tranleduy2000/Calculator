@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:support="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,10 +26,10 @@
         android:layout_marginTop="@dimen/display_height">
 
         <include layout="@layout/pad_numeric" />
+
         <include layout="@layout/pad_operator_two_col" />
 
-        <io.codetail.widget.RevealFrameLayout
-            style="@style/PadLayoutStyle.Card">
+        <io.codetail.widget.RevealFrameLayout style="@style/PadLayoutStyle.Card">
 
             <FrameLayout
                 android:id="@+id/overlay"
@@ -60,10 +58,10 @@
                 android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
                 android:scaleType="center"
-                support:elevation="4dp"
                 support:borderWidth="0dp"
-                android:layout_gravity="bottom|right" />
+                support:elevation="4dp" />
 
         </io.codetail.widget.RevealFrameLayout>
 
@@ -73,8 +71,8 @@
         android:id="@+id/history_fade"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/history_fade"
-        android:alpha="0"/>
+        android:alpha="0"
+        android:background="@color/history_fade" />
 
     <include
         android:id="@+id/display"

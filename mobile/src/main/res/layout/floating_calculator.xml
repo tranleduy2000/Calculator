@@ -8,15 +8,13 @@
         android:id="@+id/panelswitch"
         android:layout_width="@dimen/floating_width"
         android:layout_height="@dimen/floating_height"
-        android:layout_marginTop="@dimen/floating_display_height"/>
+        android:layout_marginTop="@dimen/floating_display_height" />
 
     <LinearLayout
         android:layout_width="@dimen/floating_width"
         android:layout_height="@dimen/floating_display_height_with_shadow"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:orientation="horizontal"
-        android:background="@drawable/white_card">
+        android:background="@drawable/white_card"
+        android:orientation="horizontal">
 
         <ViewSwitcher
             android:id="@+id/display"
@@ -24,36 +22,39 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:inAnimation="@anim/floating_slide_in"
-            android:outAnimation="@anim/floating_slide_out">
+            android:outAnimation="@anim/floating_slide_out"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp">
 
             <com.android2.calculator3.view.CalculatorEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="23sp"
-                android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:textCursorDrawable="@drawable/cursor"/>
+                android:textColor="@color/display_formula_text_color"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="23sp" />
 
             <com.android2.calculator3.view.CalculatorEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="23sp"
-                android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:textCursorDrawable="@drawable/cursor"/>
+                android:textColor="@color/display_formula_text_color"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="23sp" />
 
         </ViewSwitcher>
 
+        <!-- ?android:attr/selectableItemBackground does not work, so using custom ripple -->
         <com.android2.calculator3.view.BackspaceImageButton
             android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_gravity="center"
+            android:layout_marginRight="9dp"
+            android:background="@drawable/menu_bg_dark"
             android:contentDescription="@string/del"
             android:src="@drawable/backspace_btn"
-            android:tint="@color/display_formula_text_color"
-            android:background="@color/pad_button_advanced_ripple_color"
-            android:padding="5dp"/>
+            android:tint="@color/display_formula_text_color" />
 
     </LinearLayout>
 

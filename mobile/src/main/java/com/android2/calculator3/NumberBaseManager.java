@@ -46,12 +46,12 @@ public class NumberBaseManager {
         setNumberBase(mBase);
     }
 
-    public void setNumberBase(Base base) {
-        mBase = base;
-    }
-
     public Base getNumberBase() {
         return mBase;
+    }
+
+    public void setNumberBase(Base base) {
+        mBase = base;
     }
 
     /**

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,47 +14,43 @@
   limitations under the License.
   -->
 
-<com.android2.calculator3.view.CalculatorPadLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android2.calculator3.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_matrix"
     style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
 
     <ImageButton
         android:id="@+id/matrix"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:src="@drawable/matrix"
-        style="@style/PadButtonStyle.Advanced" />
+        android:src="@drawable/matrix" />
 
     <ImageButton
-        android:id="@+id/identity_matrix"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:src="@drawable/matrix"
-        style="@style/PadButtonStyle.Advanced" />
+        android:src="@drawable/matrix" />
 
     <Button
-        android:id="@+id/fun_dot_product"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="\u2219"
-        style="@style/PadButtonStyle.Advanced" />
+        android:text="\u2219" />
 
     <Button
-        android:id="@+id/fun_cross_product"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="\u2715"
-        style="@style/PadButtonStyle.Advanced" />
+        android:text="\u2715" />
 
     <Button
         android:id="@+id/plus_row"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/plus_row"
-        style="@style/PadButtonStyle.Advanced" />
+        android:text="@string/plus_row" />
 
     <Button
         android:id="@+id/minus_row"
+        style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
-        android:text="@string/minus_row"
-        style="@style/PadButtonStyle.Advanced" />
+        android:text="@string/minus_row" />
 
     <Button
         android:id="@+id/plus_col"

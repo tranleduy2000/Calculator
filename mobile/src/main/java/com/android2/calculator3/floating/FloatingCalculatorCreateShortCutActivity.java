@@ -17,7 +17,7 @@ public class FloatingCalculatorCreateShortCutActivity extends Activity {
     public void onCreate(Bundle state) {
         super.onCreate(state);
 
-        if(Intent.ACTION_CREATE_SHORTCUT.equals(getIntent().getAction())) {
+        if (Intent.ACTION_CREATE_SHORTCUT.equals(getIntent().getAction())) {
             if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {
                 startActivityForResult(
                         new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName())),

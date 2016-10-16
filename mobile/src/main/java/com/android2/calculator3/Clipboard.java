@@ -18,10 +18,10 @@ public class Clipboard {
 
     public static String paste(Context context) {
         ClipData clip = getPrimaryClip(context);
-        if(clip != null) {
-            for(int i = 0; i < clip.getItemCount(); i++) {
+        if (clip != null) {
+            for (int i = 0; i < clip.getItemCount(); i++) {
                 CharSequence paste = clip.getItemAt(i).coerceToText(context);
-                if(paste.length() > 0) {
+                if (paste.length() > 0) {
                     return paste.toString();
                 }
             }

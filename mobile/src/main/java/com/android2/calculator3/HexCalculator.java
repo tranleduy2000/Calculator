@@ -39,7 +39,7 @@ import java.util.Locale;
 
 /**
  * Adds graphing and base switching to the basic calculator.
- * */
+ */
 public abstract class HexCalculator extends PanelSwitchingCalculator {
 
     // instance state keys
@@ -166,7 +166,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
             text += detail.word;
         }
 
-        if(mInfoView != null) {
+        if (mInfoView != null) {
             mInfoView.setMovementMethod(LinkMovementMethod.getInstance());
             mInfoView.setText(text, TextView.BufferType.SPANNABLE);
             for (Detail detail : details) {
@@ -190,7 +190,7 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
 
     private Detail getBaseDetail() {
         String text = "";
-        switch(mBaseManager.getNumberBase()) {
+        switch (mBaseManager.getNumberBase()) {
             case HEXADECIMAL:
                 text = getString(R.string.hex).toUpperCase(Locale.getDefault());
                 break;
@@ -284,7 +284,8 @@ public abstract class HexCalculator extends PanelSwitchingCalculator {
                 listener.onClick(null);
             }
 
-            public void updateDrawState(@NonNull TextPaint ds) {}
+            public void updateDrawState(@NonNull TextPaint ds) {
+            }
         };
         spans.setSpan(span, text.indexOf(word), text.indexOf(word) + word.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }

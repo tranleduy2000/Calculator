@@ -31,9 +31,9 @@ import com.xlythe.math.Solver;
 
 /**
  * The display overlay is a container that intercepts touch events on top of:
- *      1. the display, i.e. the formula and result views
- *      2. the history view, which is revealed by dragging down on the display
- *
+ * 1. the display, i.e. the formula and result views
+ * 2. the history view, which is revealed by dragging down on the display
+ * <p>
  * This overlay passes vertical scrolling events down to the history recycler view
  * when applicable.  If the user attempts to scroll up and the recycler is already
  * scrolled all the way up, then we intercept the event and collapse the history.
@@ -42,12 +42,11 @@ public class DisplayOverlay extends RelativeLayout {
 
     /**
      * Alpha when history is pulled down
-     * */
+     */
     private static final float MAX_ALPHA = 0.6f;
-
-    private static boolean DEBUG = false;
     private static final String TAG = DisplayOverlay.class.getSimpleName();
-
+    private static boolean DEBUG = false;
+    private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private VelocityTracker mVelocityTracker;
     private int mMinimumFlingVelocity;
     private int mMaximumFlingVelocity;
@@ -81,7 +80,6 @@ public class DisplayOverlay extends RelativeLayout {
             return true;
         }
     };
-    private final DisplayAnimator mAnimator = new DisplayAnimator(0, 1f);
     private View mTemplateDisplay;
 
     public DisplayOverlay(Context context) {
@@ -128,10 +126,6 @@ public class DisplayOverlay extends RelativeLayout {
                 scrollToMostRecent();
             }
         });
-    }
-
-    public enum TranslateState {
-        EXPANDED, COLLAPSED, PARTIAL, GRAPH_EXPANDED, MINI_GRAPH
     }
 
     private TranslateState getTranslateState() {
@@ -497,16 +491,16 @@ public class DisplayOverlay extends RelativeLayout {
         }
     }
 
-    public void setAdapter(final RecyclerView.Adapter adapter) {
-        mRecyclerView.setAdapter(adapter);
-    }
-
     public void attachToRecyclerView(ItemTouchHelper itemTouchHelper) {
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
     }
 
     public HistoryAdapter getAdapter() {
         return ((HistoryAdapter) mRecyclerView.getAdapter());
+    }
+
+    public void setAdapter(final RecyclerView.Adapter adapter) {
+        mRecyclerView.setAdapter(adapter);
     }
 
     private boolean hasDisplayEntry() {
@@ -548,11 +542,40 @@ public class DisplayOverlay extends RelativeLayout {
     }
 
     public void scrollToMostRecent() {
-        mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount()-1);
+        mRecyclerView.scrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
     }
 
     public void setFade(View view) {
         mFade = view;
+    }
+
+    private int getLeft(View view, View relativeTo) {
+        if (view == null || view == relativeTo) {
+            return 0;
+        }
+        return view.getLeft() + (view.getParent() instanceof View ? getLeft((View) view.getParent(), relativeTo) : 0);
+    }
+
+    private int getRight(View view, View relativeTo) {
+        return getLeft(view, relativeTo) + view.getWidth();
+    }
+
+    private int getTop(View view, View relativeTo) {
+        if (view == null || view == relativeTo) {
+            return 0;
+        }
+        return view.getTop() + (view.getParent() instanceof View ? getTop((View) view.getParent(), relativeTo) : 0);
+    }
+
+    public enum TranslateState {
+        EXPANDED, COLLAPSED, PARTIAL, GRAPH_EXPANDED, MINI_GRAPH
+    }
+
+    private static class TemplateHolder {
+        View graph;
+        TextView formula;
+        TextView result;
+        View historyLine;
     }
 
     /**
@@ -656,7 +679,7 @@ public class DisplayOverlay extends RelativeLayout {
             mFormulaEditText.setScaleY(scale(percent, exprScale));
             float formulaWidth = exprView.getPaint().measureText(mFormulaEditText.getText().toString());
             mFormulaEditText.setTranslationX(percent * (
-                    + formulaWidth
+                    +formulaWidth
                             - exprScale * (mFormulaEditText.getWidth() - mFormulaEditText.getPaddingRight())
                             + getLeft(exprView, null)
             ));
@@ -696,7 +719,7 @@ public class DisplayOverlay extends RelativeLayout {
 
             // Handle readjustment of everything so it follows the finger
             adjustedTranslation += percent * (
-                    + mDisplayBackground.getPivotY()
+                    +mDisplayBackground.getPivotY()
                             - mDisplayBackground.getPivotY() * height / mDisplayBackground.getHeight());
 
             mCalculationsDisplay.setTranslationY(adjustedTranslation);
@@ -760,30 +783,5 @@ public class DisplayOverlay extends RelativeLayout {
 
             return Color.argb((int) a, (int) r, (int) g, (int) b);
         }
-    }
-
-    private int getLeft(View view, View relativeTo) {
-        if (view == null || view == relativeTo) {
-            return 0;
-        }
-        return view.getLeft() + (view.getParent() instanceof View ? getLeft((View) view.getParent(), relativeTo) : 0);
-    }
-
-    private int getRight(View view, View relativeTo) {
-        return getLeft(view, relativeTo) + view.getWidth();
-    }
-
-    private int getTop(View view, View relativeTo) {
-        if (view == null || view == relativeTo) {
-            return 0;
-        }
-        return view.getTop() + (view.getParent() instanceof View ? getTop((View) view.getParent(), relativeTo) : 0);
-    }
-
-    private static class TemplateHolder {
-        View graph;
-        TextView formula;
-        TextView result;
-        View historyLine;
     }
 }

@@ -61,31 +61,39 @@ import io.codetail.widget.RevealView;
 
 /**
  * A very basic calculator. Maps button clicks to the display, and solves on each key press.
- * */
+ */
 public abstract class BasicCalculator extends Activity
         implements OnTextSizeChangeListener, EvaluateCallback, OnLongClickListener {
-
-    protected static final String NAME = "Calculator";
-
-    // instance state keys
-    private static final String KEY_CURRENT_STATE = NAME + "_currentState";
-    private static final String KEY_CURRENT_EXPRESSION = NAME + "_currentExpression";
 
     /**
      * Constant for an invalid resource id.
      */
     public static final int INVALID_RES_ID = -1;
-
-    protected enum CalculatorState {
-        INPUT, EVALUATE, RESULT, ERROR, GRAPHING
-    }
-
+    protected static final String NAME = "Calculator";
+    // instance state keys
+    private static final String KEY_CURRENT_STATE = NAME + "_currentState";
+    private static final String KEY_CURRENT_EXPRESSION = NAME + "_currentExpression";
+    private final ViewGroup.LayoutParams mLayoutParams = new ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT);
+    private CalculatorState mCurrentState;
+    private CalculatorExpressionTokenizer mTokenizer;
+    private CalculatorExpressionEvaluator mEvaluator;
+    private DisplayOverlay mDisplayView;
+    private FormattedNumberEditText mFormulaEditText;
+    private TextView mResultEditText;
+    private CalculatorPadView mPadViewPager;
+    private View mDeleteButton;
+    private EqualsImageButton mEqualButton;
+    private View mClearButton;
     private final TextWatcher mFormulaTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence charSequence, int start, int count, int after) {}
+        public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
+        }
 
         @Override
         public void afterTextChanged(Editable editable) {
@@ -95,7 +103,9 @@ public abstract class BasicCalculator extends Activity
             mEvaluator.evaluate(editable, BasicCalculator.this);
         }
     };
-
+    private View mCurrentButton;
+    private Animator mCurrentAnimator;
+    private History mHistory;
     private final OnKeyListener mFormulaOnKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
@@ -112,25 +122,8 @@ public abstract class BasicCalculator extends Activity
             return false;
         }
     };
-
-    private CalculatorState mCurrentState;
-    private CalculatorExpressionTokenizer mTokenizer;
-    private CalculatorExpressionEvaluator mEvaluator;
-    private DisplayOverlay mDisplayView;
-    private FormattedNumberEditText mFormulaEditText;
-    private TextView mResultEditText;
-    private CalculatorPadView mPadViewPager;
-    private View mDeleteButton;
-    private EqualsImageButton mEqualButton;
-    private View mClearButton;
-    private View mCurrentButton;
-    private Animator mCurrentAnimator;
-    private History mHistory;
     private HistoryAdapter mHistoryAdapter;
     private Persist mPersist;
-    private final ViewGroup.LayoutParams mLayoutParams = new ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT);
     private ViewGroup mDisplayForeground;
 
     @Override
@@ -316,6 +309,10 @@ public abstract class BasicCalculator extends Activity
                 mTokenizer.getNormalizedExpression(mFormulaEditText.getCleanText()));
     }
 
+    protected CalculatorState getState() {
+        return mCurrentState;
+    }
+
     protected void setState(CalculatorState state) {
         if (mCurrentState != state) {
             mCurrentState = state;
@@ -347,10 +344,6 @@ public abstract class BasicCalculator extends Activity
                 }
             }
         }
-    }
-
-    protected CalculatorState getState() {
-        return mCurrentState;
     }
 
     @Override
@@ -435,15 +428,14 @@ public abstract class BasicCalculator extends Activity
     /**
      * Inserts text into the formula EditText. If an equation was recently solved, it will
      * replace the formula's text instead of appending.
-     * */
+     */
     protected void insert(String text) {
         // Add left parenthesis after functions.
-        if(mCurrentState.equals(CalculatorState.INPUT) ||
+        if (mCurrentState.equals(CalculatorState.INPUT) ||
                 mCurrentState.equals(CalculatorState.GRAPHING) ||
                 mFormulaEditText.isCursorModified()) {
             mFormulaEditText.insert(text);
-        }
-        else {
+        } else {
             mFormulaEditText.setText(text);
             incrementGroupId();
         }
@@ -492,8 +484,7 @@ public abstract class BasicCalculator extends Activity
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             translationX = (1.0f - textScale) *
                     (textView.getWidth() / 2.0f - textView.getPaddingEnd());
-        }
-        else {
+        } else {
             translationX = (1.0f - textScale) *
                     (textView.getWidth() / 2.0f - textView.getPaddingRight());
         }
@@ -513,7 +504,7 @@ public abstract class BasicCalculator extends Activity
     protected void onEquals() {
         String text = mFormulaEditText.getCleanText();
         if (mCurrentState == CalculatorState.INPUT) {
-            switch(mEqualButton.getState()) {
+            switch (mEqualButton.getState()) {
                 case EQUALS:
                     setState(CalculatorState.EVALUATE);
                     mEvaluator.evaluate(text, this);
@@ -653,7 +644,7 @@ public abstract class BasicCalculator extends Activity
         // Now adjust the result upwards!
         final float resultTranslationY =
                 // Move the result up (so both formula + result heights match)
-                - mFormulaEditText.getHeight()
+                -mFormulaEditText.getHeight()
                         // Now switch the result's padding top with the formula's padding top
                         - resultScale * mResultEditText.getPaddingTop()
                         + mFormulaEditText.getPaddingTop()
@@ -711,5 +702,9 @@ public abstract class BasicCalculator extends Activity
 
     protected CalculatorExpressionEvaluator getEvaluator() {
         return mEvaluator;
+    }
+
+    protected enum CalculatorState {
+        INPUT, EVALUATE, RESULT, ERROR, GRAPHING
     }
 }

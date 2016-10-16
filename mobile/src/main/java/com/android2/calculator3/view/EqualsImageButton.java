@@ -23,13 +23,8 @@ import android.widget.ImageButton;
 import com.android2.calculator3.R;
 
 public class EqualsImageButton extends ImageButton {
-    private static final int[] STATE_EQUALS = { R.attr.state_equals };
-    private static final int[] STATE_NEXT = { R.attr.state_next };
-
-    public enum State {
-        EQUALS, NEXT
-    }
-
+    private static final int[] STATE_EQUALS = {R.attr.state_equals};
+    private static final int[] STATE_NEXT = {R.attr.state_next};
     private State mState = State.EQUALS;
 
     public EqualsImageButton(Context context) {
@@ -56,21 +51,21 @@ public class EqualsImageButton extends ImageButton {
         setState(State.EQUALS);
     }
 
+    public State getState() {
+        return mState;
+    }
+
     public void setState(State state) {
         mState = state;
         refreshDrawableState();
     }
 
-    public State getState() {
-        return mState;
-    }
-
     @Override
     public int[] onCreateDrawableState(int extraSpace) {
         int[] state = super.onCreateDrawableState(extraSpace + 1);
-        if(mState == null) mState = State.EQUALS;
+        if (mState == null) mState = State.EQUALS;
 
-        switch(mState) {
+        switch (mState) {
             case EQUALS:
                 mergeDrawableStates(state, STATE_EQUALS);
                 break;
@@ -79,5 +74,9 @@ public class EqualsImageButton extends ImageButton {
                 break;
         }
         return state;
+    }
+
+    public enum State {
+        EQUALS, NEXT
     }
 }

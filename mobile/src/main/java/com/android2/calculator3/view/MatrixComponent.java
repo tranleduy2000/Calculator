@@ -26,20 +26,6 @@ public class MatrixComponent extends SpanComponent {
         mContext = context;
     }
 
-    @Override
-    public String parse(String formula) {
-        if (verify(formula)) {
-            return parseMatrix(formula);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public MathSpannable getSpan(String equation) {
-        return new MatrixSpannable(mContext, equation);
-    }
-
     public static String getPattern() {
         return "[[" + Constants.MATRIX_SEPARATOR + "][" + Constants.MATRIX_SEPARATOR + "]]";
     }
@@ -54,27 +40,39 @@ public class MatrixComponent extends SpanComponent {
     private static String parseMatrix(String text) {
         int bracket_open = 0;
         int bracket_closed = 0;
-        for(int i = 0; i < text.length(); i++) {
-            if(text.charAt(i) == '[') {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '[') {
                 bracket_open++;
-            } else if(text.charAt(i) == ']') {
+            } else if (text.charAt(i) == ']') {
                 bracket_closed++;
             }
-            if(bracket_open == bracket_closed) return text.substring(0, i + 1);
+            if (bracket_open == bracket_closed) return text.substring(0, i + 1);
         }
         return "";
     }
 
+    @Override
+    public String parse(String formula) {
+        if (verify(formula)) {
+            return parseMatrix(formula);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public MathSpannable getSpan(String equation) {
+        return new MatrixSpannable(mContext, equation);
+    }
+
     private static class MatrixSpannable extends MathSpannable {
+        private static final int BLINK = 500;
         private final Context mContext;
         private final String[][] mData;
-
         private final NinePatchDrawable mBackground;
         private final Rect mBackgroundPadding = new Rect();
         private final float mMinColumnWidth;
         private final float mSpacing;
-
-        private static final int BLINK = 500;
         private final long mShowCursor = SystemClock.uptimeMillis();
         private final Paint mHighlightPaint = new Paint();
 
@@ -91,8 +89,8 @@ public class MatrixComponent extends SpanComponent {
             mData = new String[rows][columns];
 
             String[] data = equation.split(Pattern.quote(Character.toString(Constants.MATRIX_SEPARATOR)) + "|\\]\\[");
-            for(int order = 0, row = 0; row < rows; row++) {
-                for(int column = 0; column < columns; column++) {
+            for (int order = 0, row = 0; row < rows; row++) {
+                for (int column = 0; column < columns; column++) {
                     mData[row][column] = data[order].replaceAll("[\\[\\]]", "");
                     order++;
                 }
@@ -107,6 +105,16 @@ public class MatrixComponent extends SpanComponent {
 
             mMinColumnWidth = mContext.getResources().getDisplayMetrics().density * 50;
             mSpacing = mContext.getResources().getDisplayMetrics().density * 5;
+        }
+
+        private static int countOccurrences(String haystack, char needle) {
+            int count = 0;
+            for (int i = 0; i < haystack.length(); i++) {
+                if (haystack.charAt(i) == needle) {
+                    count++;
+                }
+            }
+            return count;
         }
 
         private int getColumnSize(Paint paint, int column) {
@@ -169,8 +177,8 @@ public class MatrixComponent extends SpanComponent {
 
             // Draw the cursor
             // TODO cursor should be set when drawing text, to properly set x/y position
-            if(getCursor() >= 0) {
-                if((SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
+            if (getCursor() >= 0) {
+                if ((SystemClock.uptimeMillis() - mShowCursor) % (2 * BLINK) < BLINK) {
                     mHighlightPaint.setColor(paint.getColor());
                     mHighlightPaint.setStyle(Paint.Style.STROKE);
                     canvas.drawLine(mBackgroundPadding.left, top, mBackgroundPadding.left, bottom, mHighlightPaint);
@@ -181,16 +189,6 @@ public class MatrixComponent extends SpanComponent {
         @Override
         public boolean removeOnBackspace() {
             return true;
-        }
-
-        private static int countOccurrences(String haystack, char needle) {
-            int count = 0;
-            for(int i = 0; i < haystack.length(); i++) {
-                if(haystack.charAt(i) == needle) {
-                    count++;
-                }
-            }
-            return count;
         }
 
         @Override

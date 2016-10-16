@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +14,7 @@
   limitations under the License.
   -->
 
-<com.android2.calculator3.view.CalculatorPadLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android2.calculator3.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_hex"
     style="@style/PadLayoutStyle.Advanced"
     android:background="@color/pad_advanced_background_color">
@@ -58,28 +56,24 @@
         android:text="@string/F" />
 
     <Button
-        android:id="@+id/op_xor"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="\u2295"
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/op_and"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="\u2227"
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/op_or"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="\u2228"
         android:visibility="invisible" />
 
     <Button
-        android:id="@+id/op_not"
         style="@style/PadButtonStyle.Advanced"
         android:onClick="onButtonClick"
         android:text="\u00AC"

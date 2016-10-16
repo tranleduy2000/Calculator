@@ -55,7 +55,7 @@ public class CalculatorExpressionTokenizer {
         mReplacements.add(new Localizer("sin", context.getString(R.string.fun_sin)));
         mReplacements.add(new Localizer("cos", context.getString(R.string.fun_cos)));
         mReplacements.add(new Localizer("tan", context.getString(R.string.fun_tan)));
-        if(!CalculatorSettings.useRadians(context)) {
+        if (!CalculatorSettings.useRadians(context)) {
             mReplacements.add(new Localizer("sind", "sin"));
             mReplacements.add(new Localizer("cosd", "cos"));
             mReplacements.add(new Localizer("tand", "tan"));

@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
     android:layout_gravity="bottom"
-    android:layout_alignParentBottom="true">
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/current_graphs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="false"
-        android:divider="@null"/>
+        android:divider="@null"
+        android:focusable="false" />
 
     <com.android2.calculator3.view.SolidPadLayout
         android:layout_width="match_parent"
@@ -24,23 +24,23 @@
 
         <ImageButton
             android:id="@+id/btn_zoom_in"
-            android:src="@drawable/btn_zoomin"
-            style="@style/GraphTray"/>
+            style="@style/GraphTray"
+            android:src="@drawable/btn_zoomin" />
 
         <ImageButton
             android:id="@+id/btn_zoom_out"
-            android:src="@drawable/btn_zoomout"
-            style="@style/GraphTray"/>
+            style="@style/GraphTray"
+            android:src="@drawable/btn_zoomout" />
 
         <ImageButton
             android:id="@+id/btn_zoom_reset"
-            android:src="@drawable/btn_reset"
-            style="@style/GraphTray"/>
+            style="@style/GraphTray"
+            android:src="@drawable/btn_reset" />
 
         <ImageButton
             android:id="@+id/btn_close_graph"
-            android:src="@drawable/btn_close"
-            style="@style/GraphTray"/>
+            style="@style/GraphTray"
+            android:src="@drawable/btn_close" />
 
     </com.android2.calculator3.view.SolidPadLayout>
 

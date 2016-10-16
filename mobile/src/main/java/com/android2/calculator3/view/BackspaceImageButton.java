@@ -16,6 +16,7 @@
 
 package com.android2.calculator3.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.ImageButton;
@@ -23,13 +24,8 @@ import android.widget.ImageButton;
 import com.android2.calculator3.R;
 
 public class BackspaceImageButton extends ImageButton {
-    private static final int[] STATE_DELETE = { R.attr.state_delete };
-    private static final int[] STATE_CLEAR = { R.attr.state_clear };
-
-    public enum State {
-        DELETE, CLEAR
-    }
-
+    private static final int[] STATE_DELETE = {R.attr.state_delete};
+    private static final int[] STATE_CLEAR = {R.attr.state_clear};
     private State mState = State.DELETE;
 
     public BackspaceImageButton(Context context) {
@@ -47,6 +43,7 @@ public class BackspaceImageButton extends ImageButton {
         setup();
     }
 
+    @TargetApi(21)
     public BackspaceImageButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         setup();
@@ -56,21 +53,21 @@ public class BackspaceImageButton extends ImageButton {
         setState(State.DELETE);
     }
 
+    public State getState() {
+        return mState;
+    }
+
     public void setState(State state) {
         mState = state;
         refreshDrawableState();
     }
 
-    public State getState() {
-        return mState;
-    }
-
     @Override
     public int[] onCreateDrawableState(int extraSpace) {
         int[] state = super.onCreateDrawableState(extraSpace + 1);
-        if(mState == null) mState = State.DELETE;
+        if (mState == null) mState = State.DELETE;
 
-        switch(mState) {
+        switch (mState) {
             case DELETE:
                 mergeDrawableStates(state, STATE_DELETE);
                 break;
@@ -79,5 +76,9 @@ public class BackspaceImageButton extends ImageButton {
                 break;
         }
         return state;
+    }
+
+    public enum State {
+        DELETE, CLEAR
     }
 }

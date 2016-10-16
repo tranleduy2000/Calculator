@@ -36,17 +36,16 @@ public class GraphView extends View {
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
     private static final int BOX_STROKE = 6;
-
-    private int mDrawingAlgorithm = LINES;
-    private DecimalFormat mFormat = new DecimalFormat("#.#");
     private final List<PanListener> mPanListeners = new ArrayList<>();
     private final List<ZoomListener> mZoomListeners = new ArrayList<>();
+    private final Rect mTempRect = new Rect();
+    private int mDrawingAlgorithm = LINES;
+    private DecimalFormat mFormat = new DecimalFormat("#.#");
     private Paint mBackgroundPaint;
     private Paint mTextPaint;
     private Paint mAxisPaint;
     private Paint mGraphPaint;
     private Paint mDebugPaint;
-    private final Rect mTempRect = new Rect();
     private int mOffsetX;
     private int mOffsetY;
     private int mLineMargin;
@@ -79,6 +78,8 @@ public class GraphView extends View {
 
     private boolean mGraphIsCentered = true;
     private OnCenterListener mOnCenterListener;
+    private List<Point> curveCachedData;
+    private List<Point> curveCachedMutatedData;
 
     public GraphView(Context context) {
         super(context);
@@ -191,7 +192,7 @@ public class GraphView extends View {
             setMode(event);
         }
 
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 setMode(event);
                 break;
@@ -506,9 +507,6 @@ public class GraphView extends View {
         }
     }
 
-    private List<Point> curveCachedData;
-    private List<Point> curveCachedMutatedData;
-
     private void drawWithCurves(List<Point> data, Canvas canvas, Paint paint) {
         if (curveCachedData == data) {
             drawWithStraightLines(curveCachedMutatedData, canvas, paint);
@@ -530,28 +528,28 @@ public class GraphView extends View {
 
         // 1. loop goes through point array
         // 2. loop goes through each segment between the 2 pts + 1e point before and after
-        for (int i = 1; i < data.size() - 2; i ++) {
-            for (int t=0; t <= numOfSegments; t++) {
+        for (int i = 1; i < data.size() - 2; i++) {
+            for (int t = 0; t <= numOfSegments; t++) {
 
                 // calc tension vectors
-                float t1x = (data.get(i+1).getX() - data.get(i-1).getX()) * tension;
-                float t2x = (data.get(i+2).getX() - data.get(i).getX()) * tension;
+                float t1x = (data.get(i + 1).getX() - data.get(i - 1).getX()) * tension;
+                float t2x = (data.get(i + 2).getX() - data.get(i).getX()) * tension;
 
-                float t1y = (data.get(i+1).getY() - data.get(i-1).getY()) * tension;
-                float t2y = (data.get(i+2).getY() - data.get(i).getY()) * tension;
+                float t1y = (data.get(i + 1).getY() - data.get(i - 1).getY()) * tension;
+                float t2y = (data.get(i + 2).getY() - data.get(i).getY()) * tension;
 
                 // calc step
                 float st = t / numOfSegments;
 
                 // calc cardinals
-                double c1 =   2 * Math.pow(st, 3)  - 3 * Math.pow(st, 2) + 1;
+                double c1 = 2 * Math.pow(st, 3) - 3 * Math.pow(st, 2) + 1;
                 double c2 = -(2 * Math.pow(st, 3)) + 3 * Math.pow(st, 2);
-                double c3 =       Math.pow(st, 3)  - 2 * Math.pow(st, 2) + st;
-                double c4 =       Math.pow(st, 3)  -     Math.pow(st, 2);
+                double c3 = Math.pow(st, 3) - 2 * Math.pow(st, 2) + st;
+                double c4 = Math.pow(st, 3) - Math.pow(st, 2);
 
                 // calc x and y cords with common control vectors
-                float x = (float) (c1 * data.get(i).getX() + c2 * data.get(i+1).getX() + c3 * t1x + c4 * t2x);
-                float y = (float) (c1 * data.get(i).getY() + c2 * data.get(i+1).getY() + c3 * t1y + c4 * t2y);
+                float x = (float) (c1 * data.get(i).getX() + c2 * data.get(i + 1).getX() + c3 * t1x + c4 * t2x);
+                float y = (float) (c1 * data.get(i).getY() + c2 * data.get(i + 1).getY() + c3 * t1y + c4 * t2y);
 
                 //store points in array
                 newData.add(new Point(x, y));
@@ -629,7 +627,7 @@ public class GraphView extends View {
 
     private void setMode(MotionEvent e) {
         mPointers = e.getPointerCount();
-        switch(e.getPointerCount()) {
+        switch (e.getPointerCount()) {
             case 1:
                 // Drag
                 setMode(DRAG, e);
@@ -643,7 +641,7 @@ public class GraphView extends View {
 
     private void setMode(int mode, MotionEvent e) {
         mMode = mode;
-        switch(mode) {
+        switch (mode) {
             case DRAG:
                 mStartX = e.getX();
                 mStartY = e.getY();
@@ -822,36 +820,41 @@ public class GraphView extends View {
             this.data = data;
         }
 
-        public void setFormula(String formula) {
-            this.formula = formula;
-        }
-
         public String getFormula() {
             return formula;
         }
 
-        public void setColor(int color) {
-            this.color = color;
+        public void setFormula(String formula) {
+            this.formula = formula;
         }
 
         public int getColor() {
             return color;
         }
 
-        public void setData(List<Point> data) {
-            this.data = data;
+        public void setColor(int color) {
+            this.color = color;
         }
 
         public List<Point> getData() {
             return data;
         }
 
-        public void setVisible(boolean visible) {
-            this.visible = visible;
+        public void setData(List<Point> data) {
+            this.data = data;
         }
 
         public boolean isVisible() {
             return visible;
+        }
+
+        public void setVisible(boolean visible) {
+            this.visible = visible;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Graph{formula=%s}", formula);
         }
     }
 }

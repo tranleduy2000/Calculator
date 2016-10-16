@@ -40,27 +40,12 @@ class FloatingHistoryAdapter extends RecyclerView.Adapter<FloatingHistoryAdapter
     private final EquationFormatter mEquationFormatter;
     protected HistoryItemCallback mCallback;
 
-    public interface HistoryItemCallback {
-        void onHistoryItemSelected(HistoryEntry entry);
-    }
-
     public FloatingHistoryAdapter(Context context, Solver solver, History history, HistoryItemCallback callback) {
         mContext = context;
         mSolver = solver;
         mEntries = history.getEntries();
         mEquationFormatter = new EquationFormatter();
         mCallback = callback;
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView historyExpr;
-        public TextView historyResult;
-
-        public ViewHolder(View v) {
-            super(v);
-            historyExpr = (TextView) v.findViewById(R.id.historyExpr);
-            historyResult = (TextView) v.findViewById(R.id.historyResult);
-        }
     }
 
     @Override
@@ -119,5 +104,20 @@ class FloatingHistoryAdapter extends RecyclerView.Adapter<FloatingHistoryAdapter
 
     public Context getContext() {
         return mContext;
+    }
+
+    public interface HistoryItemCallback {
+        void onHistoryItemSelected(HistoryEntry entry);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView historyExpr;
+        public TextView historyResult;
+
+        public ViewHolder(View v) {
+            super(v);
+            historyExpr = (TextView) v.findViewById(R.id.historyExpr);
+            historyResult = (TextView) v.findViewById(R.id.historyResult);
+        }
     }
 }
