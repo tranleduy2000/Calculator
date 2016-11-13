@@ -40,17 +40,17 @@
                 android:orientation="horizontal"
                 theme:themeBackground="@drawable/display_background">
 
-                <com.android2.calculator3.view.CalculatorDisplay
+                <com.xlythe.calculator.holo.view.CalculatorDisplay
                     android:id="@+id/display"
                     maxDigits="@integer/max_digits"
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
                     android:layout_weight="1">
 
-                    <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
+                    <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
 
-                    <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
-                </com.android2.calculator3.view.CalculatorDisplay>
+                    <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
+                </com.xlythe.calculator.holo.view.CalculatorDisplay>
 
                 <com.xlythe.engine.theme.ThemedImageButton
                     android:id="@+id/overflow_menu"
@@ -76,7 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.android2.calculator3.view.CalculatorViewPager
+            <com.xlythe.calculator.holo.view.CalculatorViewPager
                 android:id="@+id/panelswitch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -107,7 +107,7 @@
                     android:layout_height="@dimen/history_bar_height"
                     android:layout_weight="1">
                     <!-- marginRight has to be 0 to catch border-touch -->
-                    <com.android2.calculator3.view.ColorButton
+                    <com.xlythe.calculator.holo.view.ColorButton
                         android:id="@+id/clear"
                         style="@style/Theme.Calculator.ButtonStyle.Del"
                         android:layout_width="match_parent"
@@ -116,7 +116,7 @@
                         android:text="@string/clear"
                         android:textSize="15sp" />
                     <!-- marginRight has to be 0 to catch border-touch -->
-                    <com.android2.calculator3.view.ColorButton
+                    <com.xlythe.calculator.holo.view.ColorButton
                         android:id="@+id/del"
                         style="@style/Theme.Calculator.ButtonStyle.Del"
                         android:layout_width="match_parent"

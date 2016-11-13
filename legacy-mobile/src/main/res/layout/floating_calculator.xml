@@ -14,18 +14,18 @@
         android:minHeight="65dp"
         android:orientation="horizontal">
 
-        <com.android2.calculator3.view.CalculatorDisplay
+        <com.xlythe.calculator.holo.view.CalculatorDisplay
             android:id="@+id/display"
             maxDigits="7"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
+            <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
 
-            <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
+            <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display.FloatingCalc" />
 
-        </com.android2.calculator3.view.CalculatorDisplay>
+        </com.xlythe.calculator.holo.view.CalculatorDisplay>
 
         <ImageButton
             android:id="@+id/delete"
@@ -45,7 +45,7 @@
 
     </LinearLayout>
 
-    <com.android2.calculator3.view.CalculatorViewPager
+    <com.xlythe.calculator.holo.view.CalculatorViewPager
         android:id="@+id/panelswitch"
         android:layout_width="280dp"
         android:layout_height="280dp" />

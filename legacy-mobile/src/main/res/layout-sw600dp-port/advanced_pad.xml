@@ -27,30 +27,30 @@
 
     <LinearLayout style="@style/Theme.Calculator.ButtonRowStyle">
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/sin"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:hint="@string/arcsin"
             android:text="@string/sin" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/cos"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:hint="@string/arccos"
             android:text="@string/cos" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/tan"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:hint="@string/arctan"
             android:text="@string/tan" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/pi"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/pi" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/factorial"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/factorial" />
@@ -58,27 +58,27 @@
 
     <LinearLayout style="@style/Theme.Calculator.ButtonRowStyle">
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/ln"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/ln" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/lg"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/lg" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/e"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/e" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/power"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/power" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/sqrt"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:hint="@string/cbrt"
@@ -87,27 +87,27 @@
 
     <LinearLayout style="@style/Theme.Calculator.ButtonRowStyle">
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/X"
             style="@style/Theme.Calculator.ButtonDigitCellStyle"
             android:text="@string/X" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/Y"
             style="@style/Theme.Calculator.ButtonDigitCellStyle"
             android:text="@string/Y" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/percentage"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/percentage" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/i"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/i" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/parentheses"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:text="@string/parentheses" />

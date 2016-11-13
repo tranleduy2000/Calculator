@@ -27,26 +27,26 @@
 
     <LinearLayout style="@style/Theme.Calculator.ButtonRowStyle">
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/solveForX"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="2"
             android:text="@string/solveForX"
             android:textSize="26dp" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/X"
             style="@style/Theme.Calculator.ButtonDigitCellStyle"
             android:layout_weight="1"
             android:text="@string/X" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/dx"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="1"
             android:text="@string/dx" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/parentheses"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="1"
@@ -55,26 +55,26 @@
 
     <LinearLayout style="@style/Theme.Calculator.ButtonRowStyle">
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/solveForY"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="2"
             android:text="@string/solveForY"
             android:textSize="26dp" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/Y"
             style="@style/Theme.Calculator.ButtonDigitCellStyle"
             android:layout_weight="1"
             android:text="@string/Y" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/dy"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="1"
             android:text="@string/dy" />
 
-        <com.android2.calculator3.view.ColorButton
+        <com.xlythe.calculator.holo.view.ColorButton
             android:id="@+id/integral"
             style="@style/Theme.Calculator.ButtonFunctionCellStyle"
             android:layout_weight="1"

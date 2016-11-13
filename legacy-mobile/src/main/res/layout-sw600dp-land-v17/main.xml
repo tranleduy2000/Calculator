@@ -37,17 +37,17 @@
                 android:orientation="horizontal"
                 theme:themeBackground="@drawable/display_background">
 
-                <com.android2.calculator3.view.CalculatorDisplay
+                <com.xlythe.calculator.holo.view.CalculatorDisplay
                     android:id="@+id/display"
                     maxDigits="@integer/max_digits"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="5">
 
-                    <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
+                    <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
 
-                    <com.android2.calculator3.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
-                </com.android2.calculator3.view.CalculatorDisplay>
+                    <com.xlythe.calculator.holo.view.ScrollableDisplay style="@style/Theme.Calculator.Display" />
+                </com.xlythe.calculator.holo.view.CalculatorDisplay>
 
                 <com.xlythe.engine.theme.ThemedImageButton
                     android:id="@+id/overflow_menu"
@@ -112,14 +112,14 @@
                 android:layout_marginTop="@dimen/history_bar_height"
                 android:orientation="horizontal">
 
-                <com.android2.calculator3.view.CalculatorViewPager
+                <com.xlythe.calculator.holo.view.CalculatorViewPager
                     android:id="@+id/smallPanelswitch"
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="@dimen/group_padding"
                     android:layout_weight="3" />
 
-                <com.android2.calculator3.view.CalculatorViewPager
+                <com.xlythe.calculator.holo.view.CalculatorViewPager
                     android:id="@+id/largePanelswitch"
                     android:layout_width="0dip"
                     android:layout_height="match_parent"
