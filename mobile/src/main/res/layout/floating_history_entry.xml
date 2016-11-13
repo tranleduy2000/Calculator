@@ -1,4 +1,4 @@
-<com.android2.calculator3.view.HistoryLine xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.HistoryLine xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/history_line"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -29,4 +29,4 @@
         android:textColor="@android:color/white"
         android:textSize="18sp" />
 
-</com.android2.calculator3.view.HistoryLine>
+</com.xlythe.calculator.material.view.HistoryLine>

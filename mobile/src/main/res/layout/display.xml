@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<com.android2.calculator3.view.DisplayOverlay xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.DisplayOverlay xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:graph="http://schemas.android.com/apk/res-auto"
     android:id="@+id/display"
     android:layout_width="match_parent"
@@ -25,7 +25,7 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="@dimen/display_shadow">
 
-        <com.android2.calculator3.view.GraphView
+        <com.xlythe.calculator.material.view.GraphView
             android:id="@+id/mini_graph"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -60,7 +60,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height">
 
-            <com.android2.calculator3.view.CalculatorEditText
+            <com.xlythe.calculator.material.view.CalculatorEditText
                 android:id="@+id/formula"
                 style="@style/Theme.Calculator.Display.Main.Formula"
                 android:layout_height="@dimen/display_formula_height"
@@ -97,4 +97,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</com.android2.calculator3.view.DisplayOverlay>
+</com.xlythe.calculator.material.view.DisplayOverlay>

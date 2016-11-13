@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.android2.calculator3.view.CalculatorPadView
+    <com.xlythe.calculator.material.view.CalculatorPadView
         android:id="@+id/pad_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +37,7 @@
 
         </LinearLayout>
 
-        <com.android2.calculator3.view.SolidLayout
+        <com.xlythe.calculator.material.view.SolidLayout
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -55,7 +55,7 @@
                 android:id="@+id/pad_matrix"
                 layout="@layout/pad_matrix" />
 
-        </com.android2.calculator3.view.SolidLayout>
+        </com.xlythe.calculator.material.view.SolidLayout>
 
         <include
             android:id="@+id/tray"
@@ -70,7 +70,7 @@
             support:borderWidth="0dp"
             support:elevation="4dp" />
 
-    </com.android2.calculator3.view.CalculatorPadView>
+    </com.xlythe.calculator.material.view.CalculatorPadView>
 
     <View
         android:id="@+id/history_fade"

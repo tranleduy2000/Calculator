@@ -1,4 +1,4 @@
-<com.android2.calculator3.view.SolidPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.SolidPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tray"
     android:layout_width="match_parent"
@@ -35,4 +35,4 @@
         android:contentDescription="@string/panel_close_btn"
         android:src="@drawable/tray_btn_close" />
 
-</com.android2.calculator3.view.SolidPadLayout>
+</com.xlythe.calculator.material.view.SolidPadLayout>

@@ -5,7 +5,7 @@
     android:layout_marginLeft="@dimen/history_margin"
     android:layout_marginRight="@dimen/history_margin">
 
-    <com.android2.calculator3.view.GraphView
+    <com.xlythe.calculator.material.view.GraphView
         android:id="@+id/graph"
         android:layout_width="match_parent"
         android:layout_height="@dimen/display_result_height"
@@ -22,7 +22,7 @@
         graph:showOutline="false"
         graph:zoomEnabled="false" />
 
-    <com.android2.calculator3.view.HistoryLine
+    <com.xlythe.calculator.material.view.HistoryLine
         android:id="@+id/history_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,6 +37,6 @@
             android:id="@+id/historyResult"
             style="@style/HistoryText.Result" />
 
-    </com.android2.calculator3.view.HistoryLine>
+    </com.xlythe.calculator.material.view.HistoryLine>
 
 </FrameLayout>

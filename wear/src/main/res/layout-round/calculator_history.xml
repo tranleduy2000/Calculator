@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.android2.calculator3.view.SolidLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.SolidLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pad_history"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/pad_history_background_color">
 
-    <com.android2.calculator3.view.CalculatorRecyclerView
+    <com.xlythe.calculator.material.view.CalculatorRecyclerView
         android:id="@+id/history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingEnd="25dp"
         android:paddingStart="18dp" />
 
-</com.android2.calculator3.view.SolidLayout>
+</com.xlythe.calculator.material.view.SolidLayout>

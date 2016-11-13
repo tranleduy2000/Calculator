@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/floating_calc_background">
 
-    <com.android2.calculator3.view.CalculatorPadViewPager
+    <com.xlythe.calculator.material.view.CalculatorPadViewPager
         android:id="@+id/panelswitch"
         android:layout_width="@dimen/floating_width"
         android:layout_height="@dimen/floating_height"
@@ -26,7 +26,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp">
 
-            <com.android2.calculator3.view.CalculatorEditText
+            <com.xlythe.calculator.material.view.CalculatorEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
@@ -34,7 +34,7 @@
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="23sp" />
 
-            <com.android2.calculator3.view.CalculatorEditText
+            <com.xlythe.calculator.material.view.CalculatorEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
@@ -45,7 +45,7 @@
         </ViewSwitcher>
 
         <!-- ?android:attr/selectableItemBackground does not work, so using custom ripple -->
-        <com.android2.calculator3.view.BackspaceImageButton
+        <com.xlythe.calculator.material.view.BackspaceImageButton
             android:id="@+id/delete"
             android:layout_width="48dp"
             android:layout_height="48dp"

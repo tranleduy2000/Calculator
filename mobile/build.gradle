@@ -9,7 +9,7 @@ android {
     buildToolsVersion "24.0.3"
 
     defaultConfig {
-        applicationId "com.android2.calculator3"
+        applicationId "com.xlythe.calculator.material"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 93

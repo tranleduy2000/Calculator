@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.android2.calculator3.view.CalculatorPadViewPager
+    <com.xlythe.calculator.material.view.CalculatorPadViewPager
         android:id="@+id/panelswitch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,7 +26,7 @@
             android:inAnimation="@anim/floating_slide_in"
             android:outAnimation="@anim/floating_slide_out">
 
-            <com.android2.calculator3.view.FormattedNumberEditText
+            <com.xlythe.calculator.material.view.FormattedNumberEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
@@ -35,7 +35,7 @@
                 android:textColor="@color/display_formula_text_color"
                 android:textSize="23sp" />
 
-            <com.android2.calculator3.view.FormattedNumberEditText
+            <com.xlythe.calculator.material.view.FormattedNumberEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
@@ -46,7 +46,7 @@
 
         </ViewSwitcher>
 
-        <com.android2.calculator3.view.BackspaceImageButton
+        <com.xlythe.calculator.material.view.BackspaceImageButton
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
