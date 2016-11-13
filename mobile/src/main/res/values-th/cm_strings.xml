@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">แผงเมทริกซ์</string>
     <string name="panel_graph">แผงกราฟ</string>
+    <string name="panel_function">แผงฟังก์ชัน</string>
     <string name="panel_hex">แผงเลขฐาน</string>
     <string name="copy">คัดลอก \'%s\'</string>
     <string name="remove_from_history">ลบออกจากประวัติ</string>

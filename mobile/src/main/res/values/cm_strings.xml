@@ -78,6 +78,9 @@
     <string name="copy">Copy \'%s\'</string>
     <string name="remove_from_history">Remove from history.</string>
 
+    <!-- Floating calculator -->
+    <string name="floating_notification_description">Tap to open</string>
+
     <!-- Matrix page text -->
     <string name="plus_row">+Row</string>
     <string name="minus_row">-Row</string>
@@ -102,7 +105,11 @@
     <string name="panel_advanced">Advanced</string>
     <string name="panel_hex">Hexadecimal</string>
     <string name="panel_matrix">Matrix</string>
+    <string name="panel_function">Function</string>
     <string name="panel_close_btn">Close</string>
+
+    <string name="function_rename">Rename</string>
+    <string name="function_clear">Clear</string>
 
     <string name="radians">RAD</string>
     <string name="degrees">DEG</string>

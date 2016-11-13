@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Macierze</string>
     <string name="panel_graph">Wykresy</string>
+    <string name="panel_function">Funkcje</string>
     <string name="panel_hex">Hex</string>
     <string name="copy">Kopiuj \'%s\'</string>
     <string name="remove_from_history">Usuń z historii</string>

@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Panel matice</string>
     <string name="panel_graph">Panel grafu</string>
+    <string name="panel_function">Panel funkce</string>
     <string name="panel_hex">Binární panel</string>
     <string name="copy">Kopírovat \u201a%s\u2018</string>
     <string name="remove_from_history">Odebrat z historie</string>

@@ -30,7 +30,7 @@ import android.view.ViewTreeObserver;
 
 import com.android2.calculator3.Calculator;
 import com.android2.calculator3.R;
-import com.xlythe.floatingview.AnimationFinishedListener;
+import com.xlythe.view.floating.AnimationFinishedListener;
 
 import io.codetail.widget.RevealFrameLayout;
 

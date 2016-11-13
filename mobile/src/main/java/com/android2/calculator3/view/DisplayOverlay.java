@@ -26,8 +26,8 @@ import android.widget.TextView;
 import com.android2.calculator3.HistoryAdapter;
 import com.android2.calculator3.R;
 import com.android2.calculator3.util.TextUtil;
-import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Solver;
+import com.xlythe.view.floating.AnimationFinishedListener;
 
 /**
  * The display overlay is a container that intercepts touch events on top of:

@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Matriisitoiminnot</string>
     <string name="panel_graph">Graafitoiminnot</string>
+    <string name="panel_function">Funktiotoiminnot</string>
     <string name="panel_hex">Heksatoiminnot</string>
     <string name="copy">Kopioi \"%s\"</string>
     <string name="remove_from_history">Poista historiasta</string>

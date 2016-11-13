@@ -25,7 +25,7 @@ public class StoreActivity extends BaseActivity {
 
         // Update theme (as needed)
         int customTheme = Theme.getSettingsTheme(this);
-        if(customTheme != 0) {
+        if (customTheme != 0) {
             super.setTheme(customTheme);
         }
 
@@ -38,14 +38,14 @@ public class StoreActivity extends BaseActivity {
         viewPager.setAdapter(pagerAdapter);
 
         ActionBar mActionBar = getActionBar();
-        if(mActionBar != null) {
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.info) {
+        if (item.getItemId() == R.id.info) {
             startActivity(new Intent(this, StoreInfoActivity.class));
             return true;
         }
@@ -54,7 +54,7 @@ public class StoreActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             startActivity(new Intent(this, Calculator.class));
             finish();
             overridePendingTransition(R.anim.activity_open_enter, R.anim.activity_close_exit);
@@ -95,7 +95,7 @@ public class StoreActivity extends BaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            switch(position) {
+            switch (position) {
                 case 0:
                     Fragment fragment = new ThemesFragment();
                     fragment.setArguments(getIntent().getExtras());
@@ -113,7 +113,7 @@ public class StoreActivity extends BaseActivity {
         @Override
         public CharSequence getPageTitle(int position) {
             Locale l = Locale.getDefault();
-            switch(position) {
+            switch (position) {
                 case 0:
                     return getString(R.string.store_tab_themes).toUpperCase(l);
             }

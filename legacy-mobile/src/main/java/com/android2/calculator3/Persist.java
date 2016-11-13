@@ -62,23 +62,23 @@ class Persist {
             InputStream is = new BufferedInputStream(mContext.openFileInput(FILE_NAME), 8192);
             DataInputStream in = new DataInputStream(is);
             int version = in.readInt();
-            if(version > LAST_VERSION) {
+            if (version > LAST_VERSION) {
                 throw new IOException("data version " + version + "; expected " + LAST_VERSION);
             }
-            if(version > 1) {
+            if (version > 1) {
                 mDeleteMode = in.readInt();
             }
-            if(version > 2) {
+            if (version > 2) {
                 int quickSerializable = in.readInt();
-                for(Base m : Base.values()) {
-                    if(m.getQuickSerializable() == quickSerializable) this.mMode = m;
+                for (Base m : Base.values()) {
+                    if (m.getQuickSerializable() == quickSerializable) this.mMode = m;
                 }
             }
             mHistory = new History(version, in);
             in.close();
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -92,7 +92,7 @@ class Persist {
             out.writeInt(mMode == null ? Base.DECIMAL.getQuickSerializable() : mMode.getQuickSerializable());
             mHistory.write(out);
             out.close();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

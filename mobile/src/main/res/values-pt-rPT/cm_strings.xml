@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Painel de matriz</string>
     <string name="panel_graph">Painel de gráfico</string>
+    <string name="panel_function">Painel avançado</string>
     <string name="panel_hex">Painel hexadecimal</string>
     <string name="copy">Copiar \'%s\'</string>
     <string name="remove_from_history">Remover do histórico</string>

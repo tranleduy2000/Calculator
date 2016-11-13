@@ -50,7 +50,7 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(View container, int position, Object object) {
-        if(mViews[position] != null) mViews[position] = null;
+        if (mViews[position] != null) mViews[position] = null;
         ((ViewGroup) container).removeView((View) object);
     }
 
@@ -73,8 +73,8 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
     }
 
     public View getViewAt(int position) {
-        if(mViews[position] != null) return mViews[position];
-        switch(position) {
+        if (mViews[position] != null) return mViews[position];
+        switch (position) {
             case 0:
                 mViews[position] = View.inflate(mContext, R.layout.floating_calculator_history, null);
                 ListView historyView = (ListView) mViews[position].findViewById(R.id.history);
@@ -92,13 +92,13 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
     }
 
     private void applyListener(View view) {
-        if(view instanceof ViewGroup) {
-            for(int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+        if (view instanceof ViewGroup) {
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
                 applyListener(((ViewGroup) view).getChildAt(i));
             }
-        } else if(view instanceof Button) {
+        } else if (view instanceof Button) {
             view.setOnClickListener(mListener);
-        } else if(view instanceof ImageButton) {
+        } else if (view instanceof ImageButton) {
             view.setOnClickListener(mListener);
         }
     }
@@ -108,7 +108,7 @@ public class FloatingCalculatorPageAdapter extends PagerAdapter {
             @Override
             public void onHistoryItemClick(HistoryEntry entry) {
                 int deleteMode = mLogic.getDeleteMode();
-                if(mDisplay.getText().isEmpty()) deleteMode = Logic.DELETE_MODE_CLEAR;
+                if (mDisplay.getText().isEmpty()) deleteMode = Logic.DELETE_MODE_CLEAR;
                 mDisplay.insert(entry.getEdited());
                 mLogic.setDeleteMode(deleteMode);
             }

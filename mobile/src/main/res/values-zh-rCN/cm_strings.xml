@@ -23,6 +23,7 @@
     <string name="mod">取余数</string>
     <string name="panel_matrix">矩阵面板</string>
     <string name="panel_graph">图表面板</string>
+    <string name="panel_function">函数面板</string>
     <string name="panel_hex">十六进制面板</string>
     <string name="copy">复制 \'%s\'</string>
     <string name="remove_from_history">从历史记录移除</string>

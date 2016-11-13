@@ -40,10 +40,6 @@ public class MainActivity extends WearableActivity {
     private CalculatorExpressionEvaluator mEvaluator;
     private State mState;
 
-    private enum State {
-        DELETE, CLEAR, ERROR
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +99,7 @@ public class MainActivity extends WearableActivity {
                         setText("(" + getActiveEditText().getText() + ")");
                         break;
                     default:
-                        if(((Button) v).getText().toString().length() >= 2) {
+                        if (((Button) v).getText().toString().length() >= 2) {
                             onInsert(((Button) v).getText().toString() + "(");
                         } else {
                             onInsert(((Button) v).getText().toString());
@@ -214,7 +210,7 @@ public class MainActivity extends WearableActivity {
 
     private void setState(State state) {
         mDelete.setState(state == State.DELETE ? BackspaceImageButton.State.DELETE : BackspaceImageButton.State.CLEAR);
-        if(mState != state) {
+        if (mState != state) {
             switch (state) {
                 case CLEAR:
                     getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
@@ -302,5 +298,9 @@ public class MainActivity extends WearableActivity {
             editTexts[i] = (FormattedNumberEditText) mDisplay.getChildAt(i);
         }
         return editTexts;
+    }
+
+    private enum State {
+        DELETE, CLEAR, ERROR
     }
 }

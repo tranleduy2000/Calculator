@@ -140,6 +140,9 @@
     <string name="vibrateOnPress">Vibrate on Click</string>
     <string name="showWidgetBackground">Show Widget Background</string>
 
+    <!-- Floating calculator -->
+    <string name="floating_notification_description">Tap to open</string>
+
     <!-- Clings -->
     <string name="cling_simple_title">Welcome</string>
     <string name="cling_simple_msg">Slide left and right to access more content. Unnecessary pages can be disabled in Settings.</string>

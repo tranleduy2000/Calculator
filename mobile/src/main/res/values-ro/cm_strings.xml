@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Panou matrice</string>
     <string name="panel_graph">Panou grafic</string>
+    <string name="panel_function">Panou funcție</string>
     <string name="panel_hex">Panou hex</string>
     <string name="copy">Copiază \"%s\"</string>
     <string name="remove_from_history">Ștergeți din istoric</string>

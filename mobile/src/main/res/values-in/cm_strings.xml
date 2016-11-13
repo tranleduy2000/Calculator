@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Panel matriks</string>
     <string name="panel_graph">Panel grafik</string>
+    <string name="panel_function">Panel fungsi</string>
     <string name="panel_hex">Panel hex</string>
     <string name="copy">Menyalin \'%s\'</string>
     <string name="remove_from_history">Hapus dari riwayat</string>

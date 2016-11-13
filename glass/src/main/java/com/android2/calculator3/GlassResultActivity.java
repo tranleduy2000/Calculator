@@ -101,7 +101,7 @@ public class GlassResultActivity extends Activity {
         mTextToSpeech = new TextToSpeech(getBaseContext(), new OnInitListener() {
             @Override
             public void onInit(int status) {
-                if(status == TextToSpeech.SUCCESS) {
+                if (status == TextToSpeech.SUCCESS) {
                     mIsTextToSpeechInit = true;
                     speakResult();
                 }
@@ -112,11 +112,11 @@ public class GlassResultActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(mTextToSpeech != null) mTextToSpeech.shutdown();
+        if (mTextToSpeech != null) mTextToSpeech.shutdown();
     }
 
     private void speakResult() {
-        if(mTextToSpeech != null && mIsTextToSpeechInit) {
+        if (mTextToSpeech != null && mIsTextToSpeechInit) {
             String question = Voice.createSpokenText(mQuery);
             String result = Voice.createSpokenText(mResult);
             mTextToSpeech.speak(getString(R.string.speech_helper_equals, question, result), TextToSpeech.QUEUE_ADD, null);

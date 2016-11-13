@@ -15,14 +15,14 @@ public class StoreInfoActivity extends BaseActivity {
 
         // Update theme (as needed)
         int customTheme = Theme.getSettingsTheme(this);
-        if(customTheme != 0) {
+        if (customTheme != 0) {
             super.setTheme(customTheme);
         }
 
         setContentView(R.layout.activity_store_info);
 
         ActionBar mActionBar = getActionBar();
-        if(mActionBar != null) {
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
 

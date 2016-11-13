@@ -25,9 +25,9 @@ public class BaseActivity extends FragmentActivity {
     public void onPause() {
         super.onPause();
         Intent serviceIntent = new Intent(this, FloatingCalculator.class);
-        if(CalculatorSettings.floatingCalculator(this)) {
+        if (CalculatorSettings.floatingCalculator(this)) {
             // Start Floating Calc service if not up yet
-            if(!mIsSwitchingActivities) {
+            if (!mIsSwitchingActivities) {
                 startService(serviceIntent);
             }
         }
@@ -44,7 +44,7 @@ public class BaseActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home) {
+        if (item.getItemId() == android.R.id.home) {
             Intent i = getPackageManager().getLaunchIntentForPackage(getPackageName());
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);

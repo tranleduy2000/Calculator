@@ -22,9 +22,9 @@ public class GraphView extends View {
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
     private static final int LINES = 1;
-    private int mDrawingAlgorithm = LINES;
     private static final int DOTS = 2;
     DecimalFormat mFormat = new DecimalFormat("#.#####");
+    private int mDrawingAlgorithm = LINES;
     private PanListener mPanListener;
     private ZoomListener mZoomListener;
     private Paint mBackgroundPaint;
@@ -51,6 +51,16 @@ public class GraphView extends View {
 
     public GraphView(Context context) {
         super(context);
+        setup();
+    }
+
+    public GraphView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setup();
+    }
+
+    public GraphView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         setup();
     }
 
@@ -85,33 +95,23 @@ public class GraphView extends View {
         mDragRemainderX = mDragRemainderY = mOffsetX = mOffsetY = 0;
         onSizeChanged(getWidth(), getHeight(), 0, 0);
         invalidate();
-        if(mPanListener != null) mPanListener.panApplied();
-        if(mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
-    }
-
-    public GraphView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setup();
-    }
-
-    public GraphView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setup();
+        if (mPanListener != null) mPanListener.panApplied();
+        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
     }
 
     private void drawInArc(LinkedList<Point> data, Canvas canvas) {
         Path path = new Path();
 
-        if(data.size() > 1) {
-            for(int i = data.size() - 2; i < data.size(); i++) {
-                if(i >= 0) {
+        if (data.size() > 1) {
+            for (int i = data.size() - 2; i < data.size(); i++) {
+                if (i >= 0) {
                     Point point = data.get(i);
 
-                    if(i == 0) {
+                    if (i == 0) {
                         Point next = data.get(i + 1);
 //                        point.dx = ((getRawX(next) - getRawX(point)) / 3);
 //                        point.dy = ((getRawY(next) - getRawY(point)) / 3);
-                    } else if(i == data.size() - 1) {
+                    } else if (i == data.size() - 1) {
                         Point prev = data.get(i - 1);
 //                        point.dx = ((getRawX(point) - getRawX(prev)) / 3);
 //                        point.dy = ((getRawY(point) - getRawY(prev)) / 3);
@@ -126,9 +126,9 @@ public class GraphView extends View {
         }
 
         boolean first = true;
-        for(int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < data.size(); i++) {
             Point point = data.get(i);
-            if(first) {
+            if (first) {
                 first = false;
                 path.moveTo(getRawX(point), getRawY(point));
             } else {
@@ -144,7 +144,7 @@ public class GraphView extends View {
         path.moveTo(getRawX(data.get(0)), getRawY(data.get(0)));
 
         final int n = 6;
-        for(int i = 1; i < data.size() - n; i += n / 2) {
+        for (int i = 1; i < data.size() - n; i += n / 2) {
             Point a = data.get(i);
             Point b = data.get(i + 1);
             Point c = data.get(i + 2);
@@ -154,7 +154,7 @@ public class GraphView extends View {
             int bY = getRawY(b);
             int cX = getRawX(c);
             int cY = getRawY(c);
-            if(tooFar(aX, aY, bX, bY)) {
+            if (tooFar(aX, aY, bX, bY)) {
                 canvas.drawPath(path, mGraphPaint);
                 path = new Path();
                 path.moveTo(cX, cY);
@@ -172,7 +172,7 @@ public class GraphView extends View {
     private Point average(Point... args) {
         float x = 0;
         float y = 0;
-        for(Point p : args) {
+        for (Point p : args) {
             x += p.getX();
             y += p.getY();
         }
@@ -182,17 +182,17 @@ public class GraphView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // Update mode if pointer count changes
-        if(mPointers != event.getPointerCount()) {
+        if (mPointers != event.getPointerCount()) {
             setMode(event);
         }
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 setMode(event);
                 break;
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(mMode == DRAG) {
+                if (mMode == DRAG) {
                     mOffsetX += mDragOffsetX;
                     mOffsetY += mDragOffsetY;
                     mDragOffsetX = (int) (event.getX() - mStartX) / mLineMargin;
@@ -201,8 +201,8 @@ public class GraphView extends View {
                     mDragRemainderY = (int) (event.getY() - mStartY) % mLineMargin;
                     mOffsetX -= mDragOffsetX;
                     mOffsetY -= mDragOffsetY;
-                    if(mPanListener != null) mPanListener.panApplied();
-                } else if(mMode == ZOOM) {
+                    if (mPanListener != null) mPanListener.panApplied();
+                } else if (mMode == ZOOM) {
                     double distance = getDistance(new Point(event.getX(0), event.getY(0)), new Point(event.getX(1), event.getY(1)));
                     double delta = mZoomInitDistance - distance;
                     float zoom = (float) (delta / mZoomInitDistance);
@@ -235,13 +235,13 @@ public class GraphView extends View {
         // Draw the grid lines
         Rect bounds = new Rect();
         int previousLine = 0;
-        for(int i = 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
+        for (int i = 1, j = mOffsetX; i * mLineMargin < getWidth(); i++, j++) {
             // Draw vertical lines
             int x = i * mLineMargin + mDragRemainderX;
-            if(x < mLineMargin || x - previousLine < mMinLineMargin) continue;
+            if (x < mLineMargin || x - previousLine < mMinLineMargin) continue;
             previousLine = x;
 
-            if(j == 0) mAxisPaint.setStrokeWidth(6);
+            if (j == 0) mAxisPaint.setStrokeWidth(6);
             else mAxisPaint.setStrokeWidth(2);
             canvas.drawLine(x, mLineMargin, x, getHeight(), mAxisPaint);
 
@@ -254,13 +254,13 @@ public class GraphView extends View {
             canvas.drawText(text, x - textWidth / 2, mLineMargin / 2 + mTextPaint.getTextSize() / 2, mTextPaint);
         }
         previousLine = 0;
-        for(int i = 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
+        for (int i = 1, j = mOffsetY; i * mLineMargin < getHeight(); i++, j++) {
             // Draw horizontal lines
             int y = i * mLineMargin + mDragRemainderY;
-            if(y < mLineMargin || y - previousLine < mMinLineMargin) continue;
+            if (y < mLineMargin || y - previousLine < mMinLineMargin) continue;
             previousLine = y;
 
-            if(j == 0) mAxisPaint.setStrokeWidth(6);
+            if (j == 0) mAxisPaint.setStrokeWidth(6);
             else mAxisPaint.setStrokeWidth(2);
             canvas.drawLine(mLineMargin, y, getWidth(), y, mAxisPaint);
 
@@ -278,21 +278,21 @@ public class GraphView extends View {
         canvas.clipRect(mLineMargin, mLineMargin, getWidth(), getHeight());
 
         // Create a path to draw smooth arcs
-        if(mDrawingAlgorithm == LINES) {
+        if (mDrawingAlgorithm == LINES) {
             LinkedList<Point> data = new LinkedList<Point>(mData);
-            if(data.size() != 0) {
+            if (data.size() != 0) {
 //            drawInArc(data, canvas);
 //            drawWithCurvedLines(data, canvas);
                 drawWithStraightLines(data, canvas);
             }
-        } else if(mDrawingAlgorithm == DOTS) {
+        } else if (mDrawingAlgorithm == DOTS) {
             drawDots(mData, canvas);
         }
     }
 
     private void drawWithStraightLines(LinkedList<Point> data, Canvas canvas) {
         Point previousPoint = data.remove();
-        for(Point currentPoint : data) {
+        for (Point currentPoint : data) {
             int aX = getRawX(previousPoint);
             int aY = getRawY(previousPoint);
             int bX = getRawX(currentPoint);
@@ -300,20 +300,20 @@ public class GraphView extends View {
 
             previousPoint = currentPoint;
 
-            if(aX == -1 || aY == -1 || bX == -1 || bY == -1 || tooFar(aX, aY, bX, bY)) continue;
+            if (aX == -1 || aY == -1 || bX == -1 || bY == -1 || tooFar(aX, aY, bX, bY)) continue;
 
             canvas.drawLine(aX, aY, bX, bY, mGraphPaint);
         }
     }
 
     private void drawDots(LinkedList<Point> data, Canvas canvas) {
-        for(Point p : data) {
+        for (Point p : data) {
             canvas.drawPoint(getRawX(p), getRawY(p), mGraphPaint);
         }
     }
 
     private int getRawX(Point p) {
-        if(p == null || Double.isNaN(p.getX()) || Double.isInfinite(p.getX())) return -1;
+        if (p == null || Double.isNaN(p.getX()) || Double.isInfinite(p.getX())) return -1;
 
         // The left line is at pos
         float leftLine = mLineMargin + mDragRemainderX;
@@ -328,7 +328,7 @@ public class GraphView extends View {
     }
 
     private int getRawY(Point p) {
-        if(p == null || Double.isNaN(p.getY()) || Double.isInfinite(p.getY())) return -1;
+        if (p == null || Double.isNaN(p.getY()) || Double.isInfinite(p.getY())) return -1;
 
         // The top line is at pos
         float topLine = mLineMargin + mDragRemainderY;
@@ -344,7 +344,7 @@ public class GraphView extends View {
 
     private boolean tooFar(float aX, float aY, float bX, float bY) {
         boolean outOfBounds = aX == -1 || aY == -1 || bX == -1 || bY == -1;
-        if(outOfBounds) return true;
+        if (outOfBounds) return true;
 
         boolean horzAsymptote = (aX > getXAxisMax() && bX < getXAxisMin()) || (aX < getXAxisMin() && bX > getXAxisMax());
         boolean vertAsymptote = (aY > getYAxisMax() && bY < getYAxisMin()) || (aY < getYAxisMin() && bY > getYAxisMax());
@@ -357,7 +357,7 @@ public class GraphView extends View {
 
     public float getXAxisMax() {
         int num = mOffsetX;
-        for(int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
+        for (int i = 1; i * mLineMargin < getWidth(); i++, num++) ;
         return num * mZoomLevel;
     }
 
@@ -367,7 +367,7 @@ public class GraphView extends View {
 
     public float getYAxisMax() {
         int num = mOffsetY;
-        for(int i = 1; i * mLineMargin < getHeight(); i++, num++) ;
+        for (int i = 1; i * mLineMargin < getHeight(); i++, num++) ;
         return num * mZoomLevel;
     }
 
@@ -378,7 +378,7 @@ public class GraphView extends View {
 
     private void setMode(MotionEvent e) {
         mPointers = e.getPointerCount();
-        switch(e.getPointerCount()) {
+        switch (e.getPointerCount()) {
             case 1:
                 // Drag
                 setMode(DRAG, e);
@@ -392,7 +392,7 @@ public class GraphView extends View {
 
     private void setMode(int mode, MotionEvent e) {
         mMode = mode;
-        switch(mode) {
+        switch (mode) {
             case DRAG:
                 mStartX = e.getX();
                 mStartY = e.getY();
@@ -413,7 +413,7 @@ public class GraphView extends View {
     public void setZoomLevel(float level) {
         mZoomLevel = level;
         invalidate();
-        if(mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
+        if (mZoomListener != null) mZoomListener.zoomApplied(mZoomLevel);
     }
 
     public void zoomIn() {

@@ -9,7 +9,7 @@
         android:id="@+id/history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="18dp"
-        android:paddingEnd="25dp" />
+        android:paddingEnd="25dp"
+        android:paddingStart="18dp" />
 
 </com.android2.calculator3.view.SolidLayout>

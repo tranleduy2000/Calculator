@@ -20,20 +20,20 @@ public class Preferences extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         int customTheme = Theme.getSettingsTheme(this);
-        if(customTheme != 0) {
+        if (customTheme != 0) {
             super.setTheme(customTheme);
         }
 
         setContentView(R.layout.activity_preferences);
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             mFragment = new PreferencesFragment();
             mFragment.setArguments(getIntent().getExtras());
             getFragmentManager().beginTransaction().add(R.id.content_view, mFragment).commit();
         }
 
         ActionBar mActionBar = getActionBar();
-        if(mActionBar != null) {
+        if (mActionBar != null) {
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -46,12 +46,12 @@ public class Preferences extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
-        if(keyCode == KeyEvent.KEYCODE_BACK) {
-            if(getFragmentManager().findFragmentById(R.id.content_view) != mFragment) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (getFragmentManager().findFragmentById(R.id.content_view) != mFragment) {
                 try {
                     getFragmentManager().popBackStack();
                     return true;
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

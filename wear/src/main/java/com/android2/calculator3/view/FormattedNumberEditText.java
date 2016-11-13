@@ -36,21 +36,25 @@ import java.util.Set;
 
 /**
  * FormattedNumberEditText adds more advanced functionality to NumberEditText.
- *
+ * <p>
  * Commas will appear as numbers are typed, exponents will be raised, and backspacing
  * on sin( and log( will remove the whole word. Because of the formatting, getText() will
  * no longer return the correct value. getCleanText() has been added instead.
- * */
+ */
 public class FormattedNumberEditText extends NumberEditText {
-    private boolean mDebug = false;
     private final Set<TextWatcher> mTextWatchers = new HashSet<>();
+    private boolean mDebug = false;
     private boolean mTextWatchersEnabled = true;
+    private EquationFormatter mEquationFormatter;
+    private Solver mSolver;
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
 
         @Override
         public void afterTextChanged(Editable s) {
@@ -60,8 +64,6 @@ public class FormattedNumberEditText extends NumberEditText {
             mTextWatchersEnabled = true;
         }
     };
-    private EquationFormatter mEquationFormatter;
-    private Solver mSolver;
     private List<String> mKeywords;
     private boolean mIsInserting;
 
@@ -192,8 +194,8 @@ public class FormattedNumberEditText extends NumberEditText {
         String textBeforeInsertionHandle = text.substring(0, selectionHandle);
         String textAfterInsertionHandle = text.substring(selectionHandle, text.length());
 
-        for(String s : mKeywords) {
-            if(textBeforeInsertionHandle.endsWith(s)) {
+        for (String s : mKeywords) {
+            if (textBeforeInsertionHandle.endsWith(s)) {
                 int deletionLength = s.length();
                 String newText = textBeforeInsertionHandle.substring(0, textBeforeInsertionHandle.length() - deletionLength) + textAfterInsertionHandle;
                 setText(newText);
@@ -229,13 +231,9 @@ public class FormattedNumberEditText extends NumberEditText {
         return Math.max(0, super.getSelectionStart());
     }
 
-    public void setSolver(Solver solver) {
-        mSolver = solver;
-    }
-
     protected String removeFormatting(String input) {
         input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
-        if(mSolver != null) {
+        if (mSolver != null) {
             input = input.replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
         }
         return input;
@@ -269,6 +267,10 @@ public class FormattedNumberEditText extends NumberEditText {
 
     protected Solver getSolver() {
         return mSolver;
+    }
+
+    public void setSolver(Solver solver) {
+        mSolver = solver;
     }
 
     public void setDebugEnabled(boolean enabled) {

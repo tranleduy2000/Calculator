@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Πίνακες</string>
     <string name="panel_graph">Γραφικές παράστασεις</string>
+    <string name="panel_function">Συναρτήσεις</string>
     <string name="panel_hex">Δεκαεξαδικές πράξεις</string>
     <string name="copy">Αντιγραφή \"%s\"</string>
     <string name="remove_from_history">Αφαίρεση από το ιστορικό</string>

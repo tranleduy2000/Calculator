@@ -22,6 +22,7 @@
     <string name="dy">dY</string>
     <string name="panel_matrix">Matrice</string>
     <string name="panel_graph">Grafovi</string>
+    <string name="panel_function">Funkcije</string>
     <string name="panel_hex">Heksadecimalni</string>
     <string name="copy">Kopiraj \'%s\'</string>
     <string name="remove_from_history">Izbriši iz povijesti</string>

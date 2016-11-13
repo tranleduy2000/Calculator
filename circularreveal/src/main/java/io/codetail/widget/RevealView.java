@@ -9,17 +9,14 @@ import android.view.View;
 
 import io.codetail.animation.RevealAnimator;
 
-public class RevealView extends View implements RevealAnimator{
+public class RevealView extends View implements RevealAnimator {
 
+    final Paint mPaint = new Paint();
     Path mRevealPath;
-
     float mCenterX;
     float mCenterY;
     float mRadius;
-
     View mTarget;
-
-    final Paint mPaint = new Paint();
 
     public RevealView(Context context) {
         this(context, null);
@@ -45,7 +42,7 @@ public class RevealView extends View implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setTarget(View view){
+    public void setTarget(View view) {
         mTarget = view;
     }
 
@@ -55,7 +52,7 @@ public class RevealView extends View implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setCenter(float centerX, float centerY){
+    public void setCenter(float centerX, float centerY) {
         mCenterX = centerX;
         mCenterY = centerY;
     }
@@ -66,9 +63,8 @@ public class RevealView extends View implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setRevealRadius(float radius){
-        mRadius = radius;
-        invalidate();
+    public float getRevealRadius() {
+        return mRadius;
     }
 
     /**
@@ -77,8 +73,9 @@ public class RevealView extends View implements RevealAnimator{
      * @hide
      */
     @Override
-    public float getRevealRadius(){
-        return mRadius;
+    public void setRevealRadius(float radius) {
+        mRadius = radius;
+        invalidate();
     }
 
     public void setRevealColor(int color) {

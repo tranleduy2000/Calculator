@@ -66,8 +66,8 @@ public class ColorButton extends ThemedButton {
 
     @Override
     public void setTypeface(Typeface tf) {
-        if(mHintPaint != null) {
-            if(mHintPaint.getTypeface() != tf) {
+        if (mHintPaint != null) {
+            if (mHintPaint.getTypeface() != tf) {
                 mHintPaint.setTypeface(tf);
             }
         }
@@ -76,22 +76,22 @@ public class ColorButton extends ThemedButton {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if(mAnimStart != -1) {
+        if (mAnimStart != -1) {
             int animDuration = (int) (System.currentTimeMillis() - mAnimStart);
 
-            if(animDuration >= CLICK_FEEDBACK_DURATION) {
+            if (animDuration >= CLICK_FEEDBACK_DURATION) {
                 mAnimStart = -1;
             } else {
                 drawMagicFlame(animDuration, canvas);
                 postInvalidateDelayed(CLICK_FEEDBACK_INTERVAL);
             }
-        } else if(isPressed()) {
+        } else if (isPressed()) {
             drawMagicFlame(0, canvas);
         }
 
         mHintPaint.setColor(Theme.getColor(getContext(), R.color.button_hint_text));
         CharSequence hint = getHint();
-        if(hint != null) {
+        if (hint != null) {
             mHintPaint.setTextSize(getPaint().getTextSize() * getContext().getResources().getInteger(R.integer.button_hint_text_size_percent) / 100f);
             int offsetX = getContext().getResources().getDimensionPixelSize(R.dimen.button_hint_offset_x);
             int offsetY = (int) ((mTextY + getContext().getResources().getDimensionPixelSize(R.dimen.button_hint_offset_y) - mHintPaint.getTextSize()) / 2) - getPaddingTop();
@@ -99,7 +99,7 @@ public class ColorButton extends ThemedButton {
             float textWidth = mHintPaint.measureText(hint.toString());
             float width = getWidth() - getPaddingLeft() - getPaddingRight() - mTextX - offsetX;
             float textSize = mHintPaint.getTextSize();
-            if(textWidth > width) {
+            if (textWidth > width) {
                 mHintPaint.setTextSize(textSize * width / textWidth);
             }
 
@@ -114,7 +114,7 @@ public class ColorButton extends ThemedButton {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if(changed) layoutText();
+        if (changed) layoutText();
     }
 
     @Override
@@ -124,11 +124,11 @@ public class ColorButton extends ThemedButton {
 
     private void layoutText() {
         Paint paint = getPaint();
-        if(mTextSize != 0f) paint.setTextSize(mTextSize);
+        if (mTextSize != 0f) paint.setTextSize(mTextSize);
         float textWidth = paint.measureText(getText().toString());
         float width = getWidth() - getPaddingLeft() - getPaddingRight();
         float textSize = getTextSize();
-        if(textWidth > width) {
+        if (textWidth > width) {
             paint.setTextSize(textSize * width / textWidth);
             mTextX = getPaddingLeft();
             mTextSize = textSize;
@@ -142,9 +142,9 @@ public class ColorButton extends ThemedButton {
     public boolean onTouchEvent(MotionEvent event) {
         boolean result = super.onTouchEvent(event);
 
-        switch(event.getAction()) {
+        switch (event.getAction()) {
             case MotionEvent.ACTION_UP:
-                if(isPressed()) {
+                if (isPressed()) {
                     animateClickFeedback();
                 } else {
                     invalidate();
@@ -166,7 +166,7 @@ public class ColorButton extends ThemedButton {
     }
 
     private void drawMagicFlame(int duration, Canvas canvas) {
-        if(CLICK_FEEDBACK_COLOR >= 0x00000000 && CLICK_FEEDBACK_COLOR <= 0x00FFFFFF) {
+        if (CLICK_FEEDBACK_COLOR >= 0x00000000 && CLICK_FEEDBACK_COLOR <= 0x00FFFFFF) {
             // Feedback has been set as transparent
             return;
         }

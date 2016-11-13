@@ -44,12 +44,12 @@ public class FloatingCalculatorEditText extends CalculatorEditText {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if(event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
             mPressedTime = System.currentTimeMillis();
             mHandler.postDelayed(mOnLongPressed, LONG_PRESS_TIME);
         }
-        if(event.getAction() == MotionEvent.ACTION_UP) {
-            if(System.currentTimeMillis() - mPressedTime < LONG_PRESS_TIME) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (System.currentTimeMillis() - mPressedTime < LONG_PRESS_TIME) {
                 mHandler.removeCallbacks(mOnLongPressed);
             }
             final int offset = getOffsetForPosition(event.getX(), event.getY());

@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Tauler matrius</string>
     <string name="panel_graph">Tauler gràfics</string>
+    <string name="panel_function">Tauler funcions</string>
     <string name="panel_hex">Tauler Hex</string>
     <string name="copy">Copia \'%s\'</string>
     <string name="remove_from_history">Treu-ho de l\'historial</string>

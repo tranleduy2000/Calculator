@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Matricos skydelis</string>
     <string name="panel_graph">Grafinis skydelis</string>
+    <string name="panel_function">Funkcijų skydelis</string>
     <string name="panel_hex">Hex skydelis</string>
     <string name="copy">Kopijuoti „%s“</string>
     <string name="remove_from_history">Pašalinti iš istorijos</string>

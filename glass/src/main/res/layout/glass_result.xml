@@ -10,15 +10,15 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:textSize="70sp"
+        android:singleLine="true"
         android:textColor="#808080"
-        android:singleLine="true" />
+        android:textSize="70sp" />
 
     <com.android2.calculator3.ResizingTextView
-        android:text="@string/equal"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:text="@string/equal"
         android:textColor="#808080" />
 
     <com.android2.calculator3.ResizingTextView
@@ -26,8 +26,8 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:textSize="70sp"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:singleLine="true" />
+        android:textSize="70sp" />
 
 </LinearLayout>

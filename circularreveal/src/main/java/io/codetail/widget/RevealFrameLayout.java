@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 
 import io.codetail.animation.RevealAnimator;
 
-public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
+public class RevealFrameLayout extends FrameLayout implements RevealAnimator {
 
     Path mRevealPath;
 
@@ -45,7 +45,7 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setTarget(View view){
+    public void setTarget(View view) {
         mTarget = view;
     }
 
@@ -55,7 +55,7 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setCenter(float centerX, float centerY){
+    public void setCenter(float centerX, float centerY) {
         mCenterX = centerX;
         mCenterY = centerY;
     }
@@ -66,7 +66,7 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setClipOutlines(boolean clip){
+    public void setClipOutlines(boolean clip) {
         mClipOutlines = clip;
     }
 
@@ -76,9 +76,8 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setRevealRadius(float radius){
-        mRadius = radius;
-        invalidate();
+    public float getRevealRadius() {
+        return mRadius;
     }
 
     /**
@@ -87,14 +86,14 @@ public class RevealFrameLayout extends FrameLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public float getRevealRadius(){
-        return mRadius;
+    public void setRevealRadius(float radius) {
+        mRadius = radius;
+        invalidate();
     }
-
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
-        if(!mClipOutlines && child != mTarget)
+        if (!mClipOutlines && child != mTarget)
             return super.drawChild(canvas, child, drawingTime);
 
         final int state = canvas.save();

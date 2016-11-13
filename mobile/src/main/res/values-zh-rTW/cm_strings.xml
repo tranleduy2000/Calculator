@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">矩陣面板</string>
     <string name="panel_graph">圖表面板</string>
+    <string name="panel_function">函數面板</string>
     <string name="panel_hex">十六進位面板</string>
     <string name="copy">複製「%s」</string>
     <string name="remove_from_history">從紀錄中移除</string>

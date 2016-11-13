@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (C) 2014 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +31,7 @@
 
     <style name="Theme.Calculator.Display.Main" />
 
-    <style name="Theme.Calculator.Display.Main.Formula" >
+    <style name="Theme.Calculator.Display.Main.Formula">
         <item name="android:paddingTop">34dip</item>
         <item name="android:paddingBottom">12dip</item>
         <item name="android:paddingLeft">16dip</item>
@@ -42,7 +41,7 @@
         <item name="stepTextSize">8sp</item>
     </style>
 
-    <style name="Theme.Calculator.Display.Main.Result" >
+    <style name="Theme.Calculator.Display.Main.Result">
         <item name="android:paddingTop">12dip</item>
         <item name="android:paddingBottom">34dip</item>
         <item name="android:paddingLeft">16dip</item>
@@ -50,7 +49,7 @@
         <item name="android:textSize">36sp</item>
     </style>
 
-    <style name="Theme.Calculator.Display.Widget" >
+    <style name="Theme.Calculator.Display.Widget">
         <item name="android:textColor">@color/widget_text_color</item>
     </style>
 
@@ -127,7 +126,7 @@
         <item name="android:rowCount">3</item>
     </style>
 
-    <style name="PadLayoutStyle.Matrix" parent="@style/PadLayoutStyle.Advanced" >
+    <style name="PadLayoutStyle.Matrix" parent="@style/PadLayoutStyle.Advanced">
         <item name="android:columnCount">2</item>
         <item name="android:rowCount">4</item>
     </style>

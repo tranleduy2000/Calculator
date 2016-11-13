@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">מטריצה</string>
     <string name="panel_graph">גרף</string>
+    <string name="panel_function">פונקציה</string>
     <string name="panel_hex">הקס</string>
     <string name="copy">העתק \"%s\"</string>
     <string name="remove_from_history">הסר מההיסטוריה</string>

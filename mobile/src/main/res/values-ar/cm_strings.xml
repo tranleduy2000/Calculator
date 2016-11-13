@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">لوحة المصفوفة</string>
     <string name="panel_graph">لوحة الرسم البياني</string>
+    <string name="panel_function">لوحة الدالة</string>
     <string name="panel_hex">لوحة التعريف</string>
     <string name="copy">نسخ\"%s\"</string>
     <string name="remove_from_history">إزالة من التاريخ</string>

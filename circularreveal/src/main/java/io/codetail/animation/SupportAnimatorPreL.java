@@ -28,25 +28,34 @@ final class SupportAnimatorPreL extends SupportAnimator {
     @Override
     public void start() {
         Animator a = mSupportFramework.get();
-        if(a != null) {
+        if (a != null) {
             a.start();
         }
     }
 
     @Override
+    public long getDuration() {
+        Animator a = mSupportFramework.get();
+        if (a != null) {
+            return a.getDuration();
+        }
+        return 0;
+    }
+
+    @Override
     public SupportAnimatorPreL setDuration(long duration) {
         Animator a = mSupportFramework.get();
-        if(a != null) {
+        if (a != null) {
             a.setDuration(duration);
         }
         return this;
     }
 
     @Override
-    public long getDuration() {
+    public long getStartDelay() {
         Animator a = mSupportFramework.get();
-        if(a != null) {
-            return a.getDuration();
+        if (a != null) {
+            return a.getStartDelay();
         }
         return 0;
     }
@@ -54,24 +63,15 @@ final class SupportAnimatorPreL extends SupportAnimator {
     @Override
     public void setStartDelay(long delay) {
         Animator a = mSupportFramework.get();
-        if(a != null) {
+        if (a != null) {
             a.setStartDelay(delay);
         }
     }
 
     @Override
-    public long getStartDelay() {
-        Animator a = mSupportFramework.get();
-        if(a != null) {
-            return a.getStartDelay();
-        }
-        return 0;
-    }
-
-    @Override
     public void setInterpolator(final TimeInterpolator value) {
         Animator a = mSupportFramework.get();
-        if(a != null) {
+        if (a != null) {
             if (value == null) {
                 a.setInterpolator(null);
             } else {
@@ -88,7 +88,7 @@ final class SupportAnimatorPreL extends SupportAnimator {
     @Override
     public void addListener(final AnimatorListener listener) {
         Animator a = mSupportFramework.get();
-        if(a == null) {
+        if (a == null) {
             return;
         }
         a.addListener(new Animator.AnimatorListener() {

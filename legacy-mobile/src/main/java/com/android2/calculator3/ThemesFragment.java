@@ -76,20 +76,20 @@ public class ThemesFragment extends Fragment implements OnItemClickListener, OnI
 
         // Restore the scroll position, if any
         final Bundle args = getArguments();
-        if(args != null) {
+        if (args != null) {
             mGridView.setSelection(args.getInt(EXTRA_LIST_POSITION, 0));
             // Hack to scroll to the previous offset
             mGridView.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(android.os.Build.VERSION.SDK_INT >= 19) {
+                    if (android.os.Build.VERSION.SDK_INT >= 19) {
                         mGridView.scrollListBy(-1 * args.getInt(EXTRA_LIST_VIEW_OFFSET, 0));
                     } else {
                         try {
                             Method m = AbsListView.class.getDeclaredMethod("trackMotionScroll", Integer.TYPE, Integer.TYPE);
                             m.setAccessible(true);
                             m.invoke(mGridView, args.getInt(EXTRA_LIST_VIEW_OFFSET, 0), args.getInt(EXTRA_LIST_VIEW_OFFSET, 0));
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                         }
                     }
                 }

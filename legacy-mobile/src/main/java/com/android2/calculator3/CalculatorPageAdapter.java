@@ -65,8 +65,8 @@ public abstract class CalculatorPageAdapter extends PagerAdapter {
 
     protected void applyBannedResources(Base baseMode) {
         Iterable<View> iterator = getViewIterator();
-        for(View child : iterator) {
-            if(child != null) {
+        for (View child : iterator) {
+            if (child != null) {
                 applyBannedResourcesByPage(child, baseMode);
             }
         }
@@ -74,22 +74,22 @@ public abstract class CalculatorPageAdapter extends PagerAdapter {
 
     protected void applyBannedResourcesByPage(View page, Base baseMode) {
         // Enable
-        for(Base key : mBannedResources.keySet()) {
-            if(baseMode.compareTo(key) != 0) {
+        for (Base key : mBannedResources.keySet()) {
+            if (baseMode.compareTo(key) != 0) {
                 List<Integer> resources = mBannedResources.get(key);
-                for(Integer resource : resources) {
+                for (Integer resource : resources) {
                     final int resId = resource.intValue();
                     View v = page.findViewById(resId);
-                    if(v != null) v.setEnabled(true);
+                    if (v != null) v.setEnabled(true);
                 }
             }
         }
         // Disable
         List<Integer> resources = mBannedResources.get(baseMode);
-        for(Integer resource : resources) {
+        for (Integer resource : resources) {
             final int resId = resource.intValue();
             View v = page.findViewById(resId);
-            if(v != null) v.setEnabled(false);
+            if (v != null) v.setEnabled(false);
         }
     }
 

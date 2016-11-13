@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import io.codetail.animation.RevealAnimator;
 
-public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
+public class RevealLinearLayout extends LinearLayout implements RevealAnimator {
 
     Path mRevealPath;
 
@@ -38,7 +38,7 @@ public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setTarget(View view){
+    public void setTarget(View view) {
         mTarget = view;
     }
 
@@ -46,7 +46,7 @@ public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setCenter(float centerX, float centerY){
+    public void setCenter(float centerX, float centerY) {
         mCenterX = centerX;
         mCenterY = centerY;
     }
@@ -55,7 +55,7 @@ public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setClipOutlines(boolean clip){
+    public void setClipOutlines(boolean clip) {
         mClipOutlines = clip;
     }
 
@@ -63,19 +63,18 @@ public class RevealLinearLayout extends LinearLayout implements RevealAnimator{
      * @hide
      */
     @Override
-    public void setRevealRadius(float radius){
-        mRadius = radius;
-        invalidate();
+    public float getRevealRadius() {
+        return mRadius;
     }
 
     /**
      * @hide
      */
     @Override
-    public float getRevealRadius(){
-        return mRadius;
+    public void setRevealRadius(float radius) {
+        mRadius = radius;
+        invalidate();
     }
-
 
     @Override
     protected boolean drawChild(Canvas canvas, View child, long drawingTime) {

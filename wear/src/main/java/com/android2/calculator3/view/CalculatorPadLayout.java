@@ -40,7 +40,7 @@ public class CalculatorPadLayout extends ViewGroup {
     public CalculatorPadLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         final TypedArray a = context.obtainStyledAttributes(attrs,
-                new int[] { android.R.attr.rowCount, android.R.attr.columnCount }, defStyle, 0);
+                new int[]{android.R.attr.rowCount, android.R.attr.columnCount}, defStyle, 0);
         mRowCount = a.getInt(0, 1);
         mColumnCount = a.getInt(1, 1);
         a.recycle();
@@ -60,8 +60,7 @@ public class CalculatorPadLayout extends ViewGroup {
         final boolean isRTL;
         if (android.os.Build.VERSION.SDK_INT >= 17) {
             isRTL = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
-        }
-        else {
+        } else {
             isRTL = false;
         }
         final int columnWidth =

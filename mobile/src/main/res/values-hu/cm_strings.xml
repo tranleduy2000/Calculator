@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Mátrix panel</string>
     <string name="panel_graph">Grafikon panel</string>
+    <string name="panel_function">Függvény panel</string>
     <string name="panel_hex">Hexadecimális panel</string>
     <string name="copy">Másolás \'%s\'</string>
     <string name="remove_from_history">Eltávolítás az előzményekből</string>

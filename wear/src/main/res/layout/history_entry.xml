@@ -12,9 +12,9 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="left"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
-        android:singleLine="true" />
+        android:textSize="15sp" />
 
     <TextView
         android:id="@+id/historyResult"
@@ -22,8 +22,8 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:gravity="right"
+        android:singleLine="true"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
-        android:singleLine="true" />
+        android:textSize="18sp" />
 
 </LinearLayout>

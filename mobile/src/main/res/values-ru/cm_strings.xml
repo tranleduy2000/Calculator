@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Панель матриц</string>
     <string name="panel_graph">Панель графиков</string>
+    <string name="panel_function">Панель функций</string>
     <string name="panel_hex">Шестн. панель</string>
     <string name="copy">Копировать «%s»</string>
     <string name="remove_from_history">Убрать из истории</string>

@@ -56,6 +56,136 @@ public class Page {
         mIsSmall = page.isSmall();
     }
 
+    public static List<Page> getAllPages(Context context) {
+        ArrayList<Page> list = new ArrayList<Page>();
+        for (Panel p : NormalPanel.values()) {
+            Page page = new Page(context, p);
+            list.add(page);
+        }
+        // TODO Readd when extensions are added
+        // List<App> extensions = Extension.getApps(context);
+        // for(App a : extensions) {
+        // Page page = new Page(a);
+        // list.add(page);
+        // }
+        Collections.sort(list, new PageSort(context));
+        return list;
+    }
+
+    public static List<Page> getPages(Context context) {
+        ArrayList<Page> list = new ArrayList<Page>();
+        for (Panel p : NormalPanel.values()) {
+            Page page = new Page(context, p);
+            if (CalculatorSettings.isPageEnabled(context, page)) {
+                list.add(page);
+            }
+        }
+        // TODO Readd when extensions are added
+        // List<App> extensions = Extension.getApps(context);
+        // for(App a : extensions) {
+        // Page page = new Page(a);
+        // if(CalculatorSettings.isPageEnabled(context, page)) {
+        // list.add(page);
+        // }
+        // }
+        Collections.sort(list, new PageSort(context));
+        while (list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
+            // Double the records to avoid using the same view twice
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                list.add(new Page(list.get(i)));
+            }
+        }
+        return list;
+    }
+
+    public static List<Page> getSmallPages(Context context) {
+        ArrayList<Page> list = new ArrayList<Page>();
+        for (Panel p : SmallPanel.values()) {
+            Page page = new Page(context, p);
+            if (CalculatorSettings.isPageEnabled(context, page)) {
+                list.add(page);
+            }
+        }
+        Collections.sort(list, new PageSort(context));
+        while (list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
+            // Double the records to avoid using the same view twice
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                list.add(new Page(list.get(i)));
+            }
+        }
+        return list;
+    }
+
+    public static List<Page> getLargePages(Context context) {
+        ArrayList<Page> list = new ArrayList<Page>();
+        for (Panel p : LargePanel.values()) {
+            Page page = new Page(context, p);
+            if (CalculatorSettings.isPageEnabled(context, page)) {
+                list.add(page);
+            }
+        }
+        // TODO Readd when extensions are added
+        // List<App> extensions = Extension.getApps(context);
+        // for(App a : extensions) {
+        // Page page = new Page(a);
+        // if(CalculatorSettings.isPageEnabled(context, page)) {
+        // list.add(page);
+        // }
+        // }
+        Collections.sort(list, new PageSort(context));
+        while (list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
+            // Double the records to avoid using the same view twice
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                list.add(new Page(list.get(i)));
+            }
+        }
+        return list;
+    }
+
+    public static Page getCurrentPage(CalculatorViewPager pager) {
+        List<Page> pages = ((CalculatorPageAdapter) pager.getAdapter()).getPages();
+        if (pages.size() != 0) {
+            return pages.get(pager.getCurrentItem() % pages.size());
+        } else {
+            return null;
+        }
+    }
+
+    public static Page getPage(List<Page> pages, String name) {
+        for (Page p : pages) {
+            if (p.getName().equals(name)) return p;
+        }
+        return null;
+    }
+
+    public static int getOrder(List<Page> pages, Page page) {
+        for (int i = 0; i < pages.size(); i++) {
+            Page p = pages.get(i);
+            if (p.equals(page)) return i;
+        }
+        return -1;
+    }
+
+    public static List<Page> removeDuplicates(List<Page> pages) {
+        ArrayList<Page> clean = new ArrayList<Page>();
+        for (Page p : pages) {
+            if (clean.contains(p)) continue;
+            clean.add(p);
+        }
+        return clean;
+    }
+
+    private static void setDecimalButton(View view) {
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        if (view.findViewById(R.id.dot) != null) {
+            Button dotBtn = (Button) view.findViewById(R.id.dot);
+            dotBtn.setText(dfs.getDecimalSeparator() + "");
+        }
+    }
+
     public String getName() {
         return mName;
     }
@@ -76,125 +206,12 @@ public class Page {
         return mIsSmall;
     }
 
-    public static List<Page> getAllPages(Context context) {
-        ArrayList<Page> list = new ArrayList<Page>();
-        for(Panel p : NormalPanel.values()) {
-            Page page = new Page(context, p);
-            list.add(page);
-        }
-        // TODO Readd when extensions are added
-        // List<App> extensions = Extension.getApps(context);
-        // for(App a : extensions) {
-        // Page page = new Page(a);
-        // list.add(page);
-        // }
-        Collections.sort(list, new PageSort(context));
-        return list;
-    }
-
-    public static List<Page> getPages(Context context) {
-        ArrayList<Page> list = new ArrayList<Page>();
-        for(Panel p : NormalPanel.values()) {
-            Page page = new Page(context, p);
-            if(CalculatorSettings.isPageEnabled(context, page)) {
-                list.add(page);
-            }
-        }
-        // TODO Readd when extensions are added
-        // List<App> extensions = Extension.getApps(context);
-        // for(App a : extensions) {
-        // Page page = new Page(a);
-        // if(CalculatorSettings.isPageEnabled(context, page)) {
-        // list.add(page);
-        // }
-        // }
-        Collections.sort(list, new PageSort(context));
-        while(list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
-            // Double the records to avoid using the same view twice
-            int size = list.size();
-            for(int i = 0; i < size; i++) {
-                list.add(new Page(list.get(i)));
-            }
-        }
-        return list;
-    }
-
-    public static List<Page> getSmallPages(Context context) {
-        ArrayList<Page> list = new ArrayList<Page>();
-        for(Panel p : SmallPanel.values()) {
-            Page page = new Page(context, p);
-            if(CalculatorSettings.isPageEnabled(context, page)) {
-                list.add(page);
-            }
-        }
-        Collections.sort(list, new PageSort(context));
-        while(list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
-            // Double the records to avoid using the same view twice
-            int size = list.size();
-            for(int i = 0; i < size; i++) {
-                list.add(new Page(list.get(i)));
-            }
-        }
-        return list;
-    }
-
-    public static List<Page> getLargePages(Context context) {
-        ArrayList<Page> list = new ArrayList<Page>();
-        for(Panel p : LargePanel.values()) {
-            Page page = new Page(context, p);
-            if(CalculatorSettings.isPageEnabled(context, page)) {
-                list.add(page);
-            }
-        }
-        // TODO Readd when extensions are added
-        // List<App> extensions = Extension.getApps(context);
-        // for(App a : extensions) {
-        // Page page = new Page(a);
-        // if(CalculatorSettings.isPageEnabled(context, page)) {
-        // list.add(page);
-        // }
-        // }
-        Collections.sort(list, new PageSort(context));
-        while(list.size() != 0 && list.size() < 4 && CalculatorSettings.useInfiniteScrolling(context)) {
-            // Double the records to avoid using the same view twice
-            int size = list.size();
-            for(int i = 0; i < size; i++) {
-                list.add(new Page(list.get(i)));
-            }
-        }
-        return list;
-    }
-
-    public static Page getCurrentPage(CalculatorViewPager pager) {
-        List<Page> pages = ((CalculatorPageAdapter) pager.getAdapter()).getPages();
-        if(pages.size() != 0) {
-            return pages.get(pager.getCurrentItem() % pages.size());
-        } else {
-            return null;
-        }
-    }
-
-    public static Page getPage(List<Page> pages, String name) {
-        for(Page p : pages) {
-            if(p.getName().equals(name)) return p;
-        }
-        return null;
-    }
-
-    public static int getOrder(List<Page> pages, Page page) {
-        for(int i = 0; i < pages.size(); i++) {
-            Page p = pages.get(i);
-            if(p.equals(page)) return i;
-        }
-        return -1;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        if(obj != null) {
-            if(obj.getClass().isAssignableFrom(Page.class)) {
+        if (obj != null) {
+            if (obj.getClass().isAssignableFrom(Page.class)) {
                 Page p = (Page) obj;
-                if(p.getKey() == null || getKey() == null) {
+                if (p.getKey() == null || getKey() == null) {
                     return p.getKey() == null && getKey() == null;
                 } else {
                     return getKey().equals(p.getKey());
@@ -202,15 +219,6 @@ public class Page {
             }
         }
         return false;
-    }
-
-    public static List<Page> removeDuplicates(List<Page> pages) {
-        ArrayList<Page> clean = new ArrayList<Page>();
-        for(Page p : pages) {
-            if(clean.contains(p)) continue;
-            clean.add(p);
-        }
-        return clean;
     }
 
     public boolean isGraph() {
@@ -230,7 +238,7 @@ public class Page {
     }
 
     public void showTutorial(Calculator calc, boolean animate) {
-        if(mPanel != null && mPanel.hasTutorial()) {
+        if (mPanel != null && mPanel.hasTutorial()) {
             mPanel.showTutorial(calc, animate);
         }
     }
@@ -240,8 +248,8 @@ public class Page {
     }
 
     public View getView(Context context, EventListener listener, Graph graph, Logic logic) {
-        if(mPanel != null) {
-            if(mView == null) {
+        if (mPanel != null) {
+            if (mView == null) {
                 mView = mPanel.getView(context);
                 mView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
                     @Override
@@ -254,17 +262,9 @@ public class Page {
                     }
                 });
             }
-            if(logic != null) mPanel.refresh(context, mView, listener, graph, logic);
+            if (logic != null) mPanel.refresh(context, mView, listener, graph, logic);
         } else mView = null;
         return mView;
-    }
-
-    private static void setDecimalButton(View view) {
-        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-        if (view.findViewById(R.id.dot) != null) {
-            Button dotBtn = (Button)view.findViewById(R.id.dot);
-            dotBtn.setText(dfs.getDecimalSeparator()+"");
-        }
     }
 
     public enum NormalPanel implements Panel {
@@ -300,7 +300,7 @@ public class Page {
 
         public View getView(Context context) {
             View v = null;
-            switch(this) {
+            switch (this) {
                 case BASIC:
                     v = View.inflate(context, R.layout.simple_pad, null);
                     break;
@@ -321,7 +321,7 @@ public class Page {
         }
 
         public void showTutorial(final Calculator calc, boolean animate) {
-            switch(this) {
+            switch (this) {
                 case BASIC:
                     calc.showFirstRunSimpleCling(animate);
                     break;
@@ -329,7 +329,7 @@ public class Page {
                     calc.showFirstRunGraphCling(animate);
                     break;
                 case MATRIX:
-                    if(mMatrixView == null || !mMatrixView.isEnabled()) {
+                    if (mMatrixView == null || !mMatrixView.isEnabled()) {
                         mLaunchMatrixCling = true;
                     } else {
                         calc.showFirstRunMatrixCling(animate, mMatrixView);
@@ -346,8 +346,8 @@ public class Page {
         @Override
         public void refresh(Context context, final View view, EventListener listener, final Graph graph, final Logic logic) {
             setDecimalButton(view);
-            if(NormalPanel.GRAPH.equals(this)) {
-                if(!mGraphHolder.containsKey(view)) {
+            if (NormalPanel.GRAPH.equals(this)) {
+                if (!mGraphHolder.containsKey(view)) {
                     final GraphView graphView = logic.mGraphView = graph.createGraph(context);
                     mGraphHolder.put(view, graphView);
                     graphView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
@@ -391,9 +391,9 @@ public class Page {
                 } else {
                     mGraphHolder.get(view).invalidate();
                 }
-            } else if(NormalPanel.HEX.equals(this)) {
-                if(logic != null) {
-                    switch(logic.getBaseModule().getBase()) {
+            } else if (NormalPanel.HEX.equals(this)) {
+                if (logic != null) {
+                    switch (logic.getBaseModule().getBase()) {
                         case BINARY:
                             view.findViewById(R.id.bin).setSelected(true);
                             break;
@@ -405,7 +405,7 @@ public class Page {
                             break;
                     }
                 }
-            } else if(NormalPanel.MATRIX.equals(this)) {
+            } else if (NormalPanel.MATRIX.equals(this)) {
                 mMatrixView = view;
                 mMatrixView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
                     @Override
@@ -418,11 +418,11 @@ public class Page {
                         v.setEnabled(false);
                     }
                 });
-                if(mLaunchMatrixCling) {
+                if (mLaunchMatrixCling) {
                     mMatrixView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            if(android.os.Build.VERSION.SDK_INT < 16) {
+                            if (android.os.Build.VERSION.SDK_INT < 16) {
                                 mMatrixView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                             } else {
                                 mMatrixView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -432,7 +432,7 @@ public class Page {
                     });
                 }
                 View easterEgg = view.findViewById(R.id.easter);
-                if(easterEgg != null && listener != null) {
+                if (easterEgg != null && listener != null) {
                     easterEgg.setOnClickListener(listener);
                     easterEgg.setOnLongClickListener(listener);
                 }
@@ -467,7 +467,7 @@ public class Page {
 
         public View getView(Context context) {
             View v = null;
-            switch(this) {
+            switch (this) {
                 case ADVANCED:
                     v = View.inflate(context, R.layout.advanced_pad, null);
                     break;
@@ -479,7 +479,7 @@ public class Page {
         }
 
         public void showTutorial(Calculator calc, boolean animate) {
-            switch(this) {
+            switch (this) {
                 case ADVANCED:
                     break;
                 case HEX:
@@ -491,9 +491,9 @@ public class Page {
         @Override
         public void refresh(Context context, View view, EventListener listener, Graph graph, Logic logic) {
             setDecimalButton(view);
-            if(SmallPanel.HEX.equals(this)) {
-                if(logic != null) {
-                    switch(logic.getBaseModule().getBase()) {
+            if (SmallPanel.HEX.equals(this)) {
+                if (logic != null) {
+                    switch (logic.getBaseModule().getBase()) {
                         case BINARY:
                             view.findViewById(R.id.bin).setSelected(true);
                             break;
@@ -540,7 +540,7 @@ public class Page {
 
         public View getView(Context context) {
             View v = null;
-            switch(this) {
+            switch (this) {
                 case BASIC:
                     v = View.inflate(context, R.layout.simple_pad, null);
                     break;
@@ -555,7 +555,7 @@ public class Page {
         }
 
         public void showTutorial(Calculator calc, boolean animate) {
-            switch(this) {
+            switch (this) {
                 case BASIC:
                     calc.showFirstRunSimpleCling(animate);
                     break;
@@ -563,7 +563,7 @@ public class Page {
                     calc.showFirstRunGraphCling(animate);
                     break;
                 case MATRIX:
-                    if(mMatrixView == null || !mMatrixView.isEnabled()) {
+                    if (mMatrixView == null || !mMatrixView.isEnabled()) {
                         mLaunchMatrixCling = true;
                     } else {
                         calc.showFirstRunMatrixCling(animate, mMatrixView);
@@ -575,8 +575,8 @@ public class Page {
         @Override
         public void refresh(Context context, final View view, EventListener listener, final Graph graph, final Logic logic) {
             setDecimalButton(view);
-            if(LargePanel.GRAPH.equals(this)) {
-                if(!mGraphHolder.containsKey(view)) {
+            if (LargePanel.GRAPH.equals(this)) {
+                if (!mGraphHolder.containsKey(view)) {
                     final GraphView graphView = logic.mGraphView = graph.createGraph(context);
                     mGraphHolder.put(view, graphView);
                     graphView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
@@ -612,7 +612,7 @@ public class Page {
                 } else {
                     mGraphHolder.get(view).invalidate();
                 }
-            } else if(LargePanel.MATRIX.equals(this)) {
+            } else if (LargePanel.MATRIX.equals(this)) {
                 mMatrixView = view;
                 mMatrixView.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
                     @Override
@@ -625,11 +625,11 @@ public class Page {
                         v.setEnabled(false);
                     }
                 });
-                if(mLaunchMatrixCling) {
+                if (mLaunchMatrixCling) {
                     mMatrixView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            if(android.os.Build.VERSION.SDK_INT < 16) {
+                            if (android.os.Build.VERSION.SDK_INT < 16) {
                                 mMatrixView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                             } else {
                                 mMatrixView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -639,7 +639,7 @@ public class Page {
                     });
                 }
                 View easterEgg = view.findViewById(R.id.easter);
-                if(easterEgg != null && listener != null) {
+                if (easterEgg != null && listener != null) {
                     easterEgg.setOnClickListener(listener);
                     easterEgg.setOnLongClickListener(listener);
                 }

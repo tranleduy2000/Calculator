@@ -34,6 +34,18 @@ public class History {
         clear();
     }
 
+    History(int version, DataInput in) throws IOException {
+        if (version >= VERSION_1) {
+            int size = in.readInt();
+            for (int i = 0; i < size; ++i) {
+                mEntries.add(new HistoryEntry(version, in));
+            }
+            mPos = in.readInt();
+        } else {
+            throw new IOException("invalid version " + version);
+        }
+    }
+
     void clear() {
         mEntries.clear();
         mEntries.add(new HistoryEntry("", ""));
@@ -42,20 +54,8 @@ public class History {
     }
 
     private void notifyChanged() {
-        if(mObserver != null) {
+        if (mObserver != null) {
             mObserver.notifyDataSetChanged();
-        }
-    }
-
-    History(int version, DataInput in) throws IOException {
-        if(version >= VERSION_1) {
-            int size = in.readInt();
-            for(int i = 0; i < size; ++i) {
-                mEntries.add(new HistoryEntry(version, in));
-            }
-            mPos = in.readInt();
-        } else {
-            throw new IOException("invalid version " + version);
         }
     }
 
@@ -65,7 +65,7 @@ public class History {
 
     void write(DataOutput out) throws IOException {
         out.writeInt(mEntries.size());
-        for(HistoryEntry entry : mEntries) {
+        for (HistoryEntry entry : mEntries) {
             entry.write(out);
         }
         out.writeInt(mPos);
@@ -80,7 +80,7 @@ public class History {
     }
 
     boolean moveToPrevious() {
-        if(mPos > 0) {
+        if (mPos > 0) {
             --mPos;
             return true;
         }
@@ -88,7 +88,7 @@ public class History {
     }
 
     boolean moveToNext() {
-        if(mPos < mEntries.size() - 1) {
+        if (mPos < mEntries.size() - 1) {
             ++mPos;
             return true;
         }
@@ -97,10 +97,10 @@ public class History {
 
     void enter(String base, String edited) {
         current().clearEdited();
-        if(mEntries.size() >= MAX_ENTRIES) {
+        if (mEntries.size() >= MAX_ENTRIES) {
             mEntries.remove(0);
         }
-        if((mEntries.size() < 2 || !base.equals(mEntries.elementAt(mEntries.size() - 2).getBase())) && !base.isEmpty() && !edited.isEmpty()) {
+        if ((mEntries.size() < 2 || !base.equals(mEntries.elementAt(mEntries.size() - 2).getBase())) && !base.isEmpty() && !edited.isEmpty()) {
             mEntries.insertElementAt(new HistoryEntry(base, edited), mEntries.size() - 1);
         }
         mPos = mEntries.size() - 1;

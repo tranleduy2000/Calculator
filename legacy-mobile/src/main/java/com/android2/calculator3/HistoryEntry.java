@@ -31,7 +31,7 @@ public class HistoryEntry {
     }
 
     HistoryEntry(int version, DataInput in) throws IOException {
-        if(version >= VERSION_1) {
+        if (version >= VERSION_1) {
             mBase = in.readUTF();
             mEdited = in.readUTF();
         } else {

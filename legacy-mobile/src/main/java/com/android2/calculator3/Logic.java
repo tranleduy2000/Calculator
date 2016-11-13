@@ -41,10 +41,12 @@ public class Logic {
     public static final char MINUS = '\u2212';
     public static final String MARKER_EVALUATE_ON_RESUME = "?";
     public static final int DELETE_MODE_BACKSPACE = 0;
-    int mDeleteMode = DELETE_MODE_BACKSPACE;
     public static final int DELETE_MODE_CLEAR = 1;
     final String mErrorString;
     private final Context mContext;
+    private final Solver mSolver = new Solver();
+    private final CalculatorExpressionTokenizer mTokenizer;
+    int mDeleteMode = DELETE_MODE_BACKSPACE;
     CalculatorDisplay mDisplay;
     GraphView mGraphView;
     String mResult = "";
@@ -54,8 +56,6 @@ public class Logic {
     private History mHistory;
     private Graph mGraph;
     private Listener mListener;
-    private final Solver mSolver = new Solver();
-    private final CalculatorExpressionTokenizer mTokenizer;
     private OnGraphUpdatedListener mOnGraphUpdateListener = new OnGraphUpdatedListener() {
         @Override
         public void onGraphUpdated(List<Point> result) {
@@ -76,7 +76,25 @@ public class Logic {
         mEquationFormatter = new EquationFormatter();
         mTokenizer = new CalculatorExpressionTokenizer(context);
         mDisplay = display;
-        if(mDisplay != null) mDisplay.setLogic(this);
+        if (mDisplay != null) mDisplay.setLogic(this);
+    }
+
+    public static boolean isOperator(String text) {
+        return text.length() == 1 && isOperator(text.charAt(0));
+    }
+
+    static boolean isPostFunction(String text) {
+        return text.length() == 1 && isPostFunction(text.charAt(0));
+    }
+
+    static boolean isOperator(char c) {
+        // plus minus times div
+        return "+\u2212\u00d7\u00f7/*^".indexOf(c) != -1;
+    }
+
+    static boolean isPostFunction(char c) {
+        // exponent, factorial, percent
+        return "^!%".indexOf(c) != -1;
     }
 
     public void setHistory(History history) {
@@ -100,7 +118,7 @@ public class Logic {
     }
 
     void insert(String delta) {
-        if(!acceptInsert(delta)) {
+        if (!acceptInsert(delta)) {
             clear(true);
         }
         mDisplay.insert(delta);
@@ -109,10 +127,10 @@ public class Logic {
     }
 
     boolean acceptInsert(String delta) {
-        if(mIsError || getText().equals(mErrorString)) {
+        if (mIsError || getText().equals(mErrorString)) {
             return false;
         }
-        if(getDeleteMode() == DELETE_MODE_BACKSPACE || isOperator(delta) || isPostFunction(delta)) {
+        if (getDeleteMode() == DELETE_MODE_BACKSPACE || isOperator(delta) || isPostFunction(delta)) {
             return true;
         }
 
@@ -126,35 +144,21 @@ public class Logic {
         return mDeleteMode;
     }
 
-    public static boolean isOperator(String text) {
-        return text.length() == 1 && isOperator(text.charAt(0));
+    public void setDeleteMode(int mode) {
+        if (mDeleteMode != mode) {
+            mDeleteMode = mode;
+            if (mListener != null) mListener.onDeleteModeChange();
+        }
     }
 
-    static boolean isPostFunction(String text) {
-        return text.length() == 1 && isPostFunction(text.charAt(0));
-    }
-
-    static boolean isOperator(char c) {
-        // plus minus times div
-        return "+\u2212\u00d7\u00f7/*^".indexOf(c) != -1;
-    }
-
-    static boolean isPostFunction(char c) {
-        // exponent, factorial, percent
-        return "^!%".indexOf(c) != -1;
-    }    public String getText() {
+    public String getText() {
         return mDisplay.getText();
     }
 
-    public void setDeleteMode(int mode) {
-        if(mDeleteMode != mode) {
-            mDeleteMode = mode;
-            if(mListener != null) mListener.onDeleteModeChange();
-        }
-    }    void setText(String text) {
+    void setText(String text) {
         clear(false);
         mDisplay.insert(text);
-        if(text.equals(mErrorString)) setDeleteMode(DELETE_MODE_CLEAR);
+        if (text.equals(mErrorString)) setDeleteMode(DELETE_MODE_CLEAR);
     }
 
     public void onTextChanged() {
@@ -167,8 +171,8 @@ public class Logic {
 
     private void clearWithHistory(boolean scroll) {
         String text = mHistory.getText();
-        if(MARKER_EVALUATE_ON_RESUME.equals(text)) {
-            if(!mHistory.moveToPrevious()) {
+        if (MARKER_EVALUATE_ON_RESUME.equals(text)) {
+            if (!mHistory.moveToPrevious()) {
                 text = "";
             }
             text = mHistory.getBase();
@@ -183,7 +187,7 @@ public class Logic {
     public String convertToDecimal(String text) {
         try {
             return mSolver.convertToDecimal(text);
-        } catch(SyntaxException e) {
+        } catch (SyntaxException e) {
             return mErrorString;
         }
     }
@@ -191,7 +195,7 @@ public class Logic {
     public String evaluate(String text) {
         try {
             return mTokenizer.getLocalizedExpression(mSolver.solve(mTokenizer.getNormalizedExpression(text)));
-        } catch(SyntaxException e) {
+        } catch (SyntaxException e) {
             return mErrorString;
         }
     }
@@ -199,13 +203,13 @@ public class Logic {
     public void evaluateAndShowResult(String text, Scroll scroll) {
         try {
             String result = mTokenizer.getLocalizedExpression(mSolver.solve(mTokenizer.getNormalizedExpression(text)));
-            if(!text.equals(result)) {
+            if (!text.equals(result)) {
                 mHistory.enter(EquationFormatter.appendParenthesis(text), result);
                 mResult = result;
                 mDisplay.setText(mResult, scroll);
                 setDeleteMode(DELETE_MODE_CLEAR);
             }
-        } catch(SyntaxException e) {
+        } catch (SyntaxException e) {
             mIsError = true;
             mResult = mErrorString;
             mDisplay.setText(mResult, scroll);
@@ -228,7 +232,7 @@ public class Logic {
     }
 
     void onDelete() {
-        if(getText().equals(mResult) || mIsError) {
+        if (getText().equals(mResult) || mIsError) {
             clear(false);
         } else {
             mDisplay.dispatchKeyEvent(new KeyEvent(0, KeyEvent.KEYCODE_DEL));
@@ -243,7 +247,7 @@ public class Logic {
     }
 
     public void onEnter() {
-        if(mDeleteMode == DELETE_MODE_CLEAR) {
+        if (mDeleteMode == DELETE_MODE_CLEAR) {
             clearWithHistory(false); // clear after an Enter on result
         } else {
             evaluateAndShowResult(getText(), CalculatorDisplay.Scroll.UP);
@@ -251,16 +255,18 @@ public class Logic {
     }
 
     void onUp() {
-        if(mHistory.moveToPrevious()) {
+        if (mHistory.moveToPrevious()) {
             mDisplay.setText(mHistory.getText(), CalculatorDisplay.Scroll.DOWN);
         }
     }
 
     void onDown() {
-        if(mHistory.moveToNext()) {
+        if (mHistory.moveToNext()) {
             mDisplay.setText(mHistory.getText(), CalculatorDisplay.Scroll.UP);
         }
-    }    void updateHistory() {
+    }
+
+    void updateHistory() {
         String text = getText();
         mHistory.update(text);
     }
@@ -271,10 +277,6 @@ public class Logic {
 
     public Context getContext() {
         return mContext;
-    }
-
-    public interface Listener {
-        void onDeleteModeChange();
     }
 
     public void setDomain(float min, float max) {
@@ -295,5 +297,9 @@ public class Logic {
 
     public BaseModule getBaseModule() {
         return mSolver.getBaseModule();
+    }
+
+    public interface Listener {
+        void onDeleteModeChange();
     }
 }

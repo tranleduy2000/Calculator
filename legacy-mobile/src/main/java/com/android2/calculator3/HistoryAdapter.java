@@ -60,7 +60,7 @@ class HistoryAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         HistoryLine view;
-        if(convertView == null) {
+        if (convertView == null) {
             view = createView();
         } else {
             view = (HistoryLine) convertView;

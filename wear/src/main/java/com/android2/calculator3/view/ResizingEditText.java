@@ -31,16 +31,15 @@ import com.android2.calculator3.R;
  * ResizingEditText will attempt to resize the text to as large as possible (with optional
  * max and min values). You can also use getVariableTextSize() to see what font size will
  * be used.
- * */
+ */
 public class ResizingEditText extends EditText {
+    private final Paint mTempPaint = new TextPaint();
     private float mMaximumTextSize;
     private float mMinimumTextSize;
     private float mStepTextSize;
-
     // Try and use as large a text as possible, if the width allows it
     private int mWidthConstraint = -1;
     private int mHeightConstraint = -1;
-    private final Paint mTempPaint = new TextPaint();
     private OnTextSizeChangeListener mOnTextSizeChangeListener;
 
     public ResizingEditText(Context context) {
@@ -54,7 +53,7 @@ public class ResizingEditText extends EditText {
     }
 
     private void setUp(Context context, AttributeSet attrs) {
-        if(attrs != null) {
+        if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(
                     attrs, R.styleable.CalculatorEditText, 0, 0);
             mMaximumTextSize = a.getDimension(
@@ -114,7 +113,7 @@ public class ResizingEditText extends EditText {
             mTempPaint.setTextSize(nextSize);
             if (mTempPaint.measureText(text) > mWidthConstraint) {
                 break;
-            } else if(nextSize + nextSize * exponents / 2 > mHeightConstraint) {
+            } else if (nextSize + nextSize * exponents / 2 > mHeightConstraint) {
                 break;
             } else {
                 lastFitTextSize = nextSize;

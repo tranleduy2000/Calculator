@@ -29,8 +29,8 @@ import android.widget.TextView;
 import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.GraphView;
-import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.GraphModule;
+import com.xlythe.view.floating.AnimationFinishedListener;
 
 import java.util.Locale;
 

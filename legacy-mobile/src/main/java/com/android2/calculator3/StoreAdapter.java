@@ -33,10 +33,10 @@ public class StoreAdapter extends BitmapAdapter<App> {
     }
 
     private String formatPrice(App a) {
-        if(App.doesPackageExists(getContext(), a.getPackageName())) {
+        if (App.doesPackageExists(getContext(), a.getPackageName())) {
             return getContext().getString(R.string.store_price_installed);
         }
-        if(a.getPrice() == 0) {
+        if (a.getPrice() == 0) {
             return getContext().getString(R.string.store_price_free);
         }
         return NumberFormat.getCurrencyInstance(Locale.US).format(a.getPrice());

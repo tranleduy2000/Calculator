@@ -4,8 +4,8 @@
     android:layout_height="match_parent">
 
     <com.android2.calculator3.view.SolidPadLayout
-        style="@style/PadLayoutStyle.Numeric"
         android:id="@+id/pad_numeric"
+        style="@style/PadLayoutStyle.Numeric"
         android:background="@color/pad_numeric_background_color"
         android:columnCount="3"
         android:rowCount="4">
@@ -81,12 +81,11 @@
             style="@style/PadButtonStyle.Wear"
             android:contentDescription="@string/desc_eq"
             android:onClick="onButtonClick"
-            android:text="@string/eq"/>
+            android:text="@string/eq" />
 
     </com.android2.calculator3.view.SolidPadLayout>
 
-    <com.android2.calculator3.view.SolidPadLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <com.android2.calculator3.view.SolidPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pad_operator"
         style="@style/PadLayoutStyle.Operator"
         android:background="@color/pad_operator_background_color"

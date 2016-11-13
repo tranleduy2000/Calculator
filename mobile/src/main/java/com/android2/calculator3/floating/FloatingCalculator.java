@@ -1,11 +1,19 @@
 package com.android2.calculator3.floating;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ViewSwitcher;
 
@@ -16,18 +24,16 @@ import com.android2.calculator3.Clipboard;
 import com.android2.calculator3.R;
 import com.android2.calculator3.view.BackspaceImageButton;
 import com.android2.calculator3.view.CalculatorEditText;
-import com.xlythe.floatingview.FloatingView;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
-
+import com.xlythe.view.floating.FloatingView;
 
 public class FloatingCalculator extends FloatingView {
     // Calc logic
-    private View.OnClickListener mListener;
     private ViewSwitcher mDisplay;
     private BackspaceImageButton mDelete;
     private ViewPager mPager;
@@ -37,16 +43,33 @@ public class FloatingCalculator extends FloatingView {
     private CalculatorExpressionEvaluator mEvaluator;
     private State mState;
 
-    public View inflateButton() {
-        return View.inflate(getContext(), R.layout.floating_calculator_icon, null);
+    @NonNull
+    @Override
+    protected Notification createNotification() {
+        Intent intent = new Intent(this, FloatingCalculator.class).setAction(ACTION_OPEN);
+        return new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_notification)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.floating_notification_description))
+                .setContentIntent(PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .build();
     }
 
-    public View inflateView() {
+    @NonNull
+    @Override
+    public View inflateButton(@NonNull ViewGroup parent) {
+        return LayoutInflater.from(getContext()).inflate(R.layout.floating_calculator_icon, parent, false);
+    }
+
+    @NonNull
+    @Override
+    public View inflateView(@NonNull ViewGroup parent) {
         // Rebuild constants. If the user changed their locale, it won't kill the app
         // but it might change a decimal point from . to ,
         Constants.rebuildConstants();
 
-        final View child = View.inflate(getContext(), R.layout.floating_calculator, null);
+        final View child = LayoutInflater.from(getContext()).inflate(R.layout.floating_calculator, parent, false);
 
         mTokenizer = new CalculatorExpressionTokenizer(this);
         mEvaluator = new CalculatorExpressionEvaluator(mTokenizer);
@@ -73,7 +96,7 @@ public class FloatingCalculator extends FloatingView {
         }
 
         mDelete = (BackspaceImageButton) child.findViewById(R.id.delete);
-        mListener = new View.OnClickListener() {
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 switch (v.getId()) {
@@ -115,7 +138,7 @@ public class FloatingCalculator extends FloatingView {
                 }
             }
         };
-        mDelete.setOnClickListener(mListener);
+        mDelete.setOnClickListener(onClickListener);
         mDelete.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -137,7 +160,7 @@ public class FloatingCalculator extends FloatingView {
             }
         };
         final FloatingCalculatorPageAdapter adapter = new FloatingCalculatorPageAdapter(
-                getContext(), mListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
+                getContext(), onClickListener, historyItemCallback, mEvaluator.getSolver(), mHistory);
         mPager.setAdapter(adapter);
         mPager.setCurrentItem(1);
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -188,8 +211,7 @@ public class FloatingCalculator extends FloatingView {
     }
 
     @Override
-    public void openView() {
-        super.openView();
+    public void onShow() {
         if (mPager != null) {
             mPager.setCurrentItem(1);
         }
@@ -203,8 +225,7 @@ public class FloatingCalculator extends FloatingView {
     }
 
     @Override
-    public void closeView(boolean returnToOrigin) {
-        super.closeView(returnToOrigin);
+    public void onHide() {
         if (mPersist != null) {
             mPersist.save();
         }
@@ -245,13 +266,13 @@ public class FloatingCalculator extends FloatingView {
         if (mState != state) {
             switch (state) {
                 case CLEAR:
-                    getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
+                    getActiveEditText().setTextColor(ContextCompat.getColor(this, R.color.display_formula_text_color));
                     break;
                 case DELETE:
-                    getActiveEditText().setTextColor(getResources().getColor(R.color.display_formula_text_color));
+                    getActiveEditText().setTextColor(ContextCompat.getColor(this, R.color.display_formula_text_color));
                     break;
                 case ERROR:
-                    getActiveEditText().setTextColor(getResources().getColor(R.color.calculator_error_color));
+                    getActiveEditText().setTextColor(ContextCompat.getColor(this, R.color.calculator_error_color));
                     break;
             }
             mState = state;

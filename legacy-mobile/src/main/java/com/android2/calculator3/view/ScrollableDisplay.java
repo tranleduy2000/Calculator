@@ -22,7 +22,7 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
 
     public ScrollableDisplay(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        if(attrs != null) {
+        if (attrs != null) {
             TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ScrollableDisplay, defStyle, 0);
             setMaxHeight(a.getDimensionPixelSize(R.styleable.ScrollableDisplay_max_height, -1));
             a.recycle();
@@ -48,7 +48,7 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        if(mMaxHeight != -1) {
+        if (mMaxHeight != -1) {
             int width = getMeasuredWidth();
             int height = Math.min(getMeasuredHeight(), mMaxHeight);
 
@@ -65,7 +65,7 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
 
     @Override
     public void computeScroll() {
-        if(autoScrolling) return;
+        if (autoScrolling) return;
         super.computeScroll();
     }
 
@@ -80,22 +80,22 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
         ScrollableDisplay.LayoutParams p = (LayoutParams) view.getLayoutParams();
         int horizontalGravity = p.gravity & Gravity.HORIZONTAL_GRAVITY_MASK;
         int verticalGravity = p.gravity & Gravity.VERTICAL_GRAVITY_MASK;
-        if(horizontalGravity == Gravity.RIGHT) {
-            if(getScrollRange() > 0) {
+        if (horizontalGravity == Gravity.RIGHT) {
+            if (getScrollRange() > 0) {
                 gravityRight = true;
                 p.gravity = Gravity.LEFT | verticalGravity;
                 view.setLayoutParams(p);
                 super.onLayout(changed, left, top, right, bottom);
             }
-        } else if(gravityRight) {
-            if(getScrollRange() == 0) {
+        } else if (gravityRight) {
+            if (getScrollRange() == 0) {
                 gravityRight = false;
                 p.gravity = Gravity.RIGHT | verticalGravity;
                 view.setLayoutParams(p);
                 super.onLayout(changed, left, top, right, bottom);
             }
         }
-        if(gravityRight && delta > 0) {
+        if (gravityRight && delta > 0) {
             scrollBy(delta, 0);
             autoScrolling = true;
         }
@@ -103,7 +103,7 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
 
     private int getScrollRange() {
         int scrollRange = 0;
-        if(getChildCount() > 0) {
+        if (getChildCount() > 0) {
             View child = getChildAt(0);
             scrollRange = Math.max(0, child.getWidth() - (getWidth() - getPaddingLeft() - getPaddingRight()));
         }
@@ -112,7 +112,7 @@ public class ScrollableDisplay extends HorizontalScrollView implements OnLongCli
 
     @Override
     public void scrollTo(int x, int y) {
-        if(autoScrolling) return;
+        if (autoScrolling) return;
         super.scrollTo(x, y);
     }
 }

@@ -1,20 +1,20 @@
 apply plugin: 'com.android.application'
 
 repositories {
-        jcenter()
+    jcenter()
     flatDir {
         dirs 'prebuilt-libs'
     }
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.android2.calculator3"
         minSdkVersion 19
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }

@@ -8,7 +8,7 @@ import android.os.Build;
 import java.lang.ref.WeakReference;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-final class SupportAnimatorLollipop extends SupportAnimator{
+final class SupportAnimatorLollipop extends SupportAnimator {
 
     WeakReference<Animator> mNativeAnimator;
 
@@ -30,25 +30,34 @@ final class SupportAnimatorLollipop extends SupportAnimator{
     @Override
     public void start() {
         Animator a = mNativeAnimator.get();
-        if(a != null) {
+        if (a != null) {
             a.start();
         }
     }
 
     @Override
+    public long getDuration() {
+        Animator a = mNativeAnimator.get();
+        if (a != null) {
+            return a.getDuration();
+        }
+        return 0;
+    }
+
+    @Override
     public SupportAnimatorLollipop setDuration(long duration) {
         Animator a = mNativeAnimator.get();
-        if(a != null) {
+        if (a != null) {
             a.setDuration(duration);
         }
         return this;
     }
 
     @Override
-    public long getDuration() {
+    public long getStartDelay() {
         Animator a = mNativeAnimator.get();
-        if(a != null) {
-            return a.getDuration();
+        if (a != null) {
+            return a.getStartDelay();
         }
         return 0;
     }
@@ -56,24 +65,15 @@ final class SupportAnimatorLollipop extends SupportAnimator{
     @Override
     public void setStartDelay(long delay) {
         Animator a = mNativeAnimator.get();
-        if(a != null) {
+        if (a != null) {
             a.setStartDelay(delay);
         }
     }
 
     @Override
-    public long getStartDelay() {
-        Animator a = mNativeAnimator.get();
-        if(a != null) {
-            return a.getStartDelay();
-        }
-        return 0;
-    }
-
-    @Override
     public void setInterpolator(TimeInterpolator value) {
         Animator a = mNativeAnimator.get();
-        if(a != null) {
+        if (a != null) {
             a.setInterpolator(value);
         }
     }
@@ -81,7 +81,7 @@ final class SupportAnimatorLollipop extends SupportAnimator{
     @Override
     public void addListener(final AnimatorListener listener) {
         Animator a = mNativeAnimator.get();
-        if(a == null) {
+        if (a == null) {
             return;
         }
         a.addListener(listener);

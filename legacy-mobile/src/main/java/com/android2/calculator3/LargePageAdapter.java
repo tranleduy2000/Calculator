@@ -35,7 +35,7 @@ public class LargePageAdapter extends CalculatorPageAdapter {
     public View getViewAt(int position) {
         position = position % mPages.size();
         View v = mPages.get(position).getView(mContext, mListener, mGraph, mLogic);
-        if(v.getParent() != null) {
+        if (v.getParent() != null) {
             ((ViewGroup) v.getParent()).removeView(v);
         }
         applyBannedResourcesByPage(v, mLogic.getBaseModule().getBase());

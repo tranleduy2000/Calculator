@@ -68,8 +68,8 @@
                         style="@style/Theme.Calculator.Clear"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingStart="5dip"
                         android:paddingEnd="5dip"
+                        android:paddingStart="5dip"
                         android:text="@string/clear" />
 
                     <com.xlythe.engine.theme.ThemedImageButton
@@ -78,8 +78,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:contentDescription="@null"
-                        android:paddingStart="5dip"
                         android:paddingEnd="5dip"
+                        android:paddingStart="5dip"
                         theme:src="@drawable/calc_clear_symbol" />
                 </FrameLayout>
             </com.xlythe.engine.theme.ThemedLinearLayout>

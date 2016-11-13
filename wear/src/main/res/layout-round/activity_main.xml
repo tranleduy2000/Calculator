@@ -7,16 +7,16 @@
         android:id="@+id/panelswitch"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="80dp"/>
+        android:layout_marginTop="80dp" />
 
     <LinearLayout
         android:id="@+id/display_background"
         android:layout_width="match_parent"
         android:layout_height="86dp"
-        android:paddingStart="35dp"
-        android:paddingEnd="35dp"
+        android:background="@drawable/white_card"
         android:orientation="horizontal"
-        android:background="@drawable/white_card">
+        android:paddingEnd="35dp"
+        android:paddingStart="35dp">
 
         <ViewSwitcher
             android:id="@+id/display"
@@ -29,22 +29,22 @@
             <com.android2.calculator3.view.FormattedNumberEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="23sp"
-                android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:inputType="text|textNoSuggestions"
                 android:enabled="false"
-                android:paddingTop="30dp"/>
+                android:inputType="text|textNoSuggestions"
+                android:paddingTop="30dp"
+                android:textColor="@color/display_formula_text_color"
+                android:textSize="23sp" />
 
             <com.android2.calculator3.view.FormattedNumberEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:textSize="23sp"
-                android:textColor="@color/display_formula_text_color"
                 android:background="@android:color/transparent"
-                android:inputType="text|textNoSuggestions"
                 android:enabled="false"
-                android:paddingTop="30dp"/>
+                android:inputType="text|textNoSuggestions"
+                android:paddingTop="30dp"
+                android:textColor="@color/display_formula_text_color"
+                android:textSize="23sp" />
 
         </ViewSwitcher>
 
@@ -52,11 +52,11 @@
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/pad_button_advanced_ripple"
             android:contentDescription="@string/del"
             android:src="@drawable/backspace_btn"
-            android:tint="@color/display_formula_text_color"
-            android:background="@drawable/pad_button_advanced_ripple"
-            android:layout_marginTop="30dp"/>
+            android:tint="@color/display_formula_text_color" />
 
     </LinearLayout>
 

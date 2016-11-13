@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">න්‍යාස පුවරුව</string>
     <string name="panel_graph">ප්‍රස්තාර පුවරුව</string>
+    <string name="panel_function">ශ්‍රිත පුවරුව</string>
     <string name="panel_hex">16 පාදයේ පුවරුව</string>
     <string name="copy">\'%s\' පිටපත් කරන්න</string>
     <string name="remove_from_history">ඉතිහාසයෙන් ඉවත්කරන්න</string>

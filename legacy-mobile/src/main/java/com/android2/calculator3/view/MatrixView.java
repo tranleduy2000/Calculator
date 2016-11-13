@@ -34,13 +34,6 @@ public class MatrixView extends ThemedTableLayout {
         setup();
     }
 
-    private void setup() {
-        mSeparator = getSeparator();
-        setBackground(Theme.get(getContext(), R.drawable.matrix_background));
-        setFocusable(true);
-        mLogic = mParent.mLogic;
-    }
-
     private static String getSeparator() {
         return (getDecimal().equals(",") ? " " : ",");
     }
@@ -54,9 +47,9 @@ public class MatrixView extends ThemedTableLayout {
         int rows = matrix.numRows();
         int columns = matrix.numCols();
         String input = "[";
-        for(int i = 0; i < rows; i++) {
+        for (int i = 0; i < rows; i++) {
             input += "[";
-            for(int j = 0; j < columns; j++) {
+            for (int j = 0; j < columns; j++) {
                 input += strip(Double.toString(matrix.get(i, j))) + ",";
             }
             // Remove trailing ,
@@ -68,13 +61,13 @@ public class MatrixView extends ThemedTableLayout {
     }
 
     private static String strip(String input) {
-        if(input.endsWith(".0")) return input.substring(0, input.length() - 2);
+        if (input.endsWith(".0")) return input.substring(0, input.length() - 2);
         return input;
     }
 
     public static boolean load(final MutableString text, final AdvancedDisplay parent) {
         boolean changed = MatrixView.load(text, parent, parent.getChildCount());
-        if(changed) {
+        if (changed) {
             // Always append a trailing EditText
             CalculatorEditText.load(parent);
         }
@@ -82,7 +75,7 @@ public class MatrixView extends ThemedTableLayout {
     }
 
     public static boolean load(final MutableString text, final AdvancedDisplay parent, final int pos) {
-        if(!MatrixView.verify(text)) return false;
+        if (!MatrixView.verify(text)) return false;
 
         String matrix = MatrixView.parseMatrix(text.getText());
         text.setText(text.substring(matrix.length()));
@@ -90,16 +83,16 @@ public class MatrixView extends ThemedTableLayout {
         int columns = MatrixView.countOccurrences(matrix, getSeparator().charAt(0)) / rows + 1;
 
         MatrixView mv = new MatrixView(parent);
-        for(int i = 0; i < rows; i++) {
+        for (int i = 0; i < rows; i++) {
             mv.addRow();
         }
-        for(int i = 0; i < columns; i++) {
+        for (int i = 0; i < columns; i++) {
             mv.addColumn();
         }
         String[] data = matrix.split(Pattern.quote(getSeparator()) + "|\\]\\[");
-        for(int order = 0, row = 0; row < rows; row++) {
+        for (int order = 0, row = 0; row < rows; row++) {
             TableRow tr = (TableRow) mv.getChildAt(row);
-            for(int column = 0; column < columns; column++) {
+            for (int column = 0; column < columns; column++) {
                 EditText input = (EditText) tr.getChildAt(column);
                 input.setText(data[order].replaceAll("[\\[\\]]", ""));
                 order++;
@@ -123,25 +116,37 @@ public class MatrixView extends ThemedTableLayout {
     private static String parseMatrix(String text) {
         int bracket_open = 0;
         int bracket_closed = 0;
-        for(int i = 0; i < text.length(); i++) {
-            if(text.charAt(i) == '[') {
+        for (int i = 0; i < text.length(); i++) {
+            if (text.charAt(i) == '[') {
                 bracket_open++;
-            } else if(text.charAt(i) == ']') {
+            } else if (text.charAt(i) == ']') {
                 bracket_closed++;
             }
-            if(bracket_open == bracket_closed) return text.substring(0, i + 1);
+            if (bracket_open == bracket_closed) return text.substring(0, i + 1);
         }
         return "";
     }
 
     private static int countOccurrences(String haystack, char needle) {
         int count = 0;
-        for(int i = 0; i < haystack.length(); i++) {
-            if(haystack.charAt(i) == needle) {
+        for (int i = 0; i < haystack.length(); i++) {
+            if (haystack.charAt(i) == needle) {
                 count++;
             }
         }
         return count;
+    }
+
+    private static String getDecimal() {
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        return dfs.getDecimalSeparator() + "";
+    }
+
+    private void setup() {
+        mSeparator = getSeparator();
+        setBackground(Theme.get(getContext(), R.drawable.matrix_background));
+        setFocusable(true);
+        mLogic = mParent.mLogic;
     }
 
     public void addRow() {
@@ -150,7 +155,7 @@ public class MatrixView extends ThemedTableLayout {
         tr.setLayoutParams(new MatrixView.LayoutParams(MatrixView.LayoutParams.WRAP_CONTENT, MatrixView.LayoutParams.WRAP_CONTENT, 1));
         addView(tr);
 
-        for(int i = 0; i < mColumns; i++) {
+        for (int i = 0; i < mColumns; i++) {
             tr.addView(createEditText());
         }
     }
@@ -158,15 +163,10 @@ public class MatrixView extends ThemedTableLayout {
     public void addColumn() {
         mColumns++;
 
-        for(int i = 0; i < mRows; i++) {
+        for (int i = 0; i < mRows; i++) {
             TableRow tr = (TableRow) getChildAt(i);
             tr.addView(createEditText());
         }
-    }
-
-    private static String getDecimal() {
-        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-        return dfs.getDecimalSeparator()+"";
     }
 
     private EditText createEditText() {
@@ -179,18 +179,18 @@ public class MatrixView extends ThemedTableLayout {
         mRows--;
         removeViewAt(getChildCount() - 1);
 
-        if(mRows == 0 || mColumns == 0) mParent.removeView(this);
+        if (mRows == 0 || mColumns == 0) mParent.removeView(this);
     }
 
     public void removeColumn() {
         mColumns--;
 
-        for(int i = 0; i < mRows; i++) {
+        for (int i = 0; i < mRows; i++) {
             TableRow tr = (TableRow) getChildAt(i);
             tr.removeViewAt(tr.getChildCount() - 1);
         }
 
-        if(mRows == 0 || mColumns == 0) mParent.removeView(this);
+        if (mRows == 0 || mColumns == 0) mParent.removeView(this);
     }
 
     public SimpleMatrix getSimpleMatrix() throws SyntaxException {
@@ -200,14 +200,14 @@ public class MatrixView extends ThemedTableLayout {
 
     private double[][] getData() throws SyntaxException {
         double[][] data = new double[mRows][mColumns];
-        for(int row = 0; row < mRows; row++) {
+        for (int row = 0; row < mRows; row++) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = 0; column < mColumns; column++) {
+            for (int column = 0; column < mColumns; column++) {
                 String input = ((EditText) tr.getChildAt(column)).getText().toString();
-                if(input.isEmpty()) throw new SyntaxException();
+                if (input.isEmpty()) throw new SyntaxException();
                 try {
                     data[row][column] = Double.valueOf(stringify(mLogic.evaluate(input)));
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     data[row][column] = Double.NaN;
                 }
@@ -217,16 +217,16 @@ public class MatrixView extends ThemedTableLayout {
     }
 
     private String stringify(String input) {
-        if(input.isEmpty()) return "";
+        if (input.isEmpty()) return "";
         else {
             input = mLogic.convertToDecimal(input);
-            if(input.charAt(0) == '\u2212') {
-                if(input.length() == 1) input = "";
+            if (input.charAt(0) == '\u2212') {
+                if (input.length() == 1) input = "";
                 else input = "-" + input.substring(1);
             }
-            if(input.startsWith(".")) {
+            if (input.startsWith(".")) {
                 input = "0" + input;
-            } else if(input.startsWith("-.")) {
+            } else if (input.startsWith("-.")) {
                 input = "-0" + input.substring(1);
             }
             return input;
@@ -235,11 +235,11 @@ public class MatrixView extends ThemedTableLayout {
 
     boolean isEmpty() {
         boolean empty = true;
-        for(int row = 0; row < mRows; row++) {
+        for (int row = 0; row < mRows; row++) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = 0; column < mColumns; column++) {
+            for (int column = 0; column < mColumns; column++) {
                 String input = ((EditText) tr.getChildAt(column)).getText().toString();
-                if(!input.isEmpty()) empty = false;
+                if (!input.isEmpty()) empty = false;
             }
         }
         return empty;
@@ -247,11 +247,11 @@ public class MatrixView extends ThemedTableLayout {
 
     View nextView(View currentView) {
         boolean foundCurrentView = false;
-        for(int row = 0; row < mRows; row++) {
+        for (int row = 0; row < mRows; row++) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = 0; column < mColumns; column++) {
-                if(foundCurrentView) return tr.getChildAt(column);
-                else if(currentView == tr.getChildAt(column)) foundCurrentView = true;
+            for (int column = 0; column < mColumns; column++) {
+                if (foundCurrentView) return tr.getChildAt(column);
+                else if (currentView == tr.getChildAt(column)) foundCurrentView = true;
             }
         }
         return mParent.getChildAt(mParent.getChildIndex(this) + 1);
@@ -259,11 +259,11 @@ public class MatrixView extends ThemedTableLayout {
 
     View previousView(View currentView) {
         boolean foundCurrentView = false;
-        for(int row = mRows - 1; row >= 0; row--) {
+        for (int row = mRows - 1; row >= 0; row--) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = mColumns - 1; column >= 0; column--) {
-                if(foundCurrentView) return tr.getChildAt(column);
-                else if(currentView == tr.getChildAt(column)) foundCurrentView = true;
+            for (int column = mColumns - 1; column >= 0; column--) {
+                if (foundCurrentView) return tr.getChildAt(column);
+                else if (currentView == tr.getChildAt(column)) foundCurrentView = true;
             }
         }
         return mParent.getChildAt(mParent.getChildIndex(this) - 1);
@@ -273,9 +273,9 @@ public class MatrixView extends ThemedTableLayout {
     public String toString() {
         String input = "[";
         String[][] data = getDataAsString();
-        for(int i = 0; i < mRows; i++) {
+        for (int i = 0; i < mRows; i++) {
             input += "[";
-            for(int j = 0; j < mColumns; j++) {
+            for (int j = 0; j < mColumns; j++) {
                 input += data[i][j] + mSeparator;
             }
             // Remove trailing ,
@@ -288,9 +288,9 @@ public class MatrixView extends ThemedTableLayout {
 
     private String[][] getDataAsString() {
         String[][] data = new String[mRows][mColumns];
-        for(int row = 0; row < mRows; row++) {
+        for (int row = 0; row < mRows; row++) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = 0; column < mColumns; column++) {
+            for (int column = 0; column < mColumns; column++) {
                 String input = ((EditText) tr.getChildAt(column)).getText().toString();
                 data[row][column] = input;
             }
@@ -301,9 +301,9 @@ public class MatrixView extends ThemedTableLayout {
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        for(int row = 0; row < mRows; row++) {
+        for (int row = 0; row < mRows; row++) {
             TableRow tr = (TableRow) getChildAt(row);
-            for(int column = 0; column < mColumns; column++) {
+            for (int column = 0; column < mColumns; column++) {
                 tr.getChildAt(column).setEnabled(enabled);
             }
         }

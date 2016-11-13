@@ -14,7 +14,7 @@ import static io.codetail.animation.ViewAnimationUtils.SimpleAnimationListener;
 /**
  * @hide
  */
-public interface RevealAnimator{
+public interface RevealAnimator {
 
     void setClipOutlines(boolean clip);
 
@@ -22,9 +22,9 @@ public interface RevealAnimator{
 
     void setTarget(View target);
 
-    void setRevealRadius(float value);
-
     float getRevealRadius();
+
+    void setRevealRadius(float value);
 
     void invalidate(Rect bounds);
 
@@ -43,7 +43,7 @@ public interface RevealAnimator{
 
             RevealAnimator target = mReference.get();
 
-            if(target == null){
+            if (target == null) {
                 return;
             }
 
@@ -83,7 +83,7 @@ public interface RevealAnimator{
 
             RevealAnimator target = mReference.get();
 
-            if(target == null){
+            if (target == null) {
                 return;
             }
 
@@ -123,7 +123,7 @@ public interface RevealAnimator{
 
             RevealAnimator target = mReference.get();
 
-            if(target == null){
+            if (target == null) {
                 return;
             }
 

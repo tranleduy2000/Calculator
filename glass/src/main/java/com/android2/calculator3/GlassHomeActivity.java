@@ -28,7 +28,7 @@ public class GlassHomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.glass_home);
 
-        if(savedInstanceState == null) displaySpeechRecognizer();
+        if (savedInstanceState == null) displaySpeechRecognizer();
 
         mGestureDetector = new GestureDetector(this);
         mGestureDetector.setBaseListener(new GestureDetector.BaseListener() {
@@ -68,12 +68,12 @@ public class GlassHomeActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == SPEECH_REQUEST) {
-            if(resultCode == RESULT_OK) {
+        if (requestCode == SPEECH_REQUEST) {
+            if (resultCode == RESULT_OK) {
                 List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 String spokenText = Voice.parseSpokenText(results.get(0));
 
-                if(spokenText.isEmpty()) {
+                if (spokenText.isEmpty()) {
                     detectionFailed();
                     return;
                 }
@@ -86,7 +86,7 @@ public class GlassHomeActivity extends Activity {
                 String result;
                 try {
                     result = solver.solve(spokenText);
-                } catch(SyntaxException e) {
+                } catch (SyntaxException e) {
                     result = getString(R.string.error);
                 }
                 Intent intent = new Intent(this, GlassResultActivity.class);
@@ -94,11 +94,9 @@ public class GlassHomeActivity extends Activity {
                 intent.putExtra(GlassResultActivity.EXTRA_RESULT, result);
                 startActivity(intent);
                 finish();
-            }
-            else if(resultCode == RESULT_CANCELED) {
+            } else if (resultCode == RESULT_CANCELED) {
                 finish();
-            }
-            else {
+            } else {
                 detectionFailed();
             }
         }

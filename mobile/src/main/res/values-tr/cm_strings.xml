@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Matris paneli</string>
     <string name="panel_graph">Grafik paneli</string>
+    <string name="panel_function">Fonksiyon paneli</string>
     <string name="panel_hex">Taban aritmetiği paneli</string>
     <string name="copy">Kopyala: \'%s\'</string>
     <string name="remove_from_history">Geçmişten sil</string>

@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Матрични панел</string>
     <string name="panel_graph">Графички панел</string>
+    <string name="panel_function">Функцијски панел</string>
     <string name="panel_hex">Хексадекадни панел</string>
     <string name="copy">Копирај \'%s\'</string>
     <string name="remove_from_history">Уклони из историје</string>

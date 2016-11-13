@@ -92,21 +92,21 @@ public class TouchInterceptor extends ListView {
      */
     private int myPointToPosition(int x, int y) {
 
-        if(y < 0) {
+        if (y < 0) {
             // when dragging off the top of the screen, calculate position
             // by going back from a visible item
             int pos = myPointToPosition(x, y + mItemHeightNormal);
-            if(pos > 0) {
+            if (pos > 0) {
                 return pos - 1;
             }
         }
 
         Rect frame = mTempRect;
         final int count = getChildCount();
-        for(int i = count - 1; i >= 0; i--) {
+        for (int i = count - 1; i >= 0; i--) {
             final View child = getChildAt(i);
             child.getHitRect(frame);
-            if(frame.contains(x, y)) {
+            if (frame.contains(x, y)) {
                 return getFirstVisiblePosition() + i;
             }
         }
@@ -116,11 +116,11 @@ public class TouchInterceptor extends ListView {
     private int getItemForPosition(int y) {
         int adjustedy = y - mDragPointY - mItemHeightHalf;
         int pos = myPointToPosition(0, adjustedy);
-        if(pos >= 0) {
-            if(pos <= mSrcDragPos) {
+        if (pos >= 0) {
+            if (pos <= mSrcDragPos) {
                 pos += 1;
             }
-        } else if(adjustedy < 0) {
+        } else if (adjustedy < 0) {
             // this shouldn't happen anymore now that myPointToPosition deals
             // with this situation
             pos = 0;
@@ -129,10 +129,10 @@ public class TouchInterceptor extends ListView {
     }
 
     private void adjustScrollBounds(int y) {
-        if(y >= mHeight / 3) {
+        if (y >= mHeight / 3) {
             mUpperBound = mHeight / 3;
         }
-        if(y <= mHeight * 2 / 3) {
+        if (y <= mHeight * 2 / 3) {
             mLowerBound = mHeight * 2 / 3;
         }
     }
@@ -141,10 +141,10 @@ public class TouchInterceptor extends ListView {
      * Restore size and visibility for all listitems
      */
     private void unExpandViews(boolean deletion) {
-        for(int i = 0; ; i++) {
+        for (int i = 0; ; i++) {
             View v = getChildAt(i);
-            if(v == null) {
-                if(deletion) {
+            if (v == null) {
+                if (deletion) {
                     // HACK force update of mItemCount
                     int position = getFirstVisiblePosition();
                     int y = getChildAt(0).getTop();
@@ -156,14 +156,14 @@ public class TouchInterceptor extends ListView {
                     layoutChildren(); // force children to be recreated where
                     // needed
                     v = getChildAt(i);
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
                     // layoutChildren throws this sometimes, presumably because
                     // we're
                     // in the process of being torn down but are still getting
                     // touch
                     // events
                 }
-                if(v == null) {
+                if (v == null) {
                     return;
                 }
             }
@@ -179,31 +179,31 @@ public class TouchInterceptor extends ListView {
      */
     private void doExpansion() {
         int childnum = mDragPos - getFirstVisiblePosition();
-        if(mDragPos > mSrcDragPos) {
+        if (mDragPos > mSrcDragPos) {
             childnum++;
         }
         int numheaders = getHeaderViewsCount();
 
         View first = getChildAt(mSrcDragPos - getFirstVisiblePosition());
-        for(int i = 0; ; i++) {
+        for (int i = 0; ; i++) {
             View vv = getChildAt(i);
-            if(vv == null) {
+            if (vv == null) {
                 break;
             }
 
             int height = mItemHeightNormal;
             int visibility = View.VISIBLE;
-            if(mDragPos < numheaders && i == numheaders) {
+            if (mDragPos < numheaders && i == numheaders) {
                 // dragging on top of the header item, so adjust the item below
                 // instead
-                if(vv.equals(first)) {
+                if (vv.equals(first)) {
                     visibility = View.INVISIBLE;
                 } else {
                     height = mItemHeightExpanded;
                 }
-            } else if(vv.equals(first)) {
+            } else if (vv.equals(first)) {
                 // processing the item that is being dragged
-                if(mDragPos == mSrcDragPos || getPositionForView(vv) == getCount() - 1) {
+                if (mDragPos == mSrcDragPos || getPositionForView(vv) == getCount() - 1) {
                     // hovering over the original location
                     visibility = View.INVISIBLE;
                 } else {
@@ -213,8 +213,8 @@ public class TouchInterceptor extends ListView {
                     // has the desired effect.
                     height = 1;
                 }
-            } else if(i == childnum) {
-                if(mDragPos >= numheaders && mDragPos < getCount() - 1) {
+            } else if (i == childnum) {
+                if (mDragPos >= numheaders && mDragPos < getCount() - 1) {
                     height = mItemHeightExpanded;
                 }
             }
@@ -227,19 +227,19 @@ public class TouchInterceptor extends ListView {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        if(mGestureDetector != null) {
+        if (mGestureDetector != null) {
             mGestureDetector.onTouchEvent(ev);
         }
-        if((mDragListener != null || mDropListener != null) && mDragView != null) {
+        if ((mDragListener != null || mDropListener != null) && mDragView != null) {
             int action = ev.getAction();
-            switch(action) {
+            switch (action) {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     Rect r = mTempRect;
                     mDragView.getDrawingRect(r);
                     stopDragging();
 
-                    if(mDropListener != null && mDragPos >= 0 && mDragPos < getCount()) {
+                    if (mDropListener != null && mDragPos >= 0 && mDragPos < getCount()) {
                         mDropListener.drop(mSrcDragPos, mDragPos);
                     }
                     unExpandViews(false);
@@ -251,9 +251,9 @@ public class TouchInterceptor extends ListView {
                     int y = (int) ev.getY();
                     dragView(x, y);
                     int itemnum = getItemForPosition(y);
-                    if(itemnum >= 0) {
-                        if(action == MotionEvent.ACTION_DOWN || itemnum != mDragPos) {
-                            if(mDragListener != null) {
+                    if (itemnum >= 0) {
+                        if (action == MotionEvent.ACTION_DOWN || itemnum != mDragPos) {
+                            if (mDragListener != null) {
                                 mDragListener.drag(mDragPos, itemnum);
                             }
                             mDragPos = itemnum;
@@ -261,17 +261,17 @@ public class TouchInterceptor extends ListView {
                         }
                         int speed = 0;
                         adjustScrollBounds(y);
-                        if(y > mLowerBound) {
+                        if (y > mLowerBound) {
                             // scroll the list up a bit
-                            if(getLastVisiblePosition() < getCount() - 1) {
+                            if (getLastVisiblePosition() < getCount() - 1) {
                                 speed = y > (mHeight + mLowerBound) / 2 ? 16 : 4;
                             } else {
                                 speed = 1;
                             }
-                        } else if(y < mUpperBound) {
+                        } else if (y < mUpperBound) {
                             // scroll the list down a bit
                             speed = y < mUpperBound / 2 ? -16 : -4;
-                            if(getFirstVisiblePosition() == 0 && getChildAt(0).getTop() >= getPaddingTop()) {
+                            if (getFirstVisiblePosition() == 0 && getChildAt(0).getTop() >= getPaddingTop()) {
                                 // if we're already at the top, don't try to scroll,
                                 // because
                                 // it causes the framework to do some extra drawing
@@ -280,7 +280,7 @@ public class TouchInterceptor extends ListView {
                                 speed = 0;
                             }
                         }
-                        if(speed != 0) {
+                        if (speed != 0) {
                             smoothScrollBy(speed, 30);
                         }
                     }
@@ -293,13 +293,13 @@ public class TouchInterceptor extends ListView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if(mDragListener != null || mDropListener != null) {
-            switch(ev.getAction()) {
+        if (mDragListener != null || mDropListener != null) {
+            switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     int x = (int) ev.getX();
                     int y = (int) ev.getY();
                     int itemnum = pointToPosition(x, y);
-                    if(itemnum == AdapterView.INVALID_POSITION) {
+                    if (itemnum == AdapterView.INVALID_POSITION) {
                         break;
                     }
                     View item = getChildAt(itemnum - getFirstVisiblePosition());
@@ -310,7 +310,7 @@ public class TouchInterceptor extends ListView {
                     // The left side of the item is the grabber for dragging the
                     // item
                     // TODO delete this but make sure clicks still work
-                    if(x < getWidth() / 2) {
+                    if (x < getWidth() / 2) {
                         item.setDrawingCacheEnabled(true);
                         // Create a copy of the drawing cache so that it does not
                         // get recycled
@@ -358,14 +358,14 @@ public class TouchInterceptor extends ListView {
     }
 
     private void stopDragging() {
-        if(mDragView != null) {
+        if (mDragView != null) {
             mDragView.setVisibility(GONE);
             WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
             wm.removeView(mDragView);
             mDragView.setImageDrawable(null);
             mDragView = null;
         }
-        if(mDragBitmap != null) {
+        if (mDragBitmap != null) {
             mDragBitmap.recycle();
             mDragBitmap = null;
         }

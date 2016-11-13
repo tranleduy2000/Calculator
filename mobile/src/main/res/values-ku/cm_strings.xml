@@ -23,6 +23,7 @@
     <string name="mod">بار</string>
     <string name="panel_matrix">جۆری ماتریکس</string>
     <string name="panel_graph">جۆری نه‌خشه‌</string>
+    <string name="panel_function">جۆری فرمان</string>
     <string name="panel_hex">جۆری گۆشه‌یی</string>
     <string name="copy">له‌به‌ر گرتنه‌وه‌ی \'%s\'</string>
     <string name="remove_from_history">سڕینه‌وه‌ له‌ مێژوو</string>

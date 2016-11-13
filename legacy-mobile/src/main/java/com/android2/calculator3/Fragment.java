@@ -18,14 +18,14 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
 
     final private Handler mHandler = new Handler();
     private View mView;
+    private View mProgressContainer;
+    private View mViewContainer;
     final private Runnable mRequestFocus = new Runnable() {
         @Override
         public void run() {
             ((ViewGroup) mViewContainer).focusableViewAvailable(mView);
         }
     };
-    private View mProgressContainer;
-    private View mViewContainer;
     private boolean mViewShown = true;
 
     public Fragment() {
@@ -33,7 +33,7 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
         try {
             // Fragments inside fragments can't do this
             setRetainInstance(true);
-        } catch(IllegalStateException e) {
+        } catch (IllegalStateException e) {
         }
     }
 
@@ -104,18 +104,18 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
     }
 
     private void ensureView() {
-        if(mView != null) {
+        if (mView != null) {
             return;
         }
         View root = getView();
-        if(root == null) {
+        if (root == null) {
             throw new IllegalStateException("Content view not yet created");
         }
 
         mProgressContainer = root.findViewById(INTERNAL_PROGRESS_CONTAINER_ID);
         mViewContainer = root.findViewById(INTERNAL_VIEW_CONTAINER_ID);
         View rawView = root.findViewById(android.R.id.content);
-        if(rawView == null) {
+        if (rawView == null) {
             throw new RuntimeException("Your content must have a View whose id attribute is " + "'android.R.id.content'");
         }
         mView = rawView;
@@ -151,15 +151,15 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
      */
     private void setViewShown(boolean shown, boolean animate) {
         ensureView();
-        if(mProgressContainer == null) {
+        if (mProgressContainer == null) {
             throw new IllegalStateException("Can't be used with a custom content view");
         }
-        if(mViewShown == shown) {
+        if (mViewShown == shown) {
             return;
         }
         mViewShown = shown;
-        if(shown) {
-            if(animate) {
+        if (shown) {
+            if (animate) {
                 mProgressContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
                 mViewContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
             } else {
@@ -169,7 +169,7 @@ public abstract class Fragment extends android.support.v4.app.Fragment {
             mProgressContainer.setVisibility(View.GONE);
             mViewContainer.setVisibility(View.VISIBLE);
         } else {
-            if(animate) {
+            if (animate) {
                 mProgressContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_in));
                 mViewContainer.startAnimation(AnimationUtils.loadAnimation(getActivity(), android.R.anim.fade_out));
             } else {

@@ -82,7 +82,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
         View v;
         EditText active;
         int id = view.getId();
-        switch(id) {
+        switch (id) {
             case R.id.del:
                 mHandler.onDelete();
                 break;
@@ -92,8 +92,8 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 break;
 
             case R.id.equal:
-                if(mHandler.getText().contains(mX) || mHandler.getText().contains(mY)) {
-                    if(!mHandler.getText().contains("=")) {
+                if (mHandler.getText().contains(mX) || mHandler.getText().contains(mY)) {
+                    if (!mHandler.getText().contains("=")) {
                         mHandler.insert("=");
                         returnToBasic();
                     }
@@ -106,7 +106,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 try {
                     mHandler.setText(mHandler.getBaseModule().setBase(mHandler.getText().toString(),
                             Base.HEXADECIMAL));
-                } catch(SyntaxException e) {
+                } catch (SyntaxException e) {
                     e.printStackTrace();
                 }
                 applyBannedResources(Base.HEXADECIMAL);
@@ -116,7 +116,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 try {
                     mHandler.setText(mHandler.getBaseModule().setBase(mHandler.getText().toString(),
                             Base.BINARY));
-                } catch(SyntaxException e) {
+                } catch (SyntaxException e) {
                     e.printStackTrace();
                 }
                 applyBannedResources(Base.BINARY);
@@ -126,7 +126,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 try {
                     mHandler.setText(mHandler.getBaseModule().setBase(mHandler.getText().toString(),
                             Base.DECIMAL));
-                } catch(SyntaxException e) {
+                } catch (SyntaxException e) {
                     e.printStackTrace();
                 }
                 applyBannedResources(Base.DECIMAL);
@@ -149,31 +149,31 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
 
             case R.id.plus_row:
                 v = mHandler.mDisplay.getActiveEditText();
-                if(v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().addRow();
+                if (v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().addRow();
                 break;
 
             case R.id.minus_row:
                 v = mHandler.mDisplay.getActiveEditText();
-                if(v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().removeRow();
+                if (v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().removeRow();
                 break;
 
             case R.id.plus_col:
                 v = mHandler.mDisplay.getActiveEditText();
-                if(v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().addColumn();
+                if (v instanceof MatrixEditText) ((MatrixEditText) v).getMatrixView().addColumn();
                 break;
 
             case R.id.minus_col:
                 v = mHandler.mDisplay.getActiveEditText();
-                if(v instanceof MatrixEditText)
+                if (v instanceof MatrixEditText)
                     ((MatrixEditText) v).getMatrixView().removeColumn();
                 break;
 
             case R.id.next:
-                if(mHandler.getText().equals(mErrorString)) mHandler.setText("");
+                if (mHandler.getText().equals(mErrorString)) mHandler.setText("");
                 active = mHandler.mDisplay.getActiveEditText();
-                if(active.getSelectionStart() == active.getText().length()) {
+                if (active.getSelectionStart() == active.getText().length()) {
                     v = mHandler.mDisplay.getActiveEditText().focusSearch(View.FOCUS_FORWARD);
-                    if(v != null) v.requestFocus();
+                    if (v != null) v.requestFocus();
                     active = mHandler.mDisplay.getActiveEditText();
                     active.setSelection(0);
                 } else {
@@ -182,10 +182,10 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 break;
 
             case R.id.parentheses:
-                if(mHandler.getText().equals(mErrorString)) mHandler.setText("");
-                if(mHandler.getText().contains("=")) {
+                if (mHandler.getText().equals(mErrorString)) mHandler.setText("");
+                if (mHandler.getText().contains("=")) {
                     String[] equation = mHandler.getText().split("=");
-                    if(equation.length > 1) {
+                    if (equation.length > 1) {
                         mHandler.setText(equation[0] + "=(" + equation[1] + ")");
                     } else {
                         mHandler.setText(equation[0] + "=()");
@@ -197,16 +197,16 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 break;
 
             case R.id.mod:
-                if(mHandler.getText().equals(mErrorString)) mHandler.setText("");
-                if(mHandler.getText().contains("=")) {
+                if (mHandler.getText().equals(mErrorString)) mHandler.setText("");
+                if (mHandler.getText().contains("=")) {
                     String[] equation = mHandler.getText().split("=");
-                    if(equation.length > 1) {
+                    if (equation.length > 1) {
                         mHandler.setText(equation[0] + "=" + mModString + "(" + equation[1] + ",");
                     } else {
                         mHandler.insert(mModString + "(");
                     }
                 } else {
-                    if(mHandler.getText().length() > 0) {
+                    if (mHandler.getText().length() > 0) {
                         mHandler.setText(mModString + "(" + mHandler.getText() + ",");
                     } else {
                         mHandler.insert(mModString + "(");
@@ -232,11 +232,11 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 break;
 
             default:
-                if(view instanceof Button) {
+                if (view instanceof Button) {
                     String text = ((Button) view).getText().toString();
-                    if(text.equals(mDX) || text.equals(mDY)) {
+                    if (text.equals(mDX) || text.equals(mDY)) {
                         // Do nothing
-                    } else if(text.length() >= 2) {
+                    } else if (text.length() >= 2) {
                         // Add paren after sin, cos, ln, etc. from buttons
                         text += "(";
                     }
@@ -247,17 +247,17 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
     }
 
     private void vibrate() {
-        if(CalculatorSettings.vibrateOnPress(mContext)) {
+        if (CalculatorSettings.vibrateOnPress(mContext)) {
             Vibrator vi = (Vibrator) mContext.getSystemService(Context.VIBRATOR_SERVICE);
-            if(!vi.hasVibrator()) return;
+            if (!vi.hasVibrator()) return;
             vi.vibrate(CalculatorSettings.getVibrationStrength());
         }
     }
 
     private boolean returnToBasic() {
-        if(mPager != null && CalculatorSettings.returnToBasic(mContext)) {
+        if (mPager != null && CalculatorSettings.returnToBasic(mContext)) {
             Page basic = new Page(mContext, NormalPanel.BASIC);
-            if(CalculatorSettings.isPageEnabled(mContext, basic)) {
+            if (CalculatorSettings.isPageEnabled(mContext, basic)) {
                 ((Calculator) mContext).scrollToPage(basic);
             }
             return true;
@@ -270,14 +270,14 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
         ((CalculatorPageAdapter) pager.getAdapter()).applyBannedResources(base);
 
         // A special check when mLargePager exists
-        if(mLargePager != null) {
+        if (mLargePager != null) {
             ((CalculatorPageAdapter) mLargePager.getAdapter()).applyBannedResources(base);
         }
 
         // Update the buttons on the hex page(s)
         Iterable<View> iterator = ((CalculatorPageAdapter) pager.getAdapter()).getViewIterator();
-        for(View child : iterator) {
-            if(child != null) {
+        for (View child : iterator) {
+            if (child != null) {
                 updateBaseButtons(base, child);
             }
         }
@@ -285,7 +285,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
 
     private void updateBaseButtons(Base baseMode, View parent) {
         int id = 0;
-        switch(baseMode) {
+        switch (baseMode) {
             case HEXADECIMAL:
                 id = R.id.hex;
                 break;
@@ -297,7 +297,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 break;
         }
         View v = parent.findViewById(id);
-        if(v != null) {
+        if (v != null) {
             clearSelectedBase(parent);
             v.setSelected(true);
         }
@@ -315,7 +315,7 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
 
     @Override
     public boolean onLongClick(View view) {
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.del:
                 mHandler.onClear();
                 return true;
@@ -323,9 +323,9 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
             case R.id.next:
                 // Handle back
                 EditText active = mHandler.mDisplay.getActiveEditText();
-                if(active.getSelectionStart() == 0) {
+                if (active.getSelectionStart() == 0) {
                     View v = mHandler.mDisplay.getActiveEditText().focusSearch(View.FOCUS_BACKWARD);
-                    if(v != null) v.requestFocus();
+                    if (v != null) v.requestFocus();
                     active = mHandler.mDisplay.getActiveEditText();
                     active.setSelection(active.getText().length());
                 } else {
@@ -333,16 +333,16 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
                 }
                 return true;
         }
-        if(view.getTag() != null) {
+        if (view.getTag() != null) {
             String text = (String) view.getTag();
-            if(!text.isEmpty()) {
+            if (!text.isEmpty()) {
                 Toast.makeText(mContext, text, Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
-        if(view instanceof TextView && ((TextView) view).getHint() != null) {
+        if (view instanceof TextView && ((TextView) view).getHint() != null) {
             String text = ((TextView) view).getHint().toString();
-            if(text.length() >= 2) {
+            if (text.length() >= 2) {
                 // Add paren after sin, cos, ln, etc. from buttons
                 text += "(";
             }
@@ -358,19 +358,19 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
         int action = keyEvent.getAction();
 
         // Work-around for spurious key event from IME, bug #1639445
-        if(action == KeyEvent.ACTION_MULTIPLE && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+        if (action == KeyEvent.ACTION_MULTIPLE && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
             return true; // eat it
         }
 
-        if(keyEvent.getUnicodeChar() == '=') {
-            if(action == KeyEvent.ACTION_UP) {
+        if (keyEvent.getUnicodeChar() == '=') {
+            if (action == KeyEvent.ACTION_UP) {
                 mHandler.onEnter();
             }
             return true;
         }
 
-        if(keyCode != KeyEvent.KEYCODE_DPAD_CENTER && keyCode != KeyEvent.KEYCODE_DPAD_UP && keyCode != KeyEvent.KEYCODE_DPAD_DOWN && keyCode != KeyEvent.KEYCODE_ENTER) {
-            if(keyEvent.isPrintingKey() && action == KeyEvent.ACTION_UP) {
+        if (keyCode != KeyEvent.KEYCODE_DPAD_CENTER && keyCode != KeyEvent.KEYCODE_DPAD_UP && keyCode != KeyEvent.KEYCODE_DPAD_DOWN && keyCode != KeyEvent.KEYCODE_ENTER) {
+            if (keyEvent.isPrintingKey() && action == KeyEvent.ACTION_UP) {
                 // Tell the handler that text was updated.
                 mHandler.onTextChanged();
             }
@@ -381,8 +381,8 @@ public class EventListener implements View.OnKeyListener, View.OnClickListener, 
          * We should act on KeyEvent.ACTION_DOWN, but strangely sometimes the DOWN event isn't received, only the UP. So the workaround is to act on UP... http://b/issue?id=1022478
          */
 
-        if(action == KeyEvent.ACTION_UP) {
-            switch(keyCode) {
+        if (action == KeyEvent.ACTION_UP) {
+            switch (keyCode) {
                 case KeyEvent.KEYCODE_ENTER:
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                     mHandler.onEnter();

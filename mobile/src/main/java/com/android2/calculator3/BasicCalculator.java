@@ -47,13 +47,13 @@ import com.android2.calculator3.view.DisplayOverlay;
 import com.android2.calculator3.view.EqualsImageButton;
 import com.android2.calculator3.view.FormattedNumberEditText;
 import com.android2.calculator3.view.ResizingEditText.OnTextSizeChangeListener;
-import com.xlythe.floatingview.AnimationFinishedListener;
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.History;
 import com.xlythe.math.HistoryEntry;
 import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
+import com.xlythe.view.floating.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;

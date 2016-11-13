@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.android2.calculator3.drawable.AnimatingDrawable;
 import com.android2.calculator3.view.CalculatorPadLayout;
-import com.xlythe.floatingview.AnimationFinishedListener;
+import com.xlythe.view.floating.AnimationFinishedListener;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;

@@ -68,7 +68,7 @@ public class Cling extends FrameLayout {
     }
 
     public void init(Calculator c, int[] positionData, float revealRadius, boolean showHand) {
-        if(!mIsInitialized) {
+        if (!mIsInitialized) {
             mCalculator = c;
             mPositionData = positionData;
             mShowHand = showHand;
@@ -111,7 +111,7 @@ public class Cling extends FrameLayout {
     }
 
     private int[] getPunchThroughPosition() {
-        if(mPositionData != null) {
+        if (mPositionData != null) {
             return mPositionData;
         }
         return new int[]{-1, -1, -1};
@@ -119,7 +119,7 @@ public class Cling extends FrameLayout {
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if(mIsInitialized) {
+        if (mIsInitialized) {
             DisplayMetrics metrics = new DisplayMetrics();
             mCalculator.getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -128,10 +128,10 @@ public class Cling extends FrameLayout {
             Canvas c = new Canvas(b);
 
             // Draw the background
-            if(mBackground == null) {
+            if (mBackground == null) {
                 mBackground = getResources().getDrawable(R.drawable.bg_cling);
             }
-            if(mBackground != null) {
+            if (mBackground != null) {
                 mBackground.setBounds(0, 0, getMeasuredWidth(), getMeasuredHeight());
                 mBackground.draw(c);
             } else {
@@ -154,15 +154,15 @@ public class Cling extends FrameLayout {
             cx = pos[0];
             cy = pos[1] - statusBarHeight;
             cz = pos[2];
-            if(cx > -1 && cy > -1 && scale > 0) {
+            if (cx > -1 && cy > -1 && scale > 0) {
                 c.drawCircle(cx, cy, mRevealRadius, mErasePaint);
                 mPunchThroughGraphic.setBounds(cx - dw / 2, cy - dh / 2, cx + dw / 2, cy + dh / 2);
                 mPunchThroughGraphic.draw(c);
             }
 
             // Draw the hand graphic
-            if(mShowHand) {
-                if(mHandTouchGraphic == null) {
+            if (mShowHand) {
+                if (mHandTouchGraphic == null) {
                     mHandTouchGraphic = getResources().getDrawable(R.drawable.hand);
                 }
                 int offset = cz;

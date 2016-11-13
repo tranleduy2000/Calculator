@@ -1,9 +1,16 @@
 package com.android2.calculator3;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -11,7 +18,8 @@ import android.widget.Toast;
 import com.android2.calculator3.view.CalculatorDisplay;
 import com.android2.calculator3.view.CalculatorViewPager;
 import com.xlythe.engine.theme.Theme;
-import com.xlythe.floatingview.FloatingView;
+
+import com.xlythe.view.floating.FloatingView;
 
 public class FloatingCalculator extends FloatingView {
     // Calc logic
@@ -22,10 +30,6 @@ public class FloatingCalculator extends FloatingView {
     private History mHistory;
     private Logic mLogic;
 
-    public View inflateButton() {
-        return View.inflate(getContext(), R.layout.floating_calculator_icon, null);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,8 +38,29 @@ public class FloatingCalculator extends FloatingView {
         Theme.setPackageName(CalculatorSettings.getTheme(getContext()));
     }
 
-    public View inflateView() {
-        View child = View.inflate(getContext(), R.layout.floating_calculator, null);
+    @NonNull
+    @Override
+    public View inflateButton(@NonNull ViewGroup parent) {
+        return LayoutInflater.from(getContext()).inflate(R.layout.floating_calculator_icon, parent, false);
+    }
+
+    @NonNull
+    @Override
+    protected Notification createNotification() {
+        Intent intent = new Intent(this, FloatingCalculator.class).setAction(ACTION_OPEN);
+        return new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher_notification)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.floating_notification_description))
+                .setContentIntent(PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .build();
+    }
+
+    @NonNull
+    @Override
+    public View inflateView(@NonNull ViewGroup parent) {
+        View child = LayoutInflater.from(getContext()).inflate(R.layout.floating_calculator, parent, false);
 
         mPager = (CalculatorViewPager) child.findViewById(R.id.panelswitch);
 
@@ -64,18 +89,18 @@ public class FloatingCalculator extends FloatingView {
         mListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v instanceof Button) {
-                    if(((Button) v).getText().toString().equals("=")) {
+                if (v instanceof Button) {
+                    if (((Button) v).getText().toString().equals("=")) {
                         mLogic.onEnter();
-                    } else if(v.getId() == R.id.parentheses) {
-                        if(mLogic.isError()) mLogic.setText("");
+                    } else if (v.getId() == R.id.parentheses) {
+                        if (mLogic.isError()) mLogic.setText("");
                         mLogic.setText("(" + mLogic.getText() + ")");
-                    } else if(((Button) v).getText().toString().length() >= 2) {
+                    } else if (((Button) v).getText().toString().length() >= 2) {
                         mLogic.insert(((Button) v).getText().toString() + "(");
                     } else {
                         mLogic.insert(((Button) v).getText().toString());
                     }
-                } else if(v instanceof ImageButton) {
+                } else if (v instanceof ImageButton) {
                     mLogic.onDelete();
                 }
                 del.setVisibility(mLogic.getDeleteMode() == Logic.DELETE_MODE_BACKSPACE ? View.VISIBLE : View.GONE);
@@ -111,7 +136,7 @@ public class FloatingCalculator extends FloatingView {
     private void copyContent(String text) {
         ClipboardManager clipboard = (ClipboardManager) getContext().getSystemService(Context.CLIPBOARD_SERVICE);
         clipboard.setPrimaryClip(ClipData.newPlainText(null, text));
-        String toastText = String.format(getResources().getString(R.string.text_copied_toast), text);
+        String toastText = getResources().getString(R.string.text_copied_toast);
         Toast.makeText(getContext(), toastText, Toast.LENGTH_SHORT).show();
     }
 }

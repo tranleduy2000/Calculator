@@ -23,6 +23,7 @@
     <string name="mod">mod</string>
     <string name="panel_matrix">Matrixberechnung</string>
     <string name="panel_graph">Diagramm</string>
+    <string name="panel_function">Funktionen</string>
     <string name="panel_hex">Dez/Bin/Hex</string>
     <string name="copy">\"%s\" kopieren</string>
     <string name="remove_from_history">Aus Verlauf entfernen</string>

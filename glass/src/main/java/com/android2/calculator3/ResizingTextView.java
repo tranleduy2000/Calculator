@@ -43,7 +43,7 @@ class ResizingTextView extends TextView {
     }
 
     private void refitText(String text, int textWidth, int textHeight) {
-        if(textWidth <= 0 || textHeight <= 0) return;
+        if (textWidth <= 0 || textHeight <= 0) return;
 
         int targetWidth = textWidth - getPaddingLeft() - getPaddingRight();
         int targetHeight = textHeight - getPaddingTop() - getPaddingBottom();
@@ -54,19 +54,17 @@ class ResizingTextView extends TextView {
 
         mPaint.set(getPaint());
 
-        while((high - low) > threshold) {
+        while ((high - low) > threshold) {
             float size = (high + low) / 2;
             mPaint.setTextSize(size);
             mPaint.getTextBounds(text, 0, text.length(), mRect);
-            if(mRect.width() >= targetWidth) {
+            if (mRect.width() >= targetWidth) {
                 // Too big
                 high = size;
-            }
-            else if(mRect.height() >= targetHeight) {
+            } else if (mRect.height() >= targetHeight) {
                 // Too big
                 high = size;
-            }
-            else {
+            } else {
                 // Too small
                 low = size;
             }
@@ -90,8 +88,8 @@ class ResizingTextView extends TextView {
     }
 
     @Override
-    protected void onSizeChanged (int w, int h, int oldw, int oldh) {
-        if(w != oldw || h != oldh) {
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        if (w != oldw || h != oldh) {
             refitText(getText().toString(), w, h);
         }
     }
