@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<com.xlythe.calculator.material.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.CalculatorPadGridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_numeric"
     android:layout_width="match_parent"
@@ -86,4 +86,4 @@
         style="@style/bscalc_PadButtonStyle.Numeric.Equals"
         android:text="=" />
 
-</com.xlythe.calculator.material.view.CalculatorPadLayout>
+</com.xlythe.calculator.material.view.CalculatorPadGridLayout>

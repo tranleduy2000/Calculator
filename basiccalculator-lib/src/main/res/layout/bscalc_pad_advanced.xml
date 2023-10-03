@@ -13,7 +13,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<com.xlythe.calculator.material.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.CalculatorPadGridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_advanced"
     style="@style/bscalc_PadLayoutStyle.Advanced"
@@ -95,4 +95,4 @@
         style="@style/bscalc_PadButtonStyle.Advanced"
         android:text="@string/bscalc_fun_percentage" />
 
-</com.xlythe.calculator.material.view.CalculatorPadLayout>
+</com.xlythe.calculator.material.view.CalculatorPadGridLayout>

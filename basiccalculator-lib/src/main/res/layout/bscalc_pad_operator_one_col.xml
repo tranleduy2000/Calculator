@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<com.xlythe.calculator.material.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.xlythe.calculator.material.view.CalculatorPadGridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_operator"
@@ -59,4 +59,4 @@
         style="@style/bscalc_PadButtonStyle.Operator"
         android:text="@string/bscalc_op_add" />
 
-</com.xlythe.calculator.material.view.CalculatorPadLayout>
+</com.xlythe.calculator.material.view.CalculatorPadGridLayout>

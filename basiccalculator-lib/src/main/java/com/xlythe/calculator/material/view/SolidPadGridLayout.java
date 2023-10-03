@@ -13,7 +13,7 @@ import com.xlythe.calculator.material.R;
 /**
  * A ViewGroup that can be set to disallow touch events on its parents or children.
  */
-public class SolidPadLayout extends CalculatorPadLayout {
+public class SolidPadGridLayout extends CalculatorPadGridLayout {
     private static final String STATE_SUPER = "super";
     private static final String STATE_PREVENT_PARENT_TOUCH_EVENTS = "prevent_parent_touch_events";
     private static final String STATE_PREVENT_CHILD_TOUCH_EVENTS = "prevent_child_touch_events";
@@ -21,15 +21,15 @@ public class SolidPadLayout extends CalculatorPadLayout {
     private boolean mPreventParentTouchEvents;
     private boolean mPreventChildTouchEvents;
 
-    public SolidPadLayout(Context context) {
+    public SolidPadGridLayout(Context context) {
         this(context, null);
     }
 
-    public SolidPadLayout(Context context, AttributeSet attrs) {
+    public SolidPadGridLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SolidPadLayout(Context context, AttributeSet attrs, int defStyle) {
+    public SolidPadGridLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         if (attrs != null) {

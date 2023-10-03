@@ -25,19 +25,19 @@ import android.view.ViewGroup;
  * A layout that places children in an evenly distributed grid based on the specified
  * {@link android.R.attr#columnCount} and {@link android.R.attr#rowCount} attributes.
  */
-public class CalculatorPadLayout extends ViewGroup {
+public class CalculatorPadGridLayout extends ViewGroup {
     private int mRowCount;
     private int mColumnCount;
 
-    public CalculatorPadLayout(Context context) {
+    public CalculatorPadGridLayout(Context context) {
         this(context, null);
     }
 
-    public CalculatorPadLayout(Context context, AttributeSet attrs) {
+    public CalculatorPadGridLayout(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CalculatorPadLayout(Context context, AttributeSet attrs, int defStyle) {
+    public CalculatorPadGridLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 new int[]{android.R.attr.rowCount, android.R.attr.columnCount}, defStyle, 0);
