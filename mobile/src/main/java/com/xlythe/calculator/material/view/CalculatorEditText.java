@@ -19,15 +19,12 @@ package com.xlythe.calculator.material.view;
 import android.content.Context;
 import android.text.Editable;
 import android.text.Html;
-import android.text.Layout;
 import android.text.Spannable;
-import android.text.method.LinkMovementMethod;
 import android.text.style.CharacterStyle;
 import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.TextView;
 
 import com.xlythe.calculator.material.util.TextUtil;
 import com.xlythe.math.BaseModule;
@@ -57,7 +54,6 @@ public class CalculatorEditText extends FormattedNumberEditText {
 
     private void setUp(Context context, AttributeSet attrs) {
         //setMovementMethod(new MathMovementMethod());
-        //addSpanComponent(new MatrixComponent(getContext()));
     }
 
     @Override
@@ -322,32 +318,4 @@ public class CalculatorEditText extends FormattedNumberEditText {
         }
     }
 
-    /**
-     * Looks for MathSpannables and passes onTouch events to them
-     */
-    public static class MathMovementMethod extends LinkMovementMethod {
-        @Override
-        public boolean onTouchEvent(TextView widget, Spannable buffer, MotionEvent event) {
-            int x = (int) event.getX();
-            int y = (int) event.getY();
-
-            x -= widget.getTotalPaddingLeft();
-            y -= widget.getTotalPaddingTop();
-
-            x += widget.getScrollX();
-            y += widget.getScrollY();
-
-            Layout layout = widget.getLayout();
-            int line = layout.getLineForVertical(y);
-            int off = layout.getOffsetForHorizontal(line, x);
-
-            MathSpannable[] spans = buffer.getSpans(off, off, MathSpannable.class);
-
-            if (spans.length != 0) {
-                return spans[0].onTouchEvent(event);
-            }
-
-            return false;
-        }
-    }
 }

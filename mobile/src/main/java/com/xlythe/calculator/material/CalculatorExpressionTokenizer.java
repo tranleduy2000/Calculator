@@ -33,37 +33,37 @@ public class CalculatorExpressionTokenizer {
 
     private void generateReplacements(Context context) {
         mReplacements.clear();
-        mReplacements.add(new Localizer(",", String.valueOf(Constants.MATRIX_SEPARATOR)));
+        //mReplacements.add(new Localizer(",", String.valueOf(Constants.MATRIX_SEPARATOR)));
         mReplacements.add(new Localizer(".", String.valueOf(Constants.DECIMAL_POINT)));
-        mReplacements.add(new Localizer("0", context.getString(R.string.digit0)));
-        mReplacements.add(new Localizer("1", context.getString(R.string.digit1)));
-        mReplacements.add(new Localizer("2", context.getString(R.string.digit2)));
-        mReplacements.add(new Localizer("3", context.getString(R.string.digit3)));
-        mReplacements.add(new Localizer("4", context.getString(R.string.digit4)));
-        mReplacements.add(new Localizer("5", context.getString(R.string.digit5)));
-        mReplacements.add(new Localizer("6", context.getString(R.string.digit6)));
-        mReplacements.add(new Localizer("7", context.getString(R.string.digit7)));
-        mReplacements.add(new Localizer("8", context.getString(R.string.digit8)));
-        mReplacements.add(new Localizer("9", context.getString(R.string.digit9)));
+        mReplacements.add(new Localizer("0", "0"));
+        mReplacements.add(new Localizer("1", "1"));
+        mReplacements.add(new Localizer("2", "2"));
+        mReplacements.add(new Localizer("3", "3"));
+        mReplacements.add(new Localizer("4", "4"));
+        mReplacements.add(new Localizer("5", "5"));
+        mReplacements.add(new Localizer("6", "6"));
+        mReplacements.add(new Localizer("7", "7"));
+        mReplacements.add(new Localizer("8", "8"));
+        mReplacements.add(new Localizer("9", "9"));
         mReplacements.add(new Localizer("/", context.getString(R.string.op_div)));
         mReplacements.add(new Localizer("*", context.getString(R.string.op_mul)));
         mReplacements.add(new Localizer("-", context.getString(R.string.op_sub)));
         mReplacements.add(new Localizer("cbrt", context.getString(R.string.op_cbrt)));
-        mReplacements.add(new Localizer("asin", context.getString(R.string.fun_arcsin)));
-        mReplacements.add(new Localizer("acos", context.getString(R.string.fun_arccos)));
-        mReplacements.add(new Localizer("atan", context.getString(R.string.fun_arctan)));
-        mReplacements.add(new Localizer("sin", context.getString(R.string.fun_sin)));
-        mReplacements.add(new Localizer("cos", context.getString(R.string.fun_cos)));
-        mReplacements.add(new Localizer("tan", context.getString(R.string.fun_tan)));
+        mReplacements.add(new Localizer("asin", com.xlythe.calculator.material.Constants.ASIN));
+        mReplacements.add(new Localizer("acos", com.xlythe.calculator.material.Constants.ACOS));
+        mReplacements.add(new Localizer("atan", com.xlythe.calculator.material.Constants.ATAN));
+        mReplacements.add(new Localizer("sin", com.xlythe.calculator.material.Constants.SIN));
+        mReplacements.add(new Localizer("cos", com.xlythe.calculator.material.Constants.COS));
+        mReplacements.add(new Localizer("tan", com.xlythe.calculator.material.Constants.TAN));
         if (!CalculatorSettings.useRadians(context)) {
             mReplacements.add(new Localizer("sind", "sin"));
             mReplacements.add(new Localizer("cosd", "cos"));
             mReplacements.add(new Localizer("tand", "tan"));
         }
-        mReplacements.add(new Localizer("ln", context.getString(R.string.fun_ln)));
-        mReplacements.add(new Localizer("log", context.getString(R.string.fun_log)));
-        mReplacements.add(new Localizer("det", context.getString(R.string.fun_det)));
-        mReplacements.add(new Localizer("Infinity", context.getString(R.string.inf)));
+        mReplacements.add(new Localizer("ln", "ln"));
+        mReplacements.add(new Localizer("log","log"));
+        mReplacements.add(new Localizer("det", "det"));
+        mReplacements.add(new Localizer("Infinity", "∞"));
     }
 
     public String getNormalizedExpression(String expr) {

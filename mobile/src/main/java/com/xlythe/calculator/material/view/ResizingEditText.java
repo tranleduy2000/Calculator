@@ -22,8 +22,9 @@ import android.graphics.Paint;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatEditText;
 
 import com.xlythe.calculator.material.R;
 import com.xlythe.calculator.material.util.TextUtil;
@@ -33,7 +34,7 @@ import com.xlythe.calculator.material.util.TextUtil;
  * max and min values). You can also use getVariableTextSize() to see what font size will
  * be used.
  */
-public class ResizingEditText extends EditText {
+public class ResizingEditText extends AppCompatEditText {
     private final Paint mTempPaint = new TextPaint();
     private float mMaximumTextSize;
     private float mMinimumTextSize;

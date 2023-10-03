@@ -2,6 +2,8 @@ package com.xlythe.calculator.material.util;
 
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.xlythe.math.Constants;
 import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
@@ -32,7 +34,10 @@ public class TextUtil {
         return input;
     }
 
-    public static int countOccurrences(String haystack, char needle) {
+    public static int countOccurrences(@Nullable String haystack, char needle) {
+        if (haystack == null) {
+            return 0;
+        }
         int count = 0;
         for (int i = 0; i < haystack.length(); i++) {
             if (haystack.charAt(i) == needle) {

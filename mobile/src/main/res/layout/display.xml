@@ -15,70 +15,55 @@
   -->
 
 <com.xlythe.calculator.material.view.DisplayOverlay xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:graph="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/display"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/display_shadow">
-
-        <com.xlythe.calculator.material.view.GraphView
-            android:id="@+id/mini_graph"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:onClick="onButtonClick"
-            android:visibility="gone"
-            graph:backgroundColor="@color/graph_background"
-            graph:graphColor="@color/graph_line"
-            graph:gridColor="@color/graph_axis"
-            graph:numberTextColor="@color/mini_graph_text"
-            graph:panEnabled="false"
-            graph:showGrid="false"
-            graph:showInlineNumbers="true"
-            graph:showOutline="false"
-            graph:zoomEnabled="false" />
-
-    </FrameLayout>
+    android:layout_height="match_parent"
+    tools:showIn="@layout/fragment_basic_calculator">
 
     <FrameLayout
         android:id="@+id/main_display"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true">
 
         <View
             android:id="@+id/the_card"
             android:layout_width="match_parent"
             android:layout_height="@dimen/display_height_with_shadow"
-            android:background="@drawable/white_card" />
+            android:background="?colorSurface" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/calculations"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="2">
 
             <com.xlythe.calculator.material.view.CalculatorEditText
                 android:id="@+id/formula"
                 style="@style/Theme.Calculator.Display.Main.Formula"
-                android:layout_height="@dimen/display_formula_height"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:inputType="text|textNoSuggestions"
-                android:textColor="@color/display_formula_text_color"
-                android:textCursorDrawable="@drawable/cursor" />
+                android:textColor="?android:textColorPrimary"
+                android:textCursorDrawable="@drawable/cursor"
+                tools:text="123123123+12312312" />
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/result"
                 style="@style/Theme.Calculator.Display.Main.Result"
-                android:layout_height="@dimen/display_result_height"
-                android:layout_below="@id/formula"
-                android:textColor="@color/display_result_text_color"
-                android:textIsSelectable="true" />
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:textColor="?android:textColorSecondary"
+                android:textIsSelectable="true"
+                tools:text="123123213" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,13 +73,8 @@
         <FrameLayout
             android:id="@+id/the_clear_animation"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height" />
+            android:layout_height="match_parent" />
 
     </FrameLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/historyRecycler"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 </com.xlythe.calculator.material.view.DisplayOverlay>

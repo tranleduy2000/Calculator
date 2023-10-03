@@ -19,7 +19,8 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -28,7 +29,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 
-import com.xlythe.calculator.material.Calculator;
 import com.xlythe.calculator.material.R;
 import com.xlythe.view.floating.AnimationFinishedListener;
 
@@ -51,8 +51,6 @@ public class CalculatorPadView extends RevealFrameLayout {
 
     private View mBase;
     private SolidLayout mOverlay;
-    private FloatingActionButton mFab;
-    private View mTray;
 
     private Animator mActiveAnimator;
 
@@ -86,11 +84,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if (android.os.Build.VERSION.SDK_INT >= 16) {
-                    getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                } else {
-                    getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                }
+                getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 initializeLayout(getState());
             }
         });
@@ -129,20 +123,12 @@ public class CalculatorPadView extends RevealFrameLayout {
         return getState() == TranslateState.COLLAPSED;
     }
 
-    protected View getFab() {
-        return mFab;
-    }
-
     protected View getBase() {
         return mBase;
     }
 
     protected View getBaseOverlay() {
         return mOverlay;
-    }
-
-    protected View getTray() {
-        return mTray;
     }
 
     /**
@@ -161,17 +147,10 @@ public class CalculatorPadView extends RevealFrameLayout {
         }
         setEnabled(mOverlay, false);
 
-        mFab.setTranslationX((mFab.getWidth() - getWidth() / 4) / 2);
-        mFab.setTranslationY((mFab.getHeight() - getHeight() / 4) / 2);
         if (state == TranslateState.EXPANDED) {
             mOverlay.setTranslationX(-mOverlayMargin);
-            mFab.setScaleX(1f);
-            mFab.setScaleY(1f);
         } else {
             mOverlay.setTranslationX(getWidth() + mOffset - mOverlayMargin);
-            mFab.setScaleX(0f);
-            mFab.setScaleY(0f);
-            mFab.setVisibility(View.GONE);
         }
 
         return invalidate;
@@ -181,16 +160,9 @@ public class CalculatorPadView extends RevealFrameLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         mBase = findViewById(R.id.base);
-        mOverlay = (SolidLayout) findViewById(R.id.overlay);
-        mTray = findViewById(R.id.tray);
-        mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mOverlay = findViewById(R.id.overlay);
 
-        mOverlay.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return true;
-            }
-        });
+        mOverlay.setOnTouchListener((v, event) -> true);
     }
 
     @Override
@@ -341,19 +313,15 @@ public class CalculatorPadView extends RevealFrameLayout {
     }
 
     protected void showFab() {
-        ((Calculator) getContext()).showFab();
     }
 
     protected void hideFab() {
-        ((Calculator) getContext()).hideFab();
     }
 
     protected void showTray() {
-        ((Calculator) getContext()).showTray();
     }
 
     protected void hideTray() {
-        ((Calculator) getContext()).hideTray();
     }
 
     private void setEnabled(SolidLayout view, boolean enabled) {
@@ -386,7 +354,7 @@ public class CalculatorPadView extends RevealFrameLayout {
             setFloatValues(start, end);
             addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
+                public void onAnimationUpdate(@NonNull ValueAnimator animation) {
                     float percent = (float) animation.getAnimatedValue();
                     onUpdate(percent);
                 }

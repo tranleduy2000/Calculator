@@ -17,6 +17,8 @@
 package com.xlythe.calculator.material.view;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.viewpager.widget.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
@@ -27,7 +29,7 @@ public class CalculatorPadViewPager extends ViewPager {
 
     private final PageTransformer mPageTransformer = new PageTransformer() {
         @Override
-        public void transformPage(View view, float position) {
+        public void transformPage(@NonNull View view, float position) {
             if (position < 0.0f) {
                 // Pin the left page to the left side.
                 view.setTranslationX(getWidth() * -position);

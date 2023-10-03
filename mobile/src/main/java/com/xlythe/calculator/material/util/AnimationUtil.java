@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 
+import androidx.annotation.NonNull;
+
 /**
  * Utility for transition animations
  */
@@ -18,8 +20,6 @@ public class AnimationUtil {
      * Makes view visible and transitions alpha from 0 to 1.  Does nothing if view is
      * already visible.
      *
-     * @param view
-     * @param duration
      */
     public static void fadeIn(View view, int duration) {
         if (view.getVisibility() == View.VISIBLE) {
@@ -35,7 +35,6 @@ public class AnimationUtil {
     /**
      * Fade in with default duration
      *
-     * @param view
      */
     public static void fadeIn(View view) {
         fadeIn(view, DEFAULT_FADE_DURATION);
@@ -44,29 +43,27 @@ public class AnimationUtil {
     /**
      * Transitions alpha from 1 to 0 and then sets visibility to gone
      *
-     * @param view
-     * @param duration
      */
     public static void fadeOut(final View view, int duration) {
         ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", 1, 0);
         anim.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
+            public void onAnimationStart(@NonNull Animator animation) {
 
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
+            public void onAnimationEnd(@NonNull Animator animation) {
                 view.setVisibility(View.GONE);
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationCancel(@NonNull Animator animation) {
 
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(@NonNull Animator animation) {
 
             }
         });
@@ -77,7 +74,6 @@ public class AnimationUtil {
     /**
      * Fade out with default duration
      *
-     * @param view
      */
     public static void fadeOut(View view) {
         fadeOut(view, DEFAULT_FADE_DURATION);
@@ -122,8 +118,6 @@ public class AnimationUtil {
     /**
      * Shrink and grow with default duration
      *
-     * @param view1
-     * @param view2
      */
     public static void shrinkAndGrow(View view1, View view2) {
         shrinkAndGrow(view1, view2, DEFAULT_SHRINK_GROW_DURATION);

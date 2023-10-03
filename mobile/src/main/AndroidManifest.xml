@@ -19,87 +19,22 @@
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher_calculator"
-        android:label="@string/app_name"
+        android:label="Calculator"
         android:resizeableActivity="true"
-        android:supportsRtl="true">
-        <uses-library
-            android:name="com.sec.android.app.multiwindow"
-            android:required="false" />
-
-        <meta-data
-            android:name="com.sec.android.support.multiwindow"
-            android:value="true" />
-        <meta-data
-            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_W"
-            android:resource="@dimen/app_defaultsize_w" />
-        <meta-data
-            android:name="com.sec.android.multiwindow.DEFAULT_SIZE_H"
-            android:resource="@dimen/app_defaultsize_h" />
-        <meta-data
-            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_W"
-            android:resource="@dimen/app_minimumsize_w" />
-        <meta-data
-            android:name="com.sec.android.multiwindow.MINIMUM_SIZE_H"
-            android:resource="@dimen/app_minimumsize_h" />
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Calculator">
 
         <activity
-            android:name=".Calculator"
+            android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Calculator"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.APP_CALCULATOR" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
-            <layout
-                android:defaultWidth="@dimen/app_defaultsize_w"
-                android:defaultHeight="@dimen/app_defaultsize_h"
-                android:gravity="top|end"
-                android:minWidth="@dimen/app_minimumsize_w"
-                android:minHeight="@dimen/app_minimumsize_h" />
+
         </activity>
 
-        <!-- Receiver for the widget -->
-        <receiver
-            android:name=".widget.CalculatorWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/calculator_widget_info" />
-        </receiver>
-
-        <!-- Activities and services for floating calc -->
-        <activity
-            android:name=".floating.FloatingCalculatorCreateShortCutActivity"
-            android:exported="true"
-            android:icon="@drawable/ic_launcher_floating"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.CREATE_SHORTCUT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".floating.FloatingCalculatorOpenShortCutActivity"
-            android:excludeFromRecents="true"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance"
-            android:theme="@style/TransparentBackground" />
-
-        <service
-            android:name=".floating.FloatingCalculator"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.CONFIGURATION_CHANGED" />
-            </intent-filter>
-        </service>
     </application>
 </manifest> 

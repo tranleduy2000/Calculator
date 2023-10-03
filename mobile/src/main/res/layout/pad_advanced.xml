@@ -14,108 +14,85 @@
   limitations under the License.
   -->
 <com.xlythe.calculator.material.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_advanced"
     style="@style/PadLayoutStyle.Advanced"
-    android:background="@color/pad_advanced_background_color">
+    android:background="@color/pad_advanced_background_color"
+    tools:ignore="HardcodedText"
+    tools:layout_height="350dp"
+    tools:layout_width="@dimen/basic_calculator_dialog_width">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_sin"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_fun_sin"
-        android:onClick="onButtonClick"
-        android:tag="@string/fun_arcsin"
-        android:text="@string/fun_sin" />
+        android:tag="asin"
+        android:text="sin" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_cos"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_fun_cos"
-        android:onClick="onButtonClick"
-        android:tag="@string/fun_arccos"
-        android:text="@string/fun_cos" />
+        android:tag="acos"
+        android:text="cos" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_tan"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_fun_tan"
-        android:onClick="onButtonClick"
-        android:tag="@string/fun_arctan"
-        android:text="@string/fun_tan" />
+        android:tag="atan"
+        android:text="tan" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_ln"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_fun_ln"
-        android:onClick="onButtonClick"
-        android:text="@string/fun_ln" />
+        android:text="ln" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_log"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_fun_log"
-        android:onClick="onButtonClick"
-        android:text="@string/fun_log" />
+        android:text="log" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_fact"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_op_fact"
-        android:onClick="onButtonClick"
         android:text="@string/op_fact" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/const_pi"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_const_pi"
-        android:onClick="onButtonClick"
         android:text="@string/const_pi" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/const_e"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_const_e"
-        android:onClick="onButtonClick"
-        android:text="@string/const_e" />
+        android:text="e" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_pow"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_op_pow"
-        android:onClick="onButtonClick"
         android:text="@string/op_pow" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/lparen"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_lparen"
-        android:onClick="onButtonClick"
-        android:text="@string/leftParen" />
+        android:text="(" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rparen"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_rparen"
-        android:onClick="onButtonClick"
-        android:text="@string/rightParen" />
+        android:text=")" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_sqrt"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/desc_op_sqrt"
-        android:onClick="onButtonClick"
         android:text="@string/op_sqrt" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_const_imaginary"
         style="@style/PadButtonStyle.Advanced"
-        android:onClick="onButtonClick"
         android:text="@string/const_imaginary" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_percent"
         style="@style/PadButtonStyle.Advanced"
-        android:contentDescription="@string/fun_percentage"
-        android:onClick="onButtonClick"
         android:text="@string/fun_percentage" />
-
-    <Button
-        style="@style/PadButtonStyle.Advanced"
-        android:onClick="onButtonClick"
-        android:text="@string/var_x" />
 
 </com.xlythe.calculator.material.view.CalculatorPadLayout>

@@ -17,33 +17,28 @@
 <resources>
 
     <!-- Constant for Euler's number (i.e. "2.7182…"). [CHAR_LIMIT=1] -->
-    <string name="const_e">e</string>
     <!-- Constant for pi (i.e. "3.1415…"). [CHAR_LIMIT=1] -->
-    <string name="const_pi">π</string>
+    <string name="const_pi" translatable="false">π</string>
 
     <!-- Left parenthesis (e.g. "log(", "2 × (3 - 1)". [CHAR_LIMIT=1] -->
-    <string name="leftParen">(</string>
     <!-- Right parenthesis (e.g. "log(2)", "(3 - 1) × 2". [CHAR_LIMIT=1] -->
-    <string name="rightParen">)</string>
 
     <!-- Addition operator (e.g. "1 + 2"). [CHAR_LIMIT=1] -->
-    <string name="op_add">+</string>
+    <string name="op_add" translatable="false">+</string>
     <!-- Divide operator (e.g. "1 ÷ 2"). [CHAR_LIMIT=1] -->
-    <string name="op_div">÷</string>
+    <string name="op_div" translatable="false">÷</string>
     <!-- Factorial operator (e.g. "2!"). [CHAR_LIMIT=1] -->
-    <string name="op_fact">!</string>
+    <string name="op_fact" translatable="false">!</string>
     <!-- Multiply operator (e.g. "1 × 2"). [CHAR_LIMIT=1] -->
-    <string name="op_mul">×</string>
+    <string name="op_mul" translatable="false">×</string>
     <!-- Power operator (e.g. "1 ^ 2"). [CHAR_LIMIT=1] -->
-    <string name="op_pow">^</string>
+    <string name="op_pow" translatable="false">^</string>
     <!-- Square root operator (e.g. "√1"). [CHAR_LIMIT=1] -->
-    <string name="op_sqrt">√</string>
+    <string name="op_sqrt" translatable="false">√</string>
     <!-- Subtraction operator (e.g. "1 - 2"). [CHAR_LIMIT=1] -->
-    <string name="op_sub">−</string>
+    <string name="op_sub" translatable="false">−</string>
 
     <!-- Equals operator (e.g. "1 + 2 = ?"). [CHAR_LIMIT=1] -->
-    <string name="eq">=</string>
     <!-- Result displayed when expression evaluates to infinity. [CHAR_LIMIT=1] -->
-    <string name="inf">∞</string>
 
 </resources>

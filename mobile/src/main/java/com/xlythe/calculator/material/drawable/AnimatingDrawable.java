@@ -2,12 +2,13 @@ package com.xlythe.calculator.material.drawable;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.view.animation.LinearInterpolator;
+
+import androidx.annotation.NonNull;
 
 /**
  * Created by Will on 7/2/2015.
@@ -22,13 +23,10 @@ public class AnimatingDrawable extends Drawable implements Animatable {
     private AnimatingDrawable(Drawable[] frames, long duration) {
         mFrames = frames;
         mAnimator = ValueAnimator.ofInt(0, mFrames.length - 1);
-        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                // Normalize the position in case the interporator isn't linear
-                int pos = Math.max(Math.min((int) animation.getAnimatedValue(), mFrames.length - 1), 0);
-                setFrame(mFrames[pos]);
-            }
+        mAnimator.addUpdateListener(animation -> {
+            // Normalize the position in case the interporator isn't linear
+            int pos = Math.max(Math.min((int) animation.getAnimatedValue(), mFrames.length - 1), 0);
+            setFrame(mFrames[pos]);
         });
         mAnimator.setDuration(duration);
         mAnimator.setInterpolator(new LinearInterpolator());
@@ -104,44 +102,8 @@ public class AnimatingDrawable extends Drawable implements Animatable {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         mCurrentFrame.draw(canvas);
     }
 
-    public static class Builder {
-        private final Context mContext;
-        private Drawable[] mFrames;
-        private long mDuration;
-
-        public Builder(Context context) {
-            mContext = context;
-            mDuration = context.getResources().getInteger(android.R.integer.config_shortAnimTime);
-        }
-
-        public Builder frames(int... resIds) {
-            mFrames = new Drawable[resIds.length];
-            for (int i = 0; i < resIds.length; i++) {
-                if (android.os.Build.VERSION.SDK_INT >= 21) {
-                    mFrames[i] = mContext.getResources().getDrawable(resIds[i], null);
-                } else {
-                    mFrames[i] = mContext.getResources().getDrawable(resIds[i]);
-                }
-            }
-            return this;
-        }
-
-        public Builder frames(Drawable... drawables) {
-            mFrames = drawables;
-            return this;
-        }
-
-        public Builder duration(long duration) {
-            mDuration = duration;
-            return this;
-        }
-
-        public AnimatingDrawable build() {
-            return new AnimatingDrawable(mFrames, mDuration);
-        }
-    }
 }

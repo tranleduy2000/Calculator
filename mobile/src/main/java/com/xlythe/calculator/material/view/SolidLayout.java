@@ -29,8 +29,8 @@ public class SolidLayout extends FrameLayout {
 
         if (attrs != null) {
             final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SolidLayout, 0, 0);
-            mPreventParentTouchEvents = a.getBoolean(R.styleable.SolidLayout_preventParentTouchEvents, mPreventParentTouchEvents);
-            mPreventChildTouchEvents = a.getBoolean(R.styleable.SolidLayout_preventChildTouchEvents, mPreventChildTouchEvents);
+            mPreventParentTouchEvents = a.getBoolean(R.styleable.SolidLayout_preventParentTouchEvents, false);
+            mPreventChildTouchEvents = a.getBoolean(R.styleable.SolidLayout_preventChildTouchEvents, false);
             a.recycle();
         }
     }

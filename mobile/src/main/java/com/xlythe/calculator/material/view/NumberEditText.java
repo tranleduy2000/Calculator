@@ -26,6 +26,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
+import androidx.annotation.NonNull;
+
 /**
  * NumberEditText disables the keyboard and most EditText touch events.
  * It also restricts the characters allowed from physical keyboards to only numbers
@@ -75,6 +77,7 @@ public class NumberEditText extends ResizingEditText {
             return EditorInfo.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS;
         }
 
+        @NonNull
         @Override
         protected char[] getAcceptedChars() {
             return ACCEPTED_CHARS;

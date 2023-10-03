@@ -15,6 +15,8 @@
 */
 package com.xlythe.calculator.material;
 
+import androidx.annotation.Nullable;
+
 import com.xlythe.math.Base;
 import com.xlythe.math.Solver;
 import com.xlythe.math.SyntaxException;
@@ -36,10 +38,11 @@ public class CalculatorExpressionEvaluator {
         expr = mTokenizer.getNormalizedExpression(expr);
 
         try {
-            if (expr.length() == 0 || Double.valueOf(expr) != null) {
-                callback.onEvaluate(expr, null, Calculator.INVALID_RES_ID);
-                return;
+            if (expr.length() != 0) {
+                Double.valueOf(expr);
             }
+            callback.onEvaluate(expr, null, null);
+            return;
         } catch (NumberFormatException e) {
             // expr is not a simple number
         }
@@ -47,18 +50,9 @@ public class CalculatorExpressionEvaluator {
         try {
             String result = mSolver.solve(expr);
             result = mTokenizer.getLocalizedExpression(result);
-            callback.onEvaluate(expr, result, Calculator.INVALID_RES_ID);
+            callback.onEvaluate(expr, result, null);
         } catch (SyntaxException e) {
-            callback.onEvaluate(expr, null, R.string.error);
-        }
-    }
-
-    public void setBase(String expr, Base base, EvaluateCallback callback) {
-        try {
-            String result = mSolver.getBaseModule().setBase(expr, base);
-            callback.onEvaluate(expr, result, Calculator.INVALID_RES_ID);
-        } catch (SyntaxException e) {
-            callback.onEvaluate(expr, null, R.string.error);
+            callback.onEvaluate(expr, null, "Error");
         }
     }
 
@@ -67,6 +61,6 @@ public class CalculatorExpressionEvaluator {
     }
 
     public interface EvaluateCallback {
-        void onEvaluate(String expr, String result, int errorResourceId);
+        void onEvaluate(String expr, @Nullable String result, String errorMessage);
     }
 }
