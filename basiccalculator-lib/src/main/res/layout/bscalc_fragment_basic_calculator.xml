@@ -42,10 +42,10 @@
             tools:text="123123123123" />
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_confirm"
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:id="@+id/btn_confirm"
             android:background="?selectableItemBackground"
             android:padding="8dp"
             android:scaleType="centerInside"

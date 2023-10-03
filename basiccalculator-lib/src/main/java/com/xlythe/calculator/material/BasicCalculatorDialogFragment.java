@@ -82,7 +82,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             ViewGroup.LayoutParams.MATCH_PARENT);
     private CalculatorState mCurrentState;
 
-    private DecimalFormat decimalFormat = new DecimalFormat("#.#######", DecimalFormatSymbols.getInstance(Locale.US));
+    private DecimalFormat decimalFormat = new DecimalFormat("#.########", DecimalFormatSymbols.getInstance(Locale.US));
+    private DecimalFormat decimalFormatSci = new DecimalFormat("0.########E0", DecimalFormatSymbols.getInstance(Locale.US));
 
     private CalculatorExpressionTokenizer mTokenizer;
     private CalculatorExpressionEvaluator mEvaluator;
@@ -206,20 +207,22 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         mConfirmButton = findViewById(R.id.btn_confirm);
         mResultData.observe(getViewLifecycleOwner(), (value) -> {
             if ((value != null) && Double.isFinite(value)) {
-                mConfirmResultTextView.setText(decimalFormat.format(value));
+                mConfirmResultTextView.setText(formatForReading(value));
             } else {
                 mConfirmResultTextView.setText("");
             }
             mConfirmButton.setEnabled(value != null);
+            mConfirmButton.setAlpha(value != null ? 1.0f : 0.5f);
         });
         mResultData.postValue(null);
-        mConfirmButton.setOnClickListener(v ->  {
+        mConfirmButton.setOnClickListener(v -> {
             if (mOnResultConfirmed != null && mResultData.getValue() != null) {
                 mOnResultConfirmed.accept(mResultData.getValue());
                 this.dismiss();
             }
         });
     }
+
 
     protected void invalidateDetails() {
         Detail detail = getUnitDetail();
@@ -409,7 +412,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
         String result = null;
         if (resultNum != null) {
-            result = decimalFormat.format(resultNum);
+            result = formatForReading(resultNum);
         }
 
         if (mCurrentState == CalculatorState.INPUT) {
@@ -428,6 +431,15 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             setState(CalculatorState.INPUT);
         }
         invalidateEqualsButton();
+    }
+
+    @NonNull
+    private String formatForReading(double value) {
+        if (value > 1E12) {
+            return decimalFormatSci.format(value);
+        } else {
+            return decimalFormat.format(value);
+        }
     }
 
     protected void incrementGroupId() {
@@ -552,12 +564,12 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         }
         reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorAccent),
                 new AnimationFinishedListener() {
-            @Override
-            public void onAnimationFinished() {
-                mFormulaEditText.clear();
-                incrementGroupId();
-            }
-        });
+                    @Override
+                    public void onAnimationFinished() {
+                        mFormulaEditText.clear();
+                        incrementGroupId();
+                    }
+                });
     }
 
     protected void onError(final String errorMessage) {
@@ -569,12 +581,12 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
         reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError),
                 new AnimationFinishedListener() {
-            @Override
-            public void onAnimationFinished() {
-                setState(CalculatorState.ERROR);
-                mResultEditText.setText(errorMessage);
-            }
-        });
+                    @Override
+                    public void onAnimationFinished() {
+                        setState(CalculatorState.ERROR);
+                        mResultEditText.setText(errorMessage);
+                    }
+                });
     }
 
     protected void onResult(final String result) {

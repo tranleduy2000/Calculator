@@ -47,6 +47,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:inputType="text|textNoSuggestions"
+                android:singleLine="true"
                 android:textColor="?android:textColorPrimary"
                 tools:text="123123123+12312312" />
 
