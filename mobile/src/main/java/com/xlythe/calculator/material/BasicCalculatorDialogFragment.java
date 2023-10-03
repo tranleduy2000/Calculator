@@ -262,10 +262,10 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     @Override
     public void onPause() {
         super.onPause();
-        saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()), true);
+        saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()));
     }
 
-    protected boolean saveHistory(String expr, String result, boolean ensureResult) {
+    protected boolean saveHistory(String expr, String result) {
         return result != null && expr != null;
 
     }
@@ -358,7 +358,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         mCurrentButton = view;
         switch (view.getId()) {
             case R.id.del:
-                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()), true);
+                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()));
                 onClear();
                 return true;
             case R.id.lparen:
@@ -403,7 +403,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             }
         } else if (errorMessage != null) {
             onError(errorMessage);
-        } else if (saveHistory(expr, result, true)) {
+        } else if (saveHistory(expr, result)) {
             mDisplayView.scrollToMostRecent();
             onResult(result);
         } else if (mCurrentState == CalculatorState.EVALUATE) {
