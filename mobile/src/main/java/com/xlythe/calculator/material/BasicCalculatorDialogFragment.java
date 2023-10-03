@@ -124,7 +124,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_basic_calculator, container, false);
+        return inflater.inflate(R.layout.bscalc_fragment_basic_calculator, container, false);
     }
 
     @Override
@@ -163,7 +163,6 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         setState(CalculatorState.values()[
                 savedInstanceState.getInt(KEY_CURRENT_STATE, CalculatorState.INPUT.ordinal())]);
 
-        mFormulaEditText.setSolver(mEvaluator.getSolver());
         mFormulaEditText.setText(mTokenizer.getLocalizedExpression(
                 savedInstanceState.getString(KEY_CURRENT_EXPRESSION, "")));
         mFormulaEditText.addTextChangedListener(mFormulaTextWatcher);
@@ -262,7 +261,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     @Override
     public void onPause() {
         super.onPause();
-        saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()));
+        saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText));
     }
 
     protected boolean saveHistory(String expr, String result) {
@@ -352,13 +351,13 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         }
     }
 
-    @SuppressLint("NonConstantResourceId")
+    @SuppressLint({"NonConstantResourceId", "SetTextI18n"})
     @Override
     public boolean onLongClick(View view) {
         mCurrentButton = view;
         switch (view.getId()) {
             case R.id.del:
-                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()));
+                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText));
                 onClear();
                 return true;
             case R.id.lparen:
@@ -399,7 +398,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.setText(null);
             } else {
-                mResultEditText.setText(TextUtil.formatText(result, mFormulaEditText.getEquationFormatter(), mFormulaEditText.getSolver()));
+                mResultEditText.setText(TextUtil.formatText(result));
             }
         } else if (errorMessage != null) {
             onError(errorMessage);
@@ -601,7 +600,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
                 mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue());
             }
         });
-        mResultEditText.setText(TextUtil.formatText(result, mFormulaEditText.getEquationFormatter(), mFormulaEditText.getSolver()));
+        mResultEditText.setText(TextUtil.formatText(result));
         mResultEditText.setPivotX(mResultEditText.getWidth() / 2f);
         mResultEditText.setPivotY(0f);
 

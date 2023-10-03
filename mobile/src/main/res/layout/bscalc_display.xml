@@ -19,7 +19,7 @@
     android:id="@+id/display"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/fragment_basic_calculator">
+    tools:showIn="@layout/bscalc_fragment_basic_calculator">
 
     <FrameLayout
         android:id="@+id/main_display"

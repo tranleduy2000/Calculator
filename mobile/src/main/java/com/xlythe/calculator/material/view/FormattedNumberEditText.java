@@ -16,18 +16,14 @@
 
 package com.xlythe.calculator.material.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
-import androidx.annotation.NonNull;
-
 import com.xlythe.calculator.material.util.TextUtil;
-import com.xlythe.math.BaseModule;
 import com.xlythe.math.Constants;
-import com.xlythe.math.EquationFormatter;
 import com.xlythe.math.Solver;
 
 import java.util.Arrays;
@@ -42,12 +38,10 @@ import java.util.Set;
  * on sin( and log( will remove the whole word. Because of the formatting, getText() will
  * no longer return the correct value. getCleanText() has been added instead.
  */
+@SuppressLint("SetTextI18n")
 public class FormattedNumberEditText extends NumberEditText {
     private final Set<TextWatcher> mTextWatchers = new HashSet<>();
-    private boolean mDebug = false;
     private boolean mTextWatchersEnabled = true;
-    private EquationFormatter mEquationFormatter;
-    private Solver mSolver;
     private final TextWatcher mTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -59,7 +53,7 @@ public class FormattedNumberEditText extends NumberEditText {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (!mTextWatchersEnabled || mSolver == null || getSelectionStart() == -1) return;
+            if (!mTextWatchersEnabled || getSelectionStart() == -1) return;
             mTextWatchersEnabled = false;
             onFormat(s);
             mTextWatchersEnabled = true;
@@ -79,8 +73,6 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     private void setUp(Context context, AttributeSet attrs) {
-        // Display ^ , and other visual cues
-        mEquationFormatter = new EquationFormatter();
         addTextChangedListener(mTextWatcher);
         invalidateKeywords(context);
     }
@@ -106,18 +98,7 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     protected void onFormat(Editable s) {
-        String text = removeFormatting(s.toString());
 
-        // Get the selection handle, since we're setting text and that'll overwrite it
-        MutableInteger selectionHandle = new MutableInteger(getSelectionStart());
-
-        // Adjust the handle by removing any comas or spacing to the left
-        String cs = s.subSequence(0, selectionHandle.intValue()).toString();
-        selectionHandle.subtract(TextUtil.countOccurrences(cs, mSolver.getBaseModule().getSeparator()));
-
-        // Update the text with formatted (comas, etc) text
-        setText(Html.fromHtml(formatText(text, selectionHandle)));
-        setSelection(selectionHandle.intValue());
     }
 
     @Override
@@ -152,7 +133,7 @@ public class FormattedNumberEditText extends NumberEditText {
     }
 
     public String getCleanText() {
-        return TextUtil.getCleanText(this, getSolver());
+        return TextUtil.getCleanText(this);
     }
 
     public void insert(String delta) {
@@ -210,7 +191,8 @@ public class FormattedNumberEditText extends NumberEditText {
         }
 
         mIsInserting = true;
-        setText(textBeforeInsertionHandle + delta + BaseModule.SELECTION_HANDLE + textAfterInsertionHandle);
+        setText(textBeforeInsertionHandle + delta + textAfterInsertionHandle);
+        setSelection((textBeforeInsertionHandle + delta).length());
         mIsInserting = false;
     }
 
@@ -275,92 +257,5 @@ public class FormattedNumberEditText extends NumberEditText {
         return Math.max(0, super.getSelectionStart());
     }
 
-    protected String removeFormatting(String input) {
-        input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
-        if (mSolver != null) {
-            input = input.replace(String.valueOf(mSolver.getBaseModule().getSeparator()), "");
-        }
-        return input;
-    }
 
-    protected String formatText(String input, MutableInteger selectionHandle) {
-        int customHandle = input.indexOf(BaseModule.SELECTION_HANDLE);
-        if (customHandle >= 0) {
-            selectionHandle.set(customHandle);
-            input = input.replace(Character.toString(BaseModule.SELECTION_HANDLE), "");
-        }
-
-        if (mSolver != null) {
-            // Add grouping, and then split on the selection handle
-            // which is saved as a unique char
-            String grouped = mEquationFormatter.addComas(mSolver, input, selectionHandle.intValue());
-            if (grouped.contains(String.valueOf(BaseModule.SELECTION_HANDLE))) {
-                String[] temp = grouped.split(String.valueOf(BaseModule.SELECTION_HANDLE));
-                selectionHandle.set(temp[0].length());
-                input = "";
-                for (String s : temp) {
-                    input += s;
-                }
-            } else {
-                input = grouped;
-            }
-        }
-
-        return mEquationFormatter.insertSupScripts(input);
-    }
-
-    public Solver getSolver() {
-        return mSolver;
-    }
-
-    public void setSolver(Solver solver) {
-        mSolver = solver;
-    }
-
-    public EquationFormatter getEquationFormatter() {
-        return mEquationFormatter;
-    }
-
-    public void setDebugEnabled(boolean enabled) {
-        mDebug = enabled;
-    }
-
-    public boolean isDebuggingEnabled() {
-        return mDebug;
-    }
-
-    public class MutableInteger {
-
-        private int value;
-
-        public MutableInteger(int value) {
-            this.value = value;
-        }
-
-        public MutableInteger(MutableInteger value) {
-            this.value = value.intValue();
-        }
-
-        public void set(int value) {
-            this.value = value;
-        }
-
-        public void add(int value) {
-            this.value += value;
-        }
-
-        public void subtract(int value) {
-            this.value -= value;
-        }
-
-        public int intValue() {
-            return value;
-        }
-
-        @NonNull
-        @Override
-        public String toString() {
-            return Integer.toString(value);
-        }
-    }
 }

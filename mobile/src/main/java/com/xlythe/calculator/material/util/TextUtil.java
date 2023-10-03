@@ -2,6 +2,7 @@ package com.xlythe.calculator.material.util;
 
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.xlythe.math.Constants;
@@ -12,25 +13,17 @@ import com.xlythe.math.Solver;
  * For formatting text in the display
  */
 public class TextUtil {
-    public static String getCleanText(TextView textView, Solver solver) {
-        return removeFormatting(solver, textView.getText().toString());
+    public static String getCleanText(TextView textView) {
+        return removeFormatting(textView.getText().toString());
     }
 
-    public static String formatText(String input, EquationFormatter equationFormatter, Solver solver) {
-        if (solver != null) {
-            // Add grouping, and then split on the selection handle
-            // which is saved as a unique char
-            input = equationFormatter.addComas(solver, input, -1);
-        }
-
-        return equationFormatter.insertSupScripts(input);
+    public static String formatText(String input) {
+        return  input;
     }
 
-    protected static String removeFormatting(Solver solver, String input) {
-        input = input.replace(Constants.POWER_PLACEHOLDER, Constants.POWER);
-        if (solver != null) {
-            input = input.replace(String.valueOf(solver.getBaseModule().getSeparator()), "");
-        }
+    @NonNull
+    protected static String removeFormatting(String input) {
+            input = input.replace(String.valueOf(' '), "");
         return input;
     }
 

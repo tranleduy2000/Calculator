@@ -50,7 +50,7 @@
 
         <include
             android:id="@+id/display"
-            layout="@layout/display" />
+            layout="@layout/bscalc_display" />
     </FrameLayout>
 
 
@@ -76,7 +76,7 @@
                 android:layout_weight="3"
                 tools:ignore="NestedWeights">
 
-                <include layout="@layout/pad_numeric" />
+                <include layout="@layout/bscalc_pad_numeric" />
             </FrameLayout>
 
             <FrameLayout
@@ -85,7 +85,7 @@
                 android:layout_weight="1"
                 tools:ignore="NestedWeights">
 
-                <include layout="@layout/pad_operator_one_col" />
+                <include layout="@layout/bscalc_pad_operator_one_col" />
             </FrameLayout>
 
         </LinearLayout>
@@ -99,7 +99,7 @@
 
             <include
                 android:id="@+id/pad_advanced"
-                layout="@layout/pad_advanced" />
+                layout="@layout/bscalc_pad_advanced" />
 
         </com.xlythe.calculator.material.view.SolidLayout>
 

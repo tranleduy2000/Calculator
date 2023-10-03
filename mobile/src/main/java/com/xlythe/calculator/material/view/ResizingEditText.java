@@ -106,7 +106,7 @@ public class ResizingEditText extends AppCompatEditText {
         }
 
         // Count exponents, which aren't measured properly.
-        int exponents = TextUtil.countOccurrences(text, '^');
+        final int exponents = 0;
 
         // Step through increasing text sizes until the text would no longer fit.
         float lastFitTextSize = mMinimumTextSize;

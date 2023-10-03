@@ -16,6 +16,7 @@
 
 package com.xlythe.calculator.material.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
@@ -35,7 +36,7 @@ import androidx.annotation.NonNull;
  */
 public class NumberEditText extends ResizingEditText {
     // Restrict keys from hardware keyboards
-    private static final char[] ACCEPTED_CHARS = "0123456789.+-*/\u2212\u00d7\u00f7()!%^".toCharArray();
+    private static final char[] ACCEPTED_CHARS = "0123456789.+-*/−×÷()!%^".toCharArray();
 
     private final Editable.Factory mFactory = new CalculatorEditable.Factory();
 
@@ -58,6 +59,7 @@ public class NumberEditText extends ResizingEditText {
         return mFactory;
     }
 
+    @SuppressLint("SetTextI18n")
     public void backspace() {
         String text = getText().toString();
         int selectionHandle = getSelectionStart();
@@ -85,9 +87,9 @@ public class NumberEditText extends ResizingEditText {
 
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                /*
-                 * the EditText should still accept letters (eg. 'sin') coming from the on-screen touch buttons, so don't filter anything.
-                 */
+            /*
+             * the EditText should still accept letters (eg. 'sin') coming from the on-screen touch buttons, so don't filter anything.
+             */
             return null;
         }
 
