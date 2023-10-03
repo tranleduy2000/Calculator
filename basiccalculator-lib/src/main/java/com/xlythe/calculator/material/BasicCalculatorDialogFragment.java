@@ -324,8 +324,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             }
 
             if (state == CalculatorState.ERROR) {
-                mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), R.attr.colorError));
-                mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), R.attr.colorError));
+                mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError));
+                mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError));
             } else {
                 mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), android.R.attr.textColorPrimary));
                 mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), android.R.attr.textColorSecondary));
@@ -347,35 +347,19 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     @SuppressLint("NonConstantResourceId")
     public void onButtonClick(View view) {
         mCurrentButton = view;
-        switch (view.getId()) {
-            case R.id.eq:
-                onEquals();
-                break;
-            case R.id.del:
-                onDelete();
-                break;
-            case R.id.clr:
-                onClear();
-                break;
-            case R.id.fun_cos:
-            case R.id.fun_sin:
-            case R.id.fun_tan:
-            case R.id.fun_ln:
-            case R.id.fun_log:
-                // Add left parenthesis after functions.
-                insert(((Button) view).getText() + "(");
-                break;
-            case R.id.op_add:
-            case R.id.op_sub:
-            case R.id.op_mul:
-            case R.id.op_div:
-            case R.id.op_fact:
-            case R.id.op_pow:
-                mFormulaEditText.insert(((Button) view).getText().toString());
-                break;
-            default:
-                insert(((Button) view).getText().toString());
-                break;
+        int id = view.getId();
+        if (id == R.id.eq) {
+            onEquals();
+        } else if (id == R.id.del) {
+            onDelete();
+        } else if (id == R.id.clr) {
+            onClear();
+        } else if (id == R.id.fun_cos || id == R.id.fun_sin || id == R.id.fun_tan || id == R.id.fun_ln || id == R.id.fun_log) {// Add left parenthesis after functions.
+            insert(((Button) view).getText() + "(");
+        } else if (id == R.id.op_add || id == R.id.op_sub || id == R.id.op_mul || id == R.id.op_div || id == R.id.op_fact || id == R.id.op_pow) {
+            mFormulaEditText.insert(((Button) view).getText().toString());
+        } else {
+            insert(((Button) view).getText().toString());
         }
     }
 
@@ -383,24 +367,23 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     @Override
     public boolean onLongClick(View view) {
         mCurrentButton = view;
-        switch (view.getId()) {
-            case R.id.del:
-                saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText));
-                onClear();
-                return true;
-            case R.id.lparen:
-            case R.id.rparen:
-                mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
-                return true;
-            case R.id.fun_sin:
-                insert("asin(");
-                return true;
-            case R.id.fun_cos:
-                insert("acos(");
-                return true;
-            case R.id.fun_tan:
-                insert("atan(");
-                return true;
+        int id = view.getId();
+        if (id == R.id.del) {
+            saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText));
+            onClear();
+            return true;
+        } else if (id == R.id.lparen || id == R.id.rparen) {
+            mFormulaEditText.setText('(' + mFormulaEditText.getCleanText() + ')');
+            return true;
+        } else if (id == R.id.fun_sin) {
+            insert("asin(");
+            return true;
+        } else if (id == R.id.fun_cos) {
+            insert("acos(");
+            return true;
+        } else if (id == R.id.fun_tan) {
+            insert("atan(");
+            return true;
         }
         return false;
     }
@@ -567,7 +550,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         if (TextUtils.isEmpty(mFormulaEditText.getCleanText())) {
             return;
         }
-        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), R.attr.colorAccent), new AnimationFinishedListener() {
+        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorAccent),
+                new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 mFormulaEditText.clear();
@@ -583,7 +567,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             return;
         }
 
-        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), R.attr.colorError), new AnimationFinishedListener() {
+        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError),
+                new AnimationFinishedListener() {
             @Override
             public void onAnimationFinished() {
                 setState(CalculatorState.ERROR);

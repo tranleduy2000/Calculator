@@ -1,1 +1,1 @@
-include ':mobile', ':circularreveal'
+include ':mobile', ':circularreveal', ':basiccalculator-lib'
