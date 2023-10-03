@@ -23,18 +23,24 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -50,7 +56,6 @@ import com.xlythe.calculator.material.view.DisplayOverlay;
 import com.xlythe.calculator.material.view.FormattedNumberEditText;
 import com.xlythe.calculator.material.view.ResizingEditText.OnTextSizeChangeListener;
 import com.xlythe.math.Constants;
-import com.xlythe.math.Persist;
 import com.xlythe.math.Solver;
 import com.xlythe.view.floating.AnimationFinishedListener;
 
@@ -80,6 +85,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     private View mDeleteButton;
     private View mEqualButton;
     private View mClearButton;
+    private TextView mInfoView;
     private final TextWatcher mFormulaTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
@@ -91,9 +97,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (mCurrentState != CalculatorState.GRAPHING) {
-                setState(CalculatorState.INPUT);
-            }
+            setState(CalculatorState.INPUT);
             mEvaluator.evaluate(editable, BasicCalculatorDialogFragment.this);
         }
     };
@@ -115,7 +119,6 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             return false;
         }
     };
-    private Persist mPersist;
     private ViewGroup mDisplayForeground;
 
     @Nullable
@@ -133,7 +136,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     public final <T extends View> T findViewById(@IdRes int id) {
-        return getView().findViewById(id);
+        return requireView().findViewById(id);
     }
 
     protected void initialize(Bundle savedInstanceState) {
@@ -148,6 +151,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         mDeleteButton = findViewById(R.id.del);
         mClearButton = findViewById(R.id.clr);
         mEqualButton = findViewById(R.id.pad_numeric).findViewById(R.id.eq);
+        mInfoView = findViewById(R.id.info);
 
         if (mEqualButton == null || mEqualButton.getVisibility() != View.VISIBLE) {
             mEqualButton = findViewById(R.id.pad_operator).findViewById(R.id.eq);
@@ -173,63 +177,83 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         findViewById(R.id.fun_cos).setOnLongClickListener(this);
         findViewById(R.id.fun_tan).setOnLongClickListener(this);
 
-        // Disable IME for this application
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
         Button dot = findViewById(R.id.dec_point);
         dot.setText(String.valueOf(Constants.DECIMAL_POINT));
 
-        int[] viewIds = {
-                R.id.digit_0,
-                R.id.digit_1,
-                R.id.digit_2,
-                R.id.digit_3,
-                R.id.digit_4,
-                R.id.digit_5,
-                R.id.digit_6,
-                R.id.digit_7,
-                R.id.digit_7,
-                R.id.digit_8,
-                R.id.digit_9,
-                R.id.dec_point,
-                R.id.eq,
-                R.id.clr,
-                R.id.fun_sin,
-                R.id.fun_cos,
-                R.id.fun_tan,
-                R.id.fun_ln,
-                R.id.fun_log,
-                R.id.op_fact,
-                R.id.op_mul,
-                R.id.op_sub,
-                R.id.op_add,
-                R.id.const_pi,
-                R.id.const_e,
-                R.id.op_pow,
-                R.id.op_div,
-                R.id.lparen,
-                R.id.rparen,
-                R.id.btn_sqrt,
-                R.id.btn_const_imaginary,
-                R.id.btn_percent,
-                R.id.del,
-        };
+        int[] viewIds = {R.id.digit_0, R.id.digit_1, R.id.digit_2, R.id.digit_3, R.id.digit_4,
+                R.id.digit_5, R.id.digit_6, R.id.digit_7, R.id.digit_7, R.id.digit_8, R.id.digit_9,
+                R.id.dec_point, R.id.eq, R.id.clr, R.id.fun_sin, R.id.fun_cos, R.id.fun_tan,
+                R.id.fun_ln, R.id.fun_log, R.id.op_fact, R.id.op_mul, R.id.op_sub, R.id.op_add,
+                R.id.const_pi, R.id.const_e, R.id.op_pow, R.id.op_div, R.id.lparen, R.id.rparen, R.id.btn_sqrt,
+                R.id.btn_const_imaginary, R.id.btn_percent, R.id.del,};
         for (int viewId : viewIds) {
             findViewById(viewId).setOnClickListener(this::onButtonClick);
         }
+
+        // DEG|RAD button
+        invalidateDetails();
+    }
+
+    protected void invalidateDetails() {
+        Detail detail = getUnitDetail();
+        String text = detail.word;
+        if (mInfoView != null) {
+            mInfoView.setText(text);
+            mInfoView.setOnClickListener(detail.listener);
+        }
+    }
+
+    private Detail getUnitDetail() {
+        String text = CalculatorSettings.useRadians(requireContext()) ?
+                "RAD" : "DEG";
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final int RAD = 0;
+                final int DEG = 1;
+                final PopupMenu popupMenu = new PopupMenu(requireContext(), mInfoView);
+                final Menu menu = popupMenu.getMenu();
+                menu.add(0, RAD, menu.size(), "RAD");
+                menu.add(0, DEG, menu.size(), "DEG");
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case RAD:
+                                CalculatorSettings.setRadiansEnabled(requireContext(), true);
+                                break;
+                            case DEG:
+                                CalculatorSettings.setRadiansEnabled(requireContext(), false);
+                                break;
+                        }
+                        invalidateDetails();
+                        setState(CalculatorState.INPUT);
+                        getEvaluator().evaluate(mFormulaEditText.getCleanText(), BasicCalculatorDialogFragment.this);
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        };
+        return new Detail(text, listener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        getDialog().getWindow().setLayout(
-                getContext().getResources().getDimensionPixelSize(R.dimen.basic_calculator_dialog_width),
-                getContext().getResources().getDimensionPixelSize(R.dimen.basic_calculator_dialog_height));
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            Window window = dialog.getWindow();
+            if (window != null) {
+                Resources resources = requireContext().getResources();
+                window.setLayout(
+                        resources.getDimensionPixelSize(R.dimen.basic_calculator_dialog_width),
+                        resources.getDimensionPixelSize(R.dimen.basic_calculator_dialog_height));
+            }
+        }
 
-        // Load up to date history
-        mPersist = new Persist(requireContext());
-        mPersist.load();
         incrementGroupId();
 
         mDisplayView.scrollToMostRecent();
@@ -239,7 +263,6 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     public void onPause() {
         super.onPause();
         saveHistory(mFormulaEditText.getCleanText(), TextUtil.getCleanText(mResultEditText, mEvaluator.getSolver()), true);
-        mPersist.save();
     }
 
     protected boolean saveHistory(String expr, String result, boolean ensureResult) {
@@ -362,7 +385,6 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     protected void insert(String text) {
         // Add left parenthesis after functions.
         if (mCurrentState.equals(CalculatorState.INPUT) ||
-                mCurrentState.equals(CalculatorState.GRAPHING) ||
                 mFormulaEditText.isCursorModified()) {
             mFormulaEditText.insert(text);
         } else {
@@ -619,6 +641,16 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     protected enum CalculatorState {
-        INPUT, EVALUATE, RESULT, ERROR, GRAPHING
+        INPUT, EVALUATE, RESULT, ERROR
+    }
+
+    public static class Detail {
+        public final String word;
+        public final View.OnClickListener listener;
+
+        public Detail(String word, View.OnClickListener listener) {
+            this.word = word;
+            this.listener = listener;
+        }
     }
 }

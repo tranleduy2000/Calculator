@@ -31,29 +31,30 @@
         android:tint="@color/pad_button_text_color"
         app:srcCompat="@drawable/round_backspace_24" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/clr"
         style="@style/PadButtonStyle.Operator.Text"
         android:text="CLR"
         android:visibility="gone"
+        tools:ignore="HardcodedText"
         tools:visibility="visible" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_div"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_div" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_mul"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_mul" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_sub"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_sub" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_add"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_add" />

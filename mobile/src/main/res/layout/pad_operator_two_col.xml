@@ -27,7 +27,7 @@
     tools:ignore="HardcodedText"
     tools:showIn="@layout/fragment_basic_calculator">
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_div"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_div" />
@@ -39,32 +39,32 @@
         android:scaleType="centerInside"
         app:srcCompat="@drawable/round_backspace_24" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/clr"
         style="@style/PadButtonStyle.Operator.Text"
         android:text="CLR"
         android:visibility="gone" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_mul"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_mul" />
 
     <Space style="@style/PadButtonStyle.Operator" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_sub"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_sub" />
 
     <Space style="@style/PadButtonStyle.Operator" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_add"
         style="@style/PadButtonStyle.Operator"
         android:text="@string/op_add" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/eq"
         style="@style/PadButtonStyle.Operator.Equals"
         android:text="=" />
