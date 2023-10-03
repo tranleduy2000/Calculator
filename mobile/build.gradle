@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdk 34
-    namespace 'com.xlythe.calculator.material'
+    namespace 'com.example.calc'
 
     defaultConfig {
         applicationId "com.xlythe.calculator.material"

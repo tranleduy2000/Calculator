@@ -18,6 +18,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    resourcePrefix 'bscalc_'
+    lint {
+        disable 'MissingTranslation'
+    }
+
 }
 
 dependencies {

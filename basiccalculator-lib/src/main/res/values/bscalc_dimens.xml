@@ -15,11 +15,11 @@
 
 <resources>
     <!-- The margin between the pad pages when displayed using a view pager. -->
-    <dimen name="pad_page_margin">-24dip</dimen>
+    <dimen name="bscalc_pad_page_margin">-24dip</dimen>
 
     <!-- Calculator -->
-    <dimen name="display_text_size">40sp</dimen>
-    <dimen name="basic_calculator_dialog_width">350dp</dimen>
-    <dimen name="basic_calculator_dialog_height">500dp</dimen>
+    <dimen name="bscalc_display_text_size">40sp</dimen>
+    <dimen name="bscalc_basic_calculator_dialog_width">320dp</dimen>
+    <dimen name="bscalc_basic_calculator_dialog_height">500dp</dimen>
 
 </resources>

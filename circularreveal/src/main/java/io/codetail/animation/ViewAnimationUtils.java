@@ -17,7 +17,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 public class ViewAnimationUtils {
 
     public static final int SCALE_UP_DURATION = 500;
-    private final static boolean LOLLIPOP_PLUS = SDK_INT >= LOLLIPOP;
+    private final static boolean LOLLIPOP_PLUS = true;
 
     /**
      * Returns an Animator which can animate a clipping circle.
@@ -37,47 +37,18 @@ public class ViewAnimationUtils {
      * @param startRadius The starting radius of the animating circle.
      * @param endRadius   The ending radius of the animating circle.
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static SupportAnimator createCircularReveal(View view,
                                                        int centerX, int centerY,
                                                        float startRadius, float endRadius) {
 
-        if (LOLLIPOP_PLUS) {
-            return new SupportAnimatorLollipop(android.view.ViewAnimationUtils
-                    .createCircularReveal(view, centerX, centerY, startRadius, endRadius));
-        }
+        return new SupportAnimatorLollipop(android.view.ViewAnimationUtils
+                .createCircularReveal(view, centerX, centerY, startRadius, endRadius));
 
-        if (!(view instanceof RevealAnimator) && !(view.getParent() instanceof RevealAnimator)) {
-            throw new IllegalArgumentException("View must be inside RevealFrameLayout or RevealLinearLayout.");
-        }
-
-        RevealAnimator revealLayout;
-        if (view instanceof RevealAnimator) {
-            revealLayout = (RevealAnimator) view;
-        } else {
-            revealLayout = (RevealAnimator) view.getParent();
-        }
-        revealLayout.setTarget(view);
-        revealLayout.setCenter(centerX, centerY);
-
-        Rect bounds = new Rect();
-        view.getHitRect(bounds);
-
-        ObjectAnimator reveal = ObjectAnimator.ofFloat(revealLayout, "revealRadius", startRadius, endRadius);
-        reveal.addListener(getRevealFinishListener(revealLayout, bounds));
-
-        return new SupportAnimatorPreL(reveal);
     }
 
 
     static Animator.AnimatorListener getRevealFinishListener(RevealAnimator target, Rect bounds) {
-        if (SDK_INT >= 18) {
-            return new RevealAnimator.RevealFinishedJellyBeanMr2(target, bounds);
-        } else if (SDK_INT >= 14) {
-            return new RevealAnimator.RevealFinishedIceCreamSandwich(target, bounds);
-        } else {
-            return new RevealAnimator.RevealFinishedGingerbread(target, bounds);
-        }
+        return new RevealAnimator.RevealFinishedJellyBeanMr2(target, bounds);
     }
 
 

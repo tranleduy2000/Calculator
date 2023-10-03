@@ -15,8 +15,8 @@
 */
 -->
 
-<resources>
-    <declare-styleable name="SolidLayout">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="SolidLayout" tools:ignore="ResourceName">
         <attr name="preventParentTouchEvents" format="boolean" />
         <attr name="preventChildTouchEvents" format="boolean" />
     </declare-styleable>

@@ -17,8 +17,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/basic_calculator_dialog_width"
-    android:layout_height="@dimen/basic_calculator_dialog_height"
+    android:layout_width="@dimen/bscalc_basic_calculator_dialog_width"
+    android:layout_height="@dimen/bscalc_basic_calculator_dialog_height"
     android:background="?colorSurface"
     android:orientation="vertical"
     android:weightSum="3">
@@ -49,7 +49,7 @@
             android:background="?selectableItemBackground"
             android:padding="8dp"
             android:scaleType="centerInside"
-            android:src="@drawable/round_done_outline_24"
+            android:src="@drawable/bscalc_round_done_outline_24"
             app:tint="?colorOnSurface" />
     </FrameLayout>
 

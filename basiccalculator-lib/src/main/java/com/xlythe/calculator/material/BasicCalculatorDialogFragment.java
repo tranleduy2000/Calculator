@@ -276,8 +276,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             if (window != null) {
                 Resources resources = requireContext().getResources();
                 window.setLayout(
-                        resources.getDimensionPixelSize(R.dimen.basic_calculator_dialog_width),
-                        resources.getDimensionPixelSize(R.dimen.basic_calculator_dialog_height));
+                        resources.getDimensionPixelSize(R.dimen.bscalc_basic_calculator_dialog_width),
+                        resources.getDimensionPixelSize(R.dimen.bscalc_basic_calculator_dialog_height));
             }
         }
 

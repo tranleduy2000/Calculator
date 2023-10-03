@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme" parent="Theme.Material3.DayNight">
+        <item name="colorPrimary">@color/bscalc_calculator_accent_color</item>
+        <item name="colorAccent">@color/bscalc_calculator_accent_color</item>
+        <item name="colorError">@color/bscalc_calculator_error_color</item>
+        <!--        <item name="colorSurface">#FFF</item>-->
+        <!--        <item name="colorOnSurface">#000</item>-->
+    </style>
+
+    <style name="Theme.Calculator" parent="Theme" />
+
+</resources>

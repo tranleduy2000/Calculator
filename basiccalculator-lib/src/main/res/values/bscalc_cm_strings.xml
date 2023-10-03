@@ -13,7 +13,7 @@
 	 limitations under the License.
 -->
 <resources>
-    <string name="const_imaginary" translatable="false">i</string>
-    <string name="fun_percentage" translatable="false">%</string>
-    <string name="op_cbrt">\u00b3\u221a</string>
+    <string name="bscalc_const_imaginary" translatable="false">i</string>
+    <string name="bscalc_fun_percentage" translatable="false">%</string>
+    <string name="bscalc_op_cbrt">\u00b3\u221a</string>
 </resources>

@@ -30,7 +30,7 @@
         <View
             android:id="@+id/the_card"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/display_height_with_shadow"
+            android:layout_height="@dimen/bscalc_display_height_with_shadow"
             android:background="?colorSurface" />
 
         <LinearLayout
@@ -42,7 +42,7 @@
 
             <com.xlythe.calculator.material.view.CalculatorEditText
                 android:id="@+id/formula"
-                style="@style/Theme.Calculator.Display.Main.Formula"
+                style="@style/BsCalc.Display.Main.Formula"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
@@ -52,7 +52,7 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/result"
-                style="@style/Theme.Calculator.Display.Main.Result"
+                style="@style/BsCalc.Display.Main.Result"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"

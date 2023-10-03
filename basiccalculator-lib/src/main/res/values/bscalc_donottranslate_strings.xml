@@ -16,19 +16,19 @@
 
 <resources>
     <!-- Constant for pi (i.e. "3.1415…"). [CHAR_LIMIT=1] -->
-    <string name="const_pi" translatable="false">π</string>
+    <string name="bscalc_const_pi" translatable="false">π</string>
     <!-- Addition operator (e.g. "1 + 2"). [CHAR_LIMIT=1] -->
-    <string name="op_add" translatable="false">+</string>
+    <string name="bscalc_op_add" translatable="false">+</string>
     <!-- Divide operator (e.g. "1 ÷ 2"). [CHAR_LIMIT=1] -->
-    <string name="op_div" translatable="false">÷</string>
+    <string name="bscalc_op_div" translatable="false">÷</string>
     <!-- Factorial operator (e.g. "2!"). [CHAR_LIMIT=1] -->
-    <string name="op_fact" translatable="false">!</string>
+    <string name="bscalc_op_fact" translatable="false">!</string>
     <!-- Multiply operator (e.g. "1 × 2"). [CHAR_LIMIT=1] -->
-    <string name="op_mul" translatable="false">×</string>
+    <string name="bscalc_op_mul" translatable="false">×</string>
     <!-- Power operator (e.g. "1 ^ 2"). [CHAR_LIMIT=1] -->
-    <string name="op_pow" translatable="false">^</string>
+    <string name="bscalc_op_pow" translatable="false">^</string>
     <!-- Square root operator (e.g. "√1"). [CHAR_LIMIT=1] -->
-    <string name="op_sqrt" translatable="false">√</string>
+    <string name="bscalc_op_sqrt" translatable="false">√</string>
     <!-- Subtraction operator (e.g. "1 - 2"). [CHAR_LIMIT=1] -->
-    <string name="op_sub" translatable="false">−</string>
+    <string name="bscalc_op_sub" translatable="false">−</string>
 </resources>

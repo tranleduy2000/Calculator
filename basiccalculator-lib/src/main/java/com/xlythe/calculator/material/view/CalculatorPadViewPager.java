@@ -50,7 +50,7 @@ public class CalculatorPadViewPager extends ViewPager {
         super(context, attrs);
 
         setBackgroundColor(getResources().getColor(android.R.color.black));
-        setPageMargin(getResources().getDimensionPixelSize(R.dimen.pad_page_margin));
+        setPageMargin(getResources().getDimensionPixelSize(R.dimen.bscalc_pad_page_margin));
         setPageTransformer(false, mPageTransformer);
         setOffscreenPageLimit(3);
     }

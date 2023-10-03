@@ -74,8 +74,8 @@ public class CalculatorPadView extends RevealFrameLayout {
         mMinimumFlingVelocity = vc.getScaledMinimumFlingVelocity();
         mMaximumFlingVelocity = vc.getScaledMaximumFlingVelocity();
         mTouchSlop = vc.getScaledTouchSlop();
-        mOffset = getResources().getDimensionPixelSize(R.dimen.pad_page_margin);
-        mOverlayMargin = getResources().getDimensionPixelSize(R.dimen.shadow_margin);
+        mOffset = getResources().getDimensionPixelSize(R.dimen.bscalc_pad_page_margin);
+        mOverlayMargin = getResources().getDimensionPixelSize(R.dimen.bscalc_shadow_margin);
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {

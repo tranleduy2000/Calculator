@@ -43,10 +43,10 @@ public class CalculatorExpressionTokenizer {
         mReplacements.add(new Localizer("7", "7"));
         mReplacements.add(new Localizer("8", "8"));
         mReplacements.add(new Localizer("9", "9"));
-        mReplacements.add(new Localizer("/", context.getString(R.string.op_div)));
-        mReplacements.add(new Localizer("*", context.getString(R.string.op_mul)));
-        mReplacements.add(new Localizer("-", context.getString(R.string.op_sub)));
-        mReplacements.add(new Localizer("cbrt", context.getString(R.string.op_cbrt)));
+        mReplacements.add(new Localizer("/", context.getString(R.string.bscalc_op_div)));
+        mReplacements.add(new Localizer("*", context.getString(R.string.bscalc_op_mul)));
+        mReplacements.add(new Localizer("-", context.getString(R.string.bscalc_op_sub)));
+        mReplacements.add(new Localizer("cbrt", context.getString(R.string.bscalc_op_cbrt)));
         mReplacements.add(new Localizer("asin", com.xlythe.calculator.material.Constants.ASIN));
         mReplacements.add(new Localizer("acos", com.xlythe.calculator.material.Constants.ACOS));
         mReplacements.add(new Localizer("atan", com.xlythe.calculator.material.Constants.ATAN));

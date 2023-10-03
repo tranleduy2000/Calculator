@@ -15,8 +15,8 @@
 */
 -->
 
-<resources>
-    <declare-styleable name="CalculatorEditText">
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="CalculatorEditText" tools:ignore="ResourceName">
         <attr name="minTextSize" format="dimension" />
         <attr name="maxTextSize" format="dimension" />
         <attr name="stepTextSize" format="dimension" />

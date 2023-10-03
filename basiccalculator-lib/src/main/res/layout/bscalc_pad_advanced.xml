@@ -16,83 +16,83 @@
 <com.xlythe.calculator.material.view.CalculatorPadLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_advanced"
-    style="@style/PadLayoutStyle.Advanced"
-    android:background="@color/pad_advanced_background_color"
+    style="@style/bscalc_PadLayoutStyle.Advanced"
+    android:background="@color/bscalc_pad_advanced_background_color"
     tools:ignore="HardcodedText"
     tools:layout_height="350dp"
-    tools:layout_width="@dimen/basic_calculator_dialog_width">
+    tools:layout_width="@dimen/bscalc_basic_calculator_dialog_width">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_sin"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:tag="asin"
         android:text="sin" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_cos"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:tag="acos"
         android:text="cos" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_tan"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:tag="atan"
         android:text="tan" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_ln"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:text="ln" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/fun_log"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:text="log" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_fact"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/op_fact" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_op_fact" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/const_pi"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/const_pi" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_const_pi" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/const_e"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:text="e" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_pow"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/op_pow" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_op_pow" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/lparen"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:text="(" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/rparen"
-        style="@style/PadButtonStyle.Advanced"
+        style="@style/bscalc_PadButtonStyle.Advanced"
         android:text=")" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sqrt"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/op_sqrt" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_op_sqrt" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_const_imaginary"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/const_imaginary" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_const_imaginary" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_percent"
-        style="@style/PadButtonStyle.Advanced"
-        android:text="@string/fun_percentage" />
+        style="@style/bscalc_PadButtonStyle.Advanced"
+        android:text="@string/bscalc_fun_percentage" />
 
 </com.xlythe.calculator.material.view.CalculatorPadLayout>

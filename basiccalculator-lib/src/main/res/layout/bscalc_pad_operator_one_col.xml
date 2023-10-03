@@ -18,22 +18,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pad_operator"
-    style="@style/PadLayoutStyle.Operator"
-    android:background="@color/pad_operator_background_color"
+    style="@style/bscalc_PadLayoutStyle.Operator"
+    android:background="@color/bscalc_pad_operator_background_color"
     android:columnCount="1"
     android:rowCount="5"
     tools:showIn="@layout/bscalc_fragment_basic_calculator">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/del"
-        style="@style/PadButtonStyle.Operator.Text"
+        style="@style/bscalc_PadButtonStyle.Operator.Text"
         android:scaleType="centerInside"
-        android:tint="@color/pad_button_text_color"
-        app:srcCompat="@drawable/round_backspace_24" />
+        android:tint="@color/bscalc_pad_button_text_color"
+        app:srcCompat="@drawable/bscalc_round_backspace_24" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/clr"
-        style="@style/PadButtonStyle.Operator.Text"
+        style="@style/bscalc_PadButtonStyle.Operator.Text"
         android:text="CLR"
         android:visibility="gone"
         tools:ignore="HardcodedText"
@@ -41,22 +41,22 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_div"
-        style="@style/PadButtonStyle.Operator"
-        android:text="@string/op_div" />
+        style="@style/bscalc_PadButtonStyle.Operator"
+        android:text="@string/bscalc_op_div" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_mul"
-        style="@style/PadButtonStyle.Operator"
-        android:text="@string/op_mul" />
+        style="@style/bscalc_PadButtonStyle.Operator"
+        android:text="@string/bscalc_op_mul" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_sub"
-        style="@style/PadButtonStyle.Operator"
-        android:text="@string/op_sub" />
+        style="@style/bscalc_PadButtonStyle.Operator"
+        android:text="@string/bscalc_op_sub" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/op_add"
-        style="@style/PadButtonStyle.Operator"
-        android:text="@string/op_add" />
+        style="@style/bscalc_PadButtonStyle.Operator"
+        android:text="@string/bscalc_op_add" />
 
 </com.xlythe.calculator.material.view.CalculatorPadLayout>
