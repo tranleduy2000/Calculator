@@ -38,19 +38,9 @@ public class CalculatorExpressionEvaluator {
         expr = mTokenizer.getNormalizedExpression(expr);
 
         try {
-            if (expr.length() != 0) {
-                Double.valueOf(expr);
-            }
-            callback.onEvaluate(expr, null, null);
-            return;
-        } catch (NumberFormatException e) {
-            // expr is not a simple number
-        }
-
-        try {
             double result = mSolver.eval(expr);
             callback.onEvaluate(expr, result, null);
-        } catch (SyntaxException e) {
+        } catch (Exception e) {
             callback.onEvaluate(expr, null, "Error");
         }
     }

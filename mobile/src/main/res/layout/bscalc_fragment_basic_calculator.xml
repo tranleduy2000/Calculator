@@ -28,10 +28,24 @@
         android:layout_height="48dp"
         android:background="?colorSurface">
 
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/confirm_result_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textColor="?colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            tools:text="123123123123" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="60dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:id="@+id/btn_confirm"
             android:background="?selectableItemBackground"
             android:padding="8dp"
             android:scaleType="centerInside"

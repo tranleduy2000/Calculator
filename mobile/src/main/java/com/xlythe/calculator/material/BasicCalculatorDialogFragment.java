@@ -48,6 +48,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.MutableLiveData;
 
 import com.xlythe.calculator.material.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.xlythe.calculator.material.util.TextUtil;
@@ -60,6 +61,7 @@ import com.xlythe.calculator.material.view.ResizingEditText.OnTextSizeChangeList
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.function.Consumer;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -125,6 +127,12 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         }
     };
     private ViewGroup mDisplayForeground;
+
+    private View mConfirmButton;
+    private TextView mConfirmResultTextView;
+    private MutableLiveData<Double> mResultData = new MutableLiveData<>(null);
+    @Nullable
+    private Consumer<Double> mOnResultConfirmed;
 
     @Nullable
     @Override
@@ -193,6 +201,24 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
         // DEG|RAD button
         invalidateDetails();
+
+        mConfirmResultTextView = findViewById(R.id.confirm_result_text);
+        mConfirmButton = findViewById(R.id.btn_confirm);
+        mResultData.observe(getViewLifecycleOwner(), (value) -> {
+            if ((value != null) && Double.isFinite(value)) {
+                mConfirmResultTextView.setText(decimalFormat.format(value));
+            } else {
+                mConfirmResultTextView.setText("");
+            }
+            mConfirmButton.setEnabled(value != null);
+        });
+        mResultData.postValue(null);
+        mConfirmButton.setOnClickListener(v ->  {
+            if (mOnResultConfirmed != null && mResultData.getValue() != null) {
+                mOnResultConfirmed.accept(mResultData.getValue());
+                this.dismiss();
+            }
+        });
     }
 
     protected void invalidateDetails() {
@@ -396,12 +422,15 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
     @Override
     public void onEvaluate(String expr, @Nullable Double resultNum, String errorMessage) {
+        mResultData.postValue(resultNum);
+
         String result = null;
         if (resultNum != null) {
             result = decimalFormat.format(resultNum);
         }
+
         if (mCurrentState == CalculatorState.INPUT) {
-            if (result == null || Solver.equal(result, expr)) {
+            if (result == null) {
                 mResultEditText.setText(null);
             } else {
                 mResultEditText.setText(TextUtil.formatText(result));
@@ -643,6 +672,10 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
     protected CalculatorExpressionEvaluator getEvaluator() {
         return mEvaluator;
+    }
+
+    public void setOnResultConfirmed(@Nullable Consumer<Double> onResultConfirmed) {
+        this.mOnResultConfirmed = onResultConfirmed;
     }
 
     protected enum CalculatorState {

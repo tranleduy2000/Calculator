@@ -25,7 +25,7 @@
         android:theme="@style/Theme.Calculator">
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.xlythe.calculator.MainActivity"
             android:exported="true"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>

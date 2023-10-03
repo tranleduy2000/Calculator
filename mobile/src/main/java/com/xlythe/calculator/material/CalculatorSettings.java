@@ -1,16 +1,17 @@
 package com.xlythe.calculator.material;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 public class CalculatorSettings {
 
     static void setRadiansEnabled(Context context, boolean enabled) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("USE_RADIANS", enabled).commit();
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean("bscalc_USE_RADIANS", enabled).apply();
     }
 
     static boolean useRadians(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("USE_RADIANS", true);
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("bscalc_USE_RADIANS", true);
     }
 
 }
