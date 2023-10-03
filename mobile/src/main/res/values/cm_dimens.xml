@@ -2,11 +2,9 @@
 <resources>
 
     <!-- Display -->
-    <dimen name="display_height">100dp</dimen>
     <dimen name="display_height_with_shadow">106dp</dimen>
 
     <!-- Number pad -->
     <dimen name="num_margin_horizontal">14dp</dimen>
-    <dimen name="num_margin_vertical">10dp</dimen>
     <dimen name="shadow_margin">0dp</dimen>
 </resources>

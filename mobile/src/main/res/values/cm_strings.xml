@@ -13,41 +13,7 @@
 	 limitations under the License.
 -->
 <resources>
-
-    <!-- Displayed letters for the variable digit buttons -->
-    <!-- Displayed letters for the variable digit buttons -->
-
-    <!-- Displayed on buttons on screen for the arcsin function. -->
-    <!-- Displayed on buttons on screen for the arccos function. -->
-    <!-- Displayed on buttons on screen for the arctan function. -->
-    <!-- Displayed on buttons on screen for the csc function. -->
-    <!-- Displayed on buttons on screen for the sec function. -->
-    <!-- Displayed on buttons on screen for the cot function. -->
-    <!-- Displayed on buttons on screen for the arccsc function. -->
-    <!-- Displayed on buttons on screen for the arcsec function. -->
-    <!-- Displayed on buttons on screen for the arccot function. -->
-
-    <!-- Descriptions for trig functions -->
-
-    <!-- Displayed on buttons on screen for the value of i. -->
     <string name="const_imaginary" translatable="false">i</string>
-    <!-- Displayed on buttons on screen for the percent function. -->
     <string name="fun_percentage" translatable="false">%</string>
-    <!-- (Hidden) Displayed on buttons on screen for the integral function. -->
-    <!-- (Hidden) Displayed on buttons on screen for the integral function. -->
-    <!-- (Hidden) Displayed on buttons on screen for the integral function. -->
-    <!-- (Hidden) Displayed on buttons on screen to solve for X. -->
-    <!-- (Hidden) Displayed on buttons on screen to solve for Y. -->
-    <!-- (Hidden) Displayed on buttons on screen for the modulo function. -->
-    <!-- Displayed on button on screen for the cube root function. -->
     <string name="op_cbrt">\u00b3\u221a</string>
-
-    <!-- Displayed on buttons on screen for parentheses. -->
-
-    <!-- Floating calculator -->
-
-    <!-- Matrix page text -->
-
-    <!-- Hex page text -->
-
 </resources>

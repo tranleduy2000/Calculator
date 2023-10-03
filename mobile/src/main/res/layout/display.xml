@@ -48,7 +48,6 @@
                 android:layout_weight="1"
                 android:inputType="text|textNoSuggestions"
                 android:textColor="?android:textColorPrimary"
-                android:textCursorDrawable="@drawable/cursor"
                 tools:text="123123123+12312312" />
 
             <androidx.appcompat.widget.AppCompatTextView

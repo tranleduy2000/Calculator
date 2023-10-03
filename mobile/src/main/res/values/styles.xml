@@ -19,8 +19,9 @@
     <style name="Theme" parent="Theme.Material3.DayNight">
         <item name="colorPrimary">@color/calculator_accent_color</item>
         <item name="colorAccent">@color/calculator_accent_color</item>
-<!--        <item name="colorSurface">#FFF</item>-->
-<!--        <item name="colorOnSurface">#000</item>-->
+        <item name="colorError">@color/calculator_error_color</item>
+        <!--        <item name="colorSurface">#FFF</item>-->
+        <!--        <item name="colorOnSurface">#000</item>-->
     </style>
 
     <style name="Theme.Calculator" parent="Theme" />
@@ -92,10 +93,6 @@
         <item name="android:textSize">20sp</item>
     </style>
 
-    <style name="PadButtonStyle.Operator.Equals">
-        <item name="android:tint">@color/pad_text_color_normal</item>
-    </style>
-
     <style name="PadButtonStyle.Operator.Text">
         <item name="android:textAllCaps">true</item>
         <item name="android:textSize">15sp</item>
@@ -110,10 +107,6 @@
 
     <style name="PadLayoutStyle.Operator">
     </style>
-
-    <style name="PadLayoutStyle.Card">
-    </style>
-
 
 
 </resources>
