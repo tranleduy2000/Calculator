@@ -22,7 +22,7 @@
     android:background="@color/pad_operator_background_color"
     android:columnCount="1"
     android:rowCount="5"
-    tools:showIn="@layout/fragment_basic_calculator">
+    tools:showIn="@layout/bscalc_fragment_basic_calculator">
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/del"
