@@ -22,9 +22,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
+import com.xlythe.calculator.material.Constants;
+import com.xlythe.calculator.material.Solver;
 import com.xlythe.calculator.material.util.TextUtil;
-import com.xlythe.math.Constants;
-import com.xlythe.math.Solver;
 
 import java.util.Arrays;
 import java.util.HashSet;

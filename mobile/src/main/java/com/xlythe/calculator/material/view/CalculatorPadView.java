@@ -17,6 +17,7 @@ package com.xlythe.calculator.material.view;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 
@@ -30,7 +31,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 
 import com.xlythe.calculator.material.R;
-import com.xlythe.view.floating.AnimationFinishedListener;
 
 import io.codetail.widget.RevealFrameLayout;
 
@@ -66,11 +66,6 @@ public class CalculatorPadView extends RevealFrameLayout {
 
     public CalculatorPadView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setup();
-    }
-
-    public CalculatorPadView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         setup();
     }
 
@@ -156,6 +151,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         return invalidate;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -199,6 +195,7 @@ public class CalculatorPadView extends RevealFrameLayout {
         return mInterceptingTouchEvents;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!mInterceptingTouchEvents) {
@@ -251,7 +248,7 @@ public class CalculatorPadView extends RevealFrameLayout {
                 collapse();
             }
         } else {
-            if (mLastMotion > getWidth() / 2) {
+            if (mLastMotion > getWidth() / 2f) {
                 expand();
             } else {
                 collapse();

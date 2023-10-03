@@ -17,22 +17,7 @@
 package com.xlythe.calculator.material.view;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.style.CharacterStyle;
-import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-
-import com.xlythe.calculator.material.util.TextUtil;
-import com.xlythe.math.BaseModule;
-
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
 
 public class CalculatorEditText extends FormattedNumberEditText {
 

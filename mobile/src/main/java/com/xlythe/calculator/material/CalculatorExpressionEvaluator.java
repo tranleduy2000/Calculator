@@ -1,32 +1,32 @@
 /*
-* Copyright (C) 2014 The Android Open Source Project
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.xlythe.calculator.material;
 
 import androidx.annotation.Nullable;
 
-import com.xlythe.math.Base;
-import com.xlythe.math.Solver;
-import com.xlythe.math.SyntaxException;
+
+import org.javia.arity.Symbols;
+import org.javia.arity.SyntaxException;
 
 public class CalculatorExpressionEvaluator {
-    private final Solver mSolver;
+    private final Symbols mSolver;
     private final CalculatorExpressionTokenizer mTokenizer;
 
     public CalculatorExpressionEvaluator(CalculatorExpressionTokenizer tokenizer) {
-        mSolver = new Solver();
+        mSolver = new Symbols();
         mTokenizer = tokenizer;
     }
 
@@ -48,19 +48,14 @@ public class CalculatorExpressionEvaluator {
         }
 
         try {
-            String result = mSolver.solve(expr);
-            result = mTokenizer.getLocalizedExpression(result);
+            double result = mSolver.eval(expr);
             callback.onEvaluate(expr, result, null);
         } catch (SyntaxException e) {
             callback.onEvaluate(expr, null, "Error");
         }
     }
 
-    public Solver getSolver() {
-        return mSolver;
-    }
-
     public interface EvaluateCallback {
-        void onEvaluate(String expr, @Nullable String result, String errorMessage);
+        void onEvaluate(String expr, @Nullable Double result, String errorMessage);
     }
 }

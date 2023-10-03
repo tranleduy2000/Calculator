@@ -52,12 +52,14 @@ import androidx.fragment.app.DialogFragment;
 import com.xlythe.calculator.material.CalculatorExpressionEvaluator.EvaluateCallback;
 import com.xlythe.calculator.material.util.TextUtil;
 import com.xlythe.calculator.material.util.ViewUtils;
+import com.xlythe.calculator.material.view.AnimationFinishedListener;
 import com.xlythe.calculator.material.view.DisplayOverlay;
 import com.xlythe.calculator.material.view.FormattedNumberEditText;
 import com.xlythe.calculator.material.view.ResizingEditText.OnTextSizeChangeListener;
-import com.xlythe.math.Constants;
-import com.xlythe.math.Solver;
-import com.xlythe.view.floating.AnimationFinishedListener;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import io.codetail.animation.SupportAnimator;
 import io.codetail.animation.ViewAnimationUtils;
@@ -77,6 +79,9 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT);
     private CalculatorState mCurrentState;
+
+    private DecimalFormat decimalFormat = new DecimalFormat("#.#######", DecimalFormatSymbols.getInstance(Locale.US));
+
     private CalculatorExpressionTokenizer mTokenizer;
     private CalculatorExpressionEvaluator mEvaluator;
     private DisplayOverlay mDisplayView;
@@ -140,9 +145,6 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     protected void initialize(Bundle savedInstanceState) {
-        // Rebuild constants. If the user changed their locale, it won't kill the app
-        // but it might change a decimal point from . to ,
-        Constants.rebuildConstants();
 
         mDisplayView = findViewById(R.id.display);
         mDisplayForeground = findViewById(R.id.the_clear_animation);
@@ -393,7 +395,11 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     @Override
-    public void onEvaluate(String expr, @Nullable String result, String errorMessage) {
+    public void onEvaluate(String expr, @Nullable Double resultNum, String errorMessage) {
+        String result = null;
+        if (resultNum != null) {
+            result = decimalFormat.format(resultNum);
+        }
         if (mCurrentState == CalculatorState.INPUT) {
             if (result == null || Solver.equal(result, expr)) {
                 mResultEditText.setText(null);

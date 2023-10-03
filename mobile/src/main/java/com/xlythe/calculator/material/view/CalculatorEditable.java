@@ -19,12 +19,12 @@ package com.xlythe.calculator.material.view;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 
-import com.xlythe.math.Constants;
-import com.xlythe.math.Solver;
+import com.xlythe.calculator.material.Constants;
+import com.xlythe.calculator.material.Solver;
 
 public class CalculatorEditable extends SpannableStringBuilder {
     private static final char[] ORIGINALS = {'-', '*', '/'};
-    private static final char[] REPLACEMENTS = {'\u2212', '\u00d7', '\u00f7'};
+    private static final char[] REPLACEMENTS = {'−', '×', '÷'};
     private boolean isInsideReplace = false;
 
     private CalculatorEditable(CharSequence source) {

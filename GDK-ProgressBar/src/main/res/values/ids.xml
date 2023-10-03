@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item name="label" type="id">false</item>
-    <item name="slider" type="id">false</item>
-    <item name="icon" type="id">false</item>
-    <item name="slider_control" type="id">false</item>
-    <item name="indeterminate_slider" type="id">false</item>
-</resources>

@@ -5,10 +5,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.xlythe.math.Constants;
-import com.xlythe.math.EquationFormatter;
-import com.xlythe.math.Solver;
-
 /**
  * For formatting text in the display
  */
