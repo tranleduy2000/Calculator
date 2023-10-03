@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-public abstract class Fragment extends android.support.v4.app.Fragment {
+public abstract class Fragment extends androidx.core.app.Fragment {
     static final int INTERNAL_PROGRESS_CONTAINER_ID = 0x00ff0002;
     static final int INTERNAL_VIEW_CONTAINER_ID = 0x00ff0003;
 

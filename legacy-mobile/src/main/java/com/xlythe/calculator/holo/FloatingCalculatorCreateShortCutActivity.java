@@ -1,7 +1,7 @@
 package com.xlythe.calculator.holo;
 
 import android.content.Intent;
-import android.support.annotation.DrawableRes;
+import androidx.annotation.DrawableRes;
 
 import com.xlythe.view.floating.CreateShortcutActivity;
 

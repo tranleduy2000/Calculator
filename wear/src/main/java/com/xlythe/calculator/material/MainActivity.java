@@ -3,7 +3,7 @@ package com.xlythe.calculator.material;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.support.wearable.activity.WearableActivity;
 import android.text.TextUtils;
 import android.view.View;

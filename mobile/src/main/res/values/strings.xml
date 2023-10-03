@@ -111,4 +111,6 @@
     <!-- Content description for '=' button. [CHAR_LIMIT=NONE] -->
     <string name="desc_eq">equals</string>
 
+    <string name="clear">CLEAR</string>
+
 </resources>

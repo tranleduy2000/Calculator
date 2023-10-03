@@ -1,0 +1,52 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <com.xlythe.dao.sample.view.MyAppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/app_bar_height"
+        android:transitionName="title">
+
+        <EditText
+            android:id="@+id/title"
+            android:hint="@string/hint_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top|left"
+            android:layout_marginTop="45dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:inputType="textCapWords|textAutoComplete"
+            android:singleLine="true"
+            android:background="@android:color/transparent"
+            android:textAppearance="?android:textAppearanceLarge"/>
+
+    </com.xlythe.dao.sample.view.MyAppBarLayout>
+
+    <EditText
+        android:id="@+id/body"
+        android:hint="@string/hint_body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|left"
+        android:background="@android:color/transparent"
+        android:layout_margin="25dp"
+        android:inputType="textCapSentences|textAutoComplete|textMultiLine"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginTop="170dp"
+        android:src="@drawable/ic_add_white_36dp"
+        android:transitionName="fab"
+        android:onClick="save" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
