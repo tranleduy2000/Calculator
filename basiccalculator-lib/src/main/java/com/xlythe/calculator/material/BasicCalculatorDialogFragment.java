@@ -61,6 +61,7 @@ import com.xlythe.calculator.material.view.ResizingEditText.OnTextSizeChangeList
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.codetail.animation.SupportAnimator;
@@ -123,8 +124,14 @@ public class BasicCalculatorDialogFragment extends DialogFragment
                     }
                     // ignore all other actions
                     return true;
+                default:
+                    if (mFormulaEditText != null) {
+                        setState(CalculatorState.INPUT);
+                        mEvaluator.evaluate(mFormulaEditText.getCleanText(),
+                                BasicCalculatorDialogFragment.this);
+                    }
+                    return false;
             }
-            return false;
         }
     };
     private ViewGroup mDisplayForeground;
@@ -180,6 +187,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         mFormulaEditText.setOnKeyListener(mFormulaOnKeyListener);
         mFormulaEditText.setOnTextSizeChangeListener(this);
         mFormulaEditText.setShowSoftInputOnFocus(false);
+
         mDeleteButton.setOnLongClickListener(this);
         findViewById(R.id.lparen).setOnLongClickListener(this);
         findViewById(R.id.rparen).setOnLongClickListener(this);
@@ -237,34 +245,31 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         String text = CalculatorSettings.useRadians(requireContext()) ?
                 "RAD" : "DEG";
 
-        View.OnClickListener listener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int RAD = 0;
-                final int DEG = 1;
-                final PopupMenu popupMenu = new PopupMenu(requireContext(), mInfoView);
-                final Menu menu = popupMenu.getMenu();
-                menu.add(0, RAD, menu.size(), "RAD");
-                menu.add(0, DEG, menu.size(), "DEG");
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case RAD:
-                                CalculatorSettings.setRadiansEnabled(requireContext(), true);
-                                break;
-                            case DEG:
-                                CalculatorSettings.setRadiansEnabled(requireContext(), false);
-                                break;
-                        }
-                        invalidateDetails();
-                        setState(CalculatorState.INPUT);
-                        getEvaluator().evaluate(mFormulaEditText.getCleanText(), BasicCalculatorDialogFragment.this);
-                        return true;
+        View.OnClickListener listener = v -> {
+            final int RAD = 0;
+            final int DEG = 1;
+            final PopupMenu popupMenu = new PopupMenu(requireContext(), mInfoView);
+            final Menu menu = popupMenu.getMenu();
+            menu.add(0, RAD, menu.size(), "RAD");
+            menu.add(0, DEG, menu.size(), "DEG");
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    switch (item.getItemId()) {
+                        case RAD:
+                            CalculatorSettings.setRadiansEnabled(requireContext(), true);
+                            break;
+                        case DEG:
+                            CalculatorSettings.setRadiansEnabled(requireContext(), false);
+                            break;
                     }
-                });
-                popupMenu.show();
-            }
+                    invalidateDetails();
+                    setState(CalculatorState.INPUT);
+                    getEvaluator().evaluate(mFormulaEditText.getCleanText(), BasicCalculatorDialogFragment.this);
+                    return true;
+                }
+            });
+            popupMenu.show();
         };
         return new Detail(text, listener);
     }
