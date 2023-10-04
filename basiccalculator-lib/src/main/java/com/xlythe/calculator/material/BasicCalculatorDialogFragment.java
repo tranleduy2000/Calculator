@@ -212,7 +212,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
                 mConfirmResultTextView.setText("");
             }
             mConfirmButton.setEnabled(value != null);
-            mConfirmButton.setAlpha(value != null ? 1.0f : 0.5f);
+            mConfirmButton.setAlpha(value != null && Double.isFinite(value) ? 1.0f : 0.5f);
         });
         mResultData.postValue(null);
         mConfirmButton.setOnClickListener(v -> {
