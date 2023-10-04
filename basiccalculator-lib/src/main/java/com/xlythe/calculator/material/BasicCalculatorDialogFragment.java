@@ -115,23 +115,20 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     private final OnKeyListener mFormulaOnKeyListener = new OnKeyListener() {
         @Override
         public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-            switch (keyCode) {
-                case KeyEvent.KEYCODE_NUMPAD_ENTER:
-                case KeyEvent.KEYCODE_ENTER:
-                    if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                        mCurrentButton = mEqualButton;
-                        onEquals();
-                    }
-                    // ignore all other actions
-                    return true;
-                default:
-                    if (mFormulaEditText != null) {
-                        setState(CalculatorState.INPUT);
-                        mEvaluator.evaluate(mFormulaEditText.getCleanText(),
-                                BasicCalculatorDialogFragment.this);
-                    }
-                    return false;
+            if (keyCode == KeyEvent.KEYCODE_NUMPAD_ENTER || keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                    mCurrentButton = mEqualButton;
+                    onEquals();
+                }
+                // ignore all other actions
+                return true;
             }
+            if (mFormulaEditText != null) {
+                setState(CalculatorState.INPUT);
+                mEvaluator.evaluate(mFormulaEditText.getCleanText(),
+                        BasicCalculatorDialogFragment.this);
+            }
+            return false;
         }
     };
     private ViewGroup mDisplayForeground;
@@ -255,13 +252,11 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
-                    switch (item.getItemId()) {
-                        case RAD:
-                            CalculatorSettings.setRadiansEnabled(requireContext(), true);
-                            break;
-                        case DEG:
-                            CalculatorSettings.setRadiansEnabled(requireContext(), false);
-                            break;
+                    int itemId = item.getItemId();
+                    if (itemId == RAD) {
+                        CalculatorSettings.setRadiansEnabled(requireContext(), true);
+                    } else if (itemId == DEG) {
+                        CalculatorSettings.setRadiansEnabled(requireContext(), false);
                     }
                     invalidateDetails();
                     setState(CalculatorState.INPUT);
