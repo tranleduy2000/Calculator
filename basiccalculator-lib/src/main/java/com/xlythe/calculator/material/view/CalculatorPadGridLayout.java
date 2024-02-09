@@ -57,16 +57,9 @@ public class CalculatorPadGridLayout extends ViewGroup {
         final int paddingRight = getPaddingRight();
         final int paddingTop = getPaddingTop();
         final int paddingBottom = getPaddingBottom();
-        final boolean isRTL;
-        if (android.os.Build.VERSION.SDK_INT >= 17) {
-            isRTL = getLayoutDirection() == LAYOUT_DIRECTION_RTL;
-        } else {
-            isRTL = false;
-        }
-        final int columnWidth =
-                Math.round((float) (right - left - paddingLeft - paddingRight)) / mColumnCount;
-        final int rowHeight =
-                Math.round((float) (bottom - top - paddingTop - paddingBottom)) / mRowCount;
+
+        final int columnWidth = Math.round((float) (right - left - paddingLeft - paddingRight)) / mColumnCount;
+        final int rowHeight = Math.round((float) (bottom - top - paddingTop - paddingBottom)) / mRowCount;
         int rowIndex = 0, columnIndex = 0;
         for (int childIndex = 0; childIndex < getChildCount(); ++childIndex) {
             final View childView = getChildAt(childIndex);
@@ -76,8 +69,7 @@ public class CalculatorPadGridLayout extends ViewGroup {
             final MarginLayoutParams lp = (MarginLayoutParams) childView.getLayoutParams();
             int childTop = paddingTop + lp.topMargin + rowIndex * rowHeight;
             int childBottom = childTop - lp.topMargin - lp.bottomMargin + rowHeight;
-            int childLeft = paddingLeft + lp.leftMargin +
-                    (isRTL ? (mColumnCount - 1) - columnIndex : columnIndex) * columnWidth;
+            int childLeft = paddingLeft + lp.leftMargin + columnIndex * columnWidth;
             int childRight = childLeft - lp.leftMargin - lp.rightMargin + columnWidth;
             int childWidth = childRight - childLeft;
             int childHeight = childBottom - childTop;
