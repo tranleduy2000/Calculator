@@ -314,6 +314,9 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     protected void setState(CalculatorState state) {
+        if (getContext() == null) {
+            return;
+        }
         if (mCurrentState != state) {
             mCurrentState = state;
             invalidateEqualsButton();
