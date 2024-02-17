@@ -21,7 +21,6 @@ import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.res.Resources;
@@ -61,7 +60,6 @@ import com.xlythe.calculator.material.view.ResizingEditText.OnTextSizeChangeList
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import io.codetail.animation.SupportAnimator;
@@ -576,6 +574,9 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     protected void onError(final String errorMessage) {
+        if (getContext() == null) {
+            return;
+        }
         if (mCurrentState != CalculatorState.EVALUATE) {
             // Only animate error on evaluate.
             mResultEditText.setText(errorMessage);
@@ -593,6 +594,9 @@ public class BasicCalculatorDialogFragment extends DialogFragment
     }
 
     protected void onResult(final String result) {
+        if (getContext() == null) {
+            return;
+        }
         // Calculate the values needed to perform the scale and translation animations,
         // accounting for how the scale will affect the final position of the text.
         final float resultScale =
@@ -629,12 +633,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         final int formulaTextColor = mFormulaEditText.getCurrentTextColor();
         final ValueAnimator textColorAnimator =
                 ValueAnimator.ofObject(new ArgbEvaluator(), resultTextColor, formulaTextColor);
-        textColorAnimator.addUpdateListener(new AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(@NonNull ValueAnimator valueAnimator) {
-                mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
+        textColorAnimator.addUpdateListener(valueAnimator -> mResultEditText.setTextColor((Integer) valueAnimator.getAnimatedValue()));
         mResultEditText.setText(TextUtil.formatText(result));
         mResultEditText.setPivotX(mResultEditText.getWidth() / 2f);
         mResultEditText.setPivotY(0f);
