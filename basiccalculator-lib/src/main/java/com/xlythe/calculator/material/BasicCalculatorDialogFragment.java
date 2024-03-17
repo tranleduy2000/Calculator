@@ -453,7 +453,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
 
     @Override
     public void onTextSizeChanged(final TextView textView, float oldSize) {
-        if (mCurrentState != CalculatorState.INPUT) { // TODO dont animate when showing graph
+        if (mCurrentState != CalculatorState.INPUT) {
             // Only animate text changes that occur from user input.
             return;
         }
