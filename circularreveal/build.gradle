@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdk = 37
-    namespace 'io.codetail.view'
+    namespace = 'io.codetail.view'
 
     defaultConfig {
         minSdk = 24
