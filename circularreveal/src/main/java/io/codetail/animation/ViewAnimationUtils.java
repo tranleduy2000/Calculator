@@ -1,23 +1,14 @@
 package io.codetail.animation;
 
-import android.annotation.TargetApi;
 import android.graphics.Rect;
-import android.os.Build;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.ObjectAnimator;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
-
 public class ViewAnimationUtils {
-
-    public static final int SCALE_UP_DURATION = 500;
-    private final static boolean LOLLIPOP_PLUS = true;
 
     /**
      * Returns an Animator which can animate a clipping circle.

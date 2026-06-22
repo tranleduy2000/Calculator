@@ -31,7 +31,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
@@ -247,20 +246,17 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             final Menu menu = popupMenu.getMenu();
             menu.add(0, RAD, menu.size(), "RAD");
             menu.add(0, DEG, menu.size(), "DEG");
-            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    int itemId = item.getItemId();
-                    if (itemId == RAD) {
-                        CalculatorSettings.setRadiansEnabled(requireContext(), true);
-                    } else if (itemId == DEG) {
-                        CalculatorSettings.setRadiansEnabled(requireContext(), false);
-                    }
-                    invalidateDetails();
-                    setState(CalculatorState.INPUT);
-                    getEvaluator().evaluate(mFormulaEditText.getCleanText(), BasicCalculatorDialogFragment.this);
-                    return true;
+            popupMenu.setOnMenuItemClickListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == RAD) {
+                    CalculatorSettings.setRadiansEnabled(requireContext(), true);
+                } else if (itemId == DEG) {
+                    CalculatorSettings.setRadiansEnabled(requireContext(), false);
                 }
+                invalidateDetails();
+                setState(CalculatorState.INPUT);
+                getEvaluator().evaluate(mFormulaEditText.getCleanText(), BasicCalculatorDialogFragment.this);
+                return true;
             });
             popupMenu.show();
         };
@@ -328,8 +324,8 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             }
 
             if (state == CalculatorState.ERROR) {
-                mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError));
-                mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError));
+                mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), R.attr.colorError));
+                mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), R.attr.colorError));
             } else {
                 mFormulaEditText.setTextColor(ViewUtils.getColor(requireContext(), android.R.attr.textColorPrimary));
                 mResultEditText.setTextColor(ViewUtils.getColor(requireContext(), android.R.attr.textColorSecondary));
@@ -563,7 +559,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
         if (TextUtils.isEmpty(mFormulaEditText.getCleanText())) {
             return;
         }
-        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorAccent),
+        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), R.attr.colorAccent),
                 new AnimationFinishedListener() {
                     @Override
                     public void onAnimationFinished() {
@@ -583,7 +579,7 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             return;
         }
 
-        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), com.google.android.material.R.attr.colorError),
+        reveal(mCurrentButton, ViewUtils.getColor(requireContext(), R.attr.colorError),
                 new AnimationFinishedListener() {
                     @Override
                     public void onAnimationFinished() {

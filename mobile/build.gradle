@@ -2,23 +2,23 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 35
-    namespace 'com.example.calc'
+    compileSdk = 37
+    namespace = 'com.example.calc'
 
     defaultConfig {
         applicationId "com.xlythe.calculator.material"
-        minSdkVersion 24
-        targetSdkVersion 35
-        versionCode 93
-        versionName "5.4"
+        minSdk = 24
+        targetSdk = 37
+        versionCode = 93
+        versionName = "5.4"
     }
     buildTypes {
         release {
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
 }
 
