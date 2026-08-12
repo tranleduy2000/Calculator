@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Label of the button that closes the calculator dialog and hands the computed value back
+         to the field that opened it. -->
+    <string name="bscalc_button_done">Fet</string>
+</resources>

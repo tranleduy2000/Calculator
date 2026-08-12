@@ -213,8 +213,9 @@ public class BasicCalculatorDialogFragment extends DialogFragment
             } else {
                 mConfirmResultTextView.setText("");
             }
-            mConfirmButton.setEnabled(value != null);
-            mConfirmButton.setAlpha(value != null && Double.isFinite(value) ? 1.0f : 0.5f);
+            // The button is a MaterialButton now, it draws its own disabled state, so there is
+            // no need to dim it by hand any more.
+            mConfirmButton.setEnabled(value != null && Double.isFinite(value));
         });
         mResultData.postValue(null);
         mConfirmButton.setOnClickListener(v -> {

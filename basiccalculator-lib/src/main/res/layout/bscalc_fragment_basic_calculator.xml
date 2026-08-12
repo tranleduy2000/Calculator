@@ -25,40 +25,6 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="?colorSurface">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/confirm_result_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:textColor="?colorPrimary"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:typeface="monospace"
-            tools:text="123123123123" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/btn_confirm"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:background="?selectableItemBackground"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/bscalc_round_done_outline_24"
-            app:tint="?colorOnSurface" />
-    </FrameLayout>
-
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="1dp" />
-
-    <FrameLayout
-        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
@@ -118,5 +84,45 @@
         </com.xlythe.calculator.material.view.SolidLayout>
 
     </com.xlythe.calculator.material.view.CalculatorPadView>
+
+    <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <!-- Confirm bar: shows the value that will be returned and the button that returns it.
+         It sits at the bottom of the dialog, right under the keypad, so it is close to the
+         keys the user has just been pressing. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?colorSurface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/confirm_result_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:textColor="?colorPrimary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            tools:text="123123123123" />
+
+        <!-- Icon + label, so the action is readable and not only a check mark. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_confirm"
+            style="@style/Widget.Material3.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:text="@string/bscalc_button_done"
+            app:icon="@drawable/bscalc_round_done_outline_24" />
+    </LinearLayout>
 
 </LinearLayout>
